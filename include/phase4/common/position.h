@@ -1,0 +1,4 @@
+#ifndef PHASE4_COMMON_POSITION_H
+#define PHASE4_COMMON_POSITION_H
+
+#endif

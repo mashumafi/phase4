@@ -1,0 +1,4 @@
+#ifndef PHASE4_MOVES_MOVE_FLAGS_H
+#define PHASE4_MOVES_MOVE_FLAGS_H
+
+#endif
