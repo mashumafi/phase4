@@ -53,8 +53,8 @@ constexpr PieceColor &PieceColor::operator=(uint64_t value) {
 	return *this;
 }
 
-constexpr PieceColor PieceColor::WHITE = 0;
-constexpr PieceColor PieceColor::BLACK = 1;
+inline constexpr PieceColor PieceColor::WHITE = 0;
+inline constexpr PieceColor PieceColor::BLACK = 1;
 
 [[nodiscard]] constexpr uint8_t PieceColor::get_raw_value() const {
 	return m_value;

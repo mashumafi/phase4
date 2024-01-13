@@ -2,6 +2,7 @@
 #define PHASE4_COMMON_BITSET_H
 
 #include <bitset>
+#include <cstdint>
 
 namespace phase4::engine::common {
 
