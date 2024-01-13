@@ -38,8 +38,11 @@ constexpr uint8_t Distance::lookup(std::size_t i, std::size_t j) {
 
 template <std::size_t FROM, std::size_t TO>
 constexpr uint8_t Distance::populateElement() {
-	constexpr Point fromPosition(Square(FROM).asPoint());
-	constexpr Point toPosition(Square(TO).asPoint());
+	constexpr uint64_t from = FROM;
+	constexpr uint64_t to = TO;
+
+	constexpr Point fromPosition(Square(from).asPoint());
+	constexpr Point toPosition(Square(to).asPoint());
 
 	return static_cast<uint8_t>(fromPosition.maxCartesianDistance(toPosition));
 }
