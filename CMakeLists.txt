@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.27.9)
 
 project(phase4 VERSION 1.0)
 
