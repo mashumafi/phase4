@@ -64,7 +64,7 @@ constexpr Move::Move(std::string_view textNotation) :
 
 std::ostream &operator<<(std::ostream &os, const Move &move) {
 	os << common::Square(move.from()) << common::Square(move.to());
-	if (move.flags().isPromotion()) {
+	if (unlikely(move.flags().isPromotion())) {
 		os << move.flags().getPromotionSymbol();
 	}
 	return os;

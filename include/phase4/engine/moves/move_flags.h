@@ -227,52 +227,37 @@ constexpr bool MoveFlags::operator==(const MoveFlags &flags) const {
 inline std::ostream &operator<<(std::ostream &os, const MoveFlags &flags) {
 	switch (flags.m_flags) {
 		case MoveFlags::QUIET.m_flags:
-			os << "QUIET";
-			break;
+			return os << "QUIET";
 		case MoveFlags::DOUBLE_PUSH.m_flags:
-			os << "DOUBLE_PUSH";
-			break;
+			return os << "DOUBLE_PUSH";
 		case MoveFlags::KING_CASTLE.m_flags:
-			os << "KING_CASTLE";
-			break;
+			return os << "KING_CASTLE";
 		case MoveFlags::QUEEN_CASTLE.m_flags:
-			os << "QUEEN_CASTLE";
-			break;
+			return os << "QUEEN_CASTLE";
 		case MoveFlags::CAPTURE.m_flags:
-			os << "CAPTURE";
-			break;
+			return os << "CAPTURE";
 		case MoveFlags::EN_PASSANT.m_flags:
-			os << "EN_PASSANT";
-			break;
+			return os << "EN_PASSANT";
 		case MoveFlags::KNIGHT_PROMOTION.m_flags:
-			os << "KNIGHT_PROMOTION";
-			break;
+			return os << "KNIGHT_PROMOTION";
 		case MoveFlags::BISHOP_PROMOTION.m_flags:
-			os << "BISHOP_PROMOTION";
-			break;
+			return os << "BISHOP_PROMOTION";
 		case MoveFlags::ROOK_PROMOTION.m_flags:
-			os << "ROOK_PROMOTION";
-			break;
+			return os << "ROOK_PROMOTION";
 		case MoveFlags::QUEEN_PROMOTION.m_flags:
-			os << "QUEEN_PROMOTION";
-			break;
+			return os << "QUEEN_PROMOTION";
 		case MoveFlags::KNIGHT_PROMOTION_CAPTURE.m_flags:
-			os << "KNIGHT_PROMOTION_CAPTURE";
-			break;
+			return os << "KNIGHT_PROMOTION_CAPTURE";
 		case MoveFlags::BISHOP_PROMOTION_CAPTURE.m_flags:
-			os << "BISHOP_PROMOTION_CAPTURE";
-			break;
+			return os << "BISHOP_PROMOTION_CAPTURE";
 		case MoveFlags::ROOK_PROMOTION_CAPTURE.m_flags:
-			os << "ROOK_PROMOTION_CAPTURE";
-			break;
+			return os << "ROOK_PROMOTION_CAPTURE";
 		case MoveFlags::QUEEN_PROMOTION_CAPTURE.m_flags:
-			os << "QUEEN_PROMOTION_CAPTURE";
-			break;
+			return os << "QUEEN_PROMOTION_CAPTURE";
 		default:
 			os.setstate(std::ios_base::failbit);
-			break;
+			return os;
 	}
-	return os;
 }
 
 } //namespace phase4::engine::moves

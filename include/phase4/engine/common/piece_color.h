@@ -17,7 +17,7 @@ public:
 
 	/// @brief inverts the color
 	/// @return the inverted color
-	[[nodiscard]] constexpr inline PieceColor invert() const;
+	[[nodiscard]] constexpr inline PieceColor invert() const noexcept;
 
 	constexpr PieceColor(PieceColor const &that);
 	constexpr PieceColor &operator=(const PieceColor &that);
@@ -27,7 +27,7 @@ public:
 
 	constexpr bool operator==(const PieceColor &) const;
 
-	friend std::ostream &operator<<(std::ostream &os, const PieceColor &color);
+	friend std::ostream &operator<<(std::ostream &os, PieceColor color);
 
 private:
 	constexpr PieceColor(uint64_t value);
@@ -36,7 +36,7 @@ private:
 	uint8_t m_value;
 };
 
-[[nodiscard]] constexpr inline PieceColor PieceColor::invert() const {
+[[nodiscard]] constexpr inline PieceColor PieceColor::invert() const noexcept {
 	if ((*this) == WHITE) {
 		return BLACK;
 	} else {
@@ -82,18 +82,16 @@ constexpr bool PieceColor::operator==(const PieceColor &color) const {
 	return color.m_value == m_value;
 }
 
-std::ostream &operator<<(std::ostream &os, const PieceColor &color) {
+std::ostream &operator<<(std::ostream &os, PieceColor color) {
 	switch (color.m_value) {
 		case PieceColor::WHITE.m_value:
-			os << "WHITE";
-			break;
+			return os << "WHITE";
 		case PieceColor::BLACK.m_value:
-			os << "BLACK";
-			break;
+			return os << "BLACK";
 		default:
 			os.setstate(std::ios_base::failbit);
+			return os;
 	}
-	return os;
 }
 
 } //namespace phase4::engine::common

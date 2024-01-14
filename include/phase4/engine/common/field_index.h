@@ -44,11 +44,11 @@ constexpr uint16_t FieldIndex::manhattanDistance(const FieldIndex &other) const 
 	return std::max(std::abs(other.x - this->x), std::abs(other.y - this->y));
 }
 
-inline bool operator==(const FieldIndex &left, const FieldIndex &right) {
+inline bool operator==(const FieldIndex left, const FieldIndex right) {
 	return left.x == right.x && left.y == right.y;
 }
 
-inline std::ostream &operator<<(std::ostream &os, const FieldIndex &fieldIndex) {
+inline std::ostream &operator<<(std::ostream &os, const FieldIndex fieldIndex) {
 	return os << "x:" << fieldIndex.x << ", y:" << fieldIndex.y;
 }
 
