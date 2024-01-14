@@ -29,6 +29,9 @@ TEST_CASE("FastVector push_back, pop_back, peek") {
 	numbers.push_back(2);
 	CHECK(numbers.peek() == 2);
 
+    CHECK(numbers.at(1) == 4);
+    CHECK(numbers.at(3) == 2);
+
 	CHECK(numbers.pop_back() == 2);
 	CHECK(numbers.peek() == 3);
 	CHECK(numbers.pop_back() == 3);
