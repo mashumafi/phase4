@@ -27,8 +27,8 @@ public:
 private:
 	uint16_t _data;
 
-	friend bool operator==(const Move &a, const Move &b);
-	friend bool operator!=(const Move &a, const Move &b);
+	friend bool operator==(const Move a, const Move b);
+	friend bool operator!=(const Move a, const Move b);
 };
 
 constexpr common::Square Move::from() const {
