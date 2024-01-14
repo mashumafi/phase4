@@ -16,19 +16,25 @@ TEST_CASE("SafeVector constructor") {
 	}
 }
 
-TEST_CASE("SafeVector push_back") {
+TEST_CASE("SafeVector push_back, pop_back, peek") {
 	using namespace phase4::engine::common;
 
 	SafeVector<uint64_t, 4> numbers;
 	numbers.push_back(5);
+	CHECK(numbers.peek() == 5);
 	numbers.push_back(4);
+	CHECK(numbers.peek() == 4);
 	numbers.push_back(3);
+	CHECK(numbers.peek() == 3);
 	numbers.push_back(2);
+	CHECK(numbers.peek() == 2);
 
 	CHECK(numbers.pop_back() == 2);
+	CHECK(numbers.peek() == 3);
 	CHECK(numbers.pop_back() == 3);
-	CHECK(numbers.pop_back() == 4);
-	CHECK(numbers.pop_back() == 5);
+	CHECK(numbers.peek() == 4);
+
+	numbers.clear();
 	CHECK(numbers.is_empty());
 }
 

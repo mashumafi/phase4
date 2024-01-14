@@ -20,6 +20,11 @@ public:
 
 	T &&pop_back();
 
+	void clear();
+
+	const T &at(std::size_t index) const;
+	const T &peek() const;
+
 	std::size_t size() const;
 	bool is_empty() const;
 
@@ -53,6 +58,23 @@ T &&SafeVector<T, SIZE>::pop_back() {
 	T &&back = std::move(m_vector.back());
 	m_vector.pop_back();
 	return std::move(back);
+}
+
+template <typename T, std::size_t SIZE>
+void SafeVector<T, SIZE>::clear() {
+	m_vector.clear();
+}
+
+template <typename T, std::size_t SIZE>
+const T &SafeVector<T, SIZE>::at(std::size_t index) const {
+	return m_vector.at(index);
+}
+
+template <typename T, std::size_t SIZE>
+const T &SafeVector<T, SIZE>::peek() const {
+	assert(!m_vector.empty());
+
+	return m_vector[size() - 1];
 }
 
 template <typename T, std::size_t SIZE>

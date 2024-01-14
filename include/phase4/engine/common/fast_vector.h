@@ -7,9 +7,9 @@
 
 namespace phase4::engine::common {
 
-/// @brief Provides a fixed size std::vector
-/// @tparam T element type used for the vector
-/// @tparam SIZE the capacity of the vector
+/// @brief Provides a fixed capacity std::array with a size
+/// @tparam T element type used for the array
+/// @tparam SIZE the capacity of the array
 template <typename T, std::size_t SIZE = 1024>
 class FastVector {
 public:
@@ -21,6 +21,11 @@ public:
 	void push_back(T &&value);
 
 	T &&pop_back();
+
+	void clear();
+
+	const T &at(std::size_t index) const;
+	const T &peek() const;
 
 	std::size_t size() const;
 	bool is_empty() const;
@@ -56,6 +61,25 @@ T &&FastVector<T, SIZE>::pop_back() {
 	assert(!is_empty());
 
 	return std::move((*m_array)[--m_size]);
+}
+
+template <typename T, std::size_t SIZE>
+void FastVector<T, SIZE>::clear() {
+	m_size = 0;
+}
+
+template <typename T, std::size_t SIZE>
+const T &FastVector<T, SIZE>::at(std::size_t index) const {
+	assert(index < m_size);
+
+	return (*m_array)[index];
+}
+
+template <typename T, std::size_t SIZE>
+const T &FastVector<T, SIZE>::peek() const {
+	assert(!is_empty());
+
+	return (*m_array)[m_size - 1];
 }
 
 template <typename T, std::size_t SIZE>
