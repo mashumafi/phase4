@@ -49,3 +49,24 @@ TEST_CASE("Square output invalid") {
 		CHECK(ss.fail());
 	}
 }
+
+TEST_CASE("Square from FieldIndex") {
+	using namespace phase4::engine::common;
+
+	CHECK(Square(FieldIndex{ 2, 2 }) == Square::C6);
+	CHECK(Square(FieldIndex{ 6, 4 }) == Square::E2);
+}
+
+TEST_CASE("Square to FieldIndex") {
+	using namespace phase4::engine::common;
+
+	CHECK(Square::C6.asFieldIndex() == FieldIndex{ 2, 2 });
+	CHECK(Square::E2.asFieldIndex() == FieldIndex{ 6, 4 });
+}
+
+TEST_CASE("Square conversion FieldIndex") {
+	using namespace phase4::engine::common;
+
+	CHECK(Square(Square::C6.asFieldIndex()) == Square::C6);
+	CHECK(Square(Square::E2.asFieldIndex()) == Square::E2);
+}

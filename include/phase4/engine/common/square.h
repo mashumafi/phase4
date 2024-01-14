@@ -91,14 +91,18 @@ public:
 
 	constexpr operator uint64_t() const;
 
-	constexpr Square(uint64_t value);
+	constexpr explicit Square(uint64_t value);
 	constexpr Square &operator=(uint64_t value);
+
+	explicit constexpr Square(const FieldIndex &fieldIndex);
 
 	constexpr Square(Square const &that);
 	constexpr Square &operator=(const Square &that);
 
 	constexpr Square(Square &&that) noexcept;
 	constexpr Square &operator=(Square &&that) noexcept;
+
+	explicit constexpr Square(std::string_view move);
 
 	friend std::ostream &operator<<(std::ostream &os, const Square &square);
 
@@ -129,70 +133,74 @@ constexpr Square &Square::operator=(uint64_t value) {
 	return *this;
 }
 
-inline constexpr Square Square::A1 = 0;
-inline constexpr Square Square::A2 = 1;
-inline constexpr Square Square::A3 = 2;
-inline constexpr Square Square::A4 = 3;
-inline constexpr Square Square::A5 = 4;
-inline constexpr Square Square::A6 = 5;
-inline constexpr Square Square::A7 = 6;
-inline constexpr Square Square::A8 = 7;
-inline constexpr Square Square::B1 = 8;
-inline constexpr Square Square::B2 = 9;
-inline constexpr Square Square::B3 = 10;
-inline constexpr Square Square::B4 = 11;
-inline constexpr Square Square::B5 = 12;
-inline constexpr Square Square::B6 = 13;
-inline constexpr Square Square::B7 = 14;
-inline constexpr Square Square::B8 = 15;
-inline constexpr Square Square::C1 = 16;
-inline constexpr Square Square::C2 = 17;
-inline constexpr Square Square::C3 = 18;
-inline constexpr Square Square::C4 = 19;
-inline constexpr Square Square::C5 = 20;
-inline constexpr Square Square::C6 = 21;
-inline constexpr Square Square::C7 = 22;
-inline constexpr Square Square::C8 = 23;
-inline constexpr Square Square::D1 = 24;
-inline constexpr Square Square::D2 = 25;
-inline constexpr Square Square::D3 = 26;
-inline constexpr Square Square::D4 = 27;
-inline constexpr Square Square::D5 = 28;
-inline constexpr Square Square::D6 = 29;
-inline constexpr Square Square::D7 = 30;
-inline constexpr Square Square::D8 = 31;
-inline constexpr Square Square::E1 = 32;
-inline constexpr Square Square::E2 = 33;
-inline constexpr Square Square::E3 = 34;
-inline constexpr Square Square::E4 = 35;
-inline constexpr Square Square::E5 = 36;
-inline constexpr Square Square::E6 = 37;
-inline constexpr Square Square::E7 = 38;
-inline constexpr Square Square::E8 = 39;
-inline constexpr Square Square::F1 = 40;
-inline constexpr Square Square::F2 = 41;
-inline constexpr Square Square::F3 = 42;
-inline constexpr Square Square::F4 = 43;
-inline constexpr Square Square::F5 = 44;
-inline constexpr Square Square::F6 = 45;
-inline constexpr Square Square::F7 = 46;
-inline constexpr Square Square::F8 = 47;
-inline constexpr Square Square::G1 = 48;
-inline constexpr Square Square::G2 = 49;
-inline constexpr Square Square::G3 = 50;
-inline constexpr Square Square::G4 = 51;
-inline constexpr Square Square::G5 = 52;
-inline constexpr Square Square::G6 = 53;
-inline constexpr Square Square::G7 = 54;
-inline constexpr Square Square::G8 = 55;
-inline constexpr Square Square::H1 = 56;
-inline constexpr Square Square::H2 = 57;
-inline constexpr Square Square::H3 = 58;
-inline constexpr Square Square::H4 = 59;
-inline constexpr Square Square::H5 = 60;
-inline constexpr Square Square::H6 = 61;
-inline constexpr Square Square::H7 = 62;
-inline constexpr Square Square::H8 = 63;
+constexpr Square::Square(const FieldIndex &fieldIndex) :
+		Square(7 - fieldIndex.x + fieldIndex.y * 8) {
+}
+
+inline constexpr Square Square::A1(0);
+inline constexpr Square Square::A2(1);
+inline constexpr Square Square::A3(2);
+inline constexpr Square Square::A4(3);
+inline constexpr Square Square::A5(4);
+inline constexpr Square Square::A6(5);
+inline constexpr Square Square::A7(6);
+inline constexpr Square Square::A8(7);
+inline constexpr Square Square::B1(8);
+inline constexpr Square Square::B2(9);
+inline constexpr Square Square::B3(10);
+inline constexpr Square Square::B4(11);
+inline constexpr Square Square::B5(12);
+inline constexpr Square Square::B6(13);
+inline constexpr Square Square::B7(14);
+inline constexpr Square Square::B8(15);
+inline constexpr Square Square::C1(16);
+inline constexpr Square Square::C2(17);
+inline constexpr Square Square::C3(18);
+inline constexpr Square Square::C4(19);
+inline constexpr Square Square::C5(20);
+inline constexpr Square Square::C6(21);
+inline constexpr Square Square::C7(22);
+inline constexpr Square Square::C8(23);
+inline constexpr Square Square::D1(24);
+inline constexpr Square Square::D2(25);
+inline constexpr Square Square::D3(26);
+inline constexpr Square Square::D4(27);
+inline constexpr Square Square::D5(28);
+inline constexpr Square Square::D6(29);
+inline constexpr Square Square::D7(30);
+inline constexpr Square Square::D8(31);
+inline constexpr Square Square::E1(32);
+inline constexpr Square Square::E2(33);
+inline constexpr Square Square::E3(34);
+inline constexpr Square Square::E4(35);
+inline constexpr Square Square::E5(36);
+inline constexpr Square Square::E6(37);
+inline constexpr Square Square::E7(38);
+inline constexpr Square Square::E8(39);
+inline constexpr Square Square::F1(40);
+inline constexpr Square Square::F2(41);
+inline constexpr Square Square::F3(42);
+inline constexpr Square Square::F4(43);
+inline constexpr Square Square::F5(44);
+inline constexpr Square Square::F6(45);
+inline constexpr Square Square::F7(46);
+inline constexpr Square Square::F8(47);
+inline constexpr Square Square::G1(48);
+inline constexpr Square Square::G2(49);
+inline constexpr Square Square::G3(50);
+inline constexpr Square Square::G4(51);
+inline constexpr Square Square::G5(52);
+inline constexpr Square Square::G6(53);
+inline constexpr Square Square::G7(54);
+inline constexpr Square Square::G8(55);
+inline constexpr Square Square::H1(56);
+inline constexpr Square Square::H2(57);
+inline constexpr Square Square::H3(58);
+inline constexpr Square Square::H4(59);
+inline constexpr Square Square::H5(60);
+inline constexpr Square Square::H6(61);
+inline constexpr Square Square::H7(62);
+inline constexpr Square Square::H8(63);
 
 constexpr Square::Square(const Square &that) :
 		m_value{ that.m_value } {
@@ -210,6 +218,10 @@ constexpr Square::Square(Square &&that) noexcept :
 constexpr Square &Square::operator=(Square &&that) noexcept {
 	m_value = std::move(that).m_value;
 	return *this;
+}
+
+constexpr Square::Square(std::string_view square) :
+		Square(FieldIndex(square)) {
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Square &square) {
