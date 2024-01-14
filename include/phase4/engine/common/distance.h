@@ -1,12 +1,12 @@
-#ifndef PHASE4_COMMON_DISTANCE_H
-#define PHASE4_COMMON_DISTANCE_H
+#ifndef PHASE4_ENGINE_COMMON_DISTANCE_H
+#define PHASE4_ENGINE_COMMON_DISTANCE_H
 
-#include <phase4/common/square.h>
+#include <phase4/engine/common/square.h>
 
 #include <array>
 #include <cstdint>
 
-namespace phase4::common {
+namespace phase4::engine::common {
 
 class Distance {
 public:
@@ -41,10 +41,10 @@ constexpr uint8_t Distance::populateElement() {
 	constexpr uint64_t from = FROM;
 	constexpr uint64_t to = TO;
 
-	constexpr Point fromPosition(Square(from).asPoint());
-	constexpr Point toPosition(Square(to).asPoint());
+	constexpr FieldIndex fromPosition(Square(from).asFieldIndex());
+	constexpr FieldIndex toPosition(Square(to).asFieldIndex());
 
-	return static_cast<uint8_t>(fromPosition.maxCartesianDistance(toPosition));
+	return static_cast<uint8_t>(fromPosition.manhattanDistance(toPosition));
 }
 
 template <std::size_t FROM, std::size_t... TO>
@@ -63,6 +63,6 @@ constexpr Distance::Table Distance::populate() {
 
 const Distance::Table Distance::G_DISTANCE_TABLE = Distance::populate();
 
-} //namespace phase4::common
+} //namespace phase4::engine::common
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef PHASE4_COMMON_BITSET_H
-#define PHASE4_COMMON_BITSET_H
+#ifndef PHASE4_ENGINE_COMMON_BITSET_H
+#define PHASE4_ENGINE_COMMON_BITSET_H
 
 #include <bitset>
 #include <cstdint>

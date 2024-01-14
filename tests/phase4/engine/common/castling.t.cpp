@@ -1,4 +1,4 @@
-#include <phase4/common/castling.h>
+#include <phase4/engine/common/castling.h>
 
 #include <sstream>
 

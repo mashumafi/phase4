@@ -1,10 +1,10 @@
-#include <phase4/common/distance.h>
-#include <phase4/common/square.h>
+#include <phase4/engine/common/distance.h>
+#include <phase4/engine/common/square.h>
 
 #include <doctest/doctest.h>
 
 TEST_CASE("Distance lookup") {
-	using namespace phase4::common;
+	using namespace phase4::engine::common;
 
 	CHECK(Distance::lookup(Square::A4, Square::A4) == 0);
 	CHECK(Distance::lookup(Square::B1, Square::B8) == 7);

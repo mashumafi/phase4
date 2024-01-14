@@ -1,11 +1,11 @@
-#ifndef PHASE4_COMMON_SQUARE_H
-#define PHASE4_COMMON_SQUARE_H
+#ifndef PHASE4_ENGINE_COMMON_SQUARE_H
+#define PHASE4_ENGINE_COMMON_SQUARE_H
 
-#include <phase4/common/point.h>
+#include <phase4/engine/common/field_index.h>
 
 #include <iostream>
 
-namespace phase4::common {
+namespace phase4::engine::common {
 
 class Square {
 public:
@@ -87,7 +87,7 @@ public:
 
 	/// @brief converts the square index to a point
 	/// @return the point
-	constexpr Point asPoint() const;
+	constexpr FieldIndex asFieldIndex() const;
 
 	constexpr operator uint64_t() const;
 
@@ -110,10 +110,10 @@ private:
 	return m_value;
 }
 
-constexpr Point Square::asPoint() const {
+constexpr FieldIndex Square::asFieldIndex() const {
 	const int16_t x = 7 - m_value % 8;
 	const int16_t y = m_value / 8;
-	return Point{ x, y };
+	return FieldIndex{ x, y };
 }
 
 constexpr Square::operator uint64_t() const {
@@ -226,6 +226,6 @@ inline std::ostream &operator<<(std::ostream &os, const Square &square) {
 	return os;
 }
 
-} //namespace phase4::common
+} //namespace phase4::engine::common
 
 #endif

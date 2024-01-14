@@ -1,0 +1,33 @@
+#ifndef PHASE4_ENGINE_COMMON_FIELD_INDEX_H
+#define PHASE4_ENGINE_COMMON_FIELD_INDEX_H
+
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+
+namespace phase4::engine::common {
+
+struct FieldIndex {
+	int16_t x;
+	int16_t y;
+
+	constexpr uint16_t manhattanDistance(const FieldIndex &other) const;
+};
+
+/**
+ * @brief Calculate the Manhattan distance between two points.
+ *
+ * The Manhattan distance, also known as the taxicab distance, is the sum of the absolute
+ * differences of their coordinates. It represents the distance in a grid-like structure
+ * where only horizontal and vertical movements are allowed.
+ *
+ * @param other The second point.
+ * @return The Manhattan distance between the two points.
+ */
+constexpr uint16_t FieldIndex::manhattanDistance(const FieldIndex &other) const {
+	return std::max(std::abs(other.x - this->x), std::abs(other.y - this->y));
+}
+
+} //namespace phase4::engine::common
+
+#endif
