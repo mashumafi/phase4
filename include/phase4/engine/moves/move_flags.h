@@ -58,7 +58,7 @@ public:
 		return m_flags == MoveFlags::EN_PASSANT.m_flags;
 	}
 
-	[[nodiscard]] bool isCapture() const {
+	[[nodiscard]] constexpr bool isCapture() const {
 		return (m_flags & static_cast<uint8_t>(Fields::CAPTURE)) != 0;
 	}
 
@@ -74,7 +74,7 @@ public:
 		return m_flags == MoveFlags::QUEEN_CASTLE.m_flags;
 	}
 
-	[[nodiscard]] bool isPromotion() const {
+	[[nodiscard]] constexpr bool isPromotion() const {
 		return (m_flags & static_cast<uint8_t>(Fields::PROMOTION)) != 0;
 	}
 
