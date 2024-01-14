@@ -28,7 +28,7 @@ public:
 
 	constexpr bool operator==(const PieceType &) const;
 
-	friend std::ostream &operator<<(std::ostream &os, const PieceType &color);
+	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
 private:
 	constexpr PieceType(uint64_t value);
@@ -74,6 +74,26 @@ constexpr PieceType &PieceType::operator=(PieceType &&that) noexcept {
 
 [[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
+}
+
+inline std::ostream &operator<<(std::ostream &os, PieceType color) {
+	switch (color.m_piece) {
+		case PieceType::PAWN.m_piece:
+			return os << "PAWN";
+		case PieceType::KNIGHT.m_piece:
+			return os << "KNIGHT";
+		case PieceType::BISHOP.m_piece:
+			return os << "BISHOP";
+		case PieceType::ROOK.m_piece:
+			return os << "ROOK";
+		case PieceType::QUEEN.m_piece:
+			return os << "QUEEN";
+		case PieceType::KING.m_piece:
+			return os << "KING";
+		default:
+			os.setstate(std::ios_base::failbit);
+			return os;
+	}
 }
 
 } //namespace phase4::engine::common

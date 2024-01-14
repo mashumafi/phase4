@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_COMMON_SQUARE_H
 
 #include <phase4/engine/common/field_index.h>
+#include <phase4/engine/common/util.h>
 
 #include <iostream>
 
@@ -229,7 +230,7 @@ inline std::ostream &operator<<(std::ostream &os, const Square &square) {
 	const int16_t file = square.m_value / 8;
 	const int16_t rank = square.m_value % 8;
 
-	if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+	if (unlikely(file >= 0 && file < 8 && rank >= 0 && rank < 8)) {
 		os << fileLabels[file] << (rank + 1);
 	} else {
 		os.setstate(std::ios_base::failbit);

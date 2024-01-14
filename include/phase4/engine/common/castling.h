@@ -1,6 +1,8 @@
 #ifndef PHASE4_ENGINE_COMMON_CASTLING_H
 #define PHASE4_ENGINE_COMMON_CASTLING_H
 
+#include <phase4/engine/common/util.h>
+
 #include <cstdint>
 #include <iostream>
 
@@ -17,51 +19,42 @@ enum Castling : uint8_t {
 	EVERYTHING = WHITE_SHORT | WHITE_LONG | BLACK_SHORT | BLACK_LONG
 };
 
-std::ostream &operator<<(std::ostream &os, const Castling &castling) {
+std::ostream &operator<<(std::ostream &os, Castling castling) {
 	switch (castling) {
 		case Castling::NONE:
-			os << "NONE";
-			break;
+			return os << "NONE";
 		case Castling::WHITE_SHORT:
-			os << "WHITE_SHORT";
-			break;
+			return os << "WHITE_SHORT";
 		case Castling::WHITE_LONG:
-			os << "WHITE_LONG";
-			break;
+			return os << "WHITE_LONG";
 		case Castling::BLACK_SHORT:
-			os << "BLACK_SHORT";
-			break;
+			return os << "BLACK_SHORT";
 		case Castling::BLACK_LONG:
-			os << "BLACK_LONG";
-			break;
+			return os << "BLACK_LONG";
 		case Castling::WHITE_CASTLING:
-			os << "WHITE_CASTLING";
-			break;
+			return os << "WHITE_CASTLING";
 		case Castling::BLACK_CASTLING:
-			os << "BLACK_CASTLING";
-			break;
+			return os << "BLACK_CASTLING";
 		case Castling::EVERYTHING:
-			os << "EVERYTHING";
-			break;
+			return os << "EVERYTHING";
 		default:
-			if (castling > EVERYTHING) {
+			if (unlikely(castling > EVERYTHING)) {
 				os.setstate(std::ios_base::failbit);
-				return os;
-			}
+			} else {
+				bool isFirstFlag = true;
 
-			bool isFirstFlag = true;
-
-			for (uint8_t flag = 1; flag <= EVERYTHING; flag <<= 1) {
-				if (castling & flag) {
-					if (!isFirstFlag) {
-						os << " | ";
+				for (uint8_t flag = 1; flag <= EVERYTHING; flag <<= 1) {
+					if (castling & flag) {
+						if (!isFirstFlag) {
+							os << " | ";
+						}
+						os << static_cast<Castling>(flag);
+						isFirstFlag = false;
 					}
-					os << static_cast<Castling>(flag);
-					isFirstFlag = false;
 				}
 			}
+			return os;
 	}
-	return os;
 }
 
 } //namespace phase4::engine::common
