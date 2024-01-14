@@ -7,5 +7,7 @@ TEST_CASE("Random seed next") {
 
 	Random rand(42);
 
-	CHECK(rand.next() == 13930160852258120406u);
+	CHECK(rand.next() == 9039304369631583587u);
+	CHECK(rand.next() == 8647191391818483560u);
+	CHECK(rand.next() == 10334312345110439241u);
 }
