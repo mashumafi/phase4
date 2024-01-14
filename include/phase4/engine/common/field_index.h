@@ -13,18 +13,22 @@ struct FieldIndex {
 	int16_t x;
 	int16_t y;
 
-	constexpr FieldIndex(int16_t x, int16_t y) :
-			x{ x },
-			y{ y } {
-	}
+	constexpr FieldIndex(int16_t x, int16_t y);
 
-	constexpr FieldIndex(std::string_view move) :
-			x{ static_cast<int16_t>('8' - move[1]) },
-			y{ static_cast<int16_t>(move[0] - 'a') } {
-	}
+	constexpr FieldIndex(std::string_view move);
 
 	constexpr uint16_t manhattanDistance(const FieldIndex &other) const;
 };
+
+constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
+		x{ x },
+		y{ y } {
+}
+
+constexpr FieldIndex::FieldIndex(std::string_view move) :
+		x{ static_cast<int16_t>('8' - move[1]) },
+		y{ static_cast<int16_t>(move[0] - 'a') } {
+}
 
 /**
  * @brief Calculate the Manhattan distance between two points.
