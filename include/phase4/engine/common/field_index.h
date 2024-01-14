@@ -2,7 +2,6 @@
 #define PHASE4_ENGINE_COMMON_FIELD_INDEX_H
 
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
