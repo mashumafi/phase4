@@ -70,11 +70,11 @@ std::ostream &operator<<(std::ostream &os, const Move &move) {
 	return os;
 }
 
-bool operator==(const Move &a, const Move &b) {
+bool operator==(const Move a, const Move b) {
 	return a._data == b._data;
 }
 
-bool operator!=(const Move &a, const Move &b) {
+bool operator!=(const Move a, const Move b) {
 	return a._data != b._data;
 }
 
