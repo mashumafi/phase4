@@ -1,4 +1,4 @@
-#include <phase4/common/piece_color.h>
+#include <phase4/engine/common/piece_color.h>
 
 #include <sstream>
 

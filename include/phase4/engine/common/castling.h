@@ -1,5 +1,5 @@
-#ifndef PHASE4_COMMON_CASTLING_H
-#define PHASE4_COMMON_CASTLING_H
+#ifndef PHASE4_ENGINE_COMMON_CASTLING_H
+#define PHASE4_ENGINE_COMMON_CASTLING_H
 
 #include <cstdint>
 #include <iostream>

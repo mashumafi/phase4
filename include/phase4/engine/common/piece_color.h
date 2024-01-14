@@ -1,5 +1,5 @@
-#ifndef PHASE4_COMMON_PIECE_COLOR_H
-#define PHASE4_COMMON_PIECE_COLOR_H
+#ifndef PHASE4_ENGINE_COMMON_PIECE_COLOR_H
+#define PHASE4_ENGINE_COMMON_PIECE_COLOR_H
 
 #include <cstdint>
 #include <iostream>

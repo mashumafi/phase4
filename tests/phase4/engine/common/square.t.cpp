@@ -1,11 +1,11 @@
-#include <phase4/common/square.h>
+#include <phase4/engine/common/square.h>
 
 #include <sstream>
 
 #include <doctest/doctest.h>
 
 TEST_CASE("Square output valid") {
-	using namespace phase4::common;
+	using namespace phase4::engine::common;
 
 	SUBCASE("Square A1") {
 		std::stringstream ss;
@@ -33,7 +33,7 @@ TEST_CASE("Square output valid") {
 }
 
 TEST_CASE("Square output invalid") {
-	using namespace phase4::common;
+	using namespace phase4::engine::common;
 
 	SUBCASE("Square with negative value") {
 		const Square invalidSquare(-1);

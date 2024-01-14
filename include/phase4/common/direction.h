@@ -1,4 +1,0 @@
-#ifndef PHASE4_COMMON_DIRECTION_H
-#define PHASE4_COMMON_DIRECTION_H
-
-#endif
