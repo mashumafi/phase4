@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <iostream>
+#include <string_view>
 
 namespace phase4::engine::common {
 
@@ -11,8 +13,22 @@ struct FieldIndex {
 	int16_t x;
 	int16_t y;
 
+	constexpr FieldIndex(int16_t x, int16_t y);
+
+	constexpr FieldIndex(std::string_view move);
+
 	constexpr uint16_t manhattanDistance(const FieldIndex &other) const;
 };
+
+constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
+		x{ x },
+		y{ y } {
+}
+
+constexpr FieldIndex::FieldIndex(std::string_view move) :
+		x{ static_cast<int16_t>('8' - move[1]) },
+		y{ static_cast<int16_t>(move[0] - 'a') } {
+}
 
 /**
  * @brief Calculate the Manhattan distance between two points.
@@ -26,6 +42,14 @@ struct FieldIndex {
  */
 constexpr uint16_t FieldIndex::manhattanDistance(const FieldIndex &other) const {
 	return std::max(std::abs(other.x - this->x), std::abs(other.y - this->y));
+}
+
+inline bool operator==(const FieldIndex &left, const FieldIndex &right) {
+	return left.x == right.x && left.y == right.y;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const FieldIndex &fieldIndex) {
+	return os << "x:" << fieldIndex.x << ", y:" << fieldIndex.y;
 }
 
 } //namespace phase4::engine::common

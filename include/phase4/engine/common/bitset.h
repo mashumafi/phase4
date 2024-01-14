@@ -13,22 +13,22 @@ public:
 	/// @brief turns off all bits except the least significant bit
 	/// @param bits to keep the LSB
 	/// @return
-	inline constexpr Bitset getLsb() const noexcept;
+	[[nodiscard]] inline constexpr Bitset getLsb() const noexcept;
 
 	/// @brief turns off the least significant bit
 	/// @param bits to turn off LSB
 	/// @return
-	inline constexpr Bitset popLsb() const noexcept;
+	[[nodiscard]] inline constexpr Bitset popLsb() const noexcept;
 
 	/// @brief counts the number of 1 bits
 	/// @param bits to count
 	/// @return
-	inline constexpr uint8_t count() const noexcept;
+	[[nodiscard]] inline constexpr uint8_t count() const noexcept;
 
 	/// @brief counts the number of zeros to the right
 	/// @param bits
 	/// @return
-	inline constexpr uint8_t bitScan() const noexcept;
+	[[nodiscard]] inline constexpr uint8_t bitScan() const noexcept;
 
 	inline constexpr bool operator==(Bitset bits) const noexcept;
 	inline constexpr bool operator==(uint64_t bits) const noexcept;
@@ -39,7 +39,7 @@ public:
 	inline constexpr bool operator>(Bitset bits) const noexcept;
 	inline constexpr bool operator>(uint64_t bits) const noexcept;
 
-	friend std::ostream &operator<<(std::ostream &os, const Bitset &bits);
+	friend std::ostream &operator<<(std::ostream &os, const Bitset bits);
 
 private:
 	static constexpr int g_bitScanValues[] = {
@@ -60,15 +60,15 @@ inline constexpr Bitset::Bitset(size_t bits) noexcept :
 		m_bits(bits) {
 }
 
-inline constexpr Bitset Bitset::getLsb() const noexcept {
+[[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
 	return (m_bits & -m_bits);
 }
 
-inline constexpr Bitset Bitset::popLsb() const noexcept {
+[[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
 	return (m_bits & (m_bits - 1));
 }
 
-inline constexpr uint8_t Bitset::count() const noexcept {
+[[nodiscard]] inline constexpr uint8_t Bitset::count() const noexcept {
 	uint64_t count = 0;
 	Bitset bits = m_bits;
 	while (bits > 0) {
@@ -78,7 +78,7 @@ inline constexpr uint8_t Bitset::count() const noexcept {
 	return count;
 }
 
-inline constexpr uint8_t Bitset::bitScan() const noexcept {
+[[nodiscard]] inline constexpr uint8_t Bitset::bitScan() const noexcept {
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 }
@@ -107,7 +107,7 @@ inline constexpr bool Bitset::operator>(Bitset bits) const noexcept {
 	return m_bits > bits.m_bits;
 }
 
-std::ostream &operator<<(std::ostream &os, const Bitset &bits) {
+std::ostream &operator<<(std::ostream &os, const Bitset bits) {
 	return os << std::bitset<64>(bits.m_bits);
 }
 

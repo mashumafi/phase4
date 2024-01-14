@@ -7,8 +7,11 @@ add_executable(phase4_test
     phase4/engine/common/castling.t.cpp
     phase4/engine/common/distance.t.cpp
     phase4/engine/common/piece_color.t.cpp
+    phase4/engine/common/piece_type.t.cpp
     phase4/engine/common/random.t.cpp
     phase4/engine/common/square.t.cpp
+    phase4/engine/moves/move.t.cpp
+    phase4/engine/moves/move_flags.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
 
