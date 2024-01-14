@@ -42,39 +42,39 @@ public:
 	[[nodiscard]] constexpr char getPromotionSymbol() const;
 	[[nodiscard]] constexpr common::PieceType getPromotionPiece() const;
 
-	[[nodiscard]] constexpr bool isQuiet() const {
+	[[nodiscard]] bool isQuiet() const {
 		return m_flags == MoveFlags::QUIET.m_flags || m_flags == MoveFlags::DOUBLE_PUSH.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isSinglePush() const {
+	[[nodiscard]] bool isSinglePush() const {
 		return m_flags == MoveFlags::QUIET.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isDoublePush() const {
+	[[nodiscard]] bool isDoublePush() const {
 		return m_flags == MoveFlags::DOUBLE_PUSH.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isEnPassant() const {
+	[[nodiscard]] bool isEnPassant() const {
 		return m_flags == MoveFlags::EN_PASSANT.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isCapture() const {
+	[[nodiscard]] bool isCapture() const {
 		return (m_flags & static_cast<uint8_t>(Fields::CAPTURE)) != 0;
 	}
 
-	[[nodiscard]] constexpr bool isCastling() const {
+	[[nodiscard]] bool isCastling() const {
 		return m_flags == MoveFlags::KING_CASTLE.m_flags || m_flags == MoveFlags::QUEEN_CASTLE.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isKingCastling() const {
+	[[nodiscard]] bool isKingCastling() const {
 		return m_flags == MoveFlags::KING_CASTLE.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isQueenCastling() const {
+	[[nodiscard]] bool isQueenCastling() const {
 		return m_flags == MoveFlags::QUEEN_CASTLE.m_flags;
 	}
 
-	[[nodiscard]] constexpr bool isPromotion() const {
+	[[nodiscard]] bool isPromotion() const {
 		return (m_flags & static_cast<uint8_t>(Fields::PROMOTION)) != 0;
 	}
 
