@@ -1,8 +1,8 @@
 #ifndef PHASE4_ENGINE_COMMON_FIELD_INDEX_H
 #define PHASE4_ENGINE_COMMON_FIELD_INDEX_H
 
-#include <algorithm>
-#include <cmath>
+#include <phase4/engine/common/math.h>
+
 #include <cstdint>
 #include <iostream>
 #include <string_view>
@@ -41,7 +41,7 @@ constexpr FieldIndex::FieldIndex(std::string_view move) :
  * @return The Manhattan distance between the two points.
  */
 constexpr uint16_t FieldIndex::manhattanDistance(const FieldIndex &other) const {
-	return std::max(std::abs(other.x - this->x), std::abs(other.y - this->y));
+	return Math::max_int16(Math::abs_int16(other.x - this->x), Math::abs_int16(other.y - this->y));
 }
 
 inline bool operator==(const FieldIndex left, const FieldIndex right) {

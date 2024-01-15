@@ -61,7 +61,7 @@ constexpr Distance::Table Distance::populate() {
 	return populateArray(std::make_index_sequence<64>{});
 }
 
-const Distance::Table Distance::G_DISTANCE_TABLE = Distance::populate();
+constexpr Distance::Table Distance::G_DISTANCE_TABLE = Distance::populate();
 
 } //namespace phase4::engine::common
 

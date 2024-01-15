@@ -10,6 +10,7 @@ add_executable(phase4_test
     phase4/engine/common/castling.t.cpp
     phase4/engine/common/distance.t.cpp
     phase4/engine/common/fast_vector.t.cpp
+    phase4/engine/common/math.t.cpp
     phase4/engine/common/piece_color.t.cpp
     phase4/engine/common/piece_type.t.cpp
     phase4/engine/common/random.t.cpp
