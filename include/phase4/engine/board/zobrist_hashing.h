@@ -87,11 +87,13 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 }
 
 [[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(int color, int piece, uint8_t from, uint8_t to) {
-	return m_hash ^ G_KEYS.m_fieldHashes(color, piece, from) ^ G_KEYS.m_fieldHashes(color, piece, to);
+	const uint64_t fromHash = G_KEYS.m_fieldHashes(static_cast<size_t>(color), static_cast<size_t>(piece), static_cast<size_t>(from));
+	const uint64_t toHash = G_KEYS.m_fieldHashes(static_cast<size_t>(color), static_cast<size_t>(piece), static_cast<size_t>(to));
+	return m_hash ^ fromHash ^ toHash;
 }
 
 [[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(int color, int piece, uint8_t at) {
-	return m_hash ^ G_KEYS.m_fieldHashes(color, piece, at);
+	return m_hash ^ G_KEYS.m_fieldHashes(static_cast<size_t>(color), static_cast<size_t>(piece), static_cast<size_t>(at));
 }
 
 [[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) {

@@ -48,7 +48,7 @@ public:
 
 		size_t index = 0;
 		size_t multiplier = 1;
-		std::array<size_t, sizeof...(Indices)> indexValues = { static_cast<size_t>(indices)... };
+		std::array<size_t, sizeof...(Indices)> indexValues = { indices... };
 		std::array<size_t, sizeof...(Dims)> dimensions = { Dims... };
 
 		for (int i = sizeof...(Dims) - 1; i >= 0; --i) {
