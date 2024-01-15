@@ -42,8 +42,6 @@ UniquePtr<T> allocate_unique(std::pmr::memory_resource *allocator, Args &&...arg
 template <size_t... Dims>
 class MultiArrayIndex {
 public:
-	static constexpr std::array<size_t, sizeof...(Dims)> dimensions = { Dims... };
-
 	template <typename... Indices>
 	static constexpr size_t computeIndex(Indices... indices) {
 		static_assert(sizeof...(Dims) == sizeof...(Indices), "Number of indices must match number of dimensions.");
@@ -51,6 +49,7 @@ public:
 		size_t index = 0;
 		size_t multiplier = 1;
 		std::array<size_t, sizeof...(Indices)> indexValues = { static_cast<size_t>(indices)... };
+		std::array<size_t, sizeof...(Dims)> dimensions = { Dims... };
 
 		for (int i = sizeof...(Dims) - 1; i >= 0; --i) {
 			if (unlikely(indexValues[i] >= dimensions[i])) {
