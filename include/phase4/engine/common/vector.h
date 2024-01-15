@@ -1,3 +1,6 @@
+#ifndef PHASE4_ENGINE_COMMON_VECTOR_H
+#define PHASE4_ENGINE_COMMON_VECTOR_H
+
 #ifdef NDEBUG
 #include <phase4/engine/common/safe_vector.h>
 #else
@@ -7,9 +10,12 @@
 namespace phase4::engine::common {
 
 #ifdef NDEBUG
-using Vector = SafeVector;
+template <typename T, std::size_t SIZE = 1024>
+using Vector = SafeVector<T, SIZE>;
 #else
-using Vector = FastVector;
+template <typename T, std::size_t SIZE = 1024>
+using Vector = FastVector<T, SIZE>;
 #endif
 
 } //namespace phase4::engine::common
+#endif

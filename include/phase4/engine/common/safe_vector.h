@@ -1,3 +1,6 @@
+#ifndef PHASE4_ENGINE_COMMON_SAFE_VECTOR_H
+#define PHASE4_ENGINE_COMMON_SAFE_VECTOR_H
+
 #include <array>
 #include <cassert>
 #include <memory_resource>
@@ -88,3 +91,5 @@ bool SafeVector<T, SIZE>::is_empty() const {
 }
 
 } //namespace phase4::engine::common
+
+#endif

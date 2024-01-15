@@ -82,7 +82,7 @@ constexpr bool PieceColor::operator==(const PieceColor &color) const {
 	return color.m_value == m_value;
 }
 
-std::ostream &operator<<(std::ostream &os, PieceColor color) {
+inline std::ostream &operator<<(std::ostream &os, PieceColor color) {
 	switch (color.m_value) {
 		case PieceColor::WHITE.m_value:
 			return os << "WHITE";

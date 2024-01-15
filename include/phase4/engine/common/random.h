@@ -7,27 +7,21 @@ namespace phase4::engine::common {
 
 class Random {
 public:
-	Random();
-	Random(uint64_t seed);
+	constexpr Random(uint64_t seed);
 
-	uint64_t next();
+	constexpr uint64_t next();
 
 private:
-	std::random_device m_random_device;
-	std::mt19937_64 m_gen;
-	std::uniform_int_distribution<uint64_t> m_dis;
+	uint64_t m_state;
 };
 
-Random::Random() :
-		m_gen(m_random_device()),
-		m_dis() {}
+constexpr Random::Random(uint64_t seed) :
+		m_state(seed) {
+}
 
-Random::Random(uint64_t seed) :
-		m_gen(seed),
-		m_dis() {}
-
-uint64_t Random::next() {
-	return m_dis(m_gen);
+constexpr uint64_t Random::next() {
+	m_state = m_state * 6364136223846793005ULL + 1;
+	return m_state;
 }
 
 } //namespace phase4::engine::common

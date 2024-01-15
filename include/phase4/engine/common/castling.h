@@ -19,7 +19,7 @@ enum Castling : uint8_t {
 	EVERYTHING = WHITE_SHORT | WHITE_LONG | BLACK_SHORT | BLACK_LONG
 };
 
-std::ostream &operator<<(std::ostream &os, Castling castling) {
+inline std::ostream &operator<<(std::ostream &os, Castling castling) {
 	switch (castling) {
 		case Castling::NONE:
 			return os << "NONE";
