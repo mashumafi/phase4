@@ -1,3 +1,6 @@
+#ifndef PHASE4_ENGINE_COMMON_FAST_VECTOR_H
+#define PHASE4_ENGINE_COMMON_FAST_VECTOR_H
+
 #include <phase4/engine/common/util.h>
 
 #include <array>
@@ -93,3 +96,5 @@ bool FastVector<T, SIZE>::is_empty() const {
 }
 
 } //namespace phase4::engine::common
+
+#endif

@@ -3,6 +3,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${doctest_SOURCE_DIR}/scripts/cmake)
 message(${doctest_SOURCE_DIR}/scripts/cmake)
 
 add_executable(phase4_test
+    phase4/engine/board/position.t.cpp
+    phase4/engine/board/session.t.cpp
     phase4/engine/board/zobrist_hashing.t.cpp
     phase4/engine/common/bitset.t.cpp
     phase4/engine/common/castling.t.cpp
@@ -13,6 +15,7 @@ add_executable(phase4_test
     phase4/engine/common/random.t.cpp
     phase4/engine/common/safe_vector.t.cpp
     phase4/engine/common/square.t.cpp
+    phase4/engine/common/util.t.cpp
     phase4/engine/moves/move.t.cpp
     phase4/engine/moves/move_flags.t.cpp
 )

@@ -107,7 +107,7 @@ inline constexpr bool Bitset::operator>(Bitset bits) const noexcept {
 	return m_bits > bits.m_bits;
 }
 
-std::ostream &operator<<(std::ostream &os, const Bitset bits) {
+inline std::ostream &operator<<(std::ostream &os, const Bitset bits) {
 	return os << std::bitset<64>(bits.m_bits);
 }
 
