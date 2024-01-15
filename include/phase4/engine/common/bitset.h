@@ -47,6 +47,9 @@ public:
 	constexpr Bitset operator|(Bitset bits) const noexcept;
 	constexpr Bitset operator|(uint64_t bits) const noexcept;
 
+	constexpr Bitset operator&(Bitset bits) const noexcept;
+	constexpr Bitset operator&(uint64_t bits) const noexcept;
+
 	friend std::ostream &operator<<(std::ostream &os, const Bitset bits);
 
 private:
@@ -133,6 +136,14 @@ inline constexpr Bitset Bitset::operator|(Bitset bits) const noexcept {
 
 inline constexpr Bitset Bitset::operator|(uint64_t bits) const noexcept {
 	return Bitset(m_bits | bits);
+}
+
+inline constexpr Bitset Bitset::operator&(Bitset bits) const noexcept {
+	return Bitset(m_bits & bits.m_bits);
+}
+
+inline constexpr Bitset Bitset::operator&(uint64_t bits) const noexcept {
+	return Bitset(m_bits & bits);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Bitset bits) {
