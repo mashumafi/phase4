@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_COMMON_UTIL_H
 #define PHASE4_ENGINE_COMMON_UTIL_H
 
+#include <array>
 #include <cassert>
 #include <memory>
 #include <memory_resource>
