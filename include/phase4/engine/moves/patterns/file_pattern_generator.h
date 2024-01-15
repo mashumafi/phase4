@@ -31,7 +31,7 @@ constexpr common::Bitset FilePatternGenerator::generatePatternForField(uint8_t f
 
 constexpr std::array<common::Bitset, 8> FilePatternGenerator::generatePatterns() {
 	std::array<common::Bitset, 8> patterns{};
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < patterns.size(); ++i) {
 		patterns[i] = generatePatternForField(i);
 	}
 	return patterns;
@@ -39,12 +39,12 @@ constexpr std::array<common::Bitset, 8> FilePatternGenerator::generatePatterns()
 
 inline constexpr std::array<common::Bitset, 8> FilePatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t rank) {
-	return PATTERNS[rank % 8];
-}
-
 constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square square) {
 	return PATTERNS[square % 8] & ~(1ull << square);
+}
+
+constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t rank) {
+	return PATTERNS[rank % 8];
 }
 
 } //namespace phase4::engine::moves::patterns
