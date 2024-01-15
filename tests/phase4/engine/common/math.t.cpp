@@ -10,6 +10,20 @@ TEST_CASE("Math abs") {
 	CHECK(Math::abs_int16(6) == 6);
 }
 
+TEST_CASE("Math min") {
+	using namespace phase4::engine::common;
+
+	CHECK(Math::min_int16(0, 0) == 0);
+	CHECK(Math::min_int16(1, -3) == -3);
+	CHECK(Math::min_int16(-2, 4) == -2);
+	CHECK(Math::min_int16(-3, -9) == -9);
+	CHECK(Math::min_int16(3, 4) == 3);
+	CHECK(Math::min_int16(0, 4) == 0);
+	CHECK(Math::min_int16(5, 0) == 0);
+	CHECK(Math::min_int16(0, -8) == -8);
+	CHECK(Math::min_int16(-7, 0) == -7);
+}
+
 TEST_CASE("Math max") {
 	using namespace phase4::engine::common;
 
