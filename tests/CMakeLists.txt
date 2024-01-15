@@ -22,6 +22,9 @@ add_executable(phase4_test
     phase4/engine/moves/move.t.cpp
     phase4/engine/moves/move_flags.t.cpp
     phase4/engine/moves/moves_generator.t.cpp
+    phase4/engine/moves/patterns/diagonal_pattern_generator.t.cpp
+    phase4/engine/moves/patterns/file_pattern_generator.t.cpp
+    phase4/engine/moves/patterns/rank_pattern_generator.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
 

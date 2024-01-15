@@ -64,10 +64,10 @@ constexpr uint64_t BoardConstants::RANK_6 = 0x0000FF0000000000;
 constexpr uint64_t BoardConstants::RANK_7 = 0x00FF000000000000;
 constexpr uint64_t BoardConstants::RANK_8 = 0xFF00000000000000;
 
-constexpr uint64_t BoardConstants::EDGES = A_FILE | H_FILE | A_RANK | H_RANK;
+constexpr uint64_t BoardConstants::EDGES = FILE_A | FILE_H | RANK_1 | RANK_8;
 constexpr uint64_t BoardConstants::BOARD_WITHOUT_EDGES = FULL & ~EDGES;
-constexpr uint64_t BoardConstants::RIGHT_LEFT_EDGE = A_FILE | H_FILE;
-constexpr uint64_t BoardConstants::TOP_BOTTOM_EDGE = A_RANK | H_RANK;
+constexpr uint64_t BoardConstants::RIGHT_LEFT_EDGE = FILE_A | FILE_H;
+constexpr uint64_t BoardConstants::TOP_BOTTOM_EDGE = RANK_1 | RANK_8;
 constexpr uint64_t BoardConstants::CORNERS = 0x8100000000000081;
 
 constexpr uint64_t BoardConstants::NEAR_PROMOTION_AREA_WHITE = 0x00ffffff00000000;
