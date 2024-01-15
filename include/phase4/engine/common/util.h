@@ -86,7 +86,7 @@ public:
 
 	// Function to access elements in the multi-dimensional array
 	template <typename... Args>
-	constexpr const T &operator()(Args... indices) const {
+	constexpr const T &at(Args... indices) const {
 		return m_data[MultiArrayIndex<Dims...>::computeIndex(indices...)];
 	}
 

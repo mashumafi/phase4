@@ -37,4 +37,5 @@ Session::Session(std::pmr::memory_resource *memory_resource) :
 }
 
 } //namespace phase4::engine::board
+
 #endif

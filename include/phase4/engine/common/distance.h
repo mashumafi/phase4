@@ -44,7 +44,7 @@ constexpr uint8_t Distance::populateElement() {
 	constexpr FieldIndex fromPosition(Square(from).asFieldIndex());
 	constexpr FieldIndex toPosition(Square(to).asFieldIndex());
 
-	return static_cast<uint8_t>(fromPosition.manhattanDistance(toPosition));
+	return static_cast<uint8_t>(fromPosition.maxCartesianDistance(toPosition));
 }
 
 template <std::size_t FROM, std::size_t... TO>

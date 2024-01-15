@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <cstdint>
+#include <iostream>
 
 namespace phase4::engine::common {
 
@@ -30,14 +31,20 @@ public:
 	/// @return
 	[[nodiscard]] inline constexpr uint8_t bitScan() const noexcept;
 
-	inline constexpr bool operator==(Bitset bits) const noexcept;
-	inline constexpr bool operator==(uint64_t bits) const noexcept;
+	constexpr bool operator==(Bitset bits) const noexcept;
+	constexpr bool operator==(uint64_t bits) const noexcept;
 
-	inline constexpr bool operator<(Bitset bits) const noexcept;
-	inline constexpr bool operator<(uint64_t bits) const noexcept;
+	constexpr bool operator!=(Bitset bits) const noexcept;
+	constexpr bool operator!=(uint64_t bits) const noexcept;
 
-	inline constexpr bool operator>(Bitset bits) const noexcept;
-	inline constexpr bool operator>(uint64_t bits) const noexcept;
+	constexpr bool operator<(Bitset bits) const noexcept;
+	constexpr bool operator<(uint64_t bits) const noexcept;
+
+	constexpr bool operator>(Bitset bits) const noexcept;
+	constexpr bool operator>(uint64_t bits) const noexcept;
+
+	constexpr Bitset operator|(Bitset bits) const noexcept;
+	constexpr Bitset operator|(uint64_t bits) const noexcept;
 
 	friend std::ostream &operator<<(std::ostream &os, const Bitset bits);
 
@@ -50,7 +57,7 @@ private:
 		63, 47, 56, 27, 60, 41, 37, 16,
 		54, 35, 52, 21, 44, 32, 23, 11,
 		46, 26, 40, 15, 34, 20, 31, 10,
-		25, 14, 19, 9, 13, 8, 7, 6
+		25, 14, 19, 9, 13, 8, 7, 06
 	};
 
 	size_t m_bits;
@@ -91,6 +98,14 @@ inline constexpr bool Bitset::operator==(Bitset bits) const noexcept {
 	return m_bits == bits.m_bits;
 }
 
+inline constexpr bool Bitset::operator!=(uint64_t bits) const noexcept {
+	return m_bits == bits;
+}
+
+inline constexpr bool Bitset::operator!=(Bitset bits) const noexcept {
+	return m_bits == bits.m_bits;
+}
+
 inline constexpr bool Bitset::operator<(uint64_t bits) const noexcept {
 	return m_bits < bits;
 }
@@ -105,6 +120,14 @@ inline constexpr bool Bitset::operator>(uint64_t bits) const noexcept {
 
 inline constexpr bool Bitset::operator>(Bitset bits) const noexcept {
 	return m_bits > bits.m_bits;
+}
+
+inline constexpr Bitset Bitset::operator|(Bitset bits) const noexcept {
+	return Bitset(m_bits | bits.m_bits);
+}
+
+inline constexpr Bitset Bitset::operator|(uint64_t bits) const noexcept {
+	return Bitset(m_bits | bits);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Bitset bits) {

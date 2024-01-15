@@ -87,4 +87,5 @@ constexpr std::array<int, 64> BoardConstants::DISTANCE_FROM_CENTER = {
 constexpr int BoardConstants::PHASE_RESOLUTION = 1024;
 
 } //namespace phase4::engine::board
+
 #endif

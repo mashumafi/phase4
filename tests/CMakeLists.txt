@@ -6,6 +6,8 @@ add_executable(phase4_test
     phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp
     phase4/engine/board/zobrist_hashing.t.cpp
+    phase4/engine/fen/fen_to_position.t.cpp
+    phase4/engine/fen/position_to_fen.t.cpp
     phase4/engine/common/bitset.t.cpp
     phase4/engine/common/castling.t.cpp
     phase4/engine/common/distance.t.cpp
@@ -19,6 +21,7 @@ add_executable(phase4_test
     phase4/engine/common/util.t.cpp
     phase4/engine/moves/move.t.cpp
     phase4/engine/moves/move_flags.t.cpp
+    phase4/engine/moves/moves_generator.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
 
