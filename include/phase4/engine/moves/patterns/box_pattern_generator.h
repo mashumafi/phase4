@@ -38,7 +38,7 @@ private:
 	}
 };
 
-constexpr std::array<uint64_t, 64> BoxPatternGenerator::PATTERNS = BoxPatternGenerator::generatePatterns();
+inline constexpr std::array<uint64_t, 64> BoxPatternGenerator::PATTERNS = BoxPatternGenerator::generatePatterns();
 
 constexpr common::Bitset BoxPatternGenerator::getPattern(common::Square square) {
 	return PATTERNS[square];

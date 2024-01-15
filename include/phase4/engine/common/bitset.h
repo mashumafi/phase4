@@ -9,6 +9,7 @@ namespace phase4::engine::common {
 
 class Bitset {
 public:
+	constexpr Bitset() noexcept;
 	constexpr Bitset(size_t bits) noexcept;
 
 	/// @brief turns off all bits except the least significant bit
@@ -63,12 +64,16 @@ private:
 	size_t m_bits;
 };
 
-inline constexpr Bitset::Bitset(size_t bits) noexcept :
-		m_bits(bits) {
-}
-
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
 	return (m_bits & -m_bits);
+}
+
+inline constexpr Bitset::Bitset() noexcept :
+		Bitset(0) {
+}
+
+inline constexpr Bitset::Bitset(size_t bits) noexcept :
+		m_bits(bits) {
 }
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
