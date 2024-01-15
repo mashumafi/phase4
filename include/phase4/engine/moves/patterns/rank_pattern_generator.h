@@ -13,31 +13,32 @@ namespace phase4::engine::moves::patterns {
 
 class RankPatternGenerator {
 public:
+	using Array = std::array<common::Bitset, 8>;
 	static constexpr common::Bitset getPatternForField(common::Square square);
 
 	static constexpr common::Bitset getPatternForRank(uint8_t rank);
 
 private:
-	static constexpr std::array<common::Bitset, 8> generatePatterns();
+	static constexpr Array generatePatterns();
 
 	static constexpr common::Bitset generatePatternForField(uint8_t rank);
 
-	static const std::array<common::Bitset, 8> PATTERNS;
+	static const Array PATTERNS;
 };
 
 constexpr common::Bitset RankPatternGenerator::generatePatternForField(uint8_t rank) {
 	return (board::BoardConstants::RANK_1) << (rank * 8);
 }
 
-constexpr std::array<common::Bitset, 8> RankPatternGenerator::generatePatterns() {
-	std::array<common::Bitset, 8> patterns{};
+constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
+	Array patterns{};
 	for (int i = 0; i < patterns.size(); i++) {
 		patterns[i] = generatePatternForField(i);
 	}
 	return patterns;
 }
 
-inline constexpr std::array<common::Bitset, 8> RankPatternGenerator::PATTERNS = generatePatterns();
+inline constexpr RankPatternGenerator::Array RankPatternGenerator::PATTERNS = generatePatterns();
 
 constexpr common::Bitset RankPatternGenerator::getPatternForField(common::Square square) {
 	return PATTERNS[square / 8] & ~(1ull << square);

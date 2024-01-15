@@ -12,50 +12,58 @@ namespace phase4::engine::moves::patterns {
 
 class DiagonalPatternGenerator {
 public:
-	static common::Bitset getPattern(int fieldIndex) {
-		return PATTERNS[fieldIndex];
-	}
+	using Array = std::array<common::Bitset, 64>;
+
+	static constexpr common::Bitset getPattern(common::Square square);
 
 private:
-	static const std::array<common::Bitset, 64> PATTERNS;
+	static constexpr uint64_t getPatternForField(common::Square square, common::FieldIndex shift);
 
-	static constexpr uint64_t getPatternForField(common::Square square, common::FieldIndex shift) {
-		uint64_t attacks = 0;
-		common::FieldIndex currentPosition = square.asFieldIndex();
+	static constexpr Array generatePatterns();
 
-		currentPosition = currentPosition + shift;
-		while (currentPosition.isValid()) {
-			const uint64_t positionBitIndex = common::Square(currentPosition);
-
-			attacks |= 1ull << positionBitIndex;
-			currentPosition = currentPosition + shift;
-		}
-
-		return attacks;
-	}
-
-	static constexpr std::array<common::Bitset, 64> generatePatterns() {
-		std::array<common::Bitset, 64> patterns{};
-		for (int i = 0; i < 64; ++i) {
-			const common::FieldIndex rightTopShift(-1, 1);
-			const common::FieldIndex leftTopShift(1, 1);
-			const common::FieldIndex rightBottomShift(-1, -1);
-			const common::FieldIndex leftBottomShift(1, -1);
-
-			const common::Square square(i);
-
-			const uint64_t rightTopPattern = getPatternForField(square, rightTopShift);
-			const uint64_t leftTopPattern = getPatternForField(square, leftTopShift);
-			const uint64_t rightBottomPattern = getPatternForField(square, rightBottomShift);
-			const uint64_t leftBottomPattern = getPatternForField(square, leftBottomShift);
-
-			patterns[i] = rightTopPattern | leftTopPattern | rightBottomPattern | leftBottomPattern;
-		}
-		return patterns;
-	}
+	static const Array PATTERNS;
 };
 
-inline constexpr std::array<common::Bitset, 64> DiagonalPatternGenerator::PATTERNS = DiagonalPatternGenerator::generatePatterns();
+constexpr uint64_t DiagonalPatternGenerator::getPatternForField(common::Square square, common::FieldIndex shift) {
+	uint64_t attacks = 0;
+	common::FieldIndex currentPosition = square.asFieldIndex();
+
+	currentPosition = currentPosition + shift;
+	while (currentPosition.isValid()) {
+		const uint64_t positionBitIndex = common::Square(currentPosition);
+
+		attacks |= 1ull << positionBitIndex;
+		currentPosition = currentPosition + shift;
+	}
+
+	return attacks;
+}
+
+constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::generatePatterns() {
+	Array patterns{};
+	for (int i = 0; i < 64; ++i) {
+		const common::FieldIndex rightTopShift(-1, 1);
+		const common::FieldIndex leftTopShift(1, 1);
+		const common::FieldIndex rightBottomShift(-1, -1);
+		const common::FieldIndex leftBottomShift(1, -1);
+
+		const common::Square square(i);
+
+		const uint64_t rightTopPattern = getPatternForField(square, rightTopShift);
+		const uint64_t leftTopPattern = getPatternForField(square, leftTopShift);
+		const uint64_t rightBottomPattern = getPatternForField(square, rightBottomShift);
+		const uint64_t leftBottomPattern = getPatternForField(square, leftBottomShift);
+
+		patterns[i] = rightTopPattern | leftTopPattern | rightBottomPattern | leftBottomPattern;
+	}
+	return patterns;
+}
+
+inline constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::PATTERNS = DiagonalPatternGenerator::generatePatterns();
+
+constexpr common::Bitset DiagonalPatternGenerator::getPattern(common::Square square) {
+	return PATTERNS[square];
+}
 
 } //namespace phase4::engine::moves::patterns
 

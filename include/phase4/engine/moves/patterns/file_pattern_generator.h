@@ -13,31 +13,33 @@ namespace phase4::engine::moves::patterns {
 
 class FilePatternGenerator {
 public:
+	using Array = std::array<common::Bitset, 8>;
+
 	static constexpr common::Bitset getPatternForField(common::Square square);
 
 	static constexpr common::Bitset getPatternForFile(uint8_t rank);
 
 private:
-	static constexpr std::array<common::Bitset, 8> generatePatterns();
+	static constexpr Array generatePatterns();
 
 	static constexpr common::Bitset generatePatternForField(uint8_t file);
 
-	static const std::array<common::Bitset, 8> PATTERNS;
+	static const Array PATTERNS;
 };
 
 constexpr common::Bitset FilePatternGenerator::generatePatternForField(uint8_t file) {
 	return board::BoardConstants::FILE_H << file;
 }
 
-constexpr std::array<common::Bitset, 8> FilePatternGenerator::generatePatterns() {
-	std::array<common::Bitset, 8> patterns{};
+constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
+	Array patterns{};
 	for (int i = 0; i < patterns.size(); ++i) {
 		patterns[i] = generatePatternForField(i);
 	}
 	return patterns;
 }
 
-inline constexpr std::array<common::Bitset, 8> FilePatternGenerator::PATTERNS = generatePatterns();
+inline constexpr FilePatternGenerator::Array FilePatternGenerator::PATTERNS = generatePatterns();
 
 constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square square) {
 	return PATTERNS[square % 8] & ~(1ull << square);
