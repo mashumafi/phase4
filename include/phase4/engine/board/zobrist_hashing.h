@@ -51,17 +51,17 @@ public:
 
 	constexpr ZobristHashing(uint64_t hash = 0);
 
-	[[nodiscard]] constexpr ZobristHashing movePiece(int color, int piece, uint8_t from, uint8_t to);
+	[[nodiscard]] constexpr ZobristHashing movePiece(int color, int piece, uint8_t from, uint8_t to) const;
 
-	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(int color, int piece, uint8_t at);
+	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(int color, int piece, uint8_t at) const;
 
-	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange);
+	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) const;
 
-	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(int enPassantRank);
+	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(int enPassantRank) const;
 
-	[[nodiscard]] constexpr ZobristHashing changeSide();
+	[[nodiscard]] constexpr ZobristHashing changeSide() const;
 
-	[[nodiscard]] constexpr ZobristHashing toggleWalls(uint64_t walls);
+	[[nodiscard]] constexpr ZobristHashing toggleWalls(uint64_t walls) const;
 
 	constexpr bool operator==(ZobristHashing other) const;
 	constexpr bool operator!=(ZobristHashing other) const;
@@ -86,17 +86,17 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 		m_hash(hash) {
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(int color, int piece, uint8_t from, uint8_t to) {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(int color, int piece, uint8_t from, uint8_t to) const {
 	const uint64_t fromHash = G_KEYS.m_fieldHashes(color, piece, from);
 	const uint64_t toHash = G_KEYS.m_fieldHashes(color, piece, to);
 	return m_hash ^ fromHash ^ toHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(int color, int piece, uint8_t at) {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(int color, int piece, uint8_t at) const {
 	return m_hash ^ G_KEYS.m_fieldHashes(color, piece, at);
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) const {
 	if (likely((currentCastling & castlingChange) != 0)) {
 		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange).bitScan()];
 	}
@@ -104,15 +104,15 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(int enPassantRank) {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(int enPassantRank) const {
 	return m_hash ^ G_KEYS.m_enPassantHashes[enPassantRank];
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::changeSide() {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::changeSide() const {
 	return m_hash ^ G_KEYS.m_sideHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(uint64_t walls) {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(uint64_t walls) const {
 	return m_hash ^ G_KEYS.m_wallHash[common::Bitset(walls).bitScan()];
 }
 

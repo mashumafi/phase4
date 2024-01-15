@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_BOARD_SESSION_H
 #define PHASE4_ENGINE_BOARD_SESSION_H
 
+#include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/vector.h>
 
 #include <cstdint>
@@ -18,7 +19,7 @@ public:
 private:
 	common::Vector<int> m_killedPieces;
 	common::Vector<int64_t> m_enPassants;
-	//common::Vector<Castling> _castlings;
+	common::Vector<common::Castling> _castlings;
 	common::Vector<int> m_promotedPieces;
 	common::Vector<int64_t> m_hashes;
 	common::Vector<int64_t> m_pawnHashes;
