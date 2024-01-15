@@ -66,16 +66,20 @@ public:
 
 template <typename T, std::size_t... Dims>
 class MultiArray {
+    template <typename... Sizes>
+    static constexpr std::size_t computeSize(Sizes... sizes) {
+        return (sizes * ...);
+    }
 public:
 	constexpr MultiArray() :
 			m_data{} {
 	}
 
-	constexpr MultiArray(const std::array<T, (Dims * ... * 1)> &data) :
+	constexpr MultiArray(const std::array<T, computeSize(Dims ...)> &data) :
 			m_data{ data } {
 	}
 
-	constexpr MultiArray(std::array<T, (Dims * ... * 1)> &&data) :
+	constexpr MultiArray(std::array<T, computeSize(Dims ...)> &&data) :
 			m_data{ std::move(data) } {
 	}
 
@@ -86,7 +90,8 @@ public:
 	}
 
 private:
-	std::array<T, (Dims * ... * 1)> m_data;
+
+	std::array<T, computeSize(Dims ...)> m_data;
 };
 
 #endif
