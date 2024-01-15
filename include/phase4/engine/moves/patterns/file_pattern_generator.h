@@ -44,7 +44,7 @@ constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t rank) {
 }
 
 constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square square) {
-	return PATTERNS[square % 8] & ~(1ul << square);
+	return PATTERNS[square % 8] & ~(1ull << square);
 }
 
 } //namespace phase4::engine::moves::patterns
