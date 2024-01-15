@@ -71,11 +71,11 @@ public:
 			m_data{} {
 	}
 
-	constexpr MultiArray(const std::array<T, (Dims * ...)> &data) :
+	constexpr MultiArray(const std::array<T, (Dims * ... * 1)> &data) :
 			m_data{ data } {
 	}
 
-	constexpr MultiArray(std::array<T, (Dims * ...)> &&data) :
+	constexpr MultiArray(std::array<T, (Dims * ... * 1)> &&data) :
 			m_data{ std::move(data) } {
 	}
 
@@ -86,7 +86,7 @@ public:
 	}
 
 private:
-	std::array<T, (Dims * ...)> m_data;
+	std::array<T, (Dims * ... * 1)> m_data;
 };
 
 #endif
