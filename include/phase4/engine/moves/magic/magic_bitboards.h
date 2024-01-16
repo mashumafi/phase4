@@ -53,8 +53,8 @@ public:
 
 	static MagicContainers generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations  {  };
-		MagicShifts::Attacks attacks { };
+		MagicShifts::Permutations permutations{};
+		MagicShifts::Attacks attacks{};
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] =
@@ -73,8 +73,8 @@ public:
 
 	static MagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations  {  };
-		MagicShifts::Attacks attacks  {  };
+		MagicShifts::Permutations permutations{};
+		MagicShifts::Attacks attacks{};
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
