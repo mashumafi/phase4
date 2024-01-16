@@ -66,7 +66,7 @@ public:
 			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
 			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
-				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[fieldIndex][permutationIndex], fieldIndex);
+				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
 		}
 
@@ -84,7 +84,7 @@ public:
 			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
 			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
-				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[fieldIndex][permutationIndex], fieldIndex);
+				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
 		}
 
