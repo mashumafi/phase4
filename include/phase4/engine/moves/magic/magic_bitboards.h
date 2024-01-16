@@ -94,11 +94,12 @@ public:
 private:
 	static MagicContainers generateAttacks(const Masks &masks, const MagicShifts::Permutations &permutations, const MagicShifts::Attacks &attacks, const MagicShifts::Array &shifts, const std::optional<MagicKeys::Array> &keys = {}) {
 		MagicContainers magicArray;
+		common::Random rand(123456);
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			magicArray[fieldIndex] = MagicContainer{
 				masks[fieldIndex],
-				0,
+				keys ? keys.value()[fieldIndex] : rand.next(),
 				{},
 				64 - shifts[fieldIndex],
 			};
@@ -106,7 +107,6 @@ private:
 			bool success = false;
 			while (!success) {
 				success = true;
-				magicArray[fieldIndex].MagicNumber = keys ? keys.value()[fieldIndex] : 1; // TODO: Random number
 
 				const size_t length = 1ull << shifts[fieldIndex];
 				for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
@@ -116,7 +116,7 @@ private:
 					if (magicArray[fieldIndex].Attacks[attackIndex.asSize()] != 0 && magicArray[fieldIndex].Attacks[attackIndex.asSize()] != attacks[fieldIndex][permutationIndex]) {
 						if (keys) {
 							std::stringstream ss;
-							ss << "The supplied key was not a valid magic number. Failed on fieldIndex:" << fieldIndex << " permutation:" << permutationIndex << "/" << length << ".";
+							ss << "The supplied key was not a valid magic number. Failed after 100 attempts on fieldIndex:" << fieldIndex << " permutation:" << permutationIndex << "/" << length << ".";
 							throw std::invalid_argument(ss.str());
 						}
 						std::fill(magicArray[fieldIndex].Attacks.begin(), magicArray[fieldIndex].Attacks.end(), 0);

@@ -13,8 +13,8 @@ public:
 
 	static constexpr size_t MAX_SHIFT = 12;
 
-	using Permutations = std::array<std::array<common::Bitset, 64>, 1 << MagicShifts::MAX_SHIFT>;
-	using Attacks = std::array<std::array<common::Bitset, 64>, 1 << MagicShifts::MAX_SHIFT>;
+	using Permutations = std::array<std::array<common::Bitset, 64>, 1ull << MagicShifts::MAX_SHIFT>;
+	using Attacks = std::array<std::array<common::Bitset, 64>, 1ull << MagicShifts::MAX_SHIFT>;
 
 	static constexpr Array RookShifts{
 		12, 11, 11, 11, 11, 11, 11, 12,
