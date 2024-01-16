@@ -92,7 +92,7 @@ inline constexpr Bitset::Bitset(size_t bits) noexcept :
 }
 
 [[nodiscard]] inline constexpr uint8_t Bitset::count() const noexcept {
-	uint64_t count = 0;
+	uint8_t count = 0;
 	Bitset bits = m_bits;
 	while (bits > 0) {
 		bits = bits.popLsb();
