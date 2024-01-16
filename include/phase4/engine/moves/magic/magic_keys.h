@@ -10,7 +10,9 @@ namespace phase4::engine::moves::magic {
 
 class MagicKeys {
 public:
-	static constexpr std::array RookKeys{
+	using Array = std::array<uint64_t, 64>;
+
+	static constexpr Array RookKeys{
 		360305701962137858u,
 		90107182288211968u,
 		72084258017058816u,
@@ -77,9 +79,7 @@ public:
 		4789480217151594u
 	};
 
-	static_assert(std::is_same<decltype(RookKeys)::value_type, uint64_t>::value, "Keys should be uint64_t");
-
-	static constexpr std::array BishopKeys{
+	static constexpr Array BishopKeys{
 		571780541481002u,
 		1169899716219396u,
 		2306977716336861568u,
@@ -145,8 +145,6 @@ public:
 		2330999148511312u,
 		81073658256180248u
 	};
-
-	static_assert(std::is_same<decltype(BishopKeys)::value_type, uint64_t>::value, "Keys should be uint64_t");
 };
 
 } //namespace phase4::engine::moves::magic

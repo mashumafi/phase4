@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_COMMON_SQUARE_H
 #define PHASE4_ENGINE_COMMON_SQUARE_H
 
+#include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/util.h>
 
@@ -90,6 +91,8 @@ public:
 	/// @return the point
 	constexpr FieldIndex asFieldIndex() const;
 
+	constexpr Bitset asBitboard() const;
+
 	constexpr operator uint64_t() const;
 
 	constexpr explicit Square(uint64_t value);
@@ -119,6 +122,10 @@ constexpr FieldIndex Square::asFieldIndex() const {
 	const int16_t x = 7 - m_value % 8;
 	const int16_t y = m_value / 8;
 	return FieldIndex{ x, y };
+}
+
+constexpr Bitset Square::asBitboard() const {
+	return Bitset(1ull << m_value);
 }
 
 constexpr Square::operator uint64_t() const {
