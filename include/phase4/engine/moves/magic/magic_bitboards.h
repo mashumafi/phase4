@@ -39,18 +39,18 @@ public:
 		generateBishopAttacks(MagicKeys::BishopKeys);
 	}
 
-	static common::Bitset getRookMoves(common::Bitset board, int fieldIndex) {
-		board = board & _rookMagicArray[fieldIndex].Mask;
-		board = board * _rookMagicArray[fieldIndex].MagicNumber;
-		board = board >> _rookMagicArray[fieldIndex].Shift;
-		return _rookMagicArray[fieldIndex].Attacks[board.asSize()];
+	static common::Bitset getRookMoves(common::Bitset board, common::Square square) {
+		board = board & _rookMagicArray[square].Mask;
+		board = board * _rookMagicArray[square].MagicNumber;
+		board = board >> _rookMagicArray[square].Shift;
+		return _rookMagicArray[square].Attacks[board.asSize()];
 	}
 
-	static common::Bitset getBishopMoves(common::Bitset board, int fieldIndex) {
-		board = board & _bishopMagicArray[fieldIndex].Mask;
-		board = board * _bishopMagicArray[fieldIndex].MagicNumber;
-		board = board >> _bishopMagicArray[fieldIndex].Shift;
-		return _bishopMagicArray[fieldIndex].Attacks[board.asSize()];
+	static common::Bitset getBishopMoves(common::Bitset board, common::Square square) {
+		board = board & _bishopMagicArray[square].Mask;
+		board = board * _bishopMagicArray[square].MagicNumber;
+		board = board >> _bishopMagicArray[square].Shift;
+		return _bishopMagicArray[square].Attacks[board.asSize()];
 	}
 
 	static MagicContainers generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
@@ -63,8 +63,8 @@ public:
 					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::TOP_BOTTOM_EDGE) |
 					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::RIGHT_LEFT_EDGE);
 
-			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
-			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
+			const size_t length = 1ull << MagicShifts::RookShifts[fieldIndex];
+			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
 				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
@@ -81,8 +81,8 @@ public:
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
 
-			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
-			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
+			const size_t length = 1ull << MagicShifts::RookShifts[fieldIndex];
+			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
 				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
@@ -108,7 +108,7 @@ private:
 				success = true;
 				magicArray[fieldIndex].MagicNumber = keys ? keys.value()[fieldIndex] : 1; // TODO: Random number
 
-				const size_t length = 1 << shifts[fieldIndex];
+				const size_t length = 1ull << shifts[fieldIndex];
 				for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 					const common::Bitset hash = permutations[fieldIndex][permutationIndex] * magicArray[fieldIndex].MagicNumber;
 					const common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;

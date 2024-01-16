@@ -72,7 +72,7 @@ private:
 		25, 14, 19, 9, 13, 8, 7, 6
 	};
 
-	size_t m_bits;
+	uint64_t m_bits;
 };
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {

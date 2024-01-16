@@ -22,12 +22,12 @@ public:
 private:
 	static constexpr Array generatePatterns();
 
-	static constexpr common::Bitset generatePatternForField(uint8_t file);
+	static constexpr common::Bitset generatePatternForField(size_t file);
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitset FilePatternGenerator::generatePatternForField(uint8_t file) {
+constexpr common::Bitset FilePatternGenerator::generatePatternForField(size_t file) {
 	return board::BoardConstants::FILE_H << file;
 }
 

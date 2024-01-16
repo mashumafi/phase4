@@ -21,12 +21,12 @@ public:
 private:
 	static constexpr Array generatePatterns();
 
-	static constexpr common::Bitset generatePatternForField(uint8_t rank);
+	static constexpr common::Bitset generatePatternForField(size_t rank);
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitset RankPatternGenerator::generatePatternForField(uint8_t rank) {
+constexpr common::Bitset RankPatternGenerator::generatePatternForField(size_t rank) {
 	return (board::BoardConstants::RANK_1) << (rank * 8);
 }
 
