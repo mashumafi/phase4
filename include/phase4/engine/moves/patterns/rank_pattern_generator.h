@@ -32,7 +32,7 @@ constexpr common::Bitset RankPatternGenerator::generatePatternForField(uint8_t r
 
 constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
 	Array patterns{};
-	for (int i = 0; i < patterns.size(); i++) {
+	for (size_t i = 0; i < patterns.size(); i++) {
 		patterns[i] = generatePatternForField(i);
 	}
 	return patterns;

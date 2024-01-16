@@ -38,7 +38,7 @@ constexpr common::Bitset JumpPatternGenerator::generatePatternForField(common::S
 
 constexpr JumpPatternGenerator::Array JumpPatternGenerator::generatePatterns() {
 	Array patterns{};
-	for (int i = 0; i < patterns.size(); ++i) {
+	for (size_t i = 0; i < patterns.size(); ++i) {
 		patterns[i] = generatePatternForField(common::Square(i));
 	}
 	return patterns;

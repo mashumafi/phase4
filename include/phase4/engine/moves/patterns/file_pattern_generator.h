@@ -33,7 +33,7 @@ constexpr common::Bitset FilePatternGenerator::generatePatternForField(uint8_t f
 
 constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
 	Array patterns{};
-	for (int i = 0; i < patterns.size(); ++i) {
+	for (size_t i = 0; i < patterns.size(); ++i) {
 		patterns[i] = generatePatternForField(i);
 	}
 	return patterns;

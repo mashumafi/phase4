@@ -53,8 +53,8 @@ public:
 
 	static MagicContainers generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations = { 0 };
-		MagicShifts::Attacks attacks = { 0 };
+		MagicShifts::Permutations permutations  {  };
+		MagicShifts::Attacks attacks { };
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] =
@@ -73,8 +73,8 @@ public:
 
 	static MagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations = { 0 };
-		MagicShifts::Attacks attacks = { 0 };
+		MagicShifts::Permutations permutations  {  };
+		MagicShifts::Attacks attacks  {  };
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
@@ -107,7 +107,7 @@ private:
 				magicArray[fieldIndex].MagicNumber = keys ? keys.value()[fieldIndex] : 1; // TODO: Random number
 
 				const size_t length = 1 << shifts[fieldIndex];
-				for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
+				for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 					common::Bitset hash = permutations[fieldIndex][permutationIndex] * magicArray[fieldIndex].MagicNumber;
 					common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;
 
