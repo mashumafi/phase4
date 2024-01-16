@@ -4,8 +4,7 @@
 
 #include <doctest/doctest.h>
 
-namespace
-{
+namespace {
 phase4::engine::common::Bitset EMPTY(0);
 }
 
