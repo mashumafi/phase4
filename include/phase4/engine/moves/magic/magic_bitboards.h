@@ -108,8 +108,8 @@ private:
 
 				const size_t length = 1 << shifts[fieldIndex];
 				for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
-					common::Bitset hash = permutations[fieldIndex][permutationIndex] * magicArray[fieldIndex].MagicNumber;
-					common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;
+					const common::Bitset hash = permutations[fieldIndex][permutationIndex] * magicArray[fieldIndex].MagicNumber;
+					const common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;
 
 					if (magicArray[fieldIndex].Attacks[attackIndex.asSize()] != 0 && magicArray[fieldIndex].Attacks[attackIndex.asSize()] != attacks[fieldIndex][permutationIndex]) {
 						std::fill(magicArray[fieldIndex].Attacks.begin(), magicArray[fieldIndex].Attacks.end(), 0);
