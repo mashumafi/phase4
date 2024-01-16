@@ -70,3 +70,12 @@ TEST_CASE("Square conversion FieldIndex") {
 	CHECK(Square(Square::C6.asFieldIndex()) == Square::C6);
 	CHECK(Square(Square::E2.asFieldIndex()) == Square::E2);
 }
+
+TEST_CASE("Square asBitboard") {
+	using namespace phase4::engine::common;
+
+	//                                 HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
+	//                                 87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	CHECK(Square::C6.asBitboard() == 0b00000000'00000000'00000000'00000000'00000000'00100000'00000000'00000000);
+	CHECK(Square::E2.asBitboard() == 0b00000000'00000000'00000000'00000010'00000000'00000000'00000000'00000000);
+}

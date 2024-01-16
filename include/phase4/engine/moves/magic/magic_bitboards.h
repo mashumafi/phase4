@@ -28,7 +28,6 @@ private:
 
 	static MagicContainers _rookMagicArray;
 	static MagicContainers _bishopMagicArray;
-	static std::random_device _random;
 
 	using Masks = std::array<common::Bitset, 64>;
 
@@ -52,16 +51,18 @@ public:
 		return _bishopMagicArray[fieldIndex].Attacks[board.asSize()];
 	}
 
-	static MagicContainers generateRookAttacks(std::optional<MagicKeys::Array> keys = {}) {
+	static MagicContainers generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
 		MagicShifts::Permutations permutations = { 0 };
 		MagicShifts::Attacks attacks = { 0 };
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
-			masks[fieldIndex] = (patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::TOP_BOTTOM_EDGE) |
+			masks[fieldIndex] =
+					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::TOP_BOTTOM_EDGE) |
 					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::RIGHT_LEFT_EDGE);
 
-			for (int permutationIndex = 0; permutationIndex < (1 << MagicShifts::RookShifts[fieldIndex]); ++permutationIndex) {
+			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
+			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
 				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[fieldIndex][permutationIndex], fieldIndex);
 			}
@@ -70,7 +71,7 @@ public:
 		return _rookMagicArray = generateAttacks(masks, permutations, attacks, MagicShifts::RookShifts, keys);
 	}
 
-	static MagicContainers generateBishopAttacks(std::optional<MagicKeys::Array> keys = {}) {
+	static MagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
 		MagicShifts::Permutations permutations = { 0 };
 		MagicShifts::Attacks attacks = { 0 };
@@ -78,7 +79,8 @@ public:
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
 
-			for (int permutationIndex = 0; permutationIndex < (1 << MagicShifts::BishopShifts[fieldIndex]); ++permutationIndex) {
+			const int length = 1 << MagicShifts::RookShifts[fieldIndex];
+			for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
 				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[fieldIndex][permutationIndex], fieldIndex);
 			}
@@ -88,21 +90,24 @@ public:
 	}
 
 private:
-	static MagicContainers generateAttacks(Masks masks, MagicShifts::Permutations permutations, MagicShifts::Attacks attacks, MagicShifts::Array shifts, std::optional<MagicKeys::Array> keys = {}) {
+	static MagicContainers generateAttacks(const Masks &masks, const MagicShifts::Permutations &permutations, const MagicShifts::Attacks &attacks, const MagicShifts::Array &shifts, const std::optional<MagicKeys::Array> &keys = {}) {
 		MagicContainers magicArray;
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			magicArray[fieldIndex] = MagicContainer{
-				64 - shifts[fieldIndex],
 				masks[fieldIndex],
+				0,
 				{},
-				keys ? keys.value()[fieldIndex] : 0 // TODO: Random number
+				64 - shifts[fieldIndex],
 			};
 
 			bool success = false;
 			while (!success) {
 				success = true;
-				for (int permutationIndex = 0; permutationIndex < (1 << shifts[fieldIndex]); ++permutationIndex) {
+				magicArray[fieldIndex].MagicNumber = keys ? keys.value()[fieldIndex] : 1; // TODO: Random number
+
+				const size_t length = 1 << shifts[fieldIndex];
+				for (int permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 					common::Bitset hash = permutations[fieldIndex][permutationIndex] * magicArray[fieldIndex].MagicNumber;
 					common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;
 
@@ -119,11 +124,10 @@ private:
 
 		return magicArray;
 	}
-
-	static uint64_t GetRandomMagicNumber() {
-		return static_cast<uint64_t>(_random()) & static_cast<uint64_t>(_random()) & static_cast<uint64_t>(_random());
-	}
 };
+
+MagicBitboards::MagicContainers MagicBitboards::_rookMagicArray;
+MagicBitboards::MagicContainers MagicBitboards::_bishopMagicArray;
 
 } //namespace phase4::engine::moves::magic
 

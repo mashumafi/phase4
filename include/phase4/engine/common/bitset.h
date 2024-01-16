@@ -119,11 +119,11 @@ inline constexpr bool Bitset::operator==(Bitset bits) const noexcept {
 }
 
 inline constexpr bool Bitset::operator!=(uint64_t bits) const noexcept {
-	return m_bits == bits;
+	return m_bits != bits;
 }
 
 inline constexpr bool Bitset::operator!=(Bitset bits) const noexcept {
-	return m_bits == bits.m_bits;
+	return m_bits != bits.m_bits;
 }
 
 inline constexpr bool Bitset::operator<(uint64_t bits) const noexcept {

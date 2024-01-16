@@ -13,7 +13,7 @@ public:
 	common::Bitset Mask;
 	common::Bitset MagicNumber;
 	std::array<common::Bitset, 64> Attacks;
-	uint64_t Shift;
+	int32_t Shift;
 };
 
 } //namespace phase4::engine::moves::magic
