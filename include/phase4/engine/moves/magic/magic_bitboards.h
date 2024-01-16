@@ -18,7 +18,9 @@
 #include <array>
 #include <cstdint>
 #include <cstdlib>
+#include <exception> // TODO: remove when no longer throwing
 #include <optional>
+#include <sstream> // TODO: remove when no longer throwing
 
 namespace phase4::engine::moves::magic {
 
@@ -112,6 +114,11 @@ private:
 					const common::Bitset attackIndex = hash >> magicArray[fieldIndex].Shift;
 
 					if (magicArray[fieldIndex].Attacks[attackIndex.asSize()] != 0 && magicArray[fieldIndex].Attacks[attackIndex.asSize()] != attacks[fieldIndex][permutationIndex]) {
+						if (keys) {
+							std::stringstream ss;
+							ss << "The supplied key was not a valid magic number. Failed on fieldIndex:" << fieldIndex << " permutation:" << permutationIndex << "/" << length << ".";
+							throw std::invalid_argument(ss.str());
+						}
 						std::fill(magicArray[fieldIndex].Attacks.begin(), magicArray[fieldIndex].Attacks.end(), 0);
 						success = false;
 						break;

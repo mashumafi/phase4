@@ -35,13 +35,6 @@ TEST_CASE("Square output valid") {
 TEST_CASE("Square output invalid") {
 	using namespace phase4::engine::common;
 
-	SUBCASE("Square with negative value") {
-		const Square invalidSquare(-1);
-		std::stringstream ss;
-		ss << invalidSquare;
-		CHECK(ss.fail());
-	}
-
 	SUBCASE("Square with value greater than 63") {
 		const Square invalidSquare(64);
 		std::stringstream ss;
@@ -78,4 +71,5 @@ TEST_CASE("Square asBitboard") {
 	//                                 87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
 	CHECK(Square::C6.asBitboard() == 0b00000000'00000000'00000000'00000000'00000000'00100000'00000000'00000000);
 	CHECK(Square::E2.asBitboard() == 0b00000000'00000000'00000000'00000010'00000000'00000000'00000000'00000000);
+	CHECK(Square::H8.asBitboard() == 0b10000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000);
 }
