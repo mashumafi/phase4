@@ -3,7 +3,6 @@
 
 #include <array>
 #include <cassert>
-#include <memory_resource>
 #include <vector>
 
 namespace phase4::engine::common {
