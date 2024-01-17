@@ -18,10 +18,8 @@
 #include <array>
 #include <cstdint>
 #include <cstdlib>
-#include <exception> // TODO: remove when no longer throwing
 #include <memory>
 #include <optional>
-#include <sstream> // TODO: remove when no longer throwing
 
 namespace phase4::engine::moves::magic {
 
@@ -57,8 +55,8 @@ public:
 private:
 	static std::unique_ptr<MagicContainers> generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations{};
-		MagicShifts::Attacks attacks{};
+		auto permutations = allocate_unique<MagicShifts::Permutations>();
+		auto attacks = allocate_unique<MagicShifts::Attacks>();
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] =
@@ -67,8 +65,8 @@ private:
 
 			const size_t length = 1ull << MagicShifts::ROOK_SHIFTS[fieldIndex];
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
-				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
-				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
+				(*permutations)[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
+				(*attacks)[fieldIndex][permutationIndex] = AttacksGenerator::getFileRankAttacks((*permutations)[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
 		}
 
@@ -77,20 +75,20 @@ private:
 
 	static std::unique_ptr<MagicContainers> generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		MagicShifts::Permutations permutations{};
-		MagicShifts::Attacks attacks{};
+		auto permutations = allocate_unique<MagicShifts::Permutations>();
+		auto attacks = allocate_unique<MagicShifts::Attacks>();
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
 
 			const size_t length = 1ull << MagicShifts::BISHOP_SHIFTS[fieldIndex];
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
-				permutations[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
-				attacks[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[fieldIndex][permutationIndex], common::Square(fieldIndex));
+				(*permutations)[fieldIndex][permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
+				(*attacks)[fieldIndex][permutationIndex] = AttacksGenerator::getDiagonalAttacks((*permutations)[fieldIndex][permutationIndex], common::Square(fieldIndex));
 			}
 		}
 
-		return generateAttacks(masks, permutations, attacks, MagicShifts::BISHOP_SHIFTS, keys);
+		return generateAttacks(masks, *permutations, *attacks, MagicShifts::BISHOP_SHIFTS, keys);
 	}
 
 	static std::unique_ptr<MagicContainers> generateAttacks(const Masks &masks, const MagicShifts::Permutations &permutations, const MagicShifts::Attacks &attacks, const MagicShifts::Array &shifts, const std::optional<MagicKeys::Array> &keys = {}) {
@@ -106,7 +104,6 @@ private:
 			};
 
 			bool success = false;
-			size_t attempt = 0;
 			while (!success) {
 				success = true;
 
@@ -117,15 +114,6 @@ private:
 					const common::Bitset attack = (*magicArray)[fieldIndex].Attacks[attackIndex.asSize()];
 
 					if (attack != 0 && attack != attacks[fieldIndex][permutationIndex]) {
-						if (keys) {
-							std::stringstream ss;
-							ss << "The supplied key:" << (*magicArray)[fieldIndex].MagicNumber.asSize() << " was not a valid magic number. Failed on fieldIndex:" << fieldIndex << " permutation:" << permutationIndex << "/" << length << " attackIndex:" << attackIndex.asSize() << ".";
-							if (attempt++ > 1000) {
-								throw std::invalid_argument(ss.str());
-							} else {
-								std::cout << ss.str() << std::endl;
-							}
-						}
 						(*magicArray)[fieldIndex].MagicNumber = rand.next();
 						std::fill((*magicArray)[fieldIndex].Attacks.begin(), (*magicArray)[fieldIndex].Attacks.end(), 0);
 						success = false;
