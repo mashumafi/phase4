@@ -25,8 +25,8 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_BUILD_TYPE=Release
         -S ${{ github.workspace }}
-        -DCMAKE_C_COMPILER=AppleClang
-        -DCMAKE_BUILD_TYPE=AppleClang
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
