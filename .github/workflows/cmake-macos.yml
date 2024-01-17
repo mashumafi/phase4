@@ -14,18 +14,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Install Xcode Command Line Tools
-      run: sudo xcode-select --install
-
-    - name: Download and Compile CMake
-      run: |
-        wget -O cmake.tar.gz https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-Darwin-x86_64.tar.gz
-        tar -xzvf cmake.tar.gz
-        sudo cp -R cmake-3.21.3-Darwin-x86_64/CMake.app /Applications/
-
-    - name: Verify CMake Installation
-      run: /Applications/CMake.app/Contents/bin/cmake --version
-
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
