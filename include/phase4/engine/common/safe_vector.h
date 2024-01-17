@@ -15,7 +15,7 @@ class SafeVector {
 public:
 	/// @brief
 	/// @param upstream the upstream std::memory_resource if allocation is requried
-	SafeVector(std::pmr::memory_resource *upstream = std::pmr::null_memory_resource());
+	SafeVector();
 
 	void push_back(const T &value);
 	void push_back(T &&value);
@@ -31,15 +31,11 @@ public:
 	bool is_empty() const;
 
 private:
-	std::array<T, SIZE> m_buffer;
-	std::pmr::monotonic_buffer_resource m_pool;
-	std::pmr::vector<T> m_vector;
+	std::vector<T> m_vector;
 };
 
 template <typename T, std::size_t SIZE>
-SafeVector<T, SIZE>::SafeVector(std::pmr::memory_resource *upstream) :
-		m_pool(m_buffer.data(), sizeof(m_buffer), upstream),
-		m_vector(&m_pool) {
+SafeVector<T, SIZE>::SafeVector() {
 	m_vector.reserve(SIZE);
 }
 
