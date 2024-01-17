@@ -34,22 +34,20 @@ TEST_CASE("MovesGenerator getBishopMoves") {
 	using namespace phase4::engine::moves;
 	using namespace phase4::engine::moves::magic;
 
-	return; // TODO: Enable tests
-
 	MagicBitboards::InitWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                           HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
 		//                                                           87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::A1) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::A2) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::B2) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::C5) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::D8) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::E1) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::F4) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::G7) == 0b0);
-		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::H2) == 0b0);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::A1) == 0b10000000'01000000'00100000'00010000'00001000'00000100'00000010'00000000);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::A2) == 0b00000000'10000000'01000000'00100000'00010000'00001000'00000101'00000000);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::B2) == 0b10000000'01000000'00100000'00010000'00001000'00000101'00000000'00000101);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::C5) == 0b00000000'00000001'10000010'01000100'00101000'00000000'00101000'01000100);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::D8) == 0b00001000'00010000'00100000'01000000'00000000'01000000'00100000'00010000);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::E1) == 0b00001000'00000100'00000010'00000000'00000010'00000100'00001000'00010000);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::F4) == 0b00100010'00010100'00000000'00010100'00100010'01000001'10000000'00000000);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::G7) == 0b10100000'00000000'10100000'00010000'00001000'00000100'00000010'00000001);
+		CHECK(MovesGenerator::getBishopMoves(EMPTY, Square::H2) == 0b00000000'00000101'00001000'00010000'00100000'01000000'10000000'00000000);
 	}
 }
 
@@ -58,22 +56,20 @@ TEST_CASE("MovesGenerator getRookMoves") {
 	using namespace phase4::engine::moves;
 	using namespace phase4::engine::moves::magic;
 
-	return; // TODO: Enable tests
-
 	MagicBitboards::InitWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                         HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
 		//                                                         87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::A1) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::A2) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::B2) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::C5) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::D8) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::E1) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::F4) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::G7) == 0b0);
-		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::H2) == 0b0);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::A1) == 0b00000001'00000001'00000001'00000001'00000001'00000001'0000000111111110);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::A2) == 0b00000010'00000010'00000010'00000010'00000010'00000010'0000001011111101);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::B2) == 0b00000010'00000010'00000010'00000010'00000010'00000010'1111110100000010);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::C5) == 0b00010000'00010000'00010000'00010000'00010000'11101111'0001000000010000);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::D8) == 0b10000000'10000000'10000000'10000000'01111111'10000000'1000000010000000);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::E1) == 0b00000001'00000001'00000001'11111110'00000001'00000001'0000000100000001);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::F4) == 0b00001000'00001000'11110111'00001000'00001000'00001000'0000100000001000);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::G7) == 0b01000000'10111111'01000000'01000000'01000000'01000000'0100000001000000);
+		CHECK(MovesGenerator::getRookMoves(EMPTY, Square::H2) == 0b11111101'00000010'00000010'00000010'00000010'00000010'0000001000000010);
 	}
 }
 
@@ -82,22 +78,20 @@ TEST_CASE("MovesGenerator getQueenMoves") {
 	using namespace phase4::engine::moves;
 	using namespace phase4::engine::moves::magic;
 
-	return; // TODO: Enable tests
-
 	MagicBitboards::InitWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                          HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
 		//                                                          87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::A1) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::A2) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::B2) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::C5) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::D8) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::E1) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::F4) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::G7) == 0b0);
-		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::H2) == 0b0);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::A1) == 0b1000000101000001001000010001000100001001000001010000001111111110);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::A2) == 0b0000001010000010010000100010001000010010000010100000011111111101);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::B2) == 0b1000001001000010001000100001001000001010000001111111110100000111);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::C5) == 0b0001000000010001100100100101010000111000111011110011100001010100);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::D8) == 0b1000100010010000101000001100000001111111110000001010000010010000);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::E1) == 0b0000100100000101000000111111111000000011000001010000100100010001);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::F4) == 0b0010101000011100111101110001110000101010010010011000100000001000);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::G7) == 0b1110000010111111111000000101000001001000010001000100001001000001);
+		CHECK(MovesGenerator::getQueenMoves(EMPTY, Square::H2) == 0b1111110100000111000010100001001000100010010000101000001000000010);
 	}
 }
 

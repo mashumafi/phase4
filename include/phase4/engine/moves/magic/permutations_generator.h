@@ -9,16 +9,15 @@ namespace phase4::engine::moves::magic {
 
 class PermutationsGenerator {
 public:
-	static constexpr common::Bitset getPermutation(common::Bitset mask, int permutationIndex) {
+	static constexpr common::Bitset getPermutation(common::Bitset mask, uint64_t permutationIndex) {
 		common::Bitset permutation = 0;
 		while (mask != 0) {
-			const common::Bitset lsb = mask.getLsb();
-			mask = mask.popLsb();
-
 			if ((permutationIndex & 1) != 0) {
-				const common::Square lsbIndex(lsb.bitScan());
+				const common::Square lsbIndex(mask.bitScan());
 				permutation = permutation | lsbIndex.asBitboard();
 			}
+
+			mask = mask.popLsb();
 
 			permutationIndex >>= 1;
 		}

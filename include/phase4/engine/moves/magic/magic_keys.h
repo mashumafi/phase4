@@ -12,7 +12,7 @@ class MagicKeys {
 public:
 	using Array = std::array<uint64_t, 64>;
 
-	static constexpr Array RookKeys{
+	static constexpr Array ROOK_KEYS{
 		360305701962137858ull,
 		90107182288211968ull,
 		72084258017058816ull,
@@ -79,7 +79,7 @@ public:
 		4789480217151594ull
 	};
 
-	static constexpr Array BishopKeys{
+	static constexpr Array BISHOP_KEYS{
 		571780541481002ull,
 		1169899716219396ull,
 		2306977716336861568ull,
