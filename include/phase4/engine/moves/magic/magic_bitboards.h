@@ -54,6 +54,7 @@ public:
 		return (*_bishopMagicArray)[square].Attacks[board.asSize()];
 	}
 
+private:
 	static std::unique_ptr<MagicContainers> generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
 		MagicShifts::Permutations permutations{};
@@ -92,7 +93,6 @@ public:
 		return generateAttacks(masks, permutations, attacks, MagicShifts::BISHOP_SHIFTS, keys);
 	}
 
-private:
 	static std::unique_ptr<MagicContainers> generateAttacks(const Masks &masks, const MagicShifts::Permutations &permutations, const MagicShifts::Attacks &attacks, const MagicShifts::Array &shifts, const std::optional<MagicKeys::Array> &keys = {}) {
 		std::unique_ptr<MagicContainers> magicArray = std::make_unique<MagicContainers>();
 		common::Random rand(123456);
