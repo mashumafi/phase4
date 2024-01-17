@@ -55,8 +55,8 @@ public:
 private:
 	static std::unique_ptr<MagicContainers> generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		auto permutations = allocate_unique<MagicShifts::Permutations>();
-		auto attacks = allocate_unique<MagicShifts::Attacks>();
+		auto permutations = std::make_unique<MagicShifts::Permutations>();
+		auto attacks = std::make_unique<MagicShifts::Attacks>();
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] =
@@ -70,13 +70,13 @@ private:
 			}
 		}
 
-		return generateAttacks(masks, permutations, attacks, MagicShifts::ROOK_SHIFTS, keys);
+		return generateAttacks(masks, *permutations, *attacks, MagicShifts::ROOK_SHIFTS, keys);
 	}
 
 	static std::unique_ptr<MagicContainers> generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) {
 		Masks masks;
-		auto permutations = allocate_unique<MagicShifts::Permutations>();
-		auto attacks = allocate_unique<MagicShifts::Attacks>();
+		auto permutations = std::make_unique<MagicShifts::Permutations>();
+		auto attacks = std::make_unique<MagicShifts::Attacks>();
 
 		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
