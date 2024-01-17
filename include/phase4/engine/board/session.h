@@ -5,13 +5,12 @@
 #include <phase4/engine/common/vector.h>
 
 #include <cstdint>
-#include <memory_resource>
 
 namespace phase4::engine::board {
 
 class Session {
 public:
-	Session(std::pmr::memory_resource *memory_resource = std::pmr::get_default_resource());
+	Session();
 
 	int64_t Hash;
 	int64_t PawnHash;
@@ -27,14 +26,15 @@ private:
 	//common::Vector<Position> _wallSlides;
 };
 
-Session::Session(std::pmr::memory_resource *memory_resource) :
-		m_killedPieces(memory_resource),
-		m_enPassants(memory_resource),
-		m_promotedPieces(memory_resource),
-		m_hashes(memory_resource),
-		m_pawnHashes(memory_resource),
-		m_irreversibleMovesCounts(memory_resource) {
+Session::Session() :
+		m_killedPieces(),
+		m_enPassants(),
+		m_promotedPieces(),
+		m_hashes(),
+		m_pawnHashes(),
+		m_irreversibleMovesCounts() {
 }
 
 } //namespace phase4::engine::board
+
 #endif

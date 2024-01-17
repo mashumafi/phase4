@@ -6,7 +6,6 @@
 #include <array>
 #include <cassert>
 #include <memory>
-#include <memory_resource>
 
 namespace phase4::engine::common {
 
@@ -18,7 +17,7 @@ class FastVector {
 public:
 	/// @brief
 	/// @param upstream the upstream std::memory_resource if allocation is requried
-	FastVector(std::pmr::memory_resource *upstream = std::pmr::get_default_resource());
+	FastVector();
 
 	void push_back(const T &value);
 	void push_back(T &&value);
@@ -36,13 +35,13 @@ public:
 private:
 	using Buffer = std::array<T, SIZE>;
 
-	UniquePtr<Buffer> m_array;
+	std::unique_ptr<Buffer> m_array;
 	std::size_t m_size = 0;
 };
 
 template <typename T, std::size_t SIZE>
-FastVector<T, SIZE>::FastVector(std::pmr::memory_resource *upstream) :
-		m_array(allocate_unique<Buffer>(upstream)) {
+FastVector<T, SIZE>::FastVector() :
+		m_array(std::make_unique<Buffer>()) {
 }
 
 template <typename T, std::size_t SIZE>

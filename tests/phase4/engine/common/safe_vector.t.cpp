@@ -1,5 +1,6 @@
 #include <phase4/engine/common/safe_vector.h>
 
+#include <cstdint>
 #include <functional>
 
 #include <doctest/doctest.h>
@@ -45,8 +46,7 @@ TEST_CASE("SafeVector pop_back") {
 	using namespace phase4::engine::common;
 
 	uint64_t &&result = std::invoke([]() {
-		std::pmr::monotonic_buffer_resource memory_resource;
-		SafeVector<uint64_t, 4> numbers(&memory_resource);
+		SafeVector<uint64_t, 4> numbers;
 		numbers.push_back(5);
 		numbers.push_back(4);
 		numbers.push_back(3);

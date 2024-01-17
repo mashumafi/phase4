@@ -17,7 +17,9 @@ struct FieldIndex {
 
 	constexpr FieldIndex(std::string_view move);
 
-	constexpr uint16_t manhattanDistance(const FieldIndex &other) const;
+	constexpr uint16_t maxCartesianDistance(FieldIndex other) const;
+
+	constexpr bool isValid() const;
 };
 
 constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
@@ -31,21 +33,28 @@ constexpr FieldIndex::FieldIndex(std::string_view move) :
 }
 
 /**
- * @brief Calculate the Manhattan distance between two points.
+ * @brief Calculate the max cartesian distance between two points.
  *
- * The Manhattan distance, also known as the taxicab distance, is the sum of the absolute
- * differences of their coordinates. It represents the distance in a grid-like structure
- * where only horizontal and vertical movements are allowed.
+ * The cartesian distance is the max of the absolute differences of their coordinates.
+ * It represents either the max distance along either the x-axis or y-axis.
  *
  * @param other The second point.
- * @return The Manhattan distance between the two points.
+ * @return The max cartesian distance between the two points.
  */
-constexpr uint16_t FieldIndex::manhattanDistance(const FieldIndex &other) const {
+constexpr uint16_t FieldIndex::maxCartesianDistance(FieldIndex other) const {
 	return Math::max_int16(Math::abs_int16(other.x - this->x), Math::abs_int16(other.y - this->y));
 }
 
-inline bool operator==(const FieldIndex left, const FieldIndex right) {
+constexpr bool FieldIndex::isValid() const {
+	return x >= 0 && x <= 7 && y >= 0 && y <= 7;
+}
+
+constexpr bool operator==(const FieldIndex left, const FieldIndex right) {
 	return left.x == right.x && left.y == right.y;
+}
+
+constexpr FieldIndex operator+(FieldIndex left, FieldIndex right) {
+	return FieldIndex(left.x + right.x, left.y + right.y);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const FieldIndex fieldIndex) {
