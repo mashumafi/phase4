@@ -20,6 +20,7 @@ add_executable(phase4_test
     phase4/engine/common/square.t.cpp
     phase4/engine/common/util.t.cpp
     phase4/engine/moves/magic/attacks_generator.t.cpp
+    phase4/engine/moves/magic/magic_bitboards.t.cpp
     phase4/engine/moves/magic/permutations_generator.t.cpp
     phase4/engine/moves/move.t.cpp
     phase4/engine/moves/move_flags.t.cpp

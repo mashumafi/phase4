@@ -9,12 +9,12 @@
 
 namespace phase4::engine::moves::magic {
 
-class MagicContainer {
-public:
-	common::Bitset Mask;
-	common::Bitset MagicNumber;
-	std::array<common::Bitset, 1ull << MagicShifts::MAX_SHIFT> Attacks;
-	int32_t Shift;
+template <size_t N>
+struct MagicContainer {
+	common::Bitset mask;
+	common::Bitset magicNumber;
+	std::array<common::Bitset, N> attacks;
+	int32_t shift;
 };
 
 } //namespace phase4::engine::moves::magic

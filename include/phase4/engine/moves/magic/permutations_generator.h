@@ -18,7 +18,6 @@ public:
 			}
 
 			mask = mask.popLsb();
-
 			permutationIndex >>= 1;
 		}
 
