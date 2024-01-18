@@ -11,10 +11,8 @@ class MagicShifts {
 public:
 	using Array = std::array<int32_t, 64>;
 
-	static constexpr size_t MAX_SHIFT = 12;
-
-	using Permutations = std::array<std::array<common::Bitset, 1ull << MagicShifts::MAX_SHIFT>, 64>;
-	using Attacks = std::array<std::array<common::Bitset, 1ull << MagicShifts::MAX_SHIFT>, 64>;
+	static constexpr size_t MAX_BISHOP_SHIFT = 9;
+	static constexpr size_t MAX_ROOK_SHIFT = 12;
 
 	static constexpr Array ROOK_SHIFTS{
 		12, 11, 11, 11, 11, 11, 11, 12,
