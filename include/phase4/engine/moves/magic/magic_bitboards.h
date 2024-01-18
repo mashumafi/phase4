@@ -70,27 +70,26 @@ private:
 	template <size_t N>
 	static void generateAttacks(
 			MagicContainer<N> &container,
-			int fieldIndex,
-			const Masks &masks,
+			common::Bitset mask,
+			int32_t shift,
 			const std::array<common::Bitset, N> &permutations,
 			const std::array<common::Bitset, N> &attacks,
-			int32_t shifts,
-			const std::optional<MagicKeys::Array> &keys = {}) {
+			std::optional<uint64_t> key = {}) {
 		common::Random rand(123456);
-		const uint64_t first = keys ? keys.value()[fieldIndex] : rand.fewBits();
+		const uint64_t first = key ? key.value() : rand.fewBits();
 
 		container = MagicContainer<N>{
-			masks[fieldIndex],
+			mask,
 			first,
 			{},
-			64 - shifts,
+			64 - shift,
 		};
 
 		bool success = false;
 		while (!success) {
 			success = true;
 
-			const size_t length = 1ull << shifts;
+			const size_t length = 1ull << shift;
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
 				const common::Bitset attackIndex = hash >> container.shift;
@@ -99,7 +98,6 @@ private:
 				if (attack != 0 && attack != attacks[permutationIndex]) {
 					const uint64_t next = rand.fewBits();
 					if (next == first) {
-						;
 						throw std::invalid_argument("Repeated the first number in the random sequence");
 					}
 					container.magicNumber = next;
@@ -147,7 +145,7 @@ inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::gene
 			attacks[permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks((*magicArray)[fieldIndex], fieldIndex, masks, permutations, attacks, MagicShifts::ROOK_SHIFTS[fieldIndex], keys);
+		generateAttacks((*magicArray)[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
 
 	return magicArray;
@@ -167,7 +165,7 @@ inline MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttac
 			attacks[permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks(magicArray[fieldIndex], fieldIndex, masks, permutations, attacks, MagicShifts::BISHOP_SHIFTS[fieldIndex], keys);
+		generateAttacks(magicArray[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
 
 	return magicArray;
