@@ -4,7 +4,6 @@
 #include <array>
 #include <cassert>
 #include <memory>
-#include <memory_resource>
 
 #if defined(__GNUC__)
 #define likely(x) __builtin_expect(!!(x), 1)
