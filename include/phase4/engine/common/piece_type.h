@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 #define PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 
+#include <array>
 #include <cstdint>
 #include <iostream>
 
@@ -8,6 +9,7 @@ namespace phase4::engine::common {
 
 class PieceType {
 public:
+	static const PieceType EMPTY;
 	static const PieceType PAWN;
 	static const PieceType KNIGHT;
 	static const PieceType BISHOP;
@@ -30,6 +32,8 @@ public:
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
+	static const std::array<PieceType, 6> PIECES;
+
 private:
 	constexpr PieceType(uint64_t value);
 	constexpr PieceType &operator=(uint64_t value);
@@ -46,6 +50,7 @@ constexpr PieceType &PieceType::operator=(uint64_t value) {
 	return *this;
 }
 
+inline constexpr PieceType PieceType::EMPTY = -1;
 inline constexpr PieceType PieceType::PAWN = 0;
 inline constexpr PieceType PieceType::KNIGHT = 1;
 inline constexpr PieceType PieceType::BISHOP = 2;
@@ -71,6 +76,15 @@ constexpr PieceType &PieceType::operator=(PieceType &&that) noexcept {
 	m_piece = std::move(that).m_piece;
 	return *this;
 }
+
+inline constexpr std::array<PieceType, 6> PIECES = {
+	PieceType::PAWN,
+	PieceType::KNIGHT,
+	PieceType::BISHOP,
+	PieceType::ROOK,
+	PieceType::QUEEN,
+	PieceType::KING
+};
 
 [[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
