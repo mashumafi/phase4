@@ -9,6 +9,7 @@
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/moves/moves_generator.h>
 
 #include <array>
 #include <cstdint>
@@ -185,6 +186,52 @@ public:
 		Position[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
 
 		PieceTable[fieldIndex] = PieceType::EMPTY;
+	}
+
+	bool isKingChecked(common::PieceColor color) {
+		const common::Bitset king = Pieces[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
+		if (king == 0) {
+			return false;
+		}
+
+		const uint8_t kingField = king.bitScan();
+		return isFieldAttacked(color, common::Square(kingField));
+	}
+
+	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) {
+		using namespace common;
+
+		PieceColor enemyColor = color.invert();
+
+		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(OccupancySummary, fieldIndex) & Occupancy[enemyColor.get_raw_value()];
+		const Bitset attackingRooks = fileRankAttacks & (Pieces[enemyColor.get_raw_value()][PieceType::ROOK.get_raw_value()] | Pieces[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);
+		if (attackingRooks != 0) {
+			return true;
+		}
+
+		const Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(OccupancySummary, fieldIndex) & Occupancy[enemyColor.get_raw_value()];
+		const Bitset attackingBishops = diagonalAttacks & (Pieces[enemyColor.get_raw_value()][PieceType::BISHOP.get_raw_value()] | Pieces[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);
+		if (attackingBishops != 0) {
+			return true;
+		}
+
+		const Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
+		const Bitset attackingKnights = jumpAttacks & Pieces[enemyColor.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		if (attackingKnights != 0) {
+			return true;
+		}
+
+		const Bitset boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
+		const Bitset attackingKings = boxAttacks & Pieces[enemyColor.get_raw_value()][PieceType::KING.get_raw_value()];
+		if (attackingKings != 0) {
+			return true;
+		}
+
+		const Bitset field = fieldIndex.asBitboard();
+		const Bitset potentialPawns = boxAttacks & Pieces[enemyColor.get_raw_value()][PieceType::PAWN.get_raw_value()];
+		const Bitset attackingPawns = (color.get_raw_value() == PieceColor::WHITE.get_raw_value()) ? field & ((potentialPawns >> 7) | (potentialPawns >> 9)) : field & ((potentialPawns << 7) | (potentialPawns << 9));
+
+		return (attackingPawns != 0);
 	}
 };
 
