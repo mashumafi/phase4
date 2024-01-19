@@ -63,9 +63,9 @@ inline constexpr int EvaluationConstants::PairOfBishops = 50;
 inline constexpr int EvaluationConstants::Fianchetto = 25;
 inline constexpr int EvaluationConstants::FianchettoWithoutBishop = -25;
 inline constexpr int EvaluationConstants::OpenFileNextToKing = -30;
- 
+
 inline constexpr int EvaluationConstants::OpeningEndgameEdge = 20500;
- 
+
 inline constexpr uint64_t EvaluationConstants::Center = 0x1818000000;
 inline constexpr uint64_t EvaluationConstants::ExtendedCenter = 0x3c3c3c3c0000;
 inline constexpr uint64_t EvaluationConstants::ExtendedCenterRing = EvaluationConstants::ExtendedCenter & ~EvaluationConstants::Center;

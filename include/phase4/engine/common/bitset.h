@@ -198,7 +198,7 @@ constexpr Bitset Bitset::operator<<(Bitset bits) const noexcept {
 	return Bitset(m_bits << bits.m_bits);
 }
 
-constexpr Bitset Bitset::operator<<(uint64_t bits) const noexcept{
+constexpr Bitset Bitset::operator<<(uint64_t bits) const noexcept {
 	return Bitset(m_bits << bits);
 }
 
