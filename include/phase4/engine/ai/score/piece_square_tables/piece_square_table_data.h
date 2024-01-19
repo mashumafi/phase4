@@ -17,7 +17,7 @@ public:
 	static const std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6> VALUES;
 };
 
-constexpr std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6> PieceSquareTablesData::VALUES = {
+inline constexpr std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6> PieceSquareTablesData::VALUES = {
 	PawnTables::build(),
 	KnightTables::build(),
 	BishopTables::build(),

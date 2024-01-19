@@ -80,7 +80,7 @@ constexpr ZobristHashing::Keys::Keys(common::Random random) :
 		m_wallHash(populateHashArray<BOARD_SIZE>(random)) {
 }
 
-constexpr ZobristHashing::Keys ZobristHashing::G_KEYS(common::Random(123456));
+inline constexpr ZobristHashing::Keys ZobristHashing::G_KEYS(common::Random(123456));
 
 constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 		m_hash(hash) {
