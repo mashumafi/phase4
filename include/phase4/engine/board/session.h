@@ -42,19 +42,21 @@ public:
 		return m_position.calculatePosition(color, phase);
 	}
 
-	void makeMove(moves::Move move) {
+	Position::MoveDetails makeMove(moves::Move move) {
 		m_castlings.push_back(m_position.m_castling);
 		m_hashes.push_back(m_position.Hash);
 		m_pawnHashes.push_back(m_position.PawnHash);
 		m_enPassants.push_back(m_position.EnPassant);
 		m_irreversibleMovesCounts.push_back(m_position.IrreversibleMovesCount);
 
-		const Position::MoveDetails &details = m_position.makeMove(move);
-		if (details.promotion)
+		Position::MoveDetails details = m_position.makeMove(move);
+		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
-		if (details.removed)
+		if (unlikely(details.removed))
 			m_killedPieces.push_back(details.removed->pieceType);
+
+		return details;
 	}
 
 	static constexpr uint32_t calculateMaterialAtOpening() {

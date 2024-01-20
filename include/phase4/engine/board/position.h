@@ -10,6 +10,7 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/vector.h>
+#include <phase4/engine/common/wall_operations.h>
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
@@ -202,15 +203,10 @@ public:
 
 	struct MoveDetails {
 		struct Movement {
-			Movement() :
-					from(common::Square::INVALID),
-					to(common::Square::INVALID) {
-			}
-
 			common::Square from;
 			common::Square to;
 		};
-		common::Vector<Movement> moved;
+		common::FastVector<Movement, 5> moved;
 
 		std::optional<common::Square> added;
 
@@ -242,7 +238,7 @@ public:
 		}
 
 		if (EnPassant != 0) {
-			int enPassantRank = EnPassant.bitScan() % 8;
+			uint8_t enPassantRank = EnPassant.bitScan() % 8;
 			Hash = Hash.toggleEnPassant(enPassantRank);
 			EnPassant = 0;
 		}
@@ -409,19 +405,19 @@ public:
 			}
 		}
 
-		/*if (Walls > 0) {
+		/*if (likely(Walls > 0)) {
 			int wallIndex = BitOperations::BitScan(Walls);
-			Position wallMove = WallOperations::SlideDir[wallIndex][move.To];
+			Position wallMove = WallOperations::SLIDE_DIR[wallIndex][move.To];
 			if (wallMove != Common::Position::Empty) {
 				int slideCount = 0;
 				std::array<Move, 4> moves;
 
 				OccupancySummary &= ~Walls;
 
-				ulong original = WallOperations::SlideToBB[wallIndex][move.To];
+				ulong original = WallOperations::SLIDE_TO[wallIndex][move.To];
 				while (original > 0) {
 					byte from = static_cast<byte>(BitOperations::BitScan(original));
-					byte to = WallOperations::SlideSquare[wallIndex][from];
+					byte to = WallOperations::SLIDE_SQUARE[wallIndex][from];
 					moves[slideCount++] = Move(from, to, 0);
 					std::pair<int, int> pieceResult;
 					if (GetPiece(from, pieceResult)) {
@@ -476,7 +472,7 @@ public:
 				}
 
 				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn off previous wall
-				Walls = WallOperations::SlideToBB[wallIndex][move.To];
+				Walls = WallOperations::SLIDE_TO[wallIndex][move.To];
 				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn on new wall location
 				OccupancySummary |= Walls;
 

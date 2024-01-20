@@ -18,6 +18,7 @@ add_executable(phase4_test
     phase4/engine/common/random.t.cpp
     phase4/engine/common/safe_vector.t.cpp
     phase4/engine/common/square.t.cpp
+    phase4/engine/common/wall_operations.t.cpp
     phase4/engine/common/util.t.cpp
     phase4/engine/moves/magic/attacks_generator.t.cpp
     phase4/engine/moves/magic/magic_bitboards.t.cpp

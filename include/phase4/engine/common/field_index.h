@@ -13,6 +13,8 @@ struct FieldIndex {
 	int16_t x;
 	int16_t y;
 
+	constexpr FieldIndex();
+
 	constexpr FieldIndex(int16_t x, int16_t y);
 
 	constexpr FieldIndex(std::string_view move);
@@ -25,6 +27,10 @@ struct FieldIndex {
 constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
 		x{ x },
 		y{ y } {
+}
+
+constexpr FieldIndex::FieldIndex() :
+		FieldIndex(0, 0) {
 }
 
 constexpr FieldIndex::FieldIndex(std::string_view move) :
@@ -55,6 +61,14 @@ constexpr bool operator==(const FieldIndex left, const FieldIndex right) {
 
 constexpr FieldIndex operator+(FieldIndex left, FieldIndex right) {
 	return FieldIndex(left.x + right.x, left.y + right.y);
+}
+
+constexpr FieldIndex operator-(FieldIndex that) {
+	return FieldIndex(-that.x, -that.y);
+}
+
+constexpr FieldIndex operator*(FieldIndex that, int16_t scalar) {
+	return FieldIndex(that.x * scalar, that.y * scalar);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const FieldIndex fieldIndex) {

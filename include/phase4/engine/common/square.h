@@ -97,6 +97,8 @@ public:
 
 	constexpr operator uint64_t() const;
 
+	constexpr Square();
+
 	constexpr explicit Square(uint64_t value);
 	constexpr Square &operator=(uint64_t value);
 
@@ -132,6 +134,10 @@ constexpr Bitset Square::asBitboard() const {
 
 constexpr Square::operator uint64_t() const {
 	return m_value;
+}
+
+constexpr Square::Square() :
+		m_value(64) {
 }
 
 constexpr Square::Square(uint64_t value) :
