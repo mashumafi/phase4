@@ -48,7 +48,7 @@ template <typename T, std::size_t SIZE>
 void FastVector<T, SIZE>::push_back(const T &value) {
 	assert(m_size < SIZE);
 
-	m_array[m_size++] = value;
+	(*m_array)[m_size++] = value;
 }
 
 template <typename T, std::size_t SIZE>

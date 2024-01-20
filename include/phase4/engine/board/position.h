@@ -9,6 +9,8 @@
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/common/vector.h>
+#include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
 #include <array>
@@ -19,13 +21,13 @@ namespace phase4::engine::board {
 class Position {
 public:
 	ZobristHashing Hash;
-	uint64_t PawnHash;
+	ZobristHashing PawnHash;
 
 	common::Bitset Pieces[2][6];
 	common::Bitset Occupancy[2];
 	common::Bitset OccupancySummary;
 	common::Bitset EnPassant;
-	common::Castling Castling = common::Castling::NONE;
+	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor ColorToMove = common::PieceColor::WHITE;
 	int MovesCount;
 	int IrreversibleMovesCount;
@@ -59,7 +61,7 @@ public:
 		OccupancySummary = Occupancy[common::PieceColor::WHITE.get_raw_value()] | Occupancy[common::PieceColor::BLACK.get_raw_value()] | Walls;
 
 		EnPassant = 0;
-		Castling = common::Castling::EVERYTHING;
+		m_castling = common::Castling::EVERYTHING;
 		ColorToMove = common::PieceColor::WHITE;
 		MovesCount = 0;
 		IrreversibleMovesCount = 0;
@@ -196,6 +198,301 @@ public:
 
 		const uint8_t kingField = king.bitScan();
 		return isFieldAttacked(color, common::Square(kingField));
+	}
+
+	struct MoveDetails {
+		struct Movement {
+			Movement() :
+					from(common::Square::INVALID),
+					to(common::Square::INVALID) {
+			}
+
+			common::Square from;
+			common::Square to;
+		};
+		common::Vector<Movement> moved;
+
+		std::optional<common::Square> added;
+
+		std::optional<common::PieceType> promotion;
+
+		struct Removed {
+			common::PieceType pieceType;
+			common::Square at;
+		};
+		std::optional<Removed> removed;
+	};
+
+	MoveDetails makeMove(moves::Move move) {
+		using namespace common;
+
+		MoveDetails details;
+
+		PieceType pieceType = PieceTable[move.from()];
+		PieceColor enemyColor = ColorToMove.invert();
+
+		if (ColorToMove == PieceColor::WHITE) {
+			MovesCount++;
+		}
+
+		if (pieceType == PieceType::PAWN || move.flags().isCapture() || move.flags().isCastling()) {
+			IrreversibleMovesCount = 0;
+		} else {
+			IrreversibleMovesCount++;
+		}
+
+		if (EnPassant != 0) {
+			int enPassantRank = EnPassant.bitScan() % 8;
+			Hash = Hash.toggleEnPassant(enPassantRank);
+			EnPassant = 0;
+		}
+
+		if (move.flags().isSinglePush()) {
+			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+
+			if (pieceType == PieceType::PAWN) {
+				PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			}
+		} else if (move.flags().isDoublePush()) {
+			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+
+			Bitset enPassantField = (ColorToMove == PieceColor::WHITE) ? Square(move.to() - 8).asBitboard() : Square(move.to() + 8).asBitboard();
+			int enPassantFieldIndex = enPassantField.bitScan();
+
+			EnPassant = enPassantField;
+			Hash = Hash.toggleEnPassant(enPassantFieldIndex % 8);
+		} else if (move.flags().isEnPassant()) {
+			Square enemyPieceField((ColorToMove == PieceColor::WHITE) ? move.to() - 8 : move.to() + 8);
+			PieceType killedPiece = PieceTable[enemyPieceField];
+
+			RemovePiece(enemyColor, killedPiece, enemyPieceField);
+			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
+			PawnHash = PawnHash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
+
+			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+
+			details.removed = MoveDetails::Removed{ killedPiece, enemyPieceField };
+		} else if (move.flags().isCapture()) {
+			PieceType killedPiece = PieceTable[move.to()];
+
+			RemovePiece(enemyColor, killedPiece, move.to());
+			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, move.to());
+
+			if (killedPiece == PieceType::PAWN) {
+				PawnHash = PawnHash.addOrRemovePiece(enemyColor, killedPiece, move.to());
+			} else if (killedPiece == PieceType::ROOK) {
+				switch (move.to()) {
+					case 0:
+						Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+						m_castling &= ~Castling::WHITE_SHORT;
+						break;
+					case 7:
+						Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+						m_castling &= ~Castling::WHITE_LONG;
+						break;
+					case 56:
+						Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+						m_castling &= ~Castling::BLACK_SHORT;
+						break;
+					case 63:
+						Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+						m_castling &= ~Castling::BLACK_LONG;
+						break;
+				}
+			}
+
+			if (move.flags().isPromotion()) {
+				PieceType promotionPiece = move.flags().getPromotionPiece();
+
+				RemovePiece(ColorToMove, pieceType, move.from());
+				Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+				PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+
+				AddPiece(ColorToMove, promotionPiece, move.to());
+				Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
+
+				details.promotion = promotionPiece;
+			} else {
+				MovePiece(ColorToMove, pieceType, move.from(), move.to());
+				Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+
+				if (pieceType == PieceType::PAWN) {
+					PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+				}
+			}
+
+			details.removed = MoveDetails::Removed{ killedPiece, move.to() };
+		} else if (move.flags().isCastling()) {
+			// Short castling
+			if (move.flags().isKingCastling()) {
+				if (ColorToMove == PieceColor::WHITE) {
+					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
+					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
+
+					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
+					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
+				} else {
+					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
+					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+
+					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
+					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+				}
+			} else { // Long castling
+				if (ColorToMove == PieceColor::WHITE) {
+					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
+					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
+
+					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
+					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
+				} else {
+					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
+					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+
+					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
+					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+				}
+			}
+
+			if (ColorToMove == PieceColor::WHITE) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_castling &= ~Castling::WHITE_CASTLING;
+			} else {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_castling &= ~Castling::BLACK_CASTLING;
+			}
+
+			CastlingDone[ColorToMove.get_raw_value()] = true;
+		} else if (move.flags().isPromotion()) {
+			PieceType promotionPiece = move.flags().getPromotionPiece();
+
+			RemovePiece(ColorToMove, pieceType, move.from());
+			Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+			PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+
+			AddPiece(ColorToMove, promotionPiece, move.to());
+			Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
+
+			details.promotion = promotionPiece;
+		}
+
+		if (pieceType == PieceType::KING && !move.flags().isCastling()) {
+			if (ColorToMove == PieceColor::WHITE) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_castling &= ~Castling::WHITE_CASTLING;
+			} else {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_castling &= ~Castling::BLACK_CASTLING;
+			}
+		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
+			if (move.from() == 0) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				m_castling &= ~Castling::WHITE_SHORT;
+			} else if (move.from() == 7) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_castling &= ~Castling::WHITE_LONG;
+			} else if (move.from() == 56) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				m_castling &= ~Castling::BLACK_SHORT;
+			} else if (move.from() == 63) {
+				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_castling &= ~Castling::BLACK_LONG;
+			}
+		}
+
+		/*if (Walls > 0) {
+			int wallIndex = BitOperations::BitScan(Walls);
+			Position wallMove = WallOperations::SlideDir[wallIndex][move.To];
+			if (wallMove != Common::Position::Empty) {
+				int slideCount = 0;
+				std::array<Move, 4> moves;
+
+				OccupancySummary &= ~Walls;
+
+				ulong original = WallOperations::SlideToBB[wallIndex][move.To];
+				while (original > 0) {
+					byte from = static_cast<byte>(BitOperations::BitScan(original));
+					byte to = WallOperations::SlideSquare[wallIndex][from];
+					moves[slideCount++] = Move(from, to, 0);
+					std::pair<int, int> pieceResult;
+					if (GetPiece(from, pieceResult)) {
+						MovePiece(pieceResult.first, pieceResult.second, from, to, emitSignal);
+						Hash = ZobristHashing::MovePiece(Hash, pieceResult.first, pieceResult.second, from, to);
+						if (pieceResult.second == Piece::Pawn) {
+							PawnHash = ZobristHashing::MovePiece(PawnHash, pieceResult.first, pieceResult.second, from, to);
+						}
+
+						if (pieceResult.second == Piece::Pawn && EnPassant != 0) {
+							int offset = (pieceResult.first == Color::White) ? -8 : 8;
+							int enPassantField = BitOperations::BitScan(EnPassant);
+							if (enPassantField == from + offset) {
+								int enPassantRank = enPassantField % 8;
+								Hash = ZobristHashing::ToggleEnPassant(Hash, enPassantRank);
+
+								if (wallMove.Offset() >= 0)
+									EnPassant >>= wallMove.Offset();
+								else
+									EnPassant <<= -wallMove.Offset();
+								Hash = ZobristHashing::ToggleEnPassant(Hash, BitOperations::BitScan(EnPassant) % 8);
+							}
+						}
+
+						if (pieceResult.second == Piece::King) {
+							if (pieceResult.first == Color::White) {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteShort);
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteLong);
+								Castling &= ~Castling::WhiteCastling;
+							} else {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackShort);
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackLong);
+								Castling &= ~Castling::BlackCastling;
+							}
+						} else if (pieceResult.second == Piece::Rook) {
+							if (from == 0) {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteShort);
+								Castling &= ~Castling::WhiteShort;
+							} else if (from == 7) {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteLong);
+								Castling &= ~Castling::WhiteLong;
+							} else if (from == 56) {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackShort);
+								Castling &= ~Castling::BlackShort;
+							} else if (from == 63) {
+								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackLong);
+								Castling &= ~Castling::BlackLong;
+							}
+						}
+					}
+					original = BitOperations::PopLsb(original);
+				}
+
+				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn off previous wall
+				Walls = WallOperations::SlideToBB[wallIndex][move.To];
+				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn on new wall location
+				OccupancySummary |= Walls;
+
+				if (emitSignal) {
+					Slide(moves);
+				}
+			}
+			_wallSlides.Push(wallMove);
+		} else {
+			_wallSlides.Push(Common::Position::Empty);
+		}*/
+
+		ColorToMove = enemyColor;
+		Hash = Hash.changeSide();
+
+		return details;
 	}
 
 	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) {

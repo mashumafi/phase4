@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_BOARD_ZOBRIST_HASHING_H
 
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/random.h>
@@ -51,11 +52,11 @@ public:
 
 	constexpr ZobristHashing(uint64_t hash = 0);
 
-	[[nodiscard]] constexpr ZobristHashing movePiece(int color, int piece, uint8_t from, uint8_t to) const;
+	[[nodiscard]] constexpr ZobristHashing movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const;
 
-	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(int color, int piece, uint8_t at) const;
+	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const;
 
-	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) const;
+	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const;
 
 	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(int enPassantRank) const;
 
@@ -86,19 +87,19 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 		m_hash(hash) {
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(int color, int piece, uint8_t from, uint8_t to) const {
-	const uint64_t fromHash = G_KEYS.m_fieldHashes.at(color, piece, from);
-	const uint64_t toHash = G_KEYS.m_fieldHashes.at(color, piece, to);
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const {
+	const uint64_t fromHash = G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), from);
+	const uint64_t toHash = G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), to);
 	return m_hash ^ fromHash ^ toHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(int color, int piece, uint8_t at) const {
-	return m_hash ^ G_KEYS.m_fieldHashes.at(color, piece, at);
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const {
+	return m_hash ^ G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), at);
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(uint8_t currentCastling, uint8_t castlingChange) const {
-	if (likely((currentCastling & castlingChange) != 0)) {
-		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange).bitScan()];
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const {
+	if (likely((currentCastling & castlingChange) != common::Castling::NONE)) {
+		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange.get_raw_value()).bitScan()];
 	}
 
 	return m_hash;

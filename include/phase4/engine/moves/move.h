@@ -27,8 +27,8 @@ public:
 private:
 	uint16_t _data;
 
-	friend bool operator==(const Move a, const Move b);
-	friend bool operator!=(const Move a, const Move b);
+	friend constexpr bool operator==(const Move a, const Move b);
+	friend constexpr bool operator!=(const Move a, const Move b);
 };
 
 constexpr common::Square Move::from() const {
@@ -62,7 +62,7 @@ constexpr Move::Move(std::string_view textNotation) :
 				(textNotation.size() >= 5) ? MoveFlags::getPromotionSymbolFlags(textNotation[4]) : MoveFlags::QUIET) {
 }
 
-std::ostream &operator<<(std::ostream &os, const Move &move) {
+inline std::ostream &operator<<(std::ostream &os, const Move &move) {
 	os << common::Square(move.from()) << common::Square(move.to());
 	if (unlikely(move.flags().isPromotion())) {
 		os << move.flags().getPromotionSymbol();
@@ -70,11 +70,11 @@ std::ostream &operator<<(std::ostream &os, const Move &move) {
 	return os;
 }
 
-bool operator==(const Move a, const Move b) {
+inline constexpr bool operator==(const Move a, const Move b) {
 	return a._data == b._data;
 }
 
-bool operator!=(const Move a, const Move b) {
+inline constexpr bool operator!=(const Move a, const Move b) {
 	return a._data != b._data;
 }
 

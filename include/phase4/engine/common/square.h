@@ -83,6 +83,8 @@ public:
 	static const Square H7;
 	static const Square H8;
 
+	static const Square INVALID;
+
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
 	[[nodiscard]] constexpr uint8_t get_raw_value() const;
@@ -209,6 +211,7 @@ inline constexpr Square Square::H5(60);
 inline constexpr Square Square::H6(61);
 inline constexpr Square Square::H7(62);
 inline constexpr Square Square::H8(63);
+inline constexpr Square Square::INVALID(64);
 
 constexpr Square::Square(const Square &that) :
 		m_value{ that.m_value } {

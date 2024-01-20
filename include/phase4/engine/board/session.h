@@ -42,6 +42,21 @@ public:
 		return m_position.calculatePosition(color, phase);
 	}
 
+	void makeMove(moves::Move move) {
+		m_castlings.push_back(m_position.m_castling);
+		m_hashes.push_back(m_position.Hash);
+		m_pawnHashes.push_back(m_position.PawnHash);
+		m_enPassants.push_back(m_position.EnPassant);
+		m_irreversibleMovesCounts.push_back(m_position.IrreversibleMovesCount);
+
+		const Position::MoveDetails &details = m_position.makeMove(move);
+		if (details.promotion)
+			m_promotedPieces.push_back(*details.promotion);
+
+		if (details.removed)
+			m_killedPieces.push_back(details.removed->pieceType);
+	}
+
 	static constexpr uint32_t calculateMaterialAtOpening() {
 		return ai::score::EvaluationConstants::Pieces[common::PieceType::KING.get_raw_value()] +
 				ai::score::EvaluationConstants::Pieces[common::PieceType::QUEEN.get_raw_value()] +
@@ -59,12 +74,12 @@ private:
 	Position m_position;
 	static const int32_t MATERIAL_AT_OPENING;
 
-	common::Vector<int> m_killedPieces;
-	common::Vector<int64_t> m_enPassants;
+	common::Vector<common::PieceType> m_killedPieces;
+	common::Vector<common::Bitset> m_enPassants;
 	common::Vector<common::Castling> m_castlings;
-	common::Vector<int> m_promotedPieces;
+	common::Vector<common::PieceType> m_promotedPieces;
 	common::Vector<ZobristHashing> m_hashes;
-	common::Vector<int64_t> m_pawnHashes;
+	common::Vector<ZobristHashing> m_pawnHashes;
 	common::Vector<int> m_irreversibleMovesCounts;
 	common::Vector<common::FieldIndex> m_wallSlides;
 };

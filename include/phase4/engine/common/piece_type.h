@@ -28,7 +28,8 @@ public:
 	constexpr PieceType(PieceType &&that) noexcept;
 	constexpr PieceType &operator=(PieceType &&that) noexcept;
 
-	constexpr bool operator==(const PieceType &) const;
+	constexpr bool operator==(const PieceType &that) const;
+	constexpr bool operator!=(const PieceType &that) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
@@ -88,6 +89,14 @@ inline constexpr std::array<PieceType, 6> PIECES = {
 
 [[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
+}
+
+inline constexpr bool PieceType::operator==(const PieceType &that) const {
+	return m_piece == that.m_piece;
+}
+
+inline constexpr bool PieceType::operator!=(const PieceType &that) const {
+	return m_piece != that.m_piece;
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceType color) {
