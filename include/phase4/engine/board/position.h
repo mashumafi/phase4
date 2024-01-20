@@ -10,6 +10,7 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/vector.h>
+#include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/wall_operations.h>
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
