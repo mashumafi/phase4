@@ -105,16 +105,16 @@ private:
 	return (m_bits & -m_bits);
 }
 
-inline constexpr Bitset::Bitset() noexcept :
-		Bitset(0) {
-}
-
 inline constexpr Bitset::Bitset(uint64_t bits) noexcept :
 		m_bits(bits) {
 }
 
 inline constexpr Bitset::Bitset(const Bitset &that) noexcept :
 		m_bits(that.m_bits) {
+}
+
+inline constexpr Bitset::Bitset() noexcept :
+		Bitset(0) {
 }
 
 inline constexpr Bitset &Bitset::operator=(const Bitset &that) {
