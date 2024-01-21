@@ -11,6 +11,7 @@
 #include <phase4/engine/moves/moves_generator.h>
 
 #include <cstdint>
+#include <tuple>
 
 namespace phase4::engine::board::operators {
 
@@ -36,7 +37,7 @@ public:
 				const Square fieldIndex(field.bitScan());
 				availableMoves = availableMoves.popLsb();
 
-				moves.push_back(moves::Move(from, fieldIndex, moves::MoveFlags::CAPTURE));
+				moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);
 			}
 		}
 	}
@@ -60,7 +61,7 @@ public:
 				const Square fieldIndex(field.bitScan());
 				availableMoves = availableMoves.popLsb();
 
-				moves.push_back(moves::Move(from, fieldIndex, moves::MoveFlags::QUIET));
+				moves.emplace_back(from, fieldIndex, moves::MoveFlags::QUIET);
 			}
 		}
 	}
@@ -84,7 +85,7 @@ public:
 				Square fieldIndex(field.bitScan());
 				availableMoves = availableMoves.popLsb();
 
-				moves.push_back(moves::Move(from, fieldIndex, moves::MoveFlags::CAPTURE));
+				moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);
 			}
 		}
 	}

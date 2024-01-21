@@ -16,16 +16,17 @@ TEST_CASE("Operators standard getAllMoves") {
 	magic::MagicBitboards::initWithInternalKeys();
 
 	Position position;
-	position.SetDefaultState();
 
 	{ // Default State
+		position.SetDefaultState();
+
 		Moves moves;
 		Operators::GetAllMoves(position, moves);
 
 		CHECK(moves.size() == 20);
 	}
 
-	{ // B7D7 Push pawn
+	{ // G2G3 Push pawn
 		Move move(Square::B7, Square::D7, MoveFlags::QUIET);
 		CHECK(Operators::IsMoveLegal(position, move));
 
@@ -45,7 +46,7 @@ TEST_CASE("Operators standard getAllMoves") {
 		CHECK(moves.size() == 20);
 	}
 
-	{ // G2G3 Double push pawn
+	{ // B7B5 Double push pawn
 		Move move(Square::G2, Square::E2, MoveFlags::DOUBLE_PUSH);
 		CHECK(Operators::IsMoveLegal(position, move));
 

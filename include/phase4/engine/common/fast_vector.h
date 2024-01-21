@@ -23,6 +23,11 @@ public:
 	void push_back(const T &value);
 	void push_back(T &&value);
 
+	template <class... Args>
+	void emplace_back(Args &&...args) {
+		m_items[m_size++] = T(args...);
+	}
+
 	T &&pop_back();
 
 	void clear();
