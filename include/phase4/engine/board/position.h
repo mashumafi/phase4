@@ -84,7 +84,7 @@ public:
 		for (int fieldIndex = 0; fieldIndex < 64; fieldIndex++) {
 			for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 				common::Bitset bitboard = Pieces[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | Pieces[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
-				if ((bitboard & (1ul << fieldIndex)) != 0) {
+				if ((bitboard & (1ull << fieldIndex)) != 0) {
 					pieceTable[fieldIndex] = pieceIndex;
 					break;
 				}
@@ -203,7 +203,7 @@ public:
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
-	std::optional<std::tuple<common::PieceColor, common::PieceType>> GetPiece(int fieldIndex) {
+	std::optional<std::tuple<common::PieceColor, common::PieceType>> GetPiece(uint16_t fieldIndex) {
 		using namespace common;
 
 		PieceType pieceType = PieceTable[fieldIndex];
