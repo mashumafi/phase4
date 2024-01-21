@@ -8,6 +8,6 @@ enum GamePhase {
 	OPENING,
 	ENDING,
 };
-};
+}
 
 #endif

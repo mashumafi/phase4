@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 
+#include <phase4/engine/ai/score/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
@@ -88,29 +89,29 @@ public:
 		}
 	}
 
-	/*static(int, int) GetMobility(const Position& position, common::Color color, common::Bitset& fieldsAttackedByColor) {
+	std::tuple<int32_t, int32_t> GetMobility(const Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
 		using namespace common;
 
-		var centerMobility = 0;
-		var outsideMobility = 0;
+		int32_t centerMobility = 0;
+		int32_t outsideMobility = 0;
 
-		var knights = boardState.Pieces[color][Piece.Knight];
+		Bitset knights = position.Pieces[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			var piece = BitOperations.GetLsb(knights);
-			knights = BitOperations.PopLsb(knights);
+			const Bitset piece = knights.getLsb();
+			knights = knights.popLsb();
 
-			var from = BitOperations.BitScan(piece);
-			var availableMoves = moves::MovesGenerator::getKnightMoves(from);
+			const Square from(piece.bitScan());
+			const Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from);
 
-			centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
-			outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
+			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).count();
+			outsideMobility += (availableMoves & ai::score::EvaluationConstants::Outside).count();
 
 			fieldsAttackedByColor |= availableMoves;
 		}
 
-		return (centerMobility, outsideMobility);
-	}*/
+		return std::make_tuple(centerMobility, outsideMobility);
+	}
 
 	static bool IsMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;

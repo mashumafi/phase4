@@ -143,8 +143,8 @@ public:
 
 		common::Bitset move = from.asBitboard() | to.asBitboard();
 
-		Pieces[color.get_raw_value()][piece.get_raw_value()] = Pieces[color.get_raw_value()][piece.get_raw_value()] ^ move;
-		Occupancy[color.get_raw_value()] = Occupancy[color.get_raw_value()] ^ move;
+		Pieces[color.get_raw_value()][piece.get_raw_value()] ^= move;
+		Occupancy[color.get_raw_value()] ^= move;
 		OccupancySummary = OccupancySummary ^ move;
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
@@ -163,8 +163,8 @@ public:
 
 		common::Bitset field = fieldIndex.asBitboard();
 
-		Pieces[color.get_raw_value()][piece.get_raw_value()] = Pieces[color.get_raw_value()][piece.get_raw_value()] ^ field;
-		Occupancy[color.get_raw_value()] = Occupancy[color.get_raw_value()] ^ field;
+		Pieces[color.get_raw_value()][piece.get_raw_value()] ^= field;
+		Occupancy[color.get_raw_value()] ^= field;
 		OccupancySummary = OccupancySummary ^ field;
 
 		Material[color.get_raw_value()] += EvaluationConstants::Pieces[piece.get_raw_value()];
@@ -181,9 +181,9 @@ public:
 
 		common::Bitset field = fieldIndex.asBitboard();
 
-		Pieces[color.get_raw_value()][piece.get_raw_value()] = Pieces[color.get_raw_value()][piece.get_raw_value()] ^ field;
-		Occupancy[color.get_raw_value()] = Occupancy[color.get_raw_value()] ^ field;
-		OccupancySummary = OccupancySummary ^ field;
+		Pieces[color.get_raw_value()][piece.get_raw_value()] ^= field;
+		Occupancy[color.get_raw_value()] ^= field;
+		OccupancySummary ^= field;
 
 		Material[color.get_raw_value()] -= EvaluationConstants::Pieces[piece.get_raw_value()];
 

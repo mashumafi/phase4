@@ -4,11 +4,14 @@
 #include <bitset>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 
 namespace phase4::engine::common {
 
 class Bitset {
 public:
+	static const Bitset MAX;
+
 	constexpr Bitset() noexcept;
 	constexpr Bitset(size_t bits) noexcept;
 
@@ -55,6 +58,9 @@ public:
 	constexpr Bitset operator|(Bitset bits) const noexcept;
 	constexpr Bitset operator|(uint64_t bits) const noexcept;
 
+	constexpr Bitset operator|=(Bitset bits) noexcept;
+	constexpr Bitset operator|=(uint64_t bits) noexcept;
+
 	constexpr Bitset operator&(Bitset bits) const noexcept;
 	constexpr Bitset operator&(uint64_t bits) const noexcept;
 
@@ -71,6 +77,9 @@ public:
 
 	constexpr Bitset operator^(Bitset bits) const noexcept;
 	constexpr Bitset operator^(uint64_t bits) const noexcept;
+
+	constexpr Bitset operator^=(Bitset bits) noexcept;
+	constexpr Bitset operator^=(uint64_t bits) noexcept;
 
 	constexpr Bitset operator<<(Bitset bits) const noexcept;
 	constexpr Bitset operator<<(uint64_t bits) const noexcept;
@@ -100,7 +109,7 @@ inline constexpr Bitset::Bitset() noexcept :
 		Bitset(0) {
 }
 
-inline constexpr Bitset::Bitset(size_t bits) noexcept :
+inline constexpr Bitset::Bitset(uint64_t bits) noexcept :
 		m_bits(bits) {
 }
 
@@ -121,6 +130,8 @@ inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
 	m_bits = std::move(that).m_bits;
 	return *this;
 }
+
+constexpr Bitset Bitset::MAX(std::numeric_limits<uint64_t>::max());
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
 	return (m_bits & (m_bits - 1));
@@ -185,6 +196,16 @@ inline constexpr Bitset Bitset::operator|(uint64_t bits) const noexcept {
 	return Bitset(m_bits | bits);
 }
 
+inline constexpr Bitset Bitset::operator|=(Bitset bits) noexcept {
+	m_bits |= bits.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset Bitset::operator|=(uint64_t bits) noexcept {
+	m_bits |= bits;
+	return *this;
+}
+
 inline constexpr Bitset Bitset::operator&(Bitset bits) const noexcept {
 	return Bitset(m_bits & bits.m_bits);
 }
@@ -229,6 +250,16 @@ constexpr Bitset Bitset::operator^(Bitset bits) const noexcept {
 
 constexpr Bitset Bitset::operator^(uint64_t bits) const noexcept {
 	return Bitset(m_bits ^ bits);
+}
+
+inline constexpr Bitset Bitset::operator^=(Bitset bits) noexcept {
+	m_bits ^= bits.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset Bitset::operator^=(uint64_t bits) noexcept {
+	m_bits ^= bits;
+	return *this;
 }
 
 constexpr Bitset Bitset::operator<<(Bitset bits) const noexcept {
