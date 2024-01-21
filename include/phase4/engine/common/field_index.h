@@ -33,7 +33,7 @@ constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
 		y{ y } {
 }
 
-constexpr FieldIndex FieldIndex::ZERO(0, 0);
+inline constexpr FieldIndex FieldIndex::ZERO(0, 0);
 
 constexpr FieldIndex::FieldIndex() :
 		FieldIndex(0, 0) {
