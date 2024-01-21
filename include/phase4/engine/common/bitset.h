@@ -130,7 +130,7 @@ inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
 	return *this;
 }
 
-constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
+inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
 	return (m_bits & (m_bits - 1));

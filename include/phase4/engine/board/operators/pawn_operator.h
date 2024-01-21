@@ -213,6 +213,7 @@ private:
 		}
 	}
 };
+
 } //namespace phase4::engine::board::operators
 
 #endif

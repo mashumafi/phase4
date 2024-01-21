@@ -227,18 +227,25 @@ public:
 		struct Movement {
 			common::Square from;
 			common::Square to;
+
+			bool operator==(MakeMoveResult::Movement that) const {
+				return from == that.from && to == that.to;
+			}
 		};
-		common::FastVector<Movement, 5> moved;
 
-		std::optional<common::Square> added;
-
-		std::optional<common::PieceType> promotion;
-
-		struct Removed {
+		struct PieceAndSquare {
 			common::PieceType pieceType;
 			common::Square at;
 		};
-		std::optional<Removed> removed;
+
+		common::FastVector<Movement, 5> moved;
+
+		std::optional<PieceAndSquare> added;
+
+		std::optional<common::PieceType> promotion;
+
+		std::optional<PieceAndSquare> killed;
+		common::FastVector<PieceAndSquare, 2> removed;
 
 		std::optional<common::FieldIndex> slide;
 	};
@@ -269,6 +276,7 @@ public:
 
 		if (move.flags().isSinglePush()) {
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			result.moved.push_back({ move.from(), move.to() });
 			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 			if (pieceType == PieceType::PAWN) {
@@ -276,6 +284,7 @@ public:
 			}
 		} else if (move.flags().isDoublePush()) {
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			result.moved.push_back({ move.from(), move.to() });
 			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
@@ -289,18 +298,21 @@ public:
 			PieceType killedPiece = PieceTable[enemyPieceField];
 
 			RemovePiece(enemyColor, killedPiece, enemyPieceField);
+			result.removed.push_back({ killedPiece, enemyPieceField });
 			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 			PawnHash = PawnHash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
+			result.moved.push_back({ move.from(), move.to() });
 			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
-			result.removed = MakeMoveResult::Removed{ killedPiece, enemyPieceField };
+			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, enemyPieceField };
 		} else if (move.flags().isCapture()) {
 			PieceType killedPiece = PieceTable[move.to()];
 
 			RemovePiece(enemyColor, killedPiece, move.to());
+			result.removed.push_back({ killedPiece, move.to() });
 			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, move.to());
 
 			if (killedPiece == PieceType::PAWN) {
@@ -330,15 +342,18 @@ public:
 				PieceType promotionPiece = move.flags().getPromotionPiece();
 
 				RemovePiece(ColorToMove, pieceType, move.from());
+				result.removed.push_back({ pieceType, move.from() });
 				Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 				PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 
 				AddPiece(ColorToMove, promotionPiece, move.to());
+				result.added = { promotionPiece, move.to() };
 				Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
 				result.promotion = promotionPiece;
 			} else {
 				MovePiece(ColorToMove, pieceType, move.from(), move.to());
+				result.moved.push_back({ move.from(), move.to() });
 				Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 				if (pieceType == PieceType::PAWN) {
@@ -346,7 +361,7 @@ public:
 				}
 			}
 
-			result.removed = MakeMoveResult::Removed{ killedPiece, move.to() };
+			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, move.to() };
 		} else if (move.flags().isCastling()) {
 			// Short castling
 			if (move.flags().isKingCastling()) {
@@ -354,11 +369,17 @@ public:
 					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
 					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
 
+					result.moved.push_back({ Square::A4, Square::A2 });
+					result.moved.push_back({ Square::A1, Square::A3 });
+
 					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
 					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
 				} else {
 					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
 					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+
+					result.moved.push_back({ Square::H4, Square::H2 });
+					result.moved.push_back({ Square::H1, Square::H3 });
 
 					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
 					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
@@ -368,11 +389,17 @@ public:
 					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
 					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
 
+					result.moved.push_back({ Square::A4, Square::A6 });
+					result.moved.push_back({ Square::A8, Square::A5 });
+
 					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
 					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
 				} else {
 					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
 					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+
+					result.moved.push_back({ Square::H4, Square::H6 });
+					result.moved.push_back({ Square::H8, Square::H5 });
 
 					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
 					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
@@ -394,10 +421,12 @@ public:
 			PieceType promotionPiece = move.flags().getPromotionPiece();
 
 			RemovePiece(ColorToMove, pieceType, move.from());
+			result.removed.push_back({ pieceType, move.from() });
 			Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 			PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 
 			AddPiece(ColorToMove, promotionPiece, move.to());
+			result.added = { promotionPiece, move.to() };
 			Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
 			result.promotion = promotionPiece;
@@ -443,6 +472,7 @@ public:
 					if (auto pieceResult = GetPiece(from)) {
 						auto [resultColor, resultType] = *pieceResult;
 						MovePiece(resultColor, resultType, from, to);
+						result.moved.push_back({ from, to });
 						Hash = Hash.movePiece(resultColor, resultType, from, to);
 						if (resultType == PieceType::PAWN) {
 							PawnHash = PawnHash.movePiece(resultColor, resultType, from, to);

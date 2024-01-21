@@ -64,8 +64,8 @@ public:
 		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
-		if (unlikely(details.removed))
-			m_killedPieces.push_back(details.removed->pieceType);
+		if (unlikely(details.killed))
+			m_killedPieces.push_back(details.killed->pieceType);
 
 		if (unlikely(details.slide))
 			m_wallSlides.push_back(*details.slide);

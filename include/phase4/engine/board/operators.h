@@ -18,11 +18,13 @@ public:
 	static void GetLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		operators::PawnOperator::GetLoudMoves(position, moves, evasionMask);
 		operators::KnightOperator::GetLoudMoves(position, moves, evasionMask);
+		operators::BishopOperator::GetLoudMoves(position, moves, evasionMask);
 	}
 
 	static void GetQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		operators::PawnOperator::GetQuietMoves(position, moves, evasionMask);
 		operators::KnightOperator::GetQuietMoves(position, moves, evasionMask);
+		operators::BishopOperator::GetQuietMoves(position, moves, evasionMask);
 	}
 
 	static void GetAllMoves(const Position &position, moves::Moves &moves) {
@@ -30,7 +32,7 @@ public:
 		GetQuietMoves(position, moves, common::Bitset::MAX);
 	}
 
-	bool IsMoveLegal(const Position &position, moves::Move move) {
+	static bool IsMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
 		if (((move.from().asBitboard()) & position.Occupancy[position.ColorToMove.get_raw_value()]) == 0) {
 			return false;
@@ -42,6 +44,8 @@ public:
 				return operators::PawnOperator::IsMoveLegal(position, move);
 			case common::PieceType::KNIGHT.get_raw_value():
 				return operators::KnightOperator::IsMoveLegal(position, move);
+			case common::PieceType::BISHOP.get_raw_value():
+				return operators::BishopOperator::IsMoveLegal(position, move);
 		}
 
 		return false;
