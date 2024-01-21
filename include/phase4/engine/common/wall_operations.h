@@ -79,7 +79,7 @@ inline constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::SLIDE_FR
 
 constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
 	std::array<std::array<common::Bitset, 64>, 64> result{};
-	for (int from = 0; from < 64; ++from) {
+	for (int16_t from = 0; from < 64; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		int64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
@@ -110,7 +110,7 @@ constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populat
 
 constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSlideDir() {
 	std::array<std::array<FieldIndex, 64>, 64> result{};
-	for (int from = 0; from < 64; ++from) {
+	for (int16_t from = 0; from < 64; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
@@ -136,7 +136,7 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 
 constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populateSlideSquare() {
 	std::array<std::array<common::Square, 64>, 64> result{};
-	for (int from = 0; from < 64; ++from) {
+	for (int16_t from = 0; from < 64; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
