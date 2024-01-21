@@ -12,7 +12,7 @@ public:
 	static const Bitset MAX;
 
 	constexpr Bitset() noexcept;
-	constexpr Bitset(size_t bits) noexcept;
+	constexpr Bitset(uint64_t bits) noexcept;
 
 	constexpr Bitset(const Bitset &that) noexcept;
 	constexpr Bitset &operator=(const Bitset &that);
