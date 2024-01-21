@@ -40,59 +40,55 @@ public:
 		}
 	}
 
-	/*static int GetQuietMoves(const Position& position, moves::Moves& moves, common::Bitset evasionMask) {
+	static void GetQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
-		Bitset knights = position.Pieces[color][Piece.Knight];
+		Bitset knights = position.Pieces[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			var piece = BitOperations.GetLsb(knights);
-			knights = BitOperations.PopLsb(knights);
+			const Bitset piece = knights.getLsb();
+			knights = knights.popLsb();
 
-			var from = BitOperations.BitScan(piece);
-			var availableMoves = KnightMovesGenerator.GetMoves(from) & ~position.OccupancySummary;
+			const Square from(piece.bitScan());
+			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & ~position.OccupancySummary;
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				var field = BitOperations.GetLsb(availableMoves);
-				var fieldIndex = BitOperations.BitScan(field);
-				availableMoves = BitOperations.PopLsb(availableMoves);
+				const Bitset field = availableMoves.getLsb();
+				const Square fieldIndex(field.bitScan());
+				availableMoves = availableMoves.popLsb();
 
-				moves[offset++] = new Move(from, fieldIndex, MoveFlags.Quiet);
+				moves.push_back(moves::Move(from, fieldIndex, moves::MoveFlags::QUIET));
 			}
 		}
-
-		return offset;
 	}
 
-	static int GetAvailableCaptureMoves(const Position& position, moves::Moves& moves) {
+	static void GetAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		var color = boardState.ColorToMove;
-		var enemyColor = ColorOperations.Invert(color);
-		var knights = boardState.Pieces[color][Piece.Knight];
+		const PieceColor color = position.ColorToMove;
+		const PieceColor enemyColor = color.invert();
+		Bitset knights = position.Pieces[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			var piece = BitOperations.GetLsb(knights);
-			knights = BitOperations.PopLsb(knights);
+			const Bitset piece = knights.getLsb();
+			knights = knights.popLsb();
 
-			var from = BitOperations.BitScan(piece);
-			var availableMoves = KnightMovesGenerator.GetMoves(from) & boardState.Occupancy[enemyColor];
+			const Square from(piece.bitScan());
+			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & position.Occupancy[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
-				var field = BitOperations.GetLsb(availableMoves);
-				var fieldIndex = BitOperations.BitScan(field);
-				availableMoves = BitOperations.PopLsb(availableMoves);
+				const Bitset field = availableMoves.getLsb();
+				const Square fieldIndex(field.bitScan());
+				availableMoves = availableMoves.popLsb();
 
-				moves[offset++] = new Move(from, fieldIndex, MoveFlags.Capture);
+				moves.push_back(moves::Move(from, fieldIndex, moves::MoveFlags::CAPTURE));
 			}
 		}
-
-		return offset;
 	}
 
-	static(int, int) GetMobility(const Position& position, common::Color color, common::Bitset& fieldsAttackedByColor) {
+	/*static(int, int) GetMobility(const Position& position, common::Color color, common::Bitset& fieldsAttackedByColor) {
 		using namespace common;
 
 		var centerMobility = 0;
@@ -105,7 +101,7 @@ public:
 			knights = BitOperations.PopLsb(knights);
 
 			var from = BitOperations.BitScan(piece);
-			var availableMoves = KnightMovesGenerator.GetMoves(from);
+			var availableMoves = moves::MovesGenerator::getKnightMoves(from);
 
 			centerMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.ExtendedCenter);
 			outsideMobility += (int)BitOperations.Count(availableMoves & EvaluationConstants.Outside);
@@ -114,25 +110,25 @@ public:
 		}
 
 		return (centerMobility, outsideMobility);
-	}
+	}*/
 
-	static bool IsMoveLegal(const Position& position, moves::Move move) {
+	static bool IsMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
-		var enemyColor = ColorOperations.Invert(boardState.ColorToMove);
-		var availableMoves = KnightMovesGenerator.GetMoves(move.From);
-		var toField = 1ul << move.To;
+		const PieceColor enemyColor = position.ColorToMove.invert();
+		const Bitset availableMoves = moves::MovesGenerator::getKnightMoves(move.from());
+		const Bitset toField = move.to().asBitboard();
 
-		if (move.IsSinglePush() && (availableMoves & toField) != 0 && (boardState.OccupancySummary & toField) == 0) {
+		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.OccupancySummary & toField) == 0) {
 			return true;
 		}
 
-		if (move.IsCapture() && (availableMoves & toField) != 0 && (boardState.Occupancy[enemyColor] & toField) != 0) {
+		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.Occupancy[enemyColor.get_raw_value()] & toField) != 0) {
 			return true;
 		}
 
 		return false;
-	}*/
+	}
 };
 
 } //namespace phase4::engine::board::operators
