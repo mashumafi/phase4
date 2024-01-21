@@ -43,7 +43,7 @@ public:
 
 	static constexpr std::array<std::array<uint64_t, 8>, 8> populateSlideFromBB();
 
-	static constexpr std::array<std::array<uint64_t, 64>, 64> populateSlideToBB();
+	static constexpr std::array<std::array<common::Bitset, 64>, 64> populateSlideToBB();
 
 	static constexpr std::array<std::array<FieldIndex, 64>, 64> populateSlideDir();
 
@@ -54,7 +54,7 @@ public:
 
 	// given a wall index and square, gives you a resulting wall mask
 	// used to update the bitset used for the wall mask
-	static const std::array<std::array<uint64_t, 64>, 64> SLIDE_TO;
+	static const std::array<std::array<common::Bitset, 64>, 64> SLIDE_TO;
 
 	// given a wall inddex and the landing square, gives the sliding direction
 	// used to determine enpassand and undo history
@@ -77,8 +77,8 @@ constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::populateSlideFr
 
 inline constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::SLIDE_FROM = WallOperations::populateSlideFromBB();
 
-constexpr std::array<std::array<uint64_t, 64>, 64> WallOperations::populateSlideToBB() {
-	std::array<std::array<uint64_t, 64>, 64> result{};
+constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
+	std::array<std::array<common::Bitset, 64>, 64> result{};
 	for (int from = 0; from < 64; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		int64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
@@ -160,7 +160,7 @@ constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populat
 	return result;
 }
 
-inline constexpr std::array<std::array<uint64_t, 64>, 64> WallOperations::SLIDE_TO = WallOperations::populateSlideToBB();
+inline constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::SLIDE_TO = WallOperations::populateSlideToBB();
 inline constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::SLIDE_DIR = WallOperations::populateSlideDir();
 inline constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::SLIDE_SQUARE = WallOperations::populateSlideSquare();
 

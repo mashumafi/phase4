@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_MOVE_H
 #define PHASE4_ENGINE_MOVES_MOVE_H
 
+#include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/move_flags.h>
 
@@ -30,6 +31,9 @@ private:
 	friend constexpr bool operator==(const Move a, const Move b);
 	friend constexpr bool operator!=(const Move a, const Move b);
 };
+
+constexpr size_t MAX_MOVES_COUNT = 218;
+using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
 	return common::Square(_data & 0x3F);

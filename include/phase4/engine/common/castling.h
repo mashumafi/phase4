@@ -23,6 +23,8 @@ public:
 	/// @return the raw internal value
 	[[nodiscard]] constexpr uint8_t get_raw_value() const;
 
+	constexpr Castling();
+
 	constexpr Castling(Castling const &that);
 	constexpr Castling &operator=(const Castling &that);
 
@@ -59,6 +61,10 @@ constexpr Castling &Castling::operator=(uint64_t value) {
 	return *this;
 }
 
+constexpr Castling::Castling() :
+		Castling(0) {
+}
+
 constexpr Castling Castling::operator|(Castling that) const {
 	return Castling(m_value | that.m_value);
 }
@@ -89,7 +95,7 @@ constexpr Castling &Castling::operator=(Castling &&that) noexcept {
 	return *this;
 }
 
-inline constexpr Castling Castling::NONE = 0;
+inline constexpr Castling Castling::NONE;
 inline constexpr Castling Castling::WHITE_SHORT = 1;
 inline constexpr Castling Castling::WHITE_LONG = 2;
 inline constexpr Castling Castling::BLACK_SHORT = 4;

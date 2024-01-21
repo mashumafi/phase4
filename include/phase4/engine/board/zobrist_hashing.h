@@ -62,7 +62,7 @@ public:
 
 	[[nodiscard]] constexpr ZobristHashing changeSide() const;
 
-	[[nodiscard]] constexpr ZobristHashing toggleWalls(uint64_t walls) const;
+	[[nodiscard]] constexpr ZobristHashing toggleWalls(common::Bitset walls) const;
 
 	constexpr bool operator==(ZobristHashing other) const;
 	constexpr bool operator!=(ZobristHashing other) const;
@@ -113,8 +113,8 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash ^ G_KEYS.m_sideHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(uint64_t walls) const {
-	return m_hash ^ G_KEYS.m_wallHash[common::Bitset(walls).bitScan()];
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(common::Bitset walls) const {
+	return m_hash ^ G_KEYS.m_wallHash[walls.bitScan()];
 }
 
 inline constexpr bool ZobristHashing::operator==(ZobristHashing other) const {

@@ -6,17 +6,18 @@
 #include <phase4/engine/board/zobrist_hashing.h>
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
+#include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
-#include <phase4/engine/common/vector.h>
-#include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/wall_operations.h>
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
 #include <array>
 #include <cstdint>
+#include <cstring>
+#include <optional>
 
 namespace phase4::engine::board {
 
@@ -31,13 +32,13 @@ public:
 	common::Bitset EnPassant;
 	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor ColorToMove = common::PieceColor::WHITE;
-	int MovesCount;
-	int IrreversibleMovesCount;
-	int NullMoves;
+	uint16_t MovesCount;
+	uint16_t IrreversibleMovesCount;
+	uint16_t NullMoves;
 
 	bool CastlingDone[2];
-	int Material[2];
-	int32_t Position[2][2];
+	int32_t Material[2];
+	int32_t m_positionEval[2][2];
 
 	std::array<common::PieceType, 64> PieceTable;
 
@@ -79,9 +80,9 @@ public:
 	}
 
 	void CalculatePieceTable(std::array<common::PieceType, 64> &pieceTable) {
-		pieceTable.fill(common::PieceType::EMPTY);
+		pieceTable.fill(common::PieceType::INVALID);
 		for (int fieldIndex = 0; fieldIndex < 64; fieldIndex++) {
-			for (common::PieceType pieceIndex : common::PieceType::PIECES) {
+			for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 				common::Bitset bitboard = Pieces[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | Pieces[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
 				if ((bitboard & (1ul << fieldIndex)) != 0) {
 					pieceTable[fieldIndex] = pieceIndex;
@@ -95,10 +96,10 @@ public:
 		Material[common::PieceColor::WHITE.get_raw_value()] = calculateMaterial(common::PieceColor::WHITE);
 		Material[common::PieceColor::BLACK.get_raw_value()] = calculateMaterial(common::PieceColor::BLACK);
 
-		Position[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::OPENING);
-		Position[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::ENDING);
-		Position[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::OPENING);
-		Position[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::ENDING);
+		m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::OPENING);
+		m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::ENDING);
+		m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::OPENING);
+		m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::ENDING);
 	}
 
 	int32_t calculateMaterial(common::PieceColor color) {
@@ -111,8 +112,8 @@ public:
 		return material;
 	}
 
-	int calculatePosition(common::PieceColor color, common::GamePhase phase) {
-		uint32_t result = 0;
+	int32_t calculatePosition(common::PieceColor color, common::GamePhase phase) {
+		int32_t result = 0;
 
 		for (size_t pieceIndex = 0; pieceIndex < 6; pieceIndex++) {
 			common::Bitset pieces(Pieces[color.get_raw_value()][pieceIndex]);
@@ -146,13 +147,13 @@ public:
 		Occupancy[color.get_raw_value()] = Occupancy[color.get_raw_value()] ^ move;
 		OccupancySummary = OccupancySummary ^ move;
 
-		Position[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
-		Position[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][to];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][to];
 
-		Position[color.get_raw_value()][GamePhase::ENDING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][from];
-		Position[color.get_raw_value()][GamePhase::ENDING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][to];
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][from];
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][to];
 
-		PieceTable[from] = PieceType::EMPTY;
+		PieceTable[from] = PieceType::INVALID;
 		PieceTable[to] = piece;
 	}
 
@@ -168,8 +169,8 @@ public:
 
 		Material[color.get_raw_value()] += EvaluationConstants::Pieces[piece.get_raw_value()];
 
-		Position[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
-		Position[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
 
 		PieceTable[fieldIndex] = piece;
 	}
@@ -186,13 +187,13 @@ public:
 
 		Material[color.get_raw_value()] -= EvaluationConstants::Pieces[piece.get_raw_value()];
 
-		Position[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
-		Position[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
 
-		PieceTable[fieldIndex] = PieceType::EMPTY;
+		PieceTable[fieldIndex] = PieceType::INVALID;
 	}
 
-	bool isKingChecked(common::PieceColor color) {
+	bool isKingChecked(common::PieceColor color) const {
 		const common::Bitset king = Pieces[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
 		if (king == 0) {
 			return false;
@@ -202,7 +203,27 @@ public:
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
-	struct MoveDetails {
+	std::optional<std::tuple<common::PieceColor, common::PieceType>> GetPiece(int fieldIndex) {
+		using namespace common;
+
+		PieceType pieceType = PieceTable[fieldIndex];
+		if (pieceType == PieceType::INVALID) {
+			return {};
+		}
+
+		uint64_t fieldBB = WallOperations::SquareBB(fieldIndex);
+		if ((Pieces[PieceColor::WHITE.get_raw_value()][pieceType.get_raw_value()] & fieldBB) > 0) {
+			return std::make_tuple(PieceColor::WHITE, pieceType);
+		}
+
+		if ((Pieces[PieceColor::BLACK.get_raw_value()][pieceType.get_raw_value()] & fieldBB) > 0) {
+			return std::make_tuple(PieceColor::BLACK, pieceType);
+		}
+
+		return {};
+	}
+
+	struct MakeMoveResult {
 		struct Movement {
 			common::Square from;
 			common::Square to;
@@ -218,12 +239,14 @@ public:
 			common::Square at;
 		};
 		std::optional<Removed> removed;
+
+		std::optional<common::FieldIndex> slide;
 	};
 
-	MoveDetails makeMove(moves::Move move) {
+	MakeMoveResult makeMove(moves::Move move) {
 		using namespace common;
 
-		MoveDetails details;
+		MakeMoveResult result;
 
 		PieceType pieceType = PieceTable[move.from()];
 		PieceColor enemyColor = ColorToMove.invert();
@@ -273,7 +296,7 @@ public:
 			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
-			details.removed = MoveDetails::Removed{ killedPiece, enemyPieceField };
+			result.removed = MakeMoveResult::Removed{ killedPiece, enemyPieceField };
 		} else if (move.flags().isCapture()) {
 			PieceType killedPiece = PieceTable[move.to()];
 
@@ -313,7 +336,7 @@ public:
 				AddPiece(ColorToMove, promotionPiece, move.to());
 				Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
-				details.promotion = promotionPiece;
+				result.promotion = promotionPiece;
 			} else {
 				MovePiece(ColorToMove, pieceType, move.from(), move.to());
 				Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
@@ -323,7 +346,7 @@ public:
 				}
 			}
 
-			details.removed = MoveDetails::Removed{ killedPiece, move.to() };
+			result.removed = MakeMoveResult::Removed{ killedPiece, move.to() };
 		} else if (move.flags().isCastling()) {
 			// Short castling
 			if (move.flags().isKingCastling()) {
@@ -377,7 +400,7 @@ public:
 			AddPiece(ColorToMove, promotionPiece, move.to());
 			Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
-			details.promotion = promotionPiece;
+			result.promotion = promotionPiece;
 		}
 
 		if (pieceType == PieceType::KING && !move.flags().isCastling()) {
@@ -391,108 +414,139 @@ public:
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
-			if (move.from() == 0) {
+			if (move.from() == Square::A1) {
 				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 				m_castling &= ~Castling::WHITE_SHORT;
-			} else if (move.from() == 7) {
+			} else if (move.from() == Square::A8) {
 				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 				m_castling &= ~Castling::WHITE_LONG;
-			} else if (move.from() == 56) {
+			} else if (move.from() == Square::H1) {
 				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 				m_castling &= ~Castling::BLACK_SHORT;
-			} else if (move.from() == 63) {
+			} else if (move.from() == Square::H8) {
 				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 				m_castling &= ~Castling::BLACK_LONG;
 			}
 		}
 
-		/*if (likely(Walls > 0)) {
-			int wallIndex = BitOperations::BitScan(Walls);
-			Position wallMove = WallOperations::SLIDE_DIR[wallIndex][move.To];
-			if (wallMove != Common::Position::Empty) {
-				int slideCount = 0;
-				std::array<Move, 4> moves;
+		if (likely(Walls > 0)) {
+			uint8_t wallIndex = Walls.bitScan();
+			const FieldIndex wallMove = WallOperations::SLIDE_DIR[wallIndex][move.to()];
+			if (wallMove != FieldIndex::ZERO) {
+				OccupancySummary = OccupancySummary & ~Walls;
 
-				OccupancySummary &= ~Walls;
-
-				ulong original = WallOperations::SLIDE_TO[wallIndex][move.To];
+				Bitset original = WallOperations::SLIDE_TO[wallIndex][move.to()];
 				while (original > 0) {
-					byte from = static_cast<byte>(BitOperations::BitScan(original));
-					byte to = WallOperations::SLIDE_SQUARE[wallIndex][from];
-					moves[slideCount++] = Move(from, to, 0);
-					std::pair<int, int> pieceResult;
-					if (GetPiece(from, pieceResult)) {
-						MovePiece(pieceResult.first, pieceResult.second, from, to, emitSignal);
-						Hash = ZobristHashing::MovePiece(Hash, pieceResult.first, pieceResult.second, from, to);
-						if (pieceResult.second == Piece::Pawn) {
-							PawnHash = ZobristHashing::MovePiece(PawnHash, pieceResult.first, pieceResult.second, from, to);
+					Square from(original.bitScan());
+					Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
+					result.moved.push_back(MakeMoveResult::Movement{ from, to });
+					if (auto pieceResult = GetPiece(from)) {
+						auto [resultColor, resultType] = *pieceResult;
+						MovePiece(resultColor, resultType, from, to);
+						Hash = Hash.movePiece(resultColor, resultType, from, to);
+						if (resultType == PieceType::PAWN) {
+							PawnHash = PawnHash.movePiece(resultColor, resultType, from, to);
 						}
 
-						if (pieceResult.second == Piece::Pawn && EnPassant != 0) {
-							int offset = (pieceResult.first == Color::White) ? -8 : 8;
-							int enPassantField = BitOperations::BitScan(EnPassant);
-							if (enPassantField == from + offset) {
+						if (resultType == PieceType::PAWN && EnPassant != 0) {
+							int offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
+							int enPassantField = EnPassant.bitScan();
+							if (enPassantField == from.get_raw_value() + offset) {
 								int enPassantRank = enPassantField % 8;
-								Hash = ZobristHashing::ToggleEnPassant(Hash, enPassantRank);
+								Hash = Hash.toggleEnPassant(enPassantRank);
 
-								if (wallMove.Offset() >= 0)
-									EnPassant >>= wallMove.Offset();
+								if (wallMove.offset() >= 0)
+									EnPassant = EnPassant >> wallMove.offset();
 								else
-									EnPassant <<= -wallMove.Offset();
-								Hash = ZobristHashing::ToggleEnPassant(Hash, BitOperations::BitScan(EnPassant) % 8);
+									EnPassant = EnPassant << -wallMove.offset();
+								Hash = Hash.toggleEnPassant(EnPassant.bitScan() % 8);
 							}
 						}
 
-						if (pieceResult.second == Piece::King) {
-							if (pieceResult.first == Color::White) {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteShort);
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteLong);
-								Castling &= ~Castling::WhiteCastling;
+						if (resultType == PieceType::KING) {
+							if (resultColor == PieceColor::WHITE) {
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+								m_castling &= ~Castling::WHITE_CASTLING;
 							} else {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackShort);
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackLong);
-								Castling &= ~Castling::BlackCastling;
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+								m_castling &= ~Castling::BLACK_CASTLING;
 							}
-						} else if (pieceResult.second == Piece::Rook) {
+						} else if (resultType == PieceType::ROOK) {
 							if (from == 0) {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteShort);
-								Castling &= ~Castling::WhiteShort;
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+								m_castling &= ~Castling::WHITE_SHORT;
 							} else if (from == 7) {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::WhiteLong);
-								Castling &= ~Castling::WhiteLong;
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+								m_castling &= ~Castling::WHITE_LONG;
 							} else if (from == 56) {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackShort);
-								Castling &= ~Castling::BlackShort;
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+								m_castling &= ~Castling::BLACK_SHORT;
 							} else if (from == 63) {
-								Hash = ZobristHashing::RemoveCastlingFlag(Hash, Castling, Castling::BlackLong);
-								Castling &= ~Castling::BlackLong;
+								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+								m_castling &= ~Castling::BLACK_LONG;
 							}
 						}
 					}
-					original = BitOperations::PopLsb(original);
+					original = original.popLsb();
 				}
 
-				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn off previous wall
-				Walls = WallOperations::SLIDE_TO[wallIndex][move.To];
-				Hash = ZobristHashing::ToggleWalls(Hash, Walls); // Turn on new wall location
-				OccupancySummary |= Walls;
-
-				if (emitSignal) {
-					Slide(moves);
-				}
+				Hash = Hash.toggleWalls(Walls); // Turn off previous wall
+				Walls = WallOperations::SLIDE_TO[wallIndex][move.to()];
+				Hash = Hash.toggleWalls(Walls); // Turn on new wall location
+				OccupancySummary = OccupancySummary | Walls;
 			}
-			_wallSlides.Push(wallMove);
+			result.slide = wallMove;
 		} else {
-			_wallSlides.Push(Common::Position::Empty);
-		}*/
+			result.slide = common::FieldIndex::ZERO;
+		}
 
 		ColorToMove = enemyColor;
 		Hash = Hash.changeSide();
 
-		return details;
+		return result;
 	}
 
-	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) {
+	bool SlideWall(common::FieldIndex wallMove) {
+		(void)wallMove;
+		return false;
+		/*if (Walls.count() != 4)
+			return false;
+
+		int slideCount = 0;
+		std::array<Move, 4> moves;
+
+		Walls.reset(wallMove.Offset());
+
+		std::bitset<64> walls = Walls;
+		if (wallMove.Offset() >= 0)
+			walls >>= wallMove.Offset();
+		else
+			walls <<= -wallMove.Offset();
+
+		std::bitset<64> original = walls;
+		while (original.any()) {
+			int from = original._Find_first();
+			int to = from + wallMove.Offset();
+			moves[slideCount++] = Move(from, to, 0);
+			// GetPiece function not provided, implement it accordingly
+			// MovePiece function not provided, implement it accordingly
+			original.reset(from);
+		}
+
+		Hash ^= Walls.to_ullong(); // Turn off previous wall
+		Walls = walls;
+		Hash ^= Walls.to_ullong(); // Turn on new wall location
+
+		if (emitSignal) {
+			// Slide function not provided, implement it accordingly
+			// Slide(moves);
+		}
+		return true;*/
+	}
+
+	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) const {
 		using namespace common;
 
 		PieceColor enemyColor = color.invert();

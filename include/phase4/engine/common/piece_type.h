@@ -9,18 +9,19 @@ namespace phase4::engine::common {
 
 class PieceType {
 public:
-	static const PieceType EMPTY;
 	static const PieceType PAWN;
 	static const PieceType KNIGHT;
 	static const PieceType BISHOP;
 	static const PieceType ROOK;
 	static const PieceType QUEEN;
 	static const PieceType KING;
-	static const PieceType END;
+	static const PieceType INVALID;
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
 	[[nodiscard]] constexpr uint8_t get_raw_value() const;
+
+	constexpr PieceType();
 
 	constexpr PieceType(PieceType const &that);
 	constexpr PieceType &operator=(const PieceType &that);
@@ -31,9 +32,9 @@ public:
 	constexpr bool operator==(const PieceType &that) const;
 	constexpr bool operator!=(const PieceType &that) const;
 
-	friend std::ostream &operator<<(std::ostream &os, PieceType color);
+	constexpr PieceType operator++();
 
-	static const std::array<PieceType, 6> PIECES;
+	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
 private:
 	constexpr PieceType(uint64_t value);
@@ -51,14 +52,17 @@ constexpr PieceType &PieceType::operator=(uint64_t value) {
 	return *this;
 }
 
-inline constexpr PieceType PieceType::EMPTY = -1;
+constexpr PieceType::PieceType() :
+		PieceType(6) {
+}
+
 inline constexpr PieceType PieceType::PAWN = 0;
 inline constexpr PieceType PieceType::KNIGHT = 1;
 inline constexpr PieceType PieceType::BISHOP = 2;
 inline constexpr PieceType PieceType::ROOK = 3;
 inline constexpr PieceType PieceType::QUEEN = 4;
 inline constexpr PieceType PieceType::KING = 5;
-inline constexpr PieceType PieceType::END = 6;
+inline constexpr PieceType PieceType::INVALID = 6;
 
 constexpr PieceType::PieceType(const PieceType &that) :
 		m_piece{ that.m_piece } {
@@ -78,15 +82,6 @@ constexpr PieceType &PieceType::operator=(PieceType &&that) noexcept {
 	return *this;
 }
 
-inline constexpr std::array<PieceType, 6> PIECES = {
-	PieceType::PAWN,
-	PieceType::KNIGHT,
-	PieceType::BISHOP,
-	PieceType::ROOK,
-	PieceType::QUEEN,
-	PieceType::KING
-};
-
 [[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
 }
@@ -97,6 +92,10 @@ inline constexpr bool PieceType::operator==(const PieceType &that) const {
 
 inline constexpr bool PieceType::operator!=(const PieceType &that) const {
 	return m_piece != that.m_piece;
+}
+
+inline constexpr PieceType PieceType::operator++() {
+	return m_piece++;
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceType color) {

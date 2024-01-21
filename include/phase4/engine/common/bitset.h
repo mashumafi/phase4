@@ -12,6 +12,12 @@ public:
 	constexpr Bitset() noexcept;
 	constexpr Bitset(size_t bits) noexcept;
 
+	constexpr Bitset(const Bitset &that) noexcept;
+	constexpr Bitset &operator=(const Bitset &that);
+
+	constexpr Bitset(Bitset &&that) noexcept;
+	constexpr Bitset &operator=(Bitset &&that) noexcept;
+
 	/// @brief turns off all bits except the least significant bit
 	/// @param bits to keep the LSB
 	/// @return
@@ -51,6 +57,9 @@ public:
 
 	constexpr Bitset operator&(Bitset bits) const noexcept;
 	constexpr Bitset operator&(uint64_t bits) const noexcept;
+
+	constexpr Bitset operator&=(Bitset bits) noexcept;
+	constexpr Bitset operator&=(uint64_t bits) noexcept;
 
 	constexpr Bitset operator*(Bitset bits) const noexcept;
 	constexpr Bitset operator*(uint64_t bits) const noexcept;
@@ -93,6 +102,24 @@ inline constexpr Bitset::Bitset() noexcept :
 
 inline constexpr Bitset::Bitset(size_t bits) noexcept :
 		m_bits(bits) {
+}
+
+inline constexpr Bitset::Bitset(const Bitset &that) noexcept :
+		m_bits(that.m_bits) {
+}
+
+inline constexpr Bitset &Bitset::operator=(const Bitset &that) {
+	m_bits = that.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset::Bitset(Bitset &&that) noexcept :
+		m_bits(std::move(that).m_bits) {
+}
+
+inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
+	m_bits = std::move(that).m_bits;
+	return *this;
 }
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
@@ -164,6 +191,16 @@ inline constexpr Bitset Bitset::operator&(Bitset bits) const noexcept {
 
 inline constexpr Bitset Bitset::operator&(uint64_t bits) const noexcept {
 	return Bitset(m_bits & bits);
+}
+
+inline constexpr Bitset Bitset::operator&=(Bitset bits) noexcept {
+	m_bits &= bits.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset Bitset::operator&=(uint64_t bits) noexcept {
+	m_bits &= bits;
+	return *this;
 }
 
 constexpr Bitset Bitset::operator*(Bitset bits) const noexcept {
