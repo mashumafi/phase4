@@ -1,3 +1,6 @@
+#ifndef PHASE4_ENGINE_BOARD_OPERATORS_H
+#define PHASE4_ENGINE_BOARD_OPERATORS_H
+
 #include <phase4/engine/board/operators/knight_operator.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/common/bitset.h>
@@ -13,3 +16,4 @@ public:
 };
 
 } //namespace phase4::engine::board
+#endif
