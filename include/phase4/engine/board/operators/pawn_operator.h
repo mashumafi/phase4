@@ -23,14 +23,14 @@ public:
 
 		PieceColor color = position.ColorToMove;
 
-		GetSinglePush(position, moves, true, evasionMask);
-		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, evasionMask);
-		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, evasionMask);
+		getSinglePush(position, moves, true, evasionMask);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, evasionMask);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, evasionMask);
 	}
 
 	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
-		GetSinglePush(position, moves, false, evasionMask);
-		GetDoublePush(position, moves, evasionMask);
+		getSinglePush(position, moves, false, evasionMask);
+		getDoublePush(position, moves, evasionMask);
 	}
 
 	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
@@ -38,8 +38,8 @@ public:
 
 		PieceColor color = position.ColorToMove;
 
-		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, Bitset::MAX);
-		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, Bitset::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, Bitset::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, Bitset::MAX);
 	}
 
 	static bool isMoveLegal(const Position &position, moves::Move move) {
@@ -78,7 +78,7 @@ public:
 	}
 
 private:
-	static void GetSinglePush(const Position &position, moves::Moves &moves, bool promotionsMode, common::Bitset evasionMask) {
+	static void getSinglePush(const Position &position, moves::Moves &moves, bool promotionsMode, common::Bitset evasionMask) {
 		using namespace common;
 
 		int shift;
@@ -133,7 +133,7 @@ private:
 		}
 	}
 
-	static void GetDoublePush(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDoublePush(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		int shift;
@@ -166,7 +166,7 @@ private:
 		}
 	}
 
-	static void GetDiagonalAttacks(const Position &position, int dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDiagonalAttacks(const Position &position, int dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		int shift;

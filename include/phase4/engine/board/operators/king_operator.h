@@ -42,19 +42,19 @@ public:
 		}
 
 		if (color == PieceColor::WHITE) {
-			if (IsWhiteKingCastlingAvailable(position, color)) {
+			if (isWhiteKingCastlingAvailable(position, color)) {
 				moves.emplace_back(Square::A4, Square::A2, moves::MoveFlags::KING_CASTLE);
 			}
 
-			if (IsWhiteQueenCastlingAvailable(position, color)) {
+			if (isWhiteQueenCastlingAvailable(position, color)) {
 				moves.emplace_back(Square::A4, Square::A6, moves::MoveFlags::QUEEN_CASTLE);
 			}
 		} else {
-			if (IsBlackKingCastlingAvailable(position, color)) {
+			if (isBlackKingCastlingAvailable(position, color)) {
 				moves.emplace_back(Square::H4, Square::H2, moves::MoveFlags::KING_CASTLE);
 			}
 
-			if (IsBlackQueenCastlingAvailable(position, color)) {
+			if (isBlackQueenCastlingAvailable(position, color)) {
 				moves.emplace_back(Square::H4, Square::H6, moves::MoveFlags::QUEEN_CASTLE);
 			}
 		}
@@ -121,17 +121,17 @@ public:
 		}
 
 		if (move.flags().isKingCastling()) {
-			if (position.ColorToMove == PieceColor::WHITE && IsWhiteKingCastlingAvailable(position, position.ColorToMove)) {
+			if (position.ColorToMove == PieceColor::WHITE && isWhiteKingCastlingAvailable(position, position.ColorToMove)) {
 				return true;
-			} else if (position.ColorToMove == PieceColor::BLACK && IsBlackKingCastlingAvailable(position, position.ColorToMove)) {
+			} else if (position.ColorToMove == PieceColor::BLACK && isBlackKingCastlingAvailable(position, position.ColorToMove)) {
 				return true;
 			}
 		}
 
 		if (move.flags().isQueenCastling()) {
-			if (position.ColorToMove == PieceColor::WHITE && IsWhiteQueenCastlingAvailable(position, position.ColorToMove)) {
+			if (position.ColorToMove == PieceColor::WHITE && isWhiteQueenCastlingAvailable(position, position.ColorToMove)) {
 				return true;
-			} else if (position.ColorToMove == PieceColor::BLACK && IsBlackQueenCastlingAvailable(position, position.ColorToMove)) {
+			} else if (position.ColorToMove == PieceColor::BLACK && isBlackQueenCastlingAvailable(position, position.ColorToMove)) {
 				return true;
 			}
 		}
@@ -140,7 +140,7 @@ public:
 	}
 
 private:
-	static bool IsWhiteKingCastlingAvailable(const Position &position, common::PieceColor color) {
+	static bool isWhiteKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
 		constexpr Bitset PASSING = Square::A2.asBitboard() | Square::A3.asBitboard();
@@ -153,7 +153,7 @@ private:
 		return false;
 	}
 
-	static bool IsWhiteQueenCastlingAvailable(const Position &position, common::PieceColor color) {
+	static bool isWhiteQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
 		constexpr Bitset PASSING = Square::A5.asBitboard() | Square::A6.asBitboard();
@@ -166,7 +166,7 @@ private:
 		return false;
 	}
 
-	static bool IsBlackKingCastlingAvailable(const Position &position, common::PieceColor color) {
+	static bool isBlackKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
 		constexpr Bitset PASSING = Square::H2.asBitboard() | Square::H3.asBitboard();
@@ -179,7 +179,7 @@ private:
 		return false;
 	}
 
-	static bool IsBlackQueenCastlingAvailable(const Position &position, common::PieceColor color) {
+	static bool isBlackQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
 		constexpr Bitset PASSING = Square::H5.asBitboard() | Square::H6.asBitboard();
