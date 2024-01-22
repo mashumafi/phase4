@@ -15,7 +15,7 @@ static void MakeMoveUndo(benchmark::State &state) {
 
 	board::Session session;
 	session.SetDefaultState();
-	constexpr moves::Move move(common::Square::B2, common::Square::C2, moves::MoveFlags::QUIET);
+	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
 		session.makeMove(move);
@@ -33,7 +33,7 @@ static void isMoveLegal(benchmark::State &state) {
 
 	phase4::engine::board::Session session;
 	session.SetDefaultState();
-	constexpr moves::Move move(common::Square::B2, common::Square::C2, moves::MoveFlags::QUIET);
+	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
 		session.isMoveLegal(move);
@@ -49,7 +49,7 @@ static void CopyMakeMove(benchmark::State &state) {
 
 	phase4::engine::board::Position position;
 	position.SetDefaultState();
-	constexpr moves::Move move(common::Square::B2, common::Square::C2, moves::MoveFlags::QUIET);
+	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
 		phase4::engine::board::Position positionCopy = position;

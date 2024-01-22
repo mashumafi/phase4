@@ -7,28 +7,28 @@
 TEST_CASE("Square output valid") {
 	using namespace phase4::engine::common;
 
-	SUBCASE("Square A1") {
+	SUBCASE("Square H1") {
 		std::stringstream ss;
-		ss << Square::A1;
-		CHECK(ss.str() == "A1");
+		ss << Square::H1;
+		CHECK(ss.str() == "H1");
 	}
 
-	SUBCASE("Square D5") {
+	SUBCASE("Square D4") {
 		std::stringstream ss;
-		ss << Square::D5;
-		CHECK(ss.str() == "D5");
+		ss << Square::D4;
+		CHECK(ss.str() == "D4");
 	}
 
-	SUBCASE("Square B7") {
+	SUBCASE("Square G2") {
 		std::stringstream ss;
-		ss << Square::B7;
-		CHECK(ss.str() == "B7");
+		ss << Square::G2;
+		CHECK(ss.str() == "G2");
 	}
 
-	SUBCASE("Square H8") {
+	SUBCASE("Square A8") {
 		std::stringstream ss;
-		ss << Square::H8;
-		CHECK(ss.str() == "H8");
+		ss << Square::A8;
+		CHECK(ss.str() == "A8");
 	}
 }
 
@@ -46,22 +46,22 @@ TEST_CASE("Square output invalid") {
 TEST_CASE("Square from FieldIndex") {
 	using namespace phase4::engine::common;
 
-	CHECK(Square(FieldIndex{ 2, 2 }) == Square::C6);
-	CHECK(Square(FieldIndex{ 6, 4 }) == Square::E2);
+	CHECK(Square(FieldIndex{ 2, 2 }) == Square::C3);
+	CHECK(Square(FieldIndex{ 6, 4 }) == Square::G5);
 }
 
 TEST_CASE("Square to FieldIndex") {
 	using namespace phase4::engine::common;
 
-	CHECK(Square::C6.asFieldIndex() == FieldIndex{ 2, 2 });
-	CHECK(Square::E2.asFieldIndex() == FieldIndex{ 6, 4 });
+	CHECK(Square::C3.asFieldIndex() == FieldIndex{ 2, 2 });
+	CHECK(Square::G5.asFieldIndex() == FieldIndex{ 6, 4 });
 }
 
 TEST_CASE("Square conversion FieldIndex") {
 	using namespace phase4::engine::common;
 
-	CHECK(Square(Square::C6.asFieldIndex()) == Square::C6);
-	CHECK(Square(Square::E2.asFieldIndex()) == Square::E2);
+	CHECK(Square(Square::C3.asFieldIndex()) == Square::C3);
+	CHECK(Square(Square::G5.asFieldIndex()) == Square::G5);
 }
 
 TEST_CASE("Square asBitboard") {
@@ -69,7 +69,7 @@ TEST_CASE("Square asBitboard") {
 
 	//                                 HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
 	//                                 87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
-	CHECK(Square::C6.asBitboard() == 0b00000000'00000000'00000000'00000000'00000000'00100000'00000000'00000000);
-	CHECK(Square::E2.asBitboard() == 0b00000000'00000000'00000000'00000010'00000000'00000000'00000000'00000000);
-	CHECK(Square::H8.asBitboard() == 0b10000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000);
+	CHECK(Square::C3.asBitboard() == 0b00000000'00000000'00000000'00000000'00000000'00100000'00000000'00000000);
+	CHECK(Square::G5.asBitboard() == 0b00000000'00000000'00000000'00000010'00000000'00000000'00000000'00000000);
+	CHECK(Square::A8.asBitboard() == 0b10000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000);
 }

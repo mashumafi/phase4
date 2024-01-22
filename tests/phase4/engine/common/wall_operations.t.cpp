@@ -26,5 +26,5 @@ TEST_CASE("WallOperations slide direction") {
 TEST_CASE("WallOperations slide square") {
 	using namespace phase4::engine::common;
 
-	CHECK(WallOperations::SLIDE_SQUARE[0][0] == Square::A1);
+	CHECK(WallOperations::SLIDE_SQUARE[0][0] == Square::H1);
 }

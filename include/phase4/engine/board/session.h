@@ -111,21 +111,21 @@ public:
 			// Short castling
 			if (move.flags().isKingCastling()) {
 				if (m_position.ColorToMove == PieceColor::WHITE) {
-					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::A2, Square::A4);
-					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A3, Square::A1);
+					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::G1, Square::E1);
+					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::F1, Square::H1);
 				} else {
-					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::H2, Square::H4);
-					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H3, Square::H1);
+					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::G8, Square::E8);
+					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::F8, Square::H8);
 				}
 			}
 			// Long castling
 			else {
 				if (m_position.ColorToMove == PieceColor::WHITE) {
-					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::A6, Square::A4);
-					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A5, Square::A8);
+					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::C1, Square::E1);
+					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::D1, Square::A1);
 				} else {
-					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::H6, Square::H4);
-					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H5, Square::H8);
+					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::C8, Square::E8);
+					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::D8, Square::A8);
 				}
 			}
 

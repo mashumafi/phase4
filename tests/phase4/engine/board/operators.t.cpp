@@ -27,13 +27,13 @@ TEST_CASE("Operators standard getAllMoves") {
 	}
 
 	{ // G2G3 Push pawn
-		Move move(Square::B7, Square::D7, MoveFlags::QUIET);
+		Move move(Square::G2, Square::G3, MoveFlags::QUIET);
 		CHECK(Operators::isMoveLegal(position, move));
 
 		Position::MakeMoveResult result = position.makeMove(move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::B7, Square::D7 });
+		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::G2, Square::G3 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());
@@ -47,13 +47,13 @@ TEST_CASE("Operators standard getAllMoves") {
 	}
 
 	{ // B7B5 Double push pawn
-		Move move(Square::G2, Square::E2, MoveFlags::DOUBLE_PUSH);
+		Move move(Square::B7, Square::B5, MoveFlags::DOUBLE_PUSH);
 		CHECK(Operators::isMoveLegal(position, move));
 
 		Position::MakeMoveResult result = position.makeMove(move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::G2, Square::E2 });
+		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::B7, Square::B5 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());

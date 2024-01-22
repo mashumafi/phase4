@@ -366,43 +366,43 @@ public:
 			// Short castling
 			if (move.flags().isKingCastling()) {
 				if (ColorToMove == PieceColor::WHITE) {
-					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
-					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
+					MovePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
+					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
 
-					result.moved.push_back({ Square::A4, Square::A2 });
-					result.moved.push_back({ Square::A1, Square::A3 });
+					result.moved.push_back({ Square::E1, Square::G1 });
+					result.moved.push_back({ Square::H1, Square::F1 });
 
-					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
-					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
 				} else {
-					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
-					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+					MovePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::G8);
+					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::F8);
 
-					result.moved.push_back({ Square::H4, Square::H2 });
-					result.moved.push_back({ Square::H1, Square::H3 });
+					result.moved.push_back({ Square::E8, Square::G8 });
+					result.moved.push_back({ Square::H8, Square::F8 });
 
-					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
-					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::G8);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::F8);
 				}
 			} else { // Long castling
 				if (ColorToMove == PieceColor::WHITE) {
-					MovePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
-					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
+					MovePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
+					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);
 
-					result.moved.push_back({ Square::A4, Square::A6 });
-					result.moved.push_back({ Square::A8, Square::A5 });
+					result.moved.push_back({ Square::E1, Square::C1 });
+					result.moved.push_back({ Square::A1, Square::D1 });
 
-					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
-					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);
 				} else {
-					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
-					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+					MovePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::C8);
+					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::A8, Square::D8);
 
-					result.moved.push_back({ Square::H4, Square::H6 });
-					result.moved.push_back({ Square::H8, Square::H5 });
+					result.moved.push_back({ Square::E8, Square::C8 });
+					result.moved.push_back({ Square::A8, Square::D8 });
 
-					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
-					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::C8);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::A8, Square::D8);
 				}
 			}
 
@@ -443,16 +443,16 @@ public:
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
-			if (move.from() == Square::A1) {
+			if (move.from() == Square::H1) {
 				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 				m_castling &= ~Castling::WHITE_SHORT;
-			} else if (move.from() == Square::A8) {
+			} else if (move.from() == Square::A1) {
 				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 				m_castling &= ~Castling::WHITE_LONG;
-			} else if (move.from() == Square::H1) {
+			} else if (move.from() == Square::H8) {
 				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 				m_castling &= ~Castling::BLACK_SHORT;
-			} else if (move.from() == Square::H8) {
+			} else if (move.from() == Square::A8) {
 				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 				m_castling &= ~Castling::BLACK_LONG;
 			}
