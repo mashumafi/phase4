@@ -38,7 +38,7 @@ public:
 		getQuietMoves(position, moves, common::Bitset::MAX);
 	}
 
-	void getAvailableCaptureMoves(const Position &position, moves::Moves& moves) {
+	void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		operators::PawnOperator::getAvailableCaptureMoves(position, moves);
 		operators::KnightOperator::getAvailableCaptureMoves(position, moves);
 		operators::BishopOperator::getAvailableCaptureMoves(position, moves);

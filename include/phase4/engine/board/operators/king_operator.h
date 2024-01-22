@@ -143,10 +143,11 @@ private:
 	static bool IsWhiteKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		if ((position.m_castling & common::Castling::WHITE_SHORT) != common::Castling::NONE && (position.OccupancySummary & 6) == 0) {
-			if (!position.isFieldAttacked(color, Square::A2) && !position.isFieldAttacked(color, Square::A3) && !position.isFieldAttacked(color, Square::A4)) {
-				return true;
-			}
+		constexpr Bitset PASSING = Square::A2.asBitboard() | Square::A3.asBitboard();
+
+		if (unlikely((position.m_castling & common::Castling::WHITE_SHORT) != common::Castling::NONE && (position.OccupancySummary & PASSING) == 0)) {
+			const bool isKingInCheck = position.isFieldAttacked(color, Square::A4);
+			return !position.isFieldAttacked(color, Square::A2) && !position.isFieldAttacked(color, Square::A3) && !isKingInCheck;
 		}
 
 		return false;
@@ -155,10 +156,11 @@ private:
 	static bool IsWhiteQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		if ((position.m_castling & Castling::WHITE_LONG) != Castling::NONE && (position.OccupancySummary & 112) == 0) {
-			if (!position.isFieldAttacked(color, Square::A4) && !position.isFieldAttacked(color, Square::A5) && !position.isFieldAttacked(color, Square::A6)) {
-				return true;
-			}
+		constexpr Bitset PASSING = Square::A5.asBitboard() | Square::A6.asBitboard();
+
+		if (unlikely((position.m_castling & Castling::WHITE_LONG) != Castling::NONE && (position.OccupancySummary & PASSING) == 0)) {
+			const bool isKingInCheck = position.isFieldAttacked(color, Square::A4);
+			return !isKingInCheck && !position.isFieldAttacked(color, Square::A5) && !position.isFieldAttacked(color, Square::A6);
 		}
 
 		return false;
@@ -167,10 +169,11 @@ private:
 	static bool IsBlackKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		if ((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE && (position.OccupancySummary & 432345564227567616) == 0) {
-			if (!position.isFieldAttacked(color, Square::H2) && !position.isFieldAttacked(color, Square::H3) && !position.isFieldAttacked(color, Square::H4)) {
-				return true;
-			}
+		constexpr Bitset PASSING = Square::H2.asBitboard() | Square::H3.asBitboard();
+
+		if (unlikely((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE && (position.OccupancySummary & PASSING) == 0)) {
+			const bool isKingInCheck = position.isFieldAttacked(color, Square::H4);
+			return !position.isFieldAttacked(color, Square::H2) && !position.isFieldAttacked(color, Square::H3) && !isKingInCheck;
 		}
 
 		return false;
@@ -179,10 +182,11 @@ private:
 	static bool IsBlackQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		if ((position.m_castling & Castling::BLACK_LONG) != Castling::NONE && (position.OccupancySummary & 8070450532247928832) == 0) {
-			if (!position.isFieldAttacked(color, Square::H4) && !position.isFieldAttacked(color, Square::H5) && !position.isFieldAttacked(color, Square::H6)) {
-				return true;
-			}
+		constexpr Bitset PASSING = Square::H5.asBitboard() | Square::H6.asBitboard();
+
+		if (unlikely((position.m_castling & Castling::BLACK_LONG) != Castling::NONE && (position.OccupancySummary & PASSING) == 0)) {
+			const bool isKingInCheck = position.isFieldAttacked(color, Square::H4);
+			return !isKingInCheck && !position.isFieldAttacked(color, Square::H5) && !position.isFieldAttacked(color, Square::H6);
 		}
 
 		return false;
