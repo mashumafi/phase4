@@ -72,6 +72,9 @@ public:
 	constexpr Bitset operator>>(Bitset bits) const noexcept;
 	constexpr Bitset operator>>(uint64_t bits) const noexcept;
 
+	constexpr Bitset operator>>=(Bitset bits) noexcept;
+	constexpr Bitset operator>>=(uint64_t bits) noexcept;
+
 	constexpr Bitset operator~() const noexcept;
 
 	constexpr Bitset operator^(Bitset bits) const noexcept;
@@ -82,6 +85,9 @@ public:
 
 	constexpr Bitset operator<<(Bitset bits) const noexcept;
 	constexpr Bitset operator<<(uint64_t bits) const noexcept;
+
+	constexpr Bitset operator<<=(Bitset bits) noexcept;
+	constexpr Bitset operator<<=(uint64_t bits) noexcept;
 
 	friend std::ostream &operator<<(std::ostream &os, const Bitset bits);
 
@@ -239,6 +245,16 @@ constexpr Bitset Bitset::operator>>(uint64_t bits) const noexcept {
 	return Bitset(m_bits >> bits);
 }
 
+inline constexpr Bitset Bitset::operator>>=(Bitset bits) noexcept {
+	m_bits >>= bits.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset Bitset::operator>>=(uint64_t bits) noexcept {
+	m_bits >>= bits;
+	return *this;
+}
+
 constexpr Bitset Bitset::operator~() const noexcept {
 	return Bitset(~m_bits);
 }
@@ -267,6 +283,16 @@ constexpr Bitset Bitset::operator<<(Bitset bits) const noexcept {
 
 constexpr Bitset Bitset::operator<<(uint64_t bits) const noexcept {
 	return Bitset(m_bits << bits);
+}
+
+inline constexpr Bitset Bitset::operator<<=(Bitset bits) noexcept {
+	m_bits <<= bits.m_bits;
+	return *this;
+}
+
+inline constexpr Bitset Bitset::operator<<=(uint64_t bits) noexcept {
+	m_bits <<= bits;
+	return *this;
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Bitset bits) {

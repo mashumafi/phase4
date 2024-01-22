@@ -21,7 +21,7 @@ public:
 	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		PieceColor color = position.ColorToMove;
+		PieceColor color = position.m_colorToMove;
 
 		getSinglePush(position, moves, true, evasionMask);
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, evasionMask);
@@ -36,7 +36,7 @@ public:
 	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		PieceColor color = position.ColorToMove;
+		PieceColor color = position.m_colorToMove;
 
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, Bitset::MAX);
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, Bitset::MAX);
@@ -45,30 +45,30 @@ public:
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
-		const PieceColor enemyColor = position.ColorToMove.invert();
+		const PieceColor enemyColor = position.m_colorToMove.invert();
 		const Bitset toField = move.to().asBitboard();
 
 		if (!move.flags().isCapture()) {
 			if (move.flags().isSinglePush() || move.flags().isPromotion()) {
-				if ((position.OccupancySummary & toField) == 0) {
+				if ((position.m_occupancySummary & toField) == 0) {
 					return true;
 				}
 			} else if (move.flags().isDoublePush()) {
 				const Square middleField(1ull << ((move.from() + move.to()) / 2));
-				if ((position.OccupancySummary & middleField) == 0 && (position.OccupancySummary & toField) == 0) {
+				if ((position.m_occupancySummary & middleField) == 0 && (position.m_occupancySummary & toField) == 0) {
 					return true;
 				}
 			}
 		} else {
 			if (move.flags().isEnPassant()) {
-				if ((position.EnPassant & toField) != 0) {
+				if ((position.m_enPassant & toField) != 0) {
 					return true;
 				}
 			} else {
 				int16_t difference = move.to() - move.from();
-				int16_t colorDifference = -(position.ColorToMove.get_raw_value() * 2 - 1) * difference;
+				int16_t colorDifference = -(position.m_colorToMove.get_raw_value() * 2 - 1) * difference;
 
-				if ((position.Occupancy[enemyColor.get_raw_value()] & toField) != 0 && (colorDifference == 7 || colorDifference == 9)) {
+				if ((position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0 && (colorDifference == 7 || colorDifference == 9)) {
 					return true;
 				}
 			}
@@ -83,12 +83,12 @@ private:
 
 		int shift;
 		Bitset promotionRank, pawns;
-		const PieceColor color = position.ColorToMove;
+		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
 			shift = 8;
 			promotionRank = BoardConstants::RANK_8;
-			pawns = position.Pieces[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
 
 			if (promotionsMode) {
 				pawns &= BoardConstants::NEAR_PROMOTION_AREA_WHITE;
@@ -96,11 +96,11 @@ private:
 				pawns &= ~BoardConstants::NEAR_PROMOTION_AREA_WHITE;
 			}
 
-			pawns = (pawns << 8) & ~position.OccupancySummary;
+			pawns = (pawns << 8) & ~position.m_occupancySummary;
 		} else {
 			shift = -8;
 			promotionRank = BoardConstants::RANK_1;
-			pawns = position.Pieces[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
 
 			if (promotionsMode) {
 				pawns &= BoardConstants::NEAR_PROMOTION_AREA_BLACK;
@@ -108,7 +108,7 @@ private:
 				pawns &= ~BoardConstants::NEAR_PROMOTION_AREA_BLACK;
 			}
 
-			pawns = (pawns >> 8) & ~position.OccupancySummary;
+			pawns = (pawns >> 8) & ~position.m_occupancySummary;
 		}
 
 		pawns &= evasionMask;
@@ -123,12 +123,12 @@ private:
 			Bitset slideSquare = position.Walls > 0 ? (WallOperations::SLIDE_SQUARE[position.Walls.bitScan()][to].asBitboard()) : 0;
 
 			if (promotionsMode && ((piece & promotionRank) != 0 || (slideSquare & promotionRank) != 0)) {
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::QUEEN_PROMOTION));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::ROOK_PROMOTION));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::KNIGHT_PROMOTION));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::BISHOP_PROMOTION));
+				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION);
+				moves.emplace_back(from, to, moves::MoveFlags::ROOK_PROMOTION);
+				moves.emplace_back(from, to, moves::MoveFlags::KNIGHT_PROMOTION);
+				moves.emplace_back(from, to, moves::MoveFlags::BISHOP_PROMOTION);
 			} else {
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::QUIET));
+				moves.emplace_back(from, to, moves::MoveFlags::QUIET);
 			}
 		}
 	}
@@ -138,20 +138,20 @@ private:
 
 		int shift;
 		Bitset startRank, pawns;
-		const PieceColor color = position.ColorToMove;
+		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
 			shift = 16;
 			startRank = BoardConstants::RANK_2;
-			pawns = position.Pieces[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
-			pawns = ((pawns & startRank) << 8) & ~position.OccupancySummary;
-			pawns = (pawns << 8) & ~position.OccupancySummary;
+			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = ((pawns & startRank) << 8) & ~position.m_occupancySummary;
+			pawns = (pawns << 8) & ~position.m_occupancySummary;
 		} else {
 			shift = -16;
 			startRank = BoardConstants::RANK_7;
-			pawns = position.Pieces[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
-			pawns = ((pawns & startRank) >> 8) & ~position.OccupancySummary;
-			pawns = (pawns >> 8) & ~position.OccupancySummary;
+			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = ((pawns & startRank) >> 8) & ~position.m_occupancySummary;
+			pawns = (pawns >> 8) & ~position.m_occupancySummary;
 		}
 
 		pawns &= evasionMask;
@@ -162,7 +162,7 @@ private:
 			const Square from(piece.bitScan() - shift);
 			const Square to(piece.bitScan());
 
-			moves.push_back(moves::Move(from, to, moves::MoveFlags::DOUBLE_PUSH));
+			moves.emplace_back(from, to, moves::MoveFlags::DOUBLE_PUSH);
 		}
 	}
 
@@ -171,19 +171,19 @@ private:
 
 		int shift;
 		Bitset promotionRank, enemyOccupancy, pawns;
-		const PieceColor color = position.ColorToMove;
+		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
 			shift = dir;
 			promotionRank = BoardConstants::RANK_8;
-			enemyOccupancy = position.Occupancy[PieceColor::BLACK.get_raw_value()] | position.EnPassant;
-			pawns = position.Pieces[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			enemyOccupancy = position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] | position.m_enPassant;
+			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
 		} else {
 			shift = -dir;
 			promotionRank = BoardConstants::RANK_1;
-			enemyOccupancy = position.Occupancy[PieceColor::WHITE.get_raw_value()] | position.EnPassant;
-			pawns = position.Pieces[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			enemyOccupancy = position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] | position.m_enPassant;
+			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
 		}
 
@@ -199,15 +199,15 @@ private:
 			Bitset slideRank = WallOperations::SLIDE_SQUARE[position.Walls.bitScan()][to].asBitboard();
 
 			if ((piece & promotionRank) != 0 || (slideRank & promotionRank) != 0) {
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::ROOK_PROMOTION_CAPTURE));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::KNIGHT_PROMOTION_CAPTURE));
-				moves.push_back(moves::Move(from, to, moves::MoveFlags::BISHOP_PROMOTION_CAPTURE));
+				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE);
+				moves.emplace_back(from, to, moves::MoveFlags::ROOK_PROMOTION_CAPTURE);
+				moves.emplace_back(from, to, moves::MoveFlags::KNIGHT_PROMOTION_CAPTURE);
+				moves.emplace_back(from, to, moves::MoveFlags::BISHOP_PROMOTION_CAPTURE);
 			} else {
-				if ((piece & position.EnPassant) != 0) {
-					moves.push_back(moves::Move(from, to, moves::MoveFlags::EN_PASSANT));
+				if ((piece & position.m_enPassant) != 0) {
+					moves.emplace_back(from, to, moves::MoveFlags::EN_PASSANT);
 				} else {
-					moves.push_back(moves::Move(from, to, moves::MoveFlags::CAPTURE));
+					moves.emplace_back(from, to, moves::MoveFlags::CAPTURE);
 				}
 			}
 		}

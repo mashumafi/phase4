@@ -20,16 +20,16 @@ public:
 	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.ColorToMove;
+		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset bishops = position.Pieces[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
+		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
 			const Square from(piece.bitScan());
-			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.OccupancySummary, from) & position.Occupancy[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -45,15 +45,15 @@ public:
 	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.ColorToMove;
-		Bitset bishops = position.Pieces[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
+		const PieceColor color = position.m_colorToMove;
+		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
 			const Square from(piece.bitScan());
-			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.OccupancySummary, from) & ~position.OccupancySummary;
+			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & ~position.m_occupancySummary;
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -69,16 +69,16 @@ public:
 	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.ColorToMove;
+		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset bishops = position.Pieces[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
+		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
 			const Square from(piece.bitScan());
-			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.OccupancySummary, from) & position.Occupancy[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb();
@@ -96,14 +96,14 @@ public:
 		int32_t centerMobility = 0;
 		int32_t outsideMobility = 0;
 
-		Bitset bishops = position.Pieces[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
+		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
 			const Square from(piece.bitScan());
-			const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.OccupancySummary, from);
+			const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from);
 
 			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).count();
 			outsideMobility += (availableMoves & ai::score::EvaluationConstants::Outside).count();
@@ -117,15 +117,15 @@ public:
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
-		const PieceColor enemyColor = position.ColorToMove.invert();
-		const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.OccupancySummary, move.from());
+		const PieceColor enemyColor = position.m_colorToMove.invert();
+		const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, move.from());
 		const Bitset toField = move.to().asBitboard();
 
-		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.OccupancySummary & toField) == 0) {
+		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
 			return true;
 		}
 
-		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.Occupancy[enemyColor.get_raw_value()] & toField) != 0) {
+		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0) {
 			return true;
 		}
 
