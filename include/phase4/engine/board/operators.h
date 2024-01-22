@@ -21,6 +21,7 @@ public:
 		operators::BishopOperator::GetLoudMoves(position, moves, evasionMask);
 		operators::RookOperator::GetLoudMoves(position, moves, evasionMask);
 		operators::QueenOperator::GetLoudMoves(position, moves, evasionMask);
+		operators::KingOperator::GetLoudMoves(position, moves);
 	}
 
 	static void GetQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
@@ -29,6 +30,7 @@ public:
 		operators::BishopOperator::GetQuietMoves(position, moves, evasionMask);
 		operators::RookOperator::GetQuietMoves(position, moves, evasionMask);
 		operators::QueenOperator::GetQuietMoves(position, moves, evasionMask);
+		operators::KingOperator::GetQuietMoves(position, moves);
 	}
 
 	static void GetAllMoves(const Position &position, moves::Moves &moves) {
@@ -54,6 +56,8 @@ public:
 				return operators::RookOperator::IsMoveLegal(position, move);
 			case common::PieceType::QUEEN.get_raw_value():
 				return operators::QueenOperator::IsMoveLegal(position, move);
+			case common::PieceType::KING.get_raw_value():
+				return operators::KingOperator::IsMoveLegal(position, move);
 		}
 
 		return false;
