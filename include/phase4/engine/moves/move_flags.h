@@ -166,7 +166,7 @@ constexpr MoveFlags &MoveFlags::operator=(MoveFlags &&that) noexcept {
 			return common::PieceType::KNIGHT;
 	}
 
-	return common::PieceType::END;
+	return common::PieceType::INVALID;
 }
 
 [[nodiscard]] constexpr bool MoveFlags::isQuiet() const {

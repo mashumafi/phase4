@@ -6,13 +6,14 @@
 #include <array>
 #include <cassert>
 #include <memory>
+#include <type_traits>
 
 namespace phase4::engine::common {
 
 /// @brief Provides a fixed capacity std::array with a size
 /// @tparam T element type used for the array
-/// @tparam SIZE the capacity of the array
-template <typename T, std::size_t SIZE = 1024>
+/// @tparam N the capacity of the array
+template <typename T, std::size_t N = 512>
 class FastVector {
 public:
 	/// @brief
@@ -21,6 +22,11 @@ public:
 
 	void push_back(const T &value);
 	void push_back(T &&value);
+
+	template <class... Args>
+	void emplace_back(Args &&...args) {
+		m_items[m_size++] = T(args...);
+	}
 
 	T &&pop_back();
 
@@ -33,64 +39,62 @@ public:
 	bool is_empty() const;
 
 private:
-	using Buffer = std::array<T, SIZE>;
-
-	std::unique_ptr<Buffer> m_array;
-	std::size_t m_size = 0;
+	T m_items[N];
+	size_t m_size;
 };
 
-template <typename T, std::size_t SIZE>
-FastVector<T, SIZE>::FastVector() :
-		m_array(std::make_unique<Buffer>()) {
+template <typename T, std::size_t N>
+FastVector<T, N>::FastVector() :
+		m_size(0) {
 }
 
-template <typename T, std::size_t SIZE>
-void FastVector<T, SIZE>::push_back(const T &value) {
-	assert(m_size < SIZE);
+template <typename T, std::size_t N>
+void FastVector<T, N>::push_back(const T &value) {
+	assert(m_size < N);
 
-	m_array[m_size++] = value;
+	m_items[m_size++] = value;
 }
 
-template <typename T, std::size_t SIZE>
-void FastVector<T, SIZE>::push_back(T &&value) {
-	assert(m_size < SIZE);
+template <typename T, std::size_t N>
+void FastVector<T, N>::push_back(T &&value) {
+	assert(m_size < N);
 
-	(*m_array)[m_size++] = std::move(value);
+	m_items[m_size++] = std::move(value);
 }
 
-template <typename T, std::size_t SIZE>
-T &&FastVector<T, SIZE>::pop_back() {
+template <typename T, std::size_t N>
+T &&FastVector<T, N>::pop_back() {
 	assert(!is_empty());
 
-	return std::move((*m_array)[--m_size]);
+	return std::move(m_items[--m_size]);
 }
 
-template <typename T, std::size_t SIZE>
-void FastVector<T, SIZE>::clear() {
+template <typename T, std::size_t N>
+void FastVector<T, N>::clear() {
 	m_size = 0;
 }
 
-template <typename T, std::size_t SIZE>
-const T &FastVector<T, SIZE>::at(std::size_t index) const {
+template <typename T, std::size_t N>
+const T &FastVector<T, N>::at(std::size_t index) const {
 	assert(index < m_size);
 
-	return (*m_array)[index];
+	return m_items[index];
 }
 
-template <typename T, std::size_t SIZE>
-const T &FastVector<T, SIZE>::peek() const {
+template <typename T, std::size_t N>
+const T &FastVector<T, N>::peek() const {
 	assert(!is_empty());
 
-	return (*m_array)[m_size - 1];
+	return m_items[m_size - 1];
 }
 
-template <typename T, std::size_t SIZE>
-std::size_t FastVector<T, SIZE>::size() const {
+template <typename T, std::size_t N>
+std::size_t FastVector<T, N>::size() const {
 	return m_size;
 }
 
-template <typename T, std::size_t SIZE>
-bool FastVector<T, SIZE>::is_empty() const {
+template <typename T, std::size_t N>
+bool FastVector<T, N>::is_empty() const {
 	return m_size == 0;
 }
 

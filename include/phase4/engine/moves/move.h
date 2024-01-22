@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_MOVE_H
 #define PHASE4_ENGINE_MOVES_MOVE_H
 
+#include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/move_flags.h>
 
@@ -27,9 +28,12 @@ public:
 private:
 	uint16_t _data;
 
-	friend bool operator==(const Move a, const Move b);
-	friend bool operator!=(const Move a, const Move b);
+	friend constexpr bool operator==(const Move a, const Move b);
+	friend constexpr bool operator!=(const Move a, const Move b);
 };
+
+constexpr size_t MAX_MOVES_COUNT = 218;
+using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
 	return common::Square(_data & 0x3F);
@@ -62,7 +66,7 @@ constexpr Move::Move(std::string_view textNotation) :
 				(textNotation.size() >= 5) ? MoveFlags::getPromotionSymbolFlags(textNotation[4]) : MoveFlags::QUIET) {
 }
 
-std::ostream &operator<<(std::ostream &os, const Move &move) {
+inline std::ostream &operator<<(std::ostream &os, const Move &move) {
 	os << common::Square(move.from()) << common::Square(move.to());
 	if (unlikely(move.flags().isPromotion())) {
 		os << move.flags().getPromotionSymbol();
@@ -70,11 +74,11 @@ std::ostream &operator<<(std::ostream &os, const Move &move) {
 	return os;
 }
 
-bool operator==(const Move a, const Move b) {
+inline constexpr bool operator==(const Move a, const Move b) {
 	return a._data == b._data;
 }
 
-bool operator!=(const Move a, const Move b) {
+inline constexpr bool operator!=(const Move a, const Move b) {
 	return a._data != b._data;
 }
 

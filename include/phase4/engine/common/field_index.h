@@ -13,6 +13,10 @@ struct FieldIndex {
 	int16_t x;
 	int16_t y;
 
+	static const FieldIndex ZERO;
+
+	constexpr FieldIndex();
+
 	constexpr FieldIndex(int16_t x, int16_t y);
 
 	constexpr FieldIndex(std::string_view move);
@@ -20,11 +24,19 @@ struct FieldIndex {
 	constexpr uint16_t maxCartesianDistance(FieldIndex other) const;
 
 	constexpr bool isValid() const;
+
+	constexpr int16_t offset() const;
 };
 
 constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
 		x{ x },
 		y{ y } {
+}
+
+inline constexpr FieldIndex FieldIndex::ZERO(0, 0);
+
+constexpr FieldIndex::FieldIndex() :
+		FieldIndex(0, 0) {
 }
 
 constexpr FieldIndex::FieldIndex(std::string_view move) :
@@ -49,12 +61,28 @@ constexpr bool FieldIndex::isValid() const {
 	return x >= 0 && x <= 7 && y >= 0 && y <= 7;
 }
 
+constexpr int16_t FieldIndex::offset() const {
+	return x + y * 8;
+}
+
 constexpr bool operator==(const FieldIndex left, const FieldIndex right) {
 	return left.x == right.x && left.y == right.y;
 }
 
+constexpr bool operator!=(const FieldIndex left, const FieldIndex right) {
+	return left.x != right.x || left.y != right.y;
+}
+
 constexpr FieldIndex operator+(FieldIndex left, FieldIndex right) {
 	return FieldIndex(left.x + right.x, left.y + right.y);
+}
+
+constexpr FieldIndex operator-(FieldIndex that) {
+	return FieldIndex(-that.x, -that.y);
+}
+
+constexpr FieldIndex operator*(FieldIndex that, int16_t scalar) {
+	return FieldIndex(that.x * scalar, that.y * scalar);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const FieldIndex fieldIndex) {
