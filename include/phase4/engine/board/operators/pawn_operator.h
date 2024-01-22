@@ -18,7 +18,7 @@ namespace phase4::engine::board::operators {
 
 class PawnOperator {
 public:
-	static void GetLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		PieceColor color = position.ColorToMove;
@@ -28,12 +28,12 @@ public:
 		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, evasionMask);
 	}
 
-	static void GetQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		GetSinglePush(position, moves, false, evasionMask);
 		GetDoublePush(position, moves, evasionMask);
 	}
 
-	static void GetAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
+	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
 		PieceColor color = position.ColorToMove;
@@ -42,7 +42,7 @@ public:
 		GetDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, Bitset::MAX);
 	}
 
-	static bool IsMoveLegal(const Position &position, moves::Move move) {
+	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
 		const PieceColor enemyColor = position.ColorToMove.invert();

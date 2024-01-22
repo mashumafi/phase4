@@ -21,14 +21,14 @@ TEST_CASE("Operators standard getAllMoves") {
 		position.SetDefaultState();
 
 		Moves moves;
-		Operators::GetAllMoves(position, moves);
+		Operators::getAllMoves(position, moves);
 
 		CHECK(moves.size() == 20);
 	}
 
 	{ // G2G3 Push pawn
 		Move move(Square::B7, Square::D7, MoveFlags::QUIET);
-		CHECK(Operators::IsMoveLegal(position, move));
+		CHECK(Operators::isMoveLegal(position, move));
 
 		Position::MakeMoveResult result = position.makeMove(move);
 		CHECK(!result.added);
@@ -41,14 +41,14 @@ TEST_CASE("Operators standard getAllMoves") {
 		CHECK(result.slide.value() == FieldIndex::ZERO);
 
 		Moves moves;
-		Operators::GetAllMoves(position, moves);
+		Operators::getAllMoves(position, moves);
 
 		CHECK(moves.size() == 20);
 	}
 
 	{ // B7B5 Double push pawn
 		Move move(Square::G2, Square::E2, MoveFlags::DOUBLE_PUSH);
-		CHECK(Operators::IsMoveLegal(position, move));
+		CHECK(Operators::isMoveLegal(position, move));
 
 		Position::MakeMoveResult result = position.makeMove(move);
 		CHECK(!result.added);
@@ -61,7 +61,7 @@ TEST_CASE("Operators standard getAllMoves") {
 		CHECK(result.slide.value() == FieldIndex::ZERO);
 
 		Moves moves;
-		Operators::GetAllMoves(position, moves);
+		Operators::getAllMoves(position, moves);
 
 		CHECK(moves.size() == 21);
 	}

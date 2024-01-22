@@ -17,7 +17,7 @@ namespace phase4::engine::board::operators {
 
 class RookOperator {
 public:
-	static void GetLoudMoves(Position position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getLoudMoves(Position position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -42,7 +42,7 @@ public:
 		}
 	}
 
-	static void GetQuietMoves(Position position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getQuietMoves(Position position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	static void GetAvailableCaptureMoves(Position position, moves::Moves &moves) {
+	static void getAvailableCaptureMoves(Position position, moves::Moves &moves) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	static std::tuple<int32_t, int32_t> GetMobility(Position position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
+	static std::tuple<int32_t, int32_t> getMobility(Position position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
 		using namespace common;
 
 		int32_t centerMobility = 0;
@@ -114,7 +114,7 @@ public:
 		return std::make_tuple(centerMobility, outsideMobility);
 	}
 
-	static bool IsMoveLegal(Position position, moves::Move move) {
+	static bool isMoveLegal(Position position, moves::Move move) {
 		using namespace common;
 
 		const PieceColor enemyColor = position.ColorToMove.invert();

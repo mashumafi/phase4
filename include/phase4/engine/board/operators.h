@@ -15,30 +15,39 @@ namespace phase4::engine::board {
 
 class Operators {
 public:
-	static void GetLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
-		operators::PawnOperator::GetLoudMoves(position, moves, evasionMask);
-		operators::KnightOperator::GetLoudMoves(position, moves, evasionMask);
-		operators::BishopOperator::GetLoudMoves(position, moves, evasionMask);
-		operators::RookOperator::GetLoudMoves(position, moves, evasionMask);
-		operators::QueenOperator::GetLoudMoves(position, moves, evasionMask);
-		operators::KingOperator::GetLoudMoves(position, moves);
+	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+		operators::PawnOperator::getLoudMoves(position, moves, evasionMask);
+		operators::KnightOperator::getLoudMoves(position, moves, evasionMask);
+		operators::BishopOperator::getLoudMoves(position, moves, evasionMask);
+		operators::RookOperator::getLoudMoves(position, moves, evasionMask);
+		operators::QueenOperator::getLoudMoves(position, moves, evasionMask);
+		operators::KingOperator::getLoudMoves(position, moves);
 	}
 
-	static void GetQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
-		operators::PawnOperator::GetQuietMoves(position, moves, evasionMask);
-		operators::KnightOperator::GetQuietMoves(position, moves, evasionMask);
-		operators::BishopOperator::GetQuietMoves(position, moves, evasionMask);
-		operators::RookOperator::GetQuietMoves(position, moves, evasionMask);
-		operators::QueenOperator::GetQuietMoves(position, moves, evasionMask);
-		operators::KingOperator::GetQuietMoves(position, moves);
+	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+		operators::PawnOperator::getQuietMoves(position, moves, evasionMask);
+		operators::KnightOperator::getQuietMoves(position, moves, evasionMask);
+		operators::BishopOperator::getQuietMoves(position, moves, evasionMask);
+		operators::RookOperator::getQuietMoves(position, moves, evasionMask);
+		operators::QueenOperator::getQuietMoves(position, moves, evasionMask);
+		operators::KingOperator::getQuietMoves(position, moves);
 	}
 
-	static void GetAllMoves(const Position &position, moves::Moves &moves) {
-		GetLoudMoves(position, moves, common::Bitset::MAX);
-		GetQuietMoves(position, moves, common::Bitset::MAX);
+	static void getAllMoves(const Position &position, moves::Moves &moves) {
+		getLoudMoves(position, moves, common::Bitset::MAX);
+		getQuietMoves(position, moves, common::Bitset::MAX);
 	}
 
-	static bool IsMoveLegal(const Position &position, moves::Move move) {
+	void getAvailableCaptureMoves(const Position &position, moves::Moves& moves) {
+		operators::PawnOperator::getAvailableCaptureMoves(position, moves);
+		operators::KnightOperator::getAvailableCaptureMoves(position, moves);
+		operators::BishopOperator::getAvailableCaptureMoves(position, moves);
+		operators::RookOperator::getAvailableCaptureMoves(position, moves);
+		operators::QueenOperator::getAvailableCaptureMoves(position, moves);
+		operators::KingOperator::getAvailableCaptureMoves(position, moves);
+	}
+
+	static bool isMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
 		if (((move.from().asBitboard()) & position.Occupancy[position.ColorToMove.get_raw_value()]) == 0) {
 			return false;
@@ -47,17 +56,17 @@ public:
 		common::PieceType fromPiece = position.PieceTable[move.from().get_raw_value()];
 		switch (fromPiece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
-				return operators::PawnOperator::IsMoveLegal(position, move);
+				return operators::PawnOperator::isMoveLegal(position, move);
 			case common::PieceType::KNIGHT.get_raw_value():
-				return operators::KnightOperator::IsMoveLegal(position, move);
+				return operators::KnightOperator::isMoveLegal(position, move);
 			case common::PieceType::BISHOP.get_raw_value():
-				return operators::BishopOperator::IsMoveLegal(position, move);
+				return operators::BishopOperator::isMoveLegal(position, move);
 			case common::PieceType::ROOK.get_raw_value():
-				return operators::RookOperator::IsMoveLegal(position, move);
+				return operators::RookOperator::isMoveLegal(position, move);
 			case common::PieceType::QUEEN.get_raw_value():
-				return operators::QueenOperator::IsMoveLegal(position, move);
+				return operators::QueenOperator::isMoveLegal(position, move);
 			case common::PieceType::KING.get_raw_value():
-				return operators::KingOperator::IsMoveLegal(position, move);
+				return operators::KingOperator::isMoveLegal(position, move);
 		}
 
 		return false;

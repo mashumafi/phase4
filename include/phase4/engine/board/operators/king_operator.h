@@ -19,7 +19,7 @@ namespace phase4::engine::board::operators {
 
 class KingOperator {
 public:
-	static void GetLoudMoves(const Position &position, moves::Moves &moves) {
+	static void getLoudMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -60,7 +60,7 @@ public:
 		}
 	}
 
-	static void GetQuietMoves(const Position &position, moves::Moves &moves) {
+	static void getQuietMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	static void GetAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
+	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
 		const PieceColor color = position.ColorToMove;
@@ -105,7 +105,7 @@ public:
 		}
 	}
 
-	static bool IsMoveLegal(const Position &position, moves::Move move) {
+	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
 		const PieceColor enemyColor = position.ColorToMove.invert();
