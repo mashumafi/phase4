@@ -9,6 +9,7 @@
 #include <phase4/engine/board/operators/rook_operator.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/util.h>
 #include <phase4/engine/moves/move.h>
 
 namespace phase4::engine::board {
@@ -49,7 +50,7 @@ public:
 
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
-		if (((move.from().asBitboard()) & position.Occupancy[position.ColorToMove.get_raw_value()]) == 0) {
+		if (unlikely(((move.from().asBitboard()) & position.Occupancy[position.ColorToMove.get_raw_value()]) == 0)) {
 			return false;
 		}
 

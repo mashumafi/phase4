@@ -236,6 +236,10 @@ public:
 		struct PieceAndSquare {
 			common::PieceType pieceType;
 			common::Square at;
+
+			bool operator==(MakeMoveResult::PieceAndSquare that) const {
+				return pieceType == that.pieceType && at == that.at;
+			}
 		};
 
 		common::FastVector<Movement, 5> moved;
