@@ -58,7 +58,7 @@ public:
 
 	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const;
 
-	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(int enPassantRank) const;
+	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(uint8_t enPassantRank) const;
 
 	[[nodiscard]] constexpr ZobristHashing changeSide() const;
 
@@ -105,7 +105,7 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(int enPassantRank) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(uint8_t enPassantRank) const {
 	return m_hash ^ G_KEYS.m_enPassantHashes[enPassantRank];
 }
 

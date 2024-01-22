@@ -23,7 +23,7 @@ namespace phase4::engine::board {
 
 class Position {
 public:
-	ZobristHashing Hash;
+	ZobristHashing m_hash;
 	ZobristHashing PawnHash;
 
 	common::Bitset Pieces[2][6];
@@ -75,7 +75,7 @@ public:
 
 		CalculatePieceTable(PieceTable);
 
-		//Hash = ZobristHashing.CalculateHash(this);
+		//m_hash = ZobristHashing.CalculateHash(this);
 		//PawnHash = ZobristHashing.CalculatePawnHash(this);
 	}
 
@@ -132,7 +132,7 @@ public:
 	void clearWalls() {
 		if (Walls > 0) {
 			OccupancySummary = OccupancySummary & ~Walls;
-			//Hash = Hash.ToggleWalls(Walls); // TODO: IMPLEMENT
+			//m_hash = m_hash.ToggleWalls(Walls); // TODO: IMPLEMENT
 			Walls = 0;
 		}
 	}
@@ -157,7 +157,7 @@ public:
 		PieceTable[to] = piece;
 	}
 
-	void AddPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
+	void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 		using namespace phase4::engine::ai::score;
 
@@ -175,7 +175,7 @@ public:
 		PieceTable[fieldIndex] = piece;
 	}
 
-	void RemovePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
+	void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 		using namespace phase4::engine::ai::score;
 
@@ -270,14 +270,14 @@ public:
 
 		if (EnPassant != 0) {
 			uint8_t enPassantRank = EnPassant.bitScan() % 8;
-			Hash = Hash.toggleEnPassant(enPassantRank);
+			m_hash = m_hash.toggleEnPassant(enPassantRank);
 			EnPassant = 0;
 		}
 
 		if (move.flags().isSinglePush()) {
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
-			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			m_hash = m_hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 			if (pieceType == PieceType::PAWN) {
 				PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
@@ -285,54 +285,54 @@ public:
 		} else if (move.flags().isDoublePush()) {
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
-			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			m_hash = m_hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 			Bitset enPassantField = (ColorToMove == PieceColor::WHITE) ? Square(move.to() - 8).asBitboard() : Square(move.to() + 8).asBitboard();
-			int enPassantFieldIndex = enPassantField.bitScan();
+			uint8_t enPassantFieldIndex = enPassantField.bitScan();
 
 			EnPassant = enPassantField;
-			Hash = Hash.toggleEnPassant(enPassantFieldIndex % 8);
+			m_hash = m_hash.toggleEnPassant(enPassantFieldIndex % 8);
 		} else if (move.flags().isEnPassant()) {
 			Square enemyPieceField((ColorToMove == PieceColor::WHITE) ? move.to() - 8 : move.to() + 8);
 			PieceType killedPiece = PieceTable[enemyPieceField];
 
-			RemovePiece(enemyColor, killedPiece, enemyPieceField);
+			removePiece(enemyColor, killedPiece, enemyPieceField);
 			result.removed.push_back({ killedPiece, enemyPieceField });
-			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
+			m_hash = m_hash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 			PawnHash = PawnHash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 
 			MovePiece(ColorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
-			Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+			m_hash = m_hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 			PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, enemyPieceField };
 		} else if (move.flags().isCapture()) {
 			PieceType killedPiece = PieceTable[move.to()];
 
-			RemovePiece(enemyColor, killedPiece, move.to());
+			removePiece(enemyColor, killedPiece, move.to());
 			result.removed.push_back({ killedPiece, move.to() });
-			Hash = Hash.addOrRemovePiece(enemyColor, killedPiece, move.to());
+			m_hash = m_hash.addOrRemovePiece(enemyColor, killedPiece, move.to());
 
 			if (killedPiece == PieceType::PAWN) {
 				PawnHash = PawnHash.addOrRemovePiece(enemyColor, killedPiece, move.to());
 			} else if (killedPiece == PieceType::ROOK) {
 				switch (move.to()) {
 					case 0:
-						Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 						m_castling &= ~Castling::WHITE_SHORT;
 						break;
 					case 7:
-						Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 						m_castling &= ~Castling::WHITE_LONG;
 						break;
 					case 56:
-						Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 						m_castling &= ~Castling::BLACK_SHORT;
 						break;
 					case 63:
-						Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 						m_castling &= ~Castling::BLACK_LONG;
 						break;
 				}
@@ -341,20 +341,20 @@ public:
 			if (move.flags().isPromotion()) {
 				PieceType promotionPiece = move.flags().getPromotionPiece();
 
-				RemovePiece(ColorToMove, pieceType, move.from());
+				removePiece(ColorToMove, pieceType, move.from());
 				result.removed.push_back({ pieceType, move.from() });
-				Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+				m_hash = m_hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 				PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 
-				AddPiece(ColorToMove, promotionPiece, move.to());
+				addPiece(ColorToMove, promotionPiece, move.to());
 				result.added = { promotionPiece, move.to() };
-				Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
+				m_hash = m_hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
 				result.promotion = promotionPiece;
 			} else {
 				MovePiece(ColorToMove, pieceType, move.from(), move.to());
 				result.moved.push_back({ move.from(), move.to() });
-				Hash = Hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
+				m_hash = m_hash.movePiece(ColorToMove, pieceType, move.from(), move.to());
 
 				if (pieceType == PieceType::PAWN) {
 					PawnHash = PawnHash.movePiece(ColorToMove, pieceType, move.from(), move.to());
@@ -372,8 +372,8 @@ public:
 					result.moved.push_back({ Square::A4, Square::A2 });
 					result.moved.push_back({ Square::A1, Square::A3 });
 
-					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
-					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A2);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::A3);
 				} else {
 					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
 					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
@@ -381,8 +381,8 @@ public:
 					result.moved.push_back({ Square::H4, Square::H2 });
 					result.moved.push_back({ Square::H1, Square::H3 });
 
-					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
-					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H2);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H1, Square::H3);
 				}
 			} else { // Long castling
 				if (ColorToMove == PieceColor::WHITE) {
@@ -392,8 +392,8 @@ public:
 					result.moved.push_back({ Square::A4, Square::A6 });
 					result.moved.push_back({ Square::A8, Square::A5 });
 
-					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
-					Hash = Hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::A4, Square::A6);
+					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A8, Square::A5);
 				} else {
 					MovePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
 					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
@@ -401,18 +401,18 @@ public:
 					result.moved.push_back({ Square::H4, Square::H6 });
 					result.moved.push_back({ Square::H8, Square::H5 });
 
-					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
-					Hash = Hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::H4, Square::H6);
+					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::H5);
 				}
 			}
 
 			if (ColorToMove == PieceColor::WHITE) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 				m_castling &= ~Castling::WHITE_CASTLING;
 			} else {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 
@@ -420,40 +420,40 @@ public:
 		} else if (move.flags().isPromotion()) {
 			PieceType promotionPiece = move.flags().getPromotionPiece();
 
-			RemovePiece(ColorToMove, pieceType, move.from());
+			removePiece(ColorToMove, pieceType, move.from());
 			result.removed.push_back({ pieceType, move.from() });
-			Hash = Hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
+			m_hash = m_hash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 			PawnHash = PawnHash.addOrRemovePiece(ColorToMove, pieceType, move.from());
 
-			AddPiece(ColorToMove, promotionPiece, move.to());
+			addPiece(ColorToMove, promotionPiece, move.to());
 			result.added = { promotionPiece, move.to() };
-			Hash = Hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
+			m_hash = m_hash.addOrRemovePiece(ColorToMove, promotionPiece, move.to());
 
 			result.promotion = promotionPiece;
 		}
 
 		if (pieceType == PieceType::KING && !move.flags().isCastling()) {
 			if (ColorToMove == PieceColor::WHITE) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 				m_castling &= ~Castling::WHITE_CASTLING;
 			} else {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
 			if (move.from() == Square::A1) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 				m_castling &= ~Castling::WHITE_SHORT;
 			} else if (move.from() == Square::A8) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 				m_castling &= ~Castling::WHITE_LONG;
 			} else if (move.from() == Square::H1) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 				m_castling &= ~Castling::BLACK_SHORT;
 			} else if (move.from() == Square::H8) {
-				Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 				m_castling &= ~Castling::BLACK_LONG;
 			}
 		}
@@ -473,48 +473,48 @@ public:
 						auto [resultColor, resultType] = *pieceResult;
 						MovePiece(resultColor, resultType, from, to);
 						result.moved.push_back({ from, to });
-						Hash = Hash.movePiece(resultColor, resultType, from, to);
+						m_hash = m_hash.movePiece(resultColor, resultType, from, to);
 						if (resultType == PieceType::PAWN) {
 							PawnHash = PawnHash.movePiece(resultColor, resultType, from, to);
 						}
 
 						if (resultType == PieceType::PAWN && EnPassant != 0) {
 							int offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
-							int enPassantField = EnPassant.bitScan();
+							uint8_t enPassantField = EnPassant.bitScan();
 							if (enPassantField == from.get_raw_value() + offset) {
-								int enPassantRank = enPassantField % 8;
-								Hash = Hash.toggleEnPassant(enPassantRank);
+								uint8_t enPassantRank = enPassantField % 8;
+								m_hash = m_hash.toggleEnPassant(enPassantRank);
 
 								if (wallMove.offset() >= 0)
 									EnPassant = EnPassant >> wallMove.offset();
 								else
 									EnPassant = EnPassant << -wallMove.offset();
-								Hash = Hash.toggleEnPassant(EnPassant.bitScan() % 8);
+								m_hash = m_hash.toggleEnPassant(EnPassant.bitScan() % 8);
 							}
 						}
 
 						if (resultType == PieceType::KING) {
 							if (resultColor == PieceColor::WHITE) {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 								m_castling &= ~Castling::WHITE_CASTLING;
 							} else {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 								m_castling &= ~Castling::BLACK_CASTLING;
 							}
 						} else if (resultType == PieceType::ROOK) {
 							if (from == 0) {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 								m_castling &= ~Castling::WHITE_SHORT;
 							} else if (from == 7) {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 								m_castling &= ~Castling::WHITE_LONG;
 							} else if (from == 56) {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 								m_castling &= ~Castling::BLACK_SHORT;
 							} else if (from == 63) {
-								Hash = Hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 								m_castling &= ~Castling::BLACK_LONG;
 							}
 						}
@@ -522,9 +522,9 @@ public:
 					original = original.popLsb();
 				}
 
-				Hash = Hash.toggleWalls(Walls); // Turn off previous wall
+				m_hash = m_hash.toggleWalls(Walls); // Turn off previous wall
 				Walls = WallOperations::SLIDE_TO[wallIndex][move.to()];
-				Hash = Hash.toggleWalls(Walls); // Turn on new wall location
+				m_hash = m_hash.toggleWalls(Walls); // Turn on new wall location
 				OccupancySummary = OccupancySummary | Walls;
 			}
 			result.slide = wallMove;
@@ -533,7 +533,7 @@ public:
 		}
 
 		ColorToMove = enemyColor;
-		Hash = Hash.changeSide();
+		m_hash = m_hash.changeSide();
 
 		return result;
 	}
@@ -565,9 +565,9 @@ public:
 			original.reset(from);
 		}
 
-		Hash ^= Walls.to_ullong(); // Turn off previous wall
+		m_hash ^= Walls.to_ullong(); // Turn off previous wall
 		Walls = walls;
-		Hash ^= Walls.to_ullong(); // Turn on new wall location
+		m_hash ^= Walls.to_ullong(); // Turn on new wall location
 
 		if (emitSignal) {
 			// Slide function not provided, implement it accordingly

@@ -55,7 +55,7 @@ public:
 
 	Position::MakeMoveResult makeMove(moves::Move move) {
 		m_castlings.push_back(m_position.m_castling);
-		m_hashes.push_back(m_position.Hash);
+		m_hashes.push_back(m_position.m_hash);
 		m_pawnHashes.push_back(m_position.PawnHash);
 		m_enPassants.push_back(m_position.EnPassant);
 		m_irreversibleMovesCounts.push_back(m_position.IrreversibleMovesCount);
@@ -92,7 +92,7 @@ public:
 			const PieceType killedPiece = m_killedPieces.pop_back();
 
 			m_position.MovePiece(m_position.ColorToMove, PieceType::PAWN, move.to(), move.from());
-			m_position.AddPiece(enemyColor, killedPiece, enemyPieceField);
+			m_position.addPiece(enemyColor, killedPiece, enemyPieceField);
 		} else if (move.flags().isCapture()) {
 			PieceColor enemyColor = m_position.ColorToMove.invert();
 			const PieceType killedPiece = m_killedPieces.pop_back();
@@ -100,13 +100,13 @@ public:
 			// Promotion
 			if (move.flags().isPromotion()) {
 				const PieceType promotionPiece = m_promotedPieces.pop_back();
-				m_position.RemovePiece(m_position.ColorToMove, promotionPiece, move.to());
-				m_position.AddPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
+				m_position.removePiece(m_position.ColorToMove, promotionPiece, move.to());
+				m_position.addPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
 			} else {
 				m_position.MovePiece(m_position.ColorToMove, pieceType, move.to(), move.from());
 			}
 
-			m_position.AddPiece(enemyColor, killedPiece, move.to());
+			m_position.addPiece(enemyColor, killedPiece, move.to());
 		} else if (move.flags().isCastling()) {
 			// Short castling
 			if (move.flags().isKingCastling()) {
@@ -132,13 +132,13 @@ public:
 			m_position.CastlingDone[m_position.ColorToMove.get_raw_value()] = false;
 		} else if (move.flags().isPromotion()) {
 			PieceType promotionPiece = m_promotedPieces.pop_back();
-			m_position.RemovePiece(m_position.ColorToMove, promotionPiece, move.to());
-			m_position.AddPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
+			m_position.removePiece(m_position.ColorToMove, promotionPiece, move.to());
+			m_position.addPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
 		}
 
 		m_position.IrreversibleMovesCount = m_irreversibleMovesCounts.pop_back();
 		m_position.PawnHash = m_pawnHashes.pop_back();
-		m_position.Hash = m_hashes.pop_back();
+		m_position.m_hash = m_hashes.pop_back();
 		m_position.m_castling = m_castlings.pop_back();
 		m_position.EnPassant = m_enPassants.pop_back();
 
