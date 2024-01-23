@@ -144,7 +144,16 @@ inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
-	return (m_bits & (m_bits - 1));
+#if defined(__GNUC__) || defined(__clang__)
+	// GCC or Clang
+	return m_bits & (m_bits - 1);
+#elif defined(_MSC_VER)
+	// Microsoft Visual C++
+	return _blsr_u64(m_bits);
+#else
+	// Fallback implementation for other compilers or platforms
+	return m_bits & (m_bits - 1);
+#endif
 }
 
 [[nodiscard]] inline constexpr uint8_t Bitset::count() const noexcept {
@@ -158,27 +167,26 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 }
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
-#ifdef __clang__
-	return __builtin_ctzll(m_bits);
-#elif __GNUC__
+#if defined(__GNUC__) || defined(__clang__)
+	// GCC or Clang
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
+	// Microsoft Visual C++
 	unsigned long index;
-	_BitScanForward64(&index, m_bits);
+	_BitScanForward64(&index, m_bits); // returns if the number was zero
 	return index;
 #else
+	// Fallback implementation for other compilers or platforms
 	static_assert(false, "Slow code, remove this if there are no native or intrinsic functions");
-	const int64_t ibits = static_cast<int64_t>(m_bits);
-	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
+	return bitScan();
 #endif
 }
 
 [[nodiscard]] inline constexpr uint8_t Bitset::bitScan() const noexcept {
-#ifdef __clang__
+#if defined(__GNUC__) || defined(__clang__)
+	// GCC or Clang
 	return __builtin_ctzll(m_bits);
-#elif __GNUC__
-	return __builtin_ctzll(m_bits);
-#elif _MSC_VER && 0 // Skip intrinsic for microsoft cl due to not being constexpr
+#elif _MSC_VER && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
