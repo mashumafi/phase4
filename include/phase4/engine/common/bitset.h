@@ -155,6 +155,11 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 [[nodiscard]] inline constexpr uint8_t Bitset::bitScan() const noexcept {
 #ifdef __clang__
 	return __builtin_ctzll(m_bits);
+#elif __GNUC__
+	return __builtin_ctzll(m_bits);
+#elif _MSC_VER
+	uint64_t index;
+	_BitScanForward64(&index, m_bits);
 #else
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
