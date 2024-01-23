@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_BOARD_SESSION_H
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/zobrist_hashing.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
@@ -17,9 +18,7 @@ public:
 	}
 
 	void setDefaultState() {
-		m_position.setDefaultState();
-
-		recalculateEvaluationDependentValues();
+		PositionState::setDefaultState(m_position);
 
 		m_killedPieces.clear();
 		m_enPassants.clear();
@@ -29,18 +28,6 @@ public:
 		m_pawnHashes.clear();
 		m_irreversibleMovesCounts.clear();
 		m_wallSlides.clear();
-	}
-
-	void recalculateEvaluationDependentValues() {
-		m_position.recalculateEvaluationDependentValues();
-	}
-
-	int32_t calculateMaterial(common::PieceColor color) {
-		return m_position.calculateMaterial(color);
-	}
-
-	int32_t calculatePosition(common::PieceColor color, common::GamePhase phase) {
-		return m_position.calculatePosition(color, phase);
 	}
 
 	bool isKingChecked(common::PieceColor color) const {

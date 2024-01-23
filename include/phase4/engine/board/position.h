@@ -32,118 +32,23 @@ public:
 	common::Bitset m_enPassant;
 	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
-	uint16_t m_movesCount;
-	uint16_t m_irreversibleMovesCount;
-	uint16_t m_nullMoves;
+	uint16_t m_movesCount = 0;
+	uint16_t m_irreversibleMovesCount = 0;
+	uint16_t m_nullMoves = 0;
 
-	bool m_castlingDone[2];
-	int32_t m_material[2];
-	int32_t m_positionEval[2][2];
+	bool m_castlingDone[2] = {};
+	int32_t m_material[2] = {};
+	int32_t m_positionEval[2][2] = {};
 
 	std::array<common::PieceType, 64> m_pieceTable;
 
-	common::Bitset Walls = 0;
-
-	void setDefaultState() {
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 65280;
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 129;
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 66;
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] = 36;
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] = 16;
-		m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KING.get_raw_value()] = 8;
-
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 71776119061217280;
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 9295429630892703744ULL;
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 4755801206503243776;
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] = 2594073385365405696;
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] = 1152921504606846976;
-		m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KING.get_raw_value()] = 576460752303423488;
-
-		m_occupancyByColor[common::PieceColor::WHITE.get_raw_value()] = 65535;
-		m_occupancyByColor[common::PieceColor::BLACK.get_raw_value()] = 18446462598732840960ULL;
-		m_occupancySummary = m_occupancyByColor[common::PieceColor::WHITE.get_raw_value()] | m_occupancyByColor[common::PieceColor::BLACK.get_raw_value()] | Walls;
-
-		m_enPassant = 0;
-		m_castling = common::Castling::EVERYTHING;
-		m_colorToMove = common::PieceColor::WHITE;
-		m_movesCount = 0;
-		m_irreversibleMovesCount = 0;
-		m_nullMoves = 0;
-
-		m_castlingDone[common::PieceColor::WHITE.get_raw_value()] = false;
-		m_castlingDone[common::PieceColor::BLACK.get_raw_value()] = false;
-
-		calculatePieceTable(m_pieceTable);
-
-		m_hash = calculateHash();
-		m_pawnHash = calculatePawnHash();
-	}
-
-	ZobristHashing calculateHash() const {
-		ZobristHashing hash;
-		return hash;
-	}
-
-	ZobristHashing calculatePawnHash() const {
-		ZobristHashing pawnHash;
-		return pawnHash;
-	}
-
-	void calculatePieceTable(std::array<common::PieceType, 64> &pieceTable) {
-		pieceTable.fill(common::PieceType::INVALID);
-		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
-			for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
-				common::Bitset bitboard = m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
-				if ((bitboard & fieldIndex.asBitboard()) != 0) {
-					pieceTable[fieldIndex] = pieceIndex;
-					break;
-				}
-			}
-		}
-	}
-
-	void recalculateEvaluationDependentValues() {
-		m_material[common::PieceColor::WHITE.get_raw_value()] = calculateMaterial(common::PieceColor::WHITE);
-		m_material[common::PieceColor::BLACK.get_raw_value()] = calculateMaterial(common::PieceColor::BLACK);
-
-		m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::OPENING);
-		m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::WHITE, common::GamePhase::ENDING);
-		m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::OPENING);
-		m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(common::PieceColor::BLACK, common::GamePhase::ENDING);
-	}
-
-	int32_t calculateMaterial(common::PieceColor color) {
-		int32_t material = 0;
-
-		for (size_t i = 0; i < 6; i++) {
-			material += common::Bitset(m_colorPieceMasks[color.get_raw_value()][i]).count() * ai::score::EvaluationConstants::Pieces[i];
-		}
-
-		return material;
-	}
-
-	int32_t calculatePosition(common::PieceColor color, common::GamePhase phase) {
-		int32_t result = 0;
-
-		for (size_t pieceIndex = 0; pieceIndex < 6; pieceIndex++) {
-			common::Bitset pieces(m_colorPieceMasks[color.get_raw_value()][pieceIndex]);
-			while (pieces != 0) {
-				common::Bitset lsb = pieces.getLsb();
-				pieces = pieces.popLsb();
-				common::Bitset fieldIndex = lsb.bitScan();
-
-				result += ai::score::piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.asSize()];
-			}
-		}
-
-		return result;
-	}
+	common::Bitset m_walls = 0;
 
 	void clearWalls() {
-		if (likely(Walls > 0)) {
-			m_occupancySummary = m_occupancySummary & ~Walls;
-			m_hash = m_hash.toggleWalls(Walls);
-			Walls = 0;
+		if (likely(m_walls > 0)) {
+			m_occupancySummary = m_occupancySummary & ~m_walls;
+			m_hash = m_hash.toggleWalls(m_walls);
+			m_walls = 0;
 		}
 	}
 
@@ -472,11 +377,11 @@ public:
 			}
 		}
 
-		if (likely(Walls > 0)) {
-			uint8_t wallIndex = Walls.bitScan();
+		if (likely(m_walls > 0)) {
+			uint8_t wallIndex = m_walls.bitScan();
 			const FieldIndex wallMove = WallOperations::SLIDE_DIR[wallIndex][move.to()];
 			if (wallMove != FieldIndex::ZERO) {
-				m_occupancySummary = m_occupancySummary & ~Walls;
+				m_occupancySummary = m_occupancySummary & ~m_walls;
 
 				Bitset original = WallOperations::SLIDE_TO[wallIndex][move.to()];
 				while (original > 0) {
@@ -536,10 +441,10 @@ public:
 					original = original.popLsb();
 				}
 
-				m_hash = m_hash.toggleWalls(Walls); // Turn off previous wall
-				Walls = WallOperations::SLIDE_TO[wallIndex][move.to()];
-				m_hash = m_hash.toggleWalls(Walls); // Turn on new wall location
-				m_occupancySummary = m_occupancySummary | Walls;
+				m_hash = m_hash.toggleWalls(m_walls); // Turn off previous wall
+				m_walls = WallOperations::SLIDE_TO[wallIndex][move.to()];
+				m_hash = m_hash.toggleWalls(m_walls); // Turn on new wall location
+				m_occupancySummary = m_occupancySummary | m_walls;
 			}
 			result.slide = wallMove;
 		} else {
@@ -569,14 +474,14 @@ public:
 	SlideResult slideWall(common::FieldIndex wallMove) {
 		using namespace common;
 
-		if (unlikely(Walls.count() != 4))
+		if (unlikely(m_walls.count() != 4))
 			return {};
 
 		SlideResult result;
 
-		m_occupancySummary &= ~Walls;
+		m_occupancySummary &= ~m_walls;
 
-		Bitset walls = Walls;
+		Bitset walls = m_walls;
 		if (wallMove.offset() >= 0)
 			walls >>= wallMove.offset();
 		else
@@ -595,11 +500,11 @@ public:
 			original = original.popLsb();
 		}
 
-		m_hash = m_hash.toggleWalls(Walls); // Turn off previous wall
-		Walls = walls;
-		m_hash = m_hash.toggleWalls(Walls);
+		m_hash = m_hash.toggleWalls(m_walls); // Turn off previous wall
+		m_walls = walls;
+		m_hash = m_hash.toggleWalls(m_walls);
 		; // Turn on new wall location
-		m_occupancySummary |= Walls;
+		m_occupancySummary |= m_walls;
 
 		return result;
 	}

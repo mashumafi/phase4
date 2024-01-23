@@ -1,6 +1,7 @@
 #include <phase4/engine/board/operators.h>
 
-#include <phase4/engine/board/session.h>
+#include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_state.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/magic/magic_bitboards.h>
 #include <phase4/engine/moves/move.h>
@@ -18,7 +19,7 @@ TEST_CASE("Operators standard getAllMoves") {
 	Position position;
 
 	{ // Default State
-		position.setDefaultState();
+		PositionState::setDefaultState(position);
 
 		Moves moves;
 		Operators::getAllMoves(position, moves);
