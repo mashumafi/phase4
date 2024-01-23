@@ -67,7 +67,7 @@ public:
 
 constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::populateSlideFromBB() {
 	std::array<std::array<uint64_t, 8>, 8> result{};
-	for (int16_t from = 0; from < 64; ++from) {
+	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		uint64_t wallSquares = SquareBB(bottomRight) | SquareBB(bottomRight + North) | SquareBB(bottomRight + West) | SquareBB(bottomRight + NorthWest);
 		result[from % 8][from / 8] = wallSquares;
@@ -79,11 +79,11 @@ inline constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::SLIDE_FR
 
 constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
 	std::array<std::array<common::Bitset, 64>, 64> result{};
-	for (int16_t from = 0; from < 64; ++from) {
+	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		int64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
-		for (int to = 0; to < 64; ++to) {
+		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
 			int64_t shiftedWall = wallSquares;
 			int64_t toBB = SquareBB(to);
@@ -110,11 +110,11 @@ constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populat
 
 constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSlideDir() {
 	std::array<std::array<FieldIndex, 64>, 64> result{};
-	for (int16_t from = 0; from < 64; ++from) {
+	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
-		for (int to = 0; to < 64; ++to) {
+		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
 			uint64_t toBB = SquareBB(to);
 
@@ -136,11 +136,11 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 
 constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populateSlideSquare() {
 	std::array<std::array<common::Square, 64>, 64> result{};
-	for (int16_t from = 0; from < 64; ++from) {
+	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
 		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
 
-		for (int to = 0; to < 64; ++to) {
+		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
 			uint64_t toBB = SquareBB(to);
 

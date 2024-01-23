@@ -91,10 +91,10 @@ public:
 
 	void calculatePieceTable(std::array<common::PieceType, 64> &pieceTable) {
 		pieceTable.fill(common::PieceType::INVALID);
-		for (int fieldIndex = 0; fieldIndex < 64; fieldIndex++) {
+		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 				common::Bitset bitboard = m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
-				if ((bitboard & (1ull << fieldIndex)) != 0) {
+				if ((bitboard & fieldIndex.asBitboard()) != 0) {
 					pieceTable[fieldIndex] = pieceIndex;
 					break;
 				}

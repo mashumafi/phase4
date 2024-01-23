@@ -11,6 +11,8 @@ namespace phase4::engine::common {
 
 class Square {
 public:
+	static const Square BEGIN;
+
 	static const Square H1;
 	static const Square G1;
 	static const Square F1;
@@ -112,6 +114,9 @@ public:
 
 	explicit constexpr Square(std::string_view move);
 
+	constexpr bool operator!=(Square piece) const;
+	constexpr Square operator++();
+
 	friend std::ostream &operator<<(std::ostream &os, const Square &square);
 
 private:
@@ -153,6 +158,7 @@ constexpr Square::Square(const FieldIndex &fieldIndex) :
 		Square(7 - fieldIndex.x + fieldIndex.y * 8) {
 }
 
+inline constexpr Square Square::BEGIN(0);
 inline constexpr Square Square::H1(0);
 inline constexpr Square Square::G1(1);
 inline constexpr Square Square::F1(2);
@@ -239,6 +245,14 @@ constexpr Square &Square::operator=(Square &&that) noexcept {
 
 constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {
+}
+
+inline constexpr bool Square::operator!=(Square piece) const {
+	return m_value != piece.m_value;
+}
+
+inline constexpr Square Square::operator++() {
+	return Square(++m_value);
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Square &square) {
