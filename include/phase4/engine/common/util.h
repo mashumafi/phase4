@@ -67,4 +67,14 @@ private:
 	std::array<T, computeSize(Dims...)> m_data;
 };
 
+#ifdef __clang__
+#define CONST constexpr
+#elif __GNUC__
+#define CONST constexpr
+#elif _MSC_VER
+#define CONST const
+#else
+#define CONST const
+#endif
+
 #endif

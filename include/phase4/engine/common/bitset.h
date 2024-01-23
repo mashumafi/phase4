@@ -162,6 +162,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	_BitScanForward64(&index, m_bits);
 	return index;
 #else
+	static_assert(false, "Slow code, remove this if there are no native or intrinsic functions");
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 #endif
