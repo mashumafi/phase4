@@ -48,8 +48,7 @@ static void CopyMakeMove(benchmark::State &state) {
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
-	board::Position position;
-	board::PositionState::setDefaultState(position);
+	board::Position position = board::PositionState::DEFAULT;
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {

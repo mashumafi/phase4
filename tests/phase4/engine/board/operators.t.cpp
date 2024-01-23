@@ -19,7 +19,7 @@ TEST_CASE("Operators standard getAllMoves") {
 	Position position;
 
 	{ // Default State
-		PositionState::setDefaultState(position);
+		position = PositionState::DEFAULT;
 
 		Moves moves;
 		Operators::getAllMoves(position, moves);
