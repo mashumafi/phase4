@@ -68,13 +68,23 @@ private:
 };
 
 #ifdef __clang__
-#define CONST constexpr
+#define CONSTEXPR_OR_NONE constexpr
 #elif __GNUC__
-#define CONST constexpr
+#define CONSTEXPR_OR_NONE constexpr
 #elif _MSC_VER
-#define CONST
+#define CONSTEXPR_OR_NONE
 #else
-#define CONST
+#define CONSTEXPR_OR_NONE
+#endif
+
+#ifdef __clang__
+#define CONSTEXPR_OR_CONST constexpr
+#elif __GNUC__
+#define CONSTEXPR_OR_CONST constexpr
+#elif _MSC_VER
+#define CONSTEXPR_OR_NONE const
+#else
+#define CONSTEXPR_OR_NONE const
 #endif
 
 #endif
