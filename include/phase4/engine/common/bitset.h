@@ -162,7 +162,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
 #elif defined(_MSC_VER)
 	// Microsoft Visual C++
-	return static_cast<std::size_t>(_mm_popcnt_u64(m_bits));
+	return static_cast<std::size_t>(__popcnt64(m_bits));
 #else
 	// Fallback implementation for other compilers or platforms
 	uint8_t count = 0;
