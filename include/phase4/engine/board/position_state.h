@@ -133,7 +133,7 @@ constexpr Position PositionState::makeDefaultPosition() {
 	return position;
 }
 
-inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
+inline const Position PositionState::DEFAULT = makeDefaultPosition();
 
 } //namespace phase4::engine::board
 
