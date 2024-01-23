@@ -149,7 +149,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	return m_bits & (m_bits - 1);
 #elif defined(_MSC_VER)
 	// Microsoft Visual C++
-	return _blsr_u64(m_bits);
+	return m_bits & (m_bits - 1);
 #else
 	// Fallback implementation for other compilers or platforms
 	return m_bits & (m_bits - 1);
