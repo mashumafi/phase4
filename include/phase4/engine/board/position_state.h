@@ -9,7 +9,7 @@ namespace phase4::engine::board {
 
 class PositionState {
 public:
-	static const Position DEFAULT;
+	static CONST Position DEFAULT;
 
 	static CONST void setDefaultState(Position &position);
 
@@ -24,7 +24,7 @@ private:
 
 	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
 
-	static constexpr int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
+	static CONST int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
 
 	static CONST Position makeDefaultPosition();
 };

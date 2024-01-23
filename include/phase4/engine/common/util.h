@@ -72,9 +72,9 @@ private:
 #elif __GNUC__
 #define CONST constexpr
 #elif _MSC_VER
-#define CONST const
+#define CONST
 #else
-#define CONST const
+#define CONST
 #endif
 
 #endif
