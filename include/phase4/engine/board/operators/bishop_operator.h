@@ -28,13 +28,13 @@ public:
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
-			const Square from(piece.bitScan());
+			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb();
-				const Square fieldIndex(field.bitScan());
+				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
 				moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);
@@ -52,13 +52,13 @@ public:
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
-			const Square from(piece.bitScan());
+			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & ~position.m_occupancySummary;
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb();
-				const Square fieldIndex(field.bitScan());
+				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
 				moves.emplace_back(from, fieldIndex, moves::MoveFlags::QUIET);
@@ -77,12 +77,12 @@ public:
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
-			const Square from(piece.bitScan());
+			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb();
-				Square fieldIndex(field.bitScan());
+				Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
 				moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);
@@ -102,7 +102,7 @@ public:
 			const Bitset piece = bishops.getLsb();
 			bishops = bishops.popLsb();
 
-			const Square from(piece.bitScan());
+			const Square from(piece.fastBitScan());
 			const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from);
 
 			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).count();

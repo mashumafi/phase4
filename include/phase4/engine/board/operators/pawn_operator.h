@@ -116,11 +116,11 @@ private:
 			const Bitset piece = pawns.getLsb();
 			pawns = pawns.popLsb();
 
-			const Square from(piece.bitScan() - shift);
-			const Square to(piece.bitScan());
+			const Square from(piece.fastBitScan() - shift);
+			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle promotion after sliding
-			Bitset slideSquare = position.m_walls > 0 ? (WallOperations::SLIDE_SQUARE[position.m_walls.bitScan()][to].asBitboard()) : 0;
+			Bitset slideSquare = position.m_walls > 0 ? (WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard()) : 0;
 
 			if (promotionsMode && ((piece & promotionRank) != 0 || (slideSquare & promotionRank) != 0)) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION);
@@ -159,8 +159,8 @@ private:
 			const Bitset piece = pawns.getLsb();
 			pawns = pawns.popLsb();
 
-			const Square from(piece.bitScan() - shift);
-			const Square to(piece.bitScan());
+			const Square from(piece.fastBitScan() - shift);
+			const Square to(piece.fastBitScan());
 
 			moves.emplace_back(from, to, moves::MoveFlags::DOUBLE_PUSH);
 		}
@@ -192,11 +192,11 @@ private:
 			const Bitset piece = pawns.getLsb();
 			pawns = pawns.popLsb();
 
-			const Square from(piece.bitScan() - shift);
-			const Square to(piece.bitScan());
+			const Square from(piece.fastBitScan() - shift);
+			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle en passant after sliding
-			Bitset slideRank = WallOperations::SLIDE_SQUARE[position.m_walls.bitScan()][to].asBitboard();
+			Bitset slideRank = WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
 
 			if ((piece & promotionRank) != 0 || (slideRank & promotionRank) != 0) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE);

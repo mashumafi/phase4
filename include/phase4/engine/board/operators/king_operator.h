@@ -30,12 +30,12 @@ public:
 			return; // NOTE: There should always be a king
 		}
 
-		const Square from(piece.bitScan());
+		const Square from(piece.fastBitScan());
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
 			const Bitset field = availableMoves.getLsb();
-			const Square fieldIndex(field.bitScan());
+			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
 			moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);
@@ -70,12 +70,12 @@ public:
 			return; // NOTE: There should always be a king
 		}
 
-		const Square from(piece.bitScan());
+		const Square from(piece.fastBitScan());
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
 
 		while (availableMoves != 0) {
 			const Bitset field = availableMoves.getLsb();
-			const Square fieldIndex(field.bitScan());
+			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
 			moves.emplace_back(from, fieldIndex, moves::MoveFlags::QUIET);
@@ -93,12 +93,12 @@ public:
 			return; // NOTE: There should always be a king
 		}
 
-		const Square from(piece.bitScan());
+		const Square from(piece.fastBitScan());
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
 			const Bitset field = availableMoves.getLsb();
-			const Square fieldIndex(field.bitScan());
+			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
 			moves.emplace_back(from, fieldIndex, moves::MoveFlags::CAPTURE);

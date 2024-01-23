@@ -99,7 +99,7 @@ constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 
 [[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const {
 	if (likely((currentCastling & castlingChange) != common::Castling::NONE)) {
-		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange.get_raw_value()).bitScan()];
+		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange.get_raw_value()).fastBitScan()];
 	}
 
 	return m_hash;

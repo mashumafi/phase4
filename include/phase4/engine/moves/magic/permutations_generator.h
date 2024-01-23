@@ -13,7 +13,7 @@ public:
 		common::Bitset permutation = 0;
 		while (mask != 0) {
 			if ((permutationIndex & 1) != 0) {
-				const common::Square lsbIndex(mask.bitScan());
+				const common::Square lsbIndex(mask.fastBitScan());
 				permutation = permutation | lsbIndex.asBitboard();
 			}
 

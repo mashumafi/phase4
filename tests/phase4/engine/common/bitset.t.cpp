@@ -28,8 +28,8 @@ TEST_CASE("Bitset count") {
 TEST_CASE("Bitset bitScan") {
 	using namespace phase4::engine::common;
 
-	CHECK(Bitset(0b00101).bitScan() == 0);
-	CHECK(Bitset((0b10100)).bitScan() == 2);
+	CHECK(Bitset(0b00101).fastBitScan() == 0);
+	CHECK(Bitset((0b10100)).fastBitScan() == 2);
 }
 
 TEST_CASE("Bitset output") {

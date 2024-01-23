@@ -114,7 +114,7 @@ public:
 			return false;
 		}
 
-		const uint8_t kingField = king.bitScan();
+		const uint8_t kingField = king.fastBitScan();
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
@@ -188,7 +188,7 @@ public:
 		}
 
 		if (m_enPassant != 0) {
-			uint8_t enPassantRank = m_enPassant.bitScan() % 8;
+			uint8_t enPassantRank = m_enPassant.fastBitScan() % 8;
 			m_hash = m_hash.toggleEnPassant(enPassantRank);
 			m_enPassant = 0;
 		}
@@ -208,7 +208,7 @@ public:
 			m_pawnHash = m_pawnHash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 
 			Bitset enPassantField = (m_colorToMove == PieceColor::WHITE) ? Square(move.to() - 8).asBitboard() : Square(move.to() + 8).asBitboard();
-			uint8_t enPassantFieldIndex = enPassantField.bitScan();
+			uint8_t enPassantFieldIndex = enPassantField.fastBitScan();
 
 			m_enPassant = enPassantField;
 			m_hash = m_hash.toggleEnPassant(enPassantFieldIndex % 8);
@@ -378,14 +378,14 @@ public:
 		}
 
 		if (likely(m_walls > 0)) {
-			uint8_t wallIndex = m_walls.bitScan();
+			uint8_t wallIndex = m_walls.fastBitScan();
 			const FieldIndex wallMove = WallOperations::SLIDE_DIR[wallIndex][move.to()];
 			if (wallMove != FieldIndex::ZERO) {
 				m_occupancySummary = m_occupancySummary & ~m_walls;
 
 				Bitset original = WallOperations::SLIDE_TO[wallIndex][move.to()];
 				while (original > 0) {
-					Square from(original.bitScan());
+					Square from(original.fastBitScan());
 					Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
 					result.moved.push_back(MakeMoveResult::Movement{ from, to });
 					if (auto pieceResult = GetPiece(from)) {
@@ -399,7 +399,7 @@ public:
 
 						if (resultType == PieceType::PAWN && m_enPassant != 0) {
 							int offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
-							uint8_t enPassantField = m_enPassant.bitScan();
+							uint8_t enPassantField = m_enPassant.fastBitScan();
 							if (enPassantField == from.get_raw_value() + offset) {
 								uint8_t enPassantRank = enPassantField % 8;
 								m_hash = m_hash.toggleEnPassant(enPassantRank);
@@ -408,7 +408,7 @@ public:
 									m_enPassant = m_enPassant >> wallMove.offset();
 								else
 									m_enPassant = m_enPassant << -wallMove.offset();
-								m_hash = m_hash.toggleEnPassant(m_enPassant.bitScan() % 8);
+								m_hash = m_hash.toggleEnPassant(m_enPassant.fastBitScan() % 8);
 							}
 						}
 
@@ -489,7 +489,7 @@ public:
 
 		Bitset original = walls;
 		while (original != 0) {
-			const Square from(original.bitScan());
+			const Square from(original.fastBitScan());
 			const Square to(from + wallMove.offset());
 			result.moves.push_back({ from, to });
 			if (auto pieceResult = GetPiece(from)) {
