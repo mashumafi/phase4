@@ -218,7 +218,10 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 }
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(USE_SLOW_BITSET_LSB)
+	const int64_t ibits = static_cast<int64_t>(m_bits);
+	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
+#elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
@@ -227,9 +230,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	_BitScanForward64(&index, m_bits); // returns if the number was zero
 	return index;
 #else
-	// Fallback implementation for other compilers or platforms
-	static_assert(false, "Slow code, remove this if there are no native or intrinsic functions");
-	return bitScan();
+	static_assert(false, "Define USE_SLOW_BITSET_LSB to use internal implementation.")
 #endif
 }
 
@@ -239,8 +240,8 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
-	const int64_t ibits = static_cast<int64_t>(m_bits);
-	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
+	// This is slow but guarantees a constexpr
+	return 1ull << count().asSize();
 #endif
 }
 
