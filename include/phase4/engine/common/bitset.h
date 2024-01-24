@@ -219,10 +219,12 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
 #if defined(USE_SLOW_BITSET_LSB)
+	assert(m_bits);
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
+	assert(m_bits);
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
 // Microsoft Visual C++
@@ -236,11 +238,13 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	unsigned long idx;
 
 	if (m_bits & 0xffffffff) {
-		_BitScanForward(&idx, static_cast<int32_t>(m_bits));
-		return Square(idx);
+		bool isZero = _BitScanForward(&idx, static_cast<int32_t>(m_bits));
+		assert(!isZero);
+		return idx;
 	} else {
-		_BitScanForward(&idx, static_cast<int32_t>(m_bits >> 32));
-		return Square(idx + 32);
+		bool isZero = _BitScanForward(&idx, static_cast<int32_t>(m_bits >> 32));
+		assert(!isZero);
+		return idx + 32;
 	}
 #endif
 #else
