@@ -81,7 +81,7 @@ private:
 	static void getSinglePush(const Position &position, moves::Moves &moves, bool promotionsMode, common::Bitset evasionMask) {
 		using namespace common;
 
-		int shift;
+		int8_t shift;
 		Bitset promotionRank, pawns;
 		const PieceColor color = position.m_colorToMove;
 
@@ -136,7 +136,7 @@ private:
 	static void getDoublePush(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		int shift;
+		int8_t shift;
 		Bitset startRank, pawns;
 		const PieceColor color = position.m_colorToMove;
 
@@ -169,7 +169,7 @@ private:
 	static void getDiagonalAttacks(const Position &position, int dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		int shift;
+		int8_t shift;
 		Bitset promotionRank, enemyOccupancy, pawns;
 		const PieceColor color = position.m_colorToMove;
 
