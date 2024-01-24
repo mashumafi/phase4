@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_COMMON_BITSET_H
 
 #include <array>
+#include <cassert>
 #include <bitset>
 #include <cstdint>
 #include <iostream>
