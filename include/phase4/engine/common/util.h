@@ -72,9 +72,9 @@ private:
 #elif __GNUC__
 #define CONSTEXPR_OR_NONE constexpr
 #elif _MSC_VER
-#define CONSTEXPR_OR_NONE
+#define CONSTEXPR_OR_NONE constexpr
 #else
-#define CONSTEXPR_OR_NONE
+#define CONSTEXPR_OR_NONE constexpr
 #endif
 
 #ifdef __clang__
@@ -82,9 +82,9 @@ private:
 #elif __GNUC__
 #define CONSTEXPR_OR_CONST constexpr
 #elif _MSC_VER
-#define CONSTEXPR_OR_CONST const
+#define CONSTEXPR_OR_CONST constexpr
 #else
-#define CONSTEXPR_OR_CONST const
+#define CONSTEXPR_OR_CONST constexpr
 #endif
 
 #endif
