@@ -44,6 +44,9 @@ public:
 
 	common::Bitset m_walls = 0;
 
+	constexpr Position() {
+	}
+
 	void clearWalls() {
 		if (likely(m_walls > 0)) {
 			m_occupancySummary = m_occupancySummary & ~m_walls;
