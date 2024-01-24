@@ -130,7 +130,7 @@ constexpr std::array<uint8_t, 1 << 16> populateBitCounts() {
 	return bitCounts;
 }
 
-constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCounts();
+inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCounts();
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
 	return (m_bits & -m_bits);
@@ -174,18 +174,12 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	// Microsoft Visual C++
 	return m_bits & (m_bits - 1);
 #else
-	static_assert(false, "Define USE_SLOW_BITSET_POP to use internal ")
+	static_assert(false, "Define USE_SLOW_BITSET_POP to use internal implementation.")
 #endif
 }
 
 [[nodiscard]] inline uint8_t Bitset::fastCount() const noexcept {
-#if defined(__GNUC__) || defined(__clang__)
-	// GCC or Clang
-	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
-#elif defined(_MSC_VER)
-	return static_cast<std::size_t>(__popcnt64(m_bits));
-#else
-	// Fallback implementation for other compilers or platforms
+#if defined(USE_SLOW_BITSET_COUNT)
 	uint8_t count = 0;
 	Bitset bits = m_bits;
 	while (bits > 0) {
@@ -193,6 +187,13 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 		count++;
 	}
 	return count;
+#elif defined(__GNUC__) || defined(__clang__)
+	// GCC or Clang
+	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
+#elif defined(_MSC_VER)
+	return static_cast<std::size_t>(__popcnt64(m_bits));
+#else
+	static_assert(false, "Define USE_SLOW_BITSET_COUNT to use internal implementation.")
 #endif
 }
 
