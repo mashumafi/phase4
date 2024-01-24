@@ -26,11 +26,11 @@ public:
 	ZobristHashing m_hash;
 	ZobristHashing m_pawnHash;
 
-	common::Bitset m_colorPieceMasks[2][6];
-	common::Bitset m_occupancyByColor[2];
+	common::Bitset m_colorPieceMasks[2][6] = {};
+	common::Bitset m_occupancyByColor[2] = {};
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
-	common::Castling m_castling = common::Castling::NONE;
+	common::Castling m_castling = common::Castling::EVERYTHING;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 0;
 	uint16_t m_irreversibleMovesCount = 0;
@@ -40,7 +40,7 @@ public:
 	int32_t m_material[2] = {};
 	int32_t m_positionEval[2][2] = {};
 
-	std::array<common::PieceType, 64> m_pieceTable;
+	std::array<common::PieceType, 64> m_pieceTable = {};
 
 	common::Bitset m_walls = 0;
 

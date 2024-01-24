@@ -130,7 +130,7 @@ inline CONSTEXPR_OR_NONE void PositionState::setDefaultState(Position &position)
 
 inline CONSTEXPR_OR_NONE Position PositionState::makeDefaultPosition() {
 	Position position;
-	//setDefaultState(position);
+	setDefaultState(position);
 	return position;
 }
 
