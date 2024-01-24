@@ -225,10 +225,25 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	// GCC or Clang
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
-	// Microsoft Visual C++
-	unsigned long index;
-	_BitScanForward64(&index, m_bits); // returns if the number was zero
-	return index;
+// Microsoft Visual C++
+#ifdef _WIN64
+
+	unsigned long idx;
+	_BitScanReverse64(&idx, b);
+	return Square(idx);
+
+#else // WIN32
+
+	unsigned long idx;
+
+	if (b >> 32) {
+		_BitScanReverse(&idx, int32_t(b >> 32));
+		return Square(idx + 32);
+	} else {
+		_BitScanReverse(&idx, int32_t(b));
+		return Square(idx);
+	}
+#endif
 #else
 	static_assert(false, "Define USE_SLOW_BITSET_LSB to use internal implementation.")
 #endif
