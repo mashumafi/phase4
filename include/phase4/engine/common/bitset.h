@@ -1,9 +1,16 @@
 #ifndef PHASE4_ENGINE_COMMON_BITSET_H
 #define PHASE4_ENGINE_COMMON_BITSET_H
 
+#include <array>
 #include <bitset>
 #include <cstdint>
 #include <iostream>
+
+#ifdef USE_SLOW_BITSET
+#define USE_SLOW_BITSET_POP
+#define USE_SLOW_BITSET_COUNT
+#define USE_SLOW_BITSET_LSB
+#endif
 
 namespace phase4::engine::common {
 
@@ -29,6 +36,11 @@ public:
 	/// @param bits to turn off LSB
 	/// @return
 	[[nodiscard]] inline constexpr Bitset popLsb() const noexcept;
+
+	/// @brief counts the number of 1 bits
+	/// @param bits to count
+	/// @return
+	[[nodiscard]] inline uint8_t fastCount() const noexcept;
 
 	/// @brief counts the number of 1 bits
 	/// @param bits to count
@@ -108,8 +120,17 @@ private:
 		25, 14, 19, 9, 13, 8, 7, 6
 	};
 
+	static const std::array<uint8_t, 1 << 16> g_popCount;
+
 	uint64_t m_bits;
 };
+
+constexpr std::array<uint8_t, 1 << 16> populateBitCounts() {
+	std::array<uint8_t, 1 << 16> bitCounts{};
+	return bitCounts;
+}
+
+constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCounts();
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
 	return (m_bits & -m_bits);
@@ -144,15 +165,33 @@ inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(USE_SLOW_BITSET_POP)
+	return m_bits & (m_bits - 1);
+#elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
 	return m_bits & (m_bits - 1);
 #elif defined(_MSC_VER)
 	// Microsoft Visual C++
 	return m_bits & (m_bits - 1);
 #else
+	static_assert(false, "Define USE_SLOW_BITSET_POP to use internal ")
+#endif
+}
+
+[[nodiscard]] inline uint8_t Bitset::fastCount() const noexcept {
+#if defined(__GNUC__) || defined(__clang__)
+	// GCC or Clang
+	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
+#elif defined(_MSC_VER)
+#else
 	// Fallback implementation for other compilers or platforms
-	return m_bits & (m_bits - 1);
+	uint8_t count = 0;
+	Bitset bits = m_bits;
+	while (bits > 0) {
+		bits = bits.popLsb();
+		count++;
+	}
+	return count;
 #endif
 }
 
@@ -160,9 +199,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 #if defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
 	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
-#elif defined(_MSC_VER)
-	// Microsoft Visual C++
-	return static_cast<std::size_t>(__popcnt64(m_bits));
+#elif defined(_MSC_VER) && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
 	// Fallback implementation for other compilers or platforms
 	uint8_t count = 0;

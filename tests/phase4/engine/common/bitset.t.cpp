@@ -18,11 +18,11 @@ TEST_CASE("Bitset popLsb") {
 	CHECK(Bitset(0b10100).popLsb() == 0b10000);
 }
 
-TEST_CASE("Bitset count") {
+TEST_CASE("Bitset fastCount") {
 	using namespace phase4::engine::common;
 
-	CHECK(Bitset(0b00101).count() == 2);
-	CHECK(Bitset(0b10100).count() == 2);
+	CHECK(Bitset(0b00101).fastCount() == 2);
+	CHECK(Bitset(0b10100).fastCount() == 2);
 }
 
 TEST_CASE("Bitset bitScan") {

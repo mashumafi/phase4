@@ -474,7 +474,7 @@ public:
 	SlideResult slideWall(common::FieldIndex wallMove) {
 		using namespace common;
 
-		if (unlikely(m_walls.count() != 4))
+		if (unlikely(m_walls.fastCount() != 4))
 			return {};
 
 		SlideResult result;
