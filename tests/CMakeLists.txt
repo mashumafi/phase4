@@ -4,6 +4,8 @@ message(${doctest_SOURCE_DIR}/scripts/cmake)
 
 add_executable(phase4_test
     phase4/engine/board/operators.t.cpp
+    phase4/engine/board/position.t.cpp
+    phase4/engine/board/position_state.t.cpp
     phase4/engine/board/session.t.cpp
     phase4/engine/board/zobrist_hashing.t.cpp
     phase4/engine/fen/fen_to_position.t.cpp
