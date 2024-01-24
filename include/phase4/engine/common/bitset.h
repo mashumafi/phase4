@@ -241,7 +241,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 #elif _MSC_VER && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
 	// This is slow but guarantees a constexpr
-	return 1ull << count().asSize();
+	return 1ull << count();
 #endif
 }
 
