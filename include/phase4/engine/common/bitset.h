@@ -127,6 +127,9 @@ private:
 
 constexpr std::array<uint8_t, 1 << 16> populateBitCounts() {
 	std::array<uint8_t, 1 << 16> bitCounts{};
+	for (size_t i = 0; i < bitCounts.size(); ++i) {
+		bitCounts[i] = i % 8;
+	}
 	return bitCounts;
 }
 
