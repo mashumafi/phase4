@@ -229,19 +229,18 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 #ifdef _WIN64
 
 	unsigned long idx;
-	_BitScanReverse64(&idx, b);
+	_BitScanForward64(&idx, m_bits);
 	return Square(idx);
 
 #else // WIN32
-
 	unsigned long idx;
 
-	if (b >> 32) {
-		_BitScanReverse(&idx, int32_t(b >> 32));
-		return Square(idx + 32);
-	} else {
-		_BitScanReverse(&idx, int32_t(b));
+	if (m_bits & 0xffffffff) {
+		_BitScanForward(&idx, static_cast<int32_t>(m_bits));
 		return Square(idx);
+	} else {
+		_BitScanForward(&idx, static_cast<int32_t>(m_bits >> 32));
+		return Square(idx + 32);
 	}
 #endif
 #else
