@@ -20,6 +20,8 @@ private:
 
 	static constexpr ZobristHashing calculatePawnHash(Position &position);
 
+	/// @brief Calculates the piece table based on piece masks
+	/// @param position the Position to update
 	static constexpr void calculatePieceTable(Position &position);
 
 	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
@@ -30,7 +32,6 @@ private:
 };
 
 inline constexpr void PositionState::calculatePieceTable(Position &position) {
-	//position.m_pieceTable.fill(common::PieceType::INVALID);
 	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 			common::Bitset bitboard = position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
