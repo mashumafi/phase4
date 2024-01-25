@@ -255,15 +255,16 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #elif _MSC_VER && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
 	// This is slow but guarantees a constexpr
-	uint8_t count = 0;
-	Bitset bits = m_bits;
+	uint8_t index = 0;
+	uint64_t bits = m_bits;
 	while (bits > 0) {
-		if ((bits & 1) == 1)
+		if (bits & 1)
 			break;
-		bits = bits.popLsb();
-		count++;
+
+		bits <<= 1;
+		index++;
 	}
-	return count;
+	return index;
 #endif
 }
 
