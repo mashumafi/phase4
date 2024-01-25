@@ -1,6 +1,8 @@
 #ifndef PHASE4_ENGINE_AI_SCORE_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
 #define PHASE4_ENGINE_AI_SCORE_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
 
+#include <phase4/engine/common/square.h>
+
 #include <array>
 #include <cstdint>
 
@@ -10,7 +12,7 @@ class TableOperations {
 public:
 	static constexpr std::array<int32_t, 64> flipVertically(const std::array<int32_t, 64> &array) {
 		std::array<int32_t, 64> result{};
-		for (int fieldIndex = 0; fieldIndex < 64; fieldIndex++) {
+		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			result[fieldIndex] = array[63 - fieldIndex];
 		}
 		return result;

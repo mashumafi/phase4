@@ -73,3 +73,16 @@ TEST_CASE("Square asBitboard") {
 	CHECK(Square::G5.asBitboard() == 0b00000000'00000000'00000000'00000010'00000000'00000000'00000000'00000000);
 	CHECK(Square::A8.asBitboard() == 0b10000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000);
 }
+
+TEST_CASE("Square increment and compare") {
+	using namespace phase4::engine::common;
+
+	Square square = Square::BEGIN;
+	CHECK(square == Square::H1);
+	++square;
+	CHECK(square == Square::G1);
+	++square;
+	CHECK(square == Square::F1);
+	++square;
+	CHECK(square == Square::E1);
+}

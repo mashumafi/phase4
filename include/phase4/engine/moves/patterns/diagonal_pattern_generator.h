@@ -41,7 +41,7 @@ constexpr uint64_t DiagonalPatternGenerator::getPatternForField(common::Square s
 
 constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::generatePatterns() {
 	Array patterns{};
-	for (int i = 0; i < 64; ++i) {
+	for (common::Square i = common::Square::BEGIN; i != common::Square::INVALID; ++i) {
 		const common::FieldIndex rightTopShift(-1, 1);
 		const common::FieldIndex leftTopShift(1, 1);
 		const common::FieldIndex rightBottomShift(-1, -1);

@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/session.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/moves/magic/magic_bitboards.h>
@@ -14,7 +15,7 @@ static void MakeMoveUndo(benchmark::State &state) {
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
 	board::Session session;
-	session.SetDefaultState();
+	session.setDefaultState();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
@@ -31,12 +32,12 @@ static void isMoveLegal(benchmark::State &state) {
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
-	phase4::engine::board::Session session;
-	session.SetDefaultState();
+	board::Session session;
+	session.setDefaultState();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
-		session.isMoveLegal(move);
+		benchmark::DoNotOptimize(session.isMoveLegal(move));
 	}
 }
 BENCHMARK(isMoveLegal);
@@ -47,14 +48,13 @@ static void CopyMakeMove(benchmark::State &state) {
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
-	phase4::engine::board::Position position;
-	position.SetDefaultState();
+	board::Position position = board::PositionState::DEFAULT;
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
-		phase4::engine::board::Position positionCopy = position;
+		board::Position positionCopy = position;
 		positionCopy.makeMove(move);
-		positionCopy.isKingChecked(common::PieceColor::BLACK);
+		benchmark::DoNotOptimize(positionCopy.isKingChecked(common::PieceColor::BLACK));
 	}
 }
 BENCHMARK(CopyMakeMove);

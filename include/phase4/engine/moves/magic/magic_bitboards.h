@@ -51,7 +51,7 @@ public:
 private:
 	static constexpr Masks generateRookMasks() {
 		Masks masks;
-		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
+		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] =
 					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::TOP_BOTTOM_EDGE) |
 					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::RIGHT_LEFT_EDGE);
@@ -61,7 +61,7 @@ private:
 
 	static constexpr Masks generateBishopMasks() {
 		Masks masks;
-		for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
+		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
 		}
 		return masks;
@@ -138,7 +138,7 @@ inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::gene
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_ROOK_SHIFT>();
 	auto attacks = std::array<common::Bitset, 1ull << MagicShifts::MAX_ROOK_SHIFT>();
-	for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
+	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		const size_t length = 1ull << MagicShifts::ROOK_SHIFTS[fieldIndex];
 		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 			permutations[permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);
@@ -158,7 +158,7 @@ inline MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttac
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
 	auto attacks = std::array<common::Bitset, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
-	for (int fieldIndex = 0; fieldIndex < 64; ++fieldIndex) {
+	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		const size_t length = 1ull << MagicShifts::BISHOP_SHIFTS[fieldIndex];
 		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 			permutations[permutationIndex] = PermutationsGenerator::getPermutation(masks[fieldIndex], permutationIndex);

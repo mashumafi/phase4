@@ -70,8 +70,8 @@ inline constexpr uint64_t BoardConstants::RIGHT_LEFT_EDGE = FILE_A | FILE_H;
 inline constexpr uint64_t BoardConstants::TOP_BOTTOM_EDGE = RANK_1 | RANK_8;
 inline constexpr uint64_t BoardConstants::CORNERS = 0x8100000000000081;
 
-inline constexpr uint64_t BoardConstants::NEAR_PROMOTION_AREA_WHITE = 0x00ffffff00000000;
-inline constexpr uint64_t BoardConstants::NEAR_PROMOTION_AREA_BLACK = 0x00000000ffffff00;
+inline constexpr uint64_t BoardConstants::NEAR_PROMOTION_AREA_WHITE = 0x00FFFFFF00000000;
+inline constexpr uint64_t BoardConstants::NEAR_PROMOTION_AREA_BLACK = 0x00000000FFFFFF00;
 
 inline constexpr std::array<int, 64> BoardConstants::DISTANCE_FROM_CENTER = {
 	3, 3, 3, 3, 3, 3, 3, 3,

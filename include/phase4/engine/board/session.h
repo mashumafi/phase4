@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_BOARD_SESSION_H
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/zobrist_hashing.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
@@ -16,10 +17,8 @@ public:
 	Session() {
 	}
 
-	void SetDefaultState() {
-		m_position.SetDefaultState();
-
-		recalculateEvaluationDependentValues();
+	void setDefaultState() {
+		m_position = PositionState::DEFAULT;
 
 		m_killedPieces.clear();
 		m_enPassants.clear();
@@ -31,18 +30,6 @@ public:
 		m_wallSlides.clear();
 	}
 
-	void recalculateEvaluationDependentValues() {
-		m_position.recalculateEvaluationDependentValues();
-	}
-
-	int32_t calculateMaterial(common::PieceColor color) {
-		return m_position.calculateMaterial(color);
-	}
-
-	int32_t calculatePosition(common::PieceColor color, common::GamePhase phase) {
-		return m_position.calculatePosition(color, phase);
-	}
-
 	bool isKingChecked(common::PieceColor color) const {
 		return m_position.isKingChecked(color);
 	}
@@ -50,15 +37,15 @@ public:
 	bool isMoveLegal(moves::Move move) const {
 		Position positionCopy = m_position;
 		positionCopy.makeMove(move);
-		return !positionCopy.isKingChecked(m_position.ColorToMove);
+		return !positionCopy.isKingChecked(m_position.m_colorToMove);
 	}
 
 	Position::MakeMoveResult makeMove(moves::Move move) {
 		m_castlings.push_back(m_position.m_castling);
 		m_hashes.push_back(m_position.m_hash);
-		m_pawnHashes.push_back(m_position.PawnHash);
-		m_enPassants.push_back(m_position.EnPassant);
-		m_irreversibleMovesCounts.push_back(m_position.IrreversibleMovesCount);
+		m_pawnHashes.push_back(m_position.m_pawnHash);
+		m_enPassants.push_back(m_position.m_enPassant);
+		m_irreversibleMovesCounts.push_back(m_position.m_irreversibleMovesCount);
 
 		Position::MakeMoveResult details = m_position.makeMove(move);
 		if (unlikely(details.promotion))
@@ -78,39 +65,39 @@ public:
 
 		FieldIndex wallMove = m_wallSlides.pop_back();
 		if (wallMove != FieldIndex::ZERO) {
-			m_position.SlideWall(wallMove);
+			m_position.slideWall(wallMove);
 		}
 
-		PieceType pieceType = m_position.PieceTable[move.to()];
-		m_position.ColorToMove = m_position.ColorToMove;
+		PieceType pieceType = m_position.m_pieceTable[move.to()];
+		m_position.m_colorToMove = m_position.m_colorToMove;
 
 		if (move.flags().isSinglePush() || move.flags().isDoublePush()) {
-			m_position.MovePiece(m_position.ColorToMove, pieceType, move.to(), move.from());
+			m_position.MovePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
 		} else if (move.flags().isEnPassant()) {
-			const PieceColor enemyColor = m_position.ColorToMove.invert();
-			const Square enemyPieceField(m_position.ColorToMove == PieceColor::WHITE ? static_cast<uint8_t>(move.to() - 8) : static_cast<uint8_t>(move.to() + 8));
+			const PieceColor enemyColor = m_position.m_colorToMove.invert();
+			const Square enemyPieceField(m_position.m_colorToMove == PieceColor::WHITE ? static_cast<uint8_t>(move.to() - 8) : static_cast<uint8_t>(move.to() + 8));
 			const PieceType killedPiece = m_killedPieces.pop_back();
 
-			m_position.MovePiece(m_position.ColorToMove, PieceType::PAWN, move.to(), move.from());
+			m_position.MovePiece(m_position.m_colorToMove, PieceType::PAWN, move.to(), move.from());
 			m_position.addPiece(enemyColor, killedPiece, enemyPieceField);
 		} else if (move.flags().isCapture()) {
-			PieceColor enemyColor = m_position.ColorToMove.invert();
+			PieceColor enemyColor = m_position.m_colorToMove.invert();
 			const PieceType killedPiece = m_killedPieces.pop_back();
 
 			// Promotion
 			if (move.flags().isPromotion()) {
 				const PieceType promotionPiece = m_promotedPieces.pop_back();
-				m_position.removePiece(m_position.ColorToMove, promotionPiece, move.to());
-				m_position.addPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
+				m_position.removePiece(m_position.m_colorToMove, promotionPiece, move.to());
+				m_position.addPiece(m_position.m_colorToMove, PieceType::PAWN, move.from());
 			} else {
-				m_position.MovePiece(m_position.ColorToMove, pieceType, move.to(), move.from());
+				m_position.MovePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
 			}
 
 			m_position.addPiece(enemyColor, killedPiece, move.to());
 		} else if (move.flags().isCastling()) {
 			// Short castling
 			if (move.flags().isKingCastling()) {
-				if (m_position.ColorToMove == PieceColor::WHITE) {
+				if (m_position.m_colorToMove == PieceColor::WHITE) {
 					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::G1, Square::E1);
 					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::F1, Square::H1);
 				} else {
@@ -120,7 +107,7 @@ public:
 			}
 			// Long castling
 			else {
-				if (m_position.ColorToMove == PieceColor::WHITE) {
+				if (m_position.m_colorToMove == PieceColor::WHITE) {
 					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::C1, Square::E1);
 					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::D1, Square::A1);
 				} else {
@@ -129,21 +116,21 @@ public:
 				}
 			}
 
-			m_position.CastlingDone[m_position.ColorToMove.get_raw_value()] = false;
+			m_position.m_castlingDone[m_position.m_colorToMove.get_raw_value()] = false;
 		} else if (move.flags().isPromotion()) {
 			PieceType promotionPiece = m_promotedPieces.pop_back();
-			m_position.removePiece(m_position.ColorToMove, promotionPiece, move.to());
-			m_position.addPiece(m_position.ColorToMove, PieceType::PAWN, move.from());
+			m_position.removePiece(m_position.m_colorToMove, promotionPiece, move.to());
+			m_position.addPiece(m_position.m_colorToMove, PieceType::PAWN, move.from());
 		}
 
-		m_position.IrreversibleMovesCount = m_irreversibleMovesCounts.pop_back();
-		m_position.PawnHash = m_pawnHashes.pop_back();
+		m_position.m_irreversibleMovesCount = m_irreversibleMovesCounts.pop_back();
+		m_position.m_pawnHash = m_pawnHashes.pop_back();
 		m_position.m_hash = m_hashes.pop_back();
 		m_position.m_castling = m_castlings.pop_back();
-		m_position.EnPassant = m_enPassants.pop_back();
+		m_position.m_enPassant = m_enPassants.pop_back();
 
-		if (m_position.ColorToMove == PieceColor::WHITE) {
-			m_position.MovesCount--;
+		if (m_position.m_colorToMove == PieceColor::WHITE) {
+			m_position.m_movesCount--;
 		}
 	}
 
@@ -170,7 +157,7 @@ private:
 	common::FastVector<common::PieceType> m_promotedPieces;
 	common::FastVector<ZobristHashing> m_hashes;
 	common::FastVector<ZobristHashing> m_pawnHashes;
-	common::FastVector<int> m_irreversibleMovesCounts;
+	common::FastVector<uint8_t> m_irreversibleMovesCounts;
 	common::FastVector<common::FieldIndex> m_wallSlides;
 };
 

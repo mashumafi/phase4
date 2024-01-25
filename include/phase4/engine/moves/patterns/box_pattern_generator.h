@@ -38,7 +38,7 @@ constexpr common::Bitset BoxPatternGenerator::getPatternForField(common::Square 
 
 constexpr BoxPatternGenerator::Array BoxPatternGenerator::generatePatterns() {
 	Array patterns{};
-	for (int i = 0; i < 64; ++i) {
+	for (common::Square i = common::Square::BEGIN; i != common::Square::INVALID; ++i) {
 		patterns[i] = getPatternForField(common::Square(i));
 	}
 	return patterns;
