@@ -4,10 +4,10 @@
 
 #include <doctest/doctest.h>
 
+constexpr phase4::engine::board::Position position;
+
 TEST_CASE("Position constexpr") {
 	using namespace phase4::engine;
-
-	constexpr board::Position position;
 
 	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
 }
