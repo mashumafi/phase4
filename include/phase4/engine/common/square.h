@@ -95,7 +95,7 @@ public:
 	/// @return the point
 	constexpr FieldIndex asFieldIndex() const;
 
-	constexpr Bitset asBitboard() const;
+	inline constexpr Bitset asBitboard() const;
 
 	constexpr operator uint64_t() const;
 
@@ -114,8 +114,8 @@ public:
 
 	explicit constexpr Square(std::string_view move);
 
-	constexpr bool operator!=(Square piece) const;
-	constexpr Square operator++();
+	inline constexpr bool operator!=(Square piece) const;
+	inline constexpr Square operator++();
 
 	friend std::ostream &operator<<(std::ostream &os, const Square &square);
 
@@ -133,7 +133,7 @@ constexpr FieldIndex Square::asFieldIndex() const {
 	return FieldIndex{ x, y };
 }
 
-constexpr Bitset Square::asBitboard() const {
+inline constexpr Bitset Square::asBitboard() const {
 	return Bitset(1ull << m_value);
 }
 

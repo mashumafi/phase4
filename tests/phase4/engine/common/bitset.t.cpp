@@ -23,6 +23,9 @@ TEST_CASE("Bitset fastCount") {
 
 	CHECK(Bitset(0b00101).fastCount() == 2);
 	CHECK(Bitset(0b10100).fastCount() == 2);
+
+	CHECK(Bitset(0b00101).count() == 2);
+	CHECK(Bitset(0b10100).count() == 2);
 }
 
 TEST_CASE("Bitset bitScan") {
@@ -30,6 +33,9 @@ TEST_CASE("Bitset bitScan") {
 
 	CHECK(Bitset(0b00101).fastBitScan() == 0);
 	CHECK(Bitset((0b10100)).fastBitScan() == 2);
+
+	CHECK(Bitset(0b00101).bitScan() == 0);
+	CHECK(Bitset((0b10100)).bitScan() == 2);
 }
 
 TEST_CASE("Bitset output") {
