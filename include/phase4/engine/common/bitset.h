@@ -258,7 +258,7 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 	uint8_t count = 0;
 	Bitset bits = m_bits;
 	while (bits > 0) {
-		if (bits & 1 == 1)
+		if ((bits & 1) == 1)
 			break;
 		bits = bits.popLsb();
 		count++;
