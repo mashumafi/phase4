@@ -157,7 +157,7 @@ private:
 	common::FastVector<common::PieceType> m_promotedPieces;
 	common::FastVector<ZobristHashing> m_hashes;
 	common::FastVector<ZobristHashing> m_pawnHashes;
-	common::FastVector<int> m_irreversibleMovesCounts;
+	common::FastVector<uint8_t> m_irreversibleMovesCounts;
 	common::FastVector<common::FieldIndex> m_wallSlides;
 };
 

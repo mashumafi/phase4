@@ -33,7 +33,7 @@ public:
 	common::Castling m_castling = common::Castling::EVERYTHING;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 0;
-	uint16_t m_irreversibleMovesCount = 0;
+	uint8_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
 	bool m_castlingDone[2] = {};
