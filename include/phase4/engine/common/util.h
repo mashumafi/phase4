@@ -67,24 +67,4 @@ private:
 	std::array<T, computeSize(Dims...)> m_data;
 };
 
-#ifdef __clang__
-#define CONSTEXPR_OR_NONE constexpr
-#elif __GNUC__
-#define CONSTEXPR_OR_NONE constexpr
-#elif _MSC_VER
-#define CONSTEXPR_OR_NONE constexpr
-#else
-#define CONSTEXPR_OR_NONE constexpr
-#endif
-
-#ifdef __clang__
-#define CONSTEXPR_OR_CONST constexpr
-#elif __GNUC__
-#define CONSTEXPR_OR_CONST constexpr
-#elif _MSC_VER
-#define CONSTEXPR_OR_CONST constexpr
-#else
-#define CONSTEXPR_OR_CONST constexpr
-#endif
-
 #endif

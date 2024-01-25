@@ -4,7 +4,7 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("Position constexpr") {
+TEST_CASE("Position default") {
 	using namespace phase4::engine;
 
 	constexpr board::Position position;
