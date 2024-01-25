@@ -37,7 +37,7 @@ static void isMoveLegal(benchmark::State &state) {
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
-		session.isMoveLegal(move);
+		benchmark::DoNotOptimize(session.isMoveLegal(move));
 	}
 }
 BENCHMARK(isMoveLegal);
@@ -54,7 +54,7 @@ static void CopyMakeMove(benchmark::State &state) {
 	for (auto _ : state) {
 		board::Position positionCopy = position;
 		positionCopy.makeMove(move);
-		positionCopy.isKingChecked(common::PieceColor::BLACK);
+		benchmark::DoNotOptimize(positionCopy.isKingChecked(common::PieceColor::BLACK));
 	}
 }
 BENCHMARK(CopyMakeMove);

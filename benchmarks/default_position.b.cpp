@@ -18,9 +18,9 @@ BENCHMARK(setDefaultState);
 static void copyDefaultState(benchmark::State &state) {
 	using namespace phase4::engine;
 
+	board::Position position;
 	for (auto _ : state) {
-		board::Position position = board::PositionState::DEFAULT;
-        (void)position;
+		benchmark::DoNotOptimize(position = board::PositionState::DEFAULT);
 	}
 }
 BENCHMARK(copyDefaultState);

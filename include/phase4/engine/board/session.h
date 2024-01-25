@@ -18,7 +18,7 @@ public:
 	}
 
 	void setDefaultState() {
-		PositionState::setDefaultState(m_position);
+		m_position = PositionState::DEFAULT;
 
 		m_killedPieces.clear();
 		m_enPassants.clear();
