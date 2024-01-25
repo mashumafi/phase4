@@ -3,13 +3,12 @@
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/position_state.h>
 
-
 static void setDefaultState(benchmark::State &state) {
 	using namespace phase4::engine;
 
-    board::Position position;
+	board::Position position;
 	for (auto _ : state) {
-	    board::PositionState::setDefaultState(position);
+		board::PositionState::setDefaultState(position);
 	}
 }
 BENCHMARK(setDefaultState);

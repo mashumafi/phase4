@@ -5,9 +5,9 @@
 #include <doctest/doctest.h>
 
 TEST_CASE("Position constexpr") {
-    using namespace phase4::engine;
+	using namespace phase4::engine;
 
-    constexpr board::Position position;
+	constexpr board::Position position;
 
-    CHECK(position.m_colorToMove == common::PieceColor::WHITE);
+	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
 }
