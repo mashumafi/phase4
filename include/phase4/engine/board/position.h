@@ -44,23 +44,13 @@ public:
 
 	common::Bitset m_walls = 0;
 
-	inline constexpr Position() noexcept {}
+	inline constexpr Position() noexcept = default;
 
-	inline constexpr Position(const Position &that) noexcept :
-			m_hash(that.m_hash) {
-	}
-	inline constexpr Position &operator=(const Position &that) {
-		m_hash = that.m_hash;
-		return *this;
-	}
+	inline constexpr Position(const Position &that) noexcept = default;
+	inline constexpr Position &operator=(const Position &that) = default;
 
-	inline constexpr Position(Position &&that) noexcept :
-			m_hash(that.m_hash) {
-	}
-	inline constexpr Position &operator=(Position &&that) noexcept {
-		m_hash = that.m_hash;
-		return *this;
-	}
+	inline constexpr Position(Position &&that) noexcept = default;
+	inline constexpr Position &operator=(Position &&that) noexcept = default;
 
 	void clearWalls() {
 		if (likely(m_walls > 0)) {
