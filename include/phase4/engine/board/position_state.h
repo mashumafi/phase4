@@ -93,6 +93,7 @@ inline constexpr ZobristHashing PositionState::calculatePawnHash(Position &posit
 }
 
 inline CONSTEXPR_OR_NONE void PositionState::setDefaultState(Position &position) {
+	(void)position;
 	/*position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 65280;
 	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 129;
 	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 66;
