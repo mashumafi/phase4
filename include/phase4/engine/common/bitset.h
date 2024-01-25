@@ -261,7 +261,7 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 		if (bits & 1)
 			break;
 
-		bits <<= 1;
+		bits >>= 1;
 		index++;
 	}
 	return index;
