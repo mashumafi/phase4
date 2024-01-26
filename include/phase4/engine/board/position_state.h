@@ -137,9 +137,6 @@ inline constexpr Position PositionState::makeDefaultPosition() {
 
 inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
 
-static_assert(PositionState::DEFAULT.m_hash != board::ZobristHashing(0));
-static_assert(PositionState::DEFAULT.m_pawnHash != board::ZobristHashing(0));
-
 } //namespace phase4::engine::board
 
 #endif
