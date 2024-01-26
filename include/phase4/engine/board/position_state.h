@@ -130,12 +130,15 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 }
 
 inline constexpr Position PositionState::makeDefaultPosition() {
-	Position position = Position();
+	Position position;
 	setDefaultState(position);
 	return position;
 }
 
 inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
+
+static_assert(PositionState::DEFAULT.m_hash != board::ZobristHashing(0));
+static_assert(PositionState::DEFAULT.m_pawnHash != board::ZobristHashing(0));
 
 } //namespace phase4::engine::board
 

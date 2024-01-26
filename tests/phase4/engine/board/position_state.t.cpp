@@ -16,8 +16,8 @@ TEST_CASE("PositionState DEFAULT") {
 
 	const board::Position position = board::PositionState::DEFAULT;
 
-	CHECK(board::PositionState::DEFAULT.m_hash != board::ZobristHashing(0));
-	CHECK(board::PositionState::DEFAULT.m_pawnHash != board::ZobristHashing(0));
+	CHECK(position.m_hash != board::ZobristHashing(0));
+	CHECK(position.m_pawnHash != board::ZobristHashing(0));
 
 	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] == board::BoardConstants::RANK_2);
 	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] == (common::Square::B1.asBitboard() | common::Square::G1.asBitboard()));
