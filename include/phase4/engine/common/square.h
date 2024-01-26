@@ -106,11 +106,11 @@ public:
 
 	explicit constexpr Square(const FieldIndex &fieldIndex);
 
-	constexpr Square(Square const &that);
-	constexpr Square &operator=(const Square &that);
+	constexpr Square(Square const &that) = default;
+	constexpr Square &operator=(const Square &that) = default;
 
-	constexpr Square(Square &&that) noexcept;
-	constexpr Square &operator=(Square &&that) noexcept;
+	constexpr Square(Square &&that) noexcept = default;
+	constexpr Square &operator=(Square &&that) noexcept = default;
 
 	explicit constexpr Square(std::string_view move);
 
@@ -224,24 +224,6 @@ inline constexpr Square Square::C8(61);
 inline constexpr Square Square::B8(62);
 inline constexpr Square Square::A8(63);
 inline constexpr Square Square::INVALID(64);
-
-constexpr Square::Square(const Square &that) :
-		m_value{ that.m_value } {
-}
-
-constexpr Square &Square::operator=(const Square &that) {
-	m_value = that.m_value;
-	return *this;
-}
-
-constexpr Square::Square(Square &&that) noexcept :
-		m_value{ std::move(that).m_value } {
-}
-
-constexpr Square &Square::operator=(Square &&that) noexcept {
-	m_value = std::move(that).m_value;
-	return *this;
-}
 
 constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {

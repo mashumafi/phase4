@@ -23,11 +23,11 @@ public:
 
 	constexpr PieceType();
 
-	constexpr PieceType(PieceType const &that);
-	constexpr PieceType &operator=(const PieceType &that);
+	constexpr PieceType(PieceType const &that) = default;
+	constexpr PieceType &operator=(const PieceType &that) = default;
 
-	constexpr PieceType(PieceType &&that) noexcept;
-	constexpr PieceType &operator=(PieceType &&that) noexcept;
+	constexpr PieceType(PieceType &&that) noexcept = default;
+	constexpr PieceType &operator=(PieceType &&that) noexcept = default;
 
 	constexpr bool operator==(const PieceType &that) const;
 	constexpr bool operator!=(const PieceType &that) const;
@@ -63,24 +63,6 @@ inline constexpr PieceType PieceType::ROOK = 3;
 inline constexpr PieceType PieceType::QUEEN = 4;
 inline constexpr PieceType PieceType::KING = 5;
 inline constexpr PieceType PieceType::INVALID = 6;
-
-constexpr PieceType::PieceType(const PieceType &that) :
-		m_piece{ that.m_piece } {
-}
-
-constexpr PieceType &PieceType::operator=(const PieceType &that) {
-	m_piece = that.m_piece;
-	return *this;
-}
-
-constexpr PieceType::PieceType(PieceType &&that) noexcept :
-		m_piece{ std::move(that).m_piece } {
-}
-
-constexpr PieceType &PieceType::operator=(PieceType &&that) noexcept {
-	m_piece = std::move(that).m_piece;
-	return *this;
-}
 
 [[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
