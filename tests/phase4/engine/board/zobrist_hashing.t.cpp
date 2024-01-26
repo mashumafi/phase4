@@ -6,6 +6,8 @@
 
 #include <doctest/doctest.h>
 
+#include <sstream>
+
 TEST_CASE("ZobristHashing different order, same hash") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::board;
@@ -23,4 +25,26 @@ TEST_CASE("ZobristHashing different order, same hash") {
 											 .addOrRemovePiece(PieceColor::WHITE, PieceType::BISHOP, Square::G1);
 
 	CHECK(hash1 == hash2);
+}
+
+TEST_CASE("ZobristHashing output valid") {
+	using namespace phase4::engine::board;
+
+	SUBCASE("Zero") {
+		std::stringstream ss;
+		ss << ZobristHashing(0);
+		CHECK(ss.str() == "0000000000000000000000000000000000000000000000000000000000000000");
+	}
+
+	SUBCASE("Low") {
+		std::stringstream ss;
+		ss << ZobristHashing(0b101);
+		CHECK(ss.str() == "0000000000000000000000000000000000000000000000000000000000000101");
+	}
+
+	SUBCASE("High") {
+		std::stringstream ss;
+		ss << ZobristHashing(0b1010000000000000000000000000000000000000000000000000000000000000);
+		CHECK(ss.str() == "1010000000000000000000000000000000000000000000000000000000000000");
+	}
 }
