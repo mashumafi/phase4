@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <iostream>
 
+#define USE_SLOW_BITSET
 #ifdef USE_SLOW_BITSET
 #define USE_SLOW_BITSET_COUNT
 #define USE_SLOW_BITSET_LSB
