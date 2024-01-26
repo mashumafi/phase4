@@ -69,7 +69,7 @@ private:
 	}
 
 	template <size_t N>
-	static void generateAttacks(
+	static bool generateAttacks(
 			MagicContainer<N> &container,
 			common::Bitset mask,
 			int32_t shift,
@@ -86,10 +86,7 @@ private:
 			64 - shift,
 		};
 
-		bool success = false;
-		while (!success) {
-			success = true;
-
+		const auto validate = [&]() -> bool {
 			const size_t length = 1ull << shift;
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
@@ -97,19 +94,30 @@ private:
 				const common::Bitset attack = container.attacks[attackIndex.asSize()];
 
 				if (attack != 0 && attack != attacks[permutationIndex]) {
-					const uint64_t next = rand.fewBits();
-					if (next == first) {
-						throw std::invalid_argument("Repeated the first number in the random sequence");
-					}
-					container.magicNumber = next;
+					container.magicNumber = rand.fewBits();
 					container.attacks.fill(0);
-					success = false;
-					break;
+					return false;
 				}
 
 				container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
 			}
+
+			return true;
+		};
+
+		const size_t limit = key ? 1 : 100000;
+		for (size_t i = 0; i < limit; ++i) {
+			if (validate()) {
+				return true;
+			}
+
+			if (container.magicNumber == first) {
+				std::cout << "Repeated the first number in the random sequence" << std::endl;
+				return false;
+			}
 		}
+
+		return false;
 	}
 
 	static RookMagicContainers ROOK_MAGIC_ARRAY;
