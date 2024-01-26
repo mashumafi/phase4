@@ -9,11 +9,11 @@ namespace phase4::engine::board {
 
 class PositionState {
 public:
+	static const Position DEFAULT;
+
 	static constexpr void setDefaultState(Position &position);
 
 	static constexpr void recalculateEvaluationDependentValues(Position &position);
-
-	static const Position DEFAULT;
 
 private:
 	static constexpr ZobristHashing calculateHash(Position &position);
@@ -132,7 +132,6 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 inline constexpr Position PositionState::makeDefaultPosition() {
 	Position position = Position();
 	setDefaultState(position);
-	position.m_hash = ZobristHashing(123456);
 	return position;
 }
 

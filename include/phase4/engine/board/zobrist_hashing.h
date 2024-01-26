@@ -67,6 +67,8 @@ public:
 	constexpr bool operator==(ZobristHashing other) const;
 	constexpr bool operator!=(ZobristHashing other) const;
 
+	friend std::ostream &operator<<(std::ostream &os, const ZobristHashing bits);
+
 private:
 	uint64_t m_hash;
 
@@ -123,6 +125,10 @@ inline constexpr bool ZobristHashing::operator==(ZobristHashing other) const {
 
 inline constexpr bool ZobristHashing::operator!=(ZobristHashing other) const {
 	return m_hash != other.m_hash;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const ZobristHashing bits) {
+	return os << std::bitset<64>(bits.m_hash);
 }
 
 } //namespace phase4::engine::board
