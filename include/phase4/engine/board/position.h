@@ -26,8 +26,8 @@ public:
 	ZobristHashing m_hash;
 	ZobristHashing m_pawnHash;
 
-	common::Bitset m_colorPieceMasks[2][6];
-	common::Bitset m_occupancyByColor[2] = {};
+	std::array<std::array<common::Bitset, 6>, 2> m_colorPieceMasks;
+	std::array<common::Bitset, 2> m_occupancyByColor = {};
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
 	common::Castling m_castling = common::Castling::EVERYTHING;
