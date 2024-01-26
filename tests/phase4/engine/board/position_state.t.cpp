@@ -14,8 +14,7 @@
 TEST_CASE("PositionState DEFAULT") {
 	using namespace phase4::engine;
 
-	board::Position position;
-	board::PositionState::setDefaultState(position);
+	constexpr board::Position position = board::PositionState::DEFAULT;
 
 	CHECK(position.m_hash != board::ZobristHashing(0));
 	CHECK(position.m_pawnHash != board::ZobristHashing(0));
