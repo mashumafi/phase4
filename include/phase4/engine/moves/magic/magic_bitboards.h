@@ -97,7 +97,7 @@ private:
 						throw std::invalid_argument("Repeated the first number in the random sequence");
 					}
 					container.magicNumber = next;
-					std::fill(container.attacks.begin(), container.attacks.end(), 0);
+					container.attacks.fill(0);
 					success = false;
 					break;
 				}
