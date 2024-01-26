@@ -26,7 +26,7 @@ public:
 	ZobristHashing m_hash;
 	ZobristHashing m_pawnHash;
 
-	common::Bitset m_colorPieceMasks[2][6] = {};
+	common::Bitset m_colorPieceMasks[2][6];
 	common::Bitset m_occupancyByColor[2] = {};
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
