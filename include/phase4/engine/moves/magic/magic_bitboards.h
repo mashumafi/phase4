@@ -116,10 +116,10 @@ inline MagicBitboards::RookMagicContainers MagicBitboards::ROOK_MAGIC_ARRAY;
 inline MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY;
 
 inline common::Bitset MagicBitboards::getRookMoves(common::Bitset board, common::Square square) {
-	board = board & (ROOK_MAGIC_ARRAY)[square].mask;
-	board = board * (ROOK_MAGIC_ARRAY)[square].magicNumber;
-	board = board >> (ROOK_MAGIC_ARRAY)[square].shift;
-	return (ROOK_MAGIC_ARRAY)[square].attacks[board.asSize()];
+	board = board & ROOK_MAGIC_ARRAY[square].mask;
+	board = board * ROOK_MAGIC_ARRAY[square].magicNumber;
+	board = board >> ROOK_MAGIC_ARRAY[square].shift;
+	return ROOK_MAGIC_ARRAY[square].attacks[board.asSize()];
 }
 
 inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, common::Square square) {
