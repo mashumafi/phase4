@@ -85,8 +85,3 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
       timeout-minutes: 3
-
-    - name: Benchmark
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ./benchmarks/valid_move_check
-      timeout-minutes: 1
