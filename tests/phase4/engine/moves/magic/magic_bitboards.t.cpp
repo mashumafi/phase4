@@ -5,7 +5,8 @@
 TEST_CASE("MagicBitboards generateBishopAttacks") {
 	using namespace phase4::engine::moves::magic;
 
-	auto bishopAttacks = MagicBitboards::generateBishopAttacks();
+	MagicBitboards::BishopMagicContainers bishopAttacks;
+	MagicBitboards::generateBishopAttacks(bishopAttacks);
 	CHECK(bishopAttacks[0].magicNumber.asSize() == 2325088863497781376ULL);
 	CHECK(bishopAttacks[1].magicNumber.asSize() == 585545056993181728ULL);
 	CHECK(bishopAttacks[2].magicNumber.asSize() == 18595494716637184ULL);
