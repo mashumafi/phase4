@@ -158,9 +158,9 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	return g_popCount[v.u[0]] + g_popCount[v.u[1]] + g_popCount[v.u[2]] + g_popCount[v.u[3]];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	return static_cast<uint8_t>(__builtin_popcountll(m_bits));
+	return __builtin_popcountll(m_bits);
 #elif defined(_MSC_VER)
-	return static_cast<uint8_t>(__popcnt64(m_bits));
+	return __popcnt64(m_bits);
 #else
 	static_assert(false, "Define USE_SLOW_BITSET_COUNT to use internal implementation.")
 #endif
