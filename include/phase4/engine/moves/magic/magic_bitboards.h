@@ -17,8 +17,8 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <cstring>
 #include <cstdlib>
-#include <exception> // exceptions
 #include <memory>
 #include <optional>
 
@@ -86,8 +86,6 @@ private:
 			64 - shift,
 		};
 
-		static constexpr std::array<common::Bitset, N> empty;
-
 		const auto validate = [shift, &permutations, &container, &attacks, &rand]() -> bool {
 			const size_t length = 1ull << shift;
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
@@ -97,7 +95,7 @@ private:
 
 				if (attack != 0 && attack != attacks[permutationIndex]) {
 					container.magicNumber = rand.fewBits();
-					container.attacks = empty;
+					std::memset((void*)container.attacks.data(), 0, container.attacks.size() * sizeof(common::Bitset));
 					return false;
 				}
 

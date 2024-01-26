@@ -23,4 +23,11 @@ TEST_CASE("MagicBitboards generateRookAttacks") {
 	MagicBitboards::RookMagicContainers rookAttacks;
 	MagicBitboards::generateRookAttacks(rookAttacks);
 	CHECK(rookAttacks.isValid);
+	CHECK(rookAttacks.containers[0].magicNumber.asSize() == 36028866283716608ull);
+	CHECK(rookAttacks.containers[1].magicNumber.asSize() == 54078380169052160ull);
+	CHECK(rookAttacks.containers[2].magicNumber.asSize() == 293859888579350528ull);
+	CHECK(rookAttacks.containers[4].magicNumber.asSize() == 293859888579350528ull);
+	CHECK(rookAttacks.containers[8].magicNumber.asSize() == 18155154251546664ull);
+	CHECK(rookAttacks.containers[16].magicNumber.asSize() == 598684085518480ull);
+	CHECK(rookAttacks.containers[32].magicNumber.asSize() == 576603963768439842ull);
 }
