@@ -86,7 +86,9 @@ private:
 			64 - shift,
 		};
 
-		const auto validate = [shift, &permutations, &container, &attacks, &rand]() -> bool {
+		constexpr std::array<common::Bitset, N> empty;
+
+		const auto validate = [shift, &empty, &permutations, &container, &attacks, &rand]() -> bool {
 			const size_t length = 1ull << shift;
 			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 				const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
@@ -95,7 +97,7 @@ private:
 
 				if (attack != 0 && attack != attacks[permutationIndex]) {
 					container.magicNumber = rand.fewBits();
-					container.attacks.fill(0);
+					container.attacks = empty;
 					return false;
 				}
 
