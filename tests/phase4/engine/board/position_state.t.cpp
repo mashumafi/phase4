@@ -16,8 +16,8 @@ TEST_CASE("PositionState DEFAULT") {
 
     const board::Position position = board::PositionState::DEFAULT;
 
-	CHECK(position.m_hash == board::ZobristHashing(0));
-    CHECK(position.m_pawnHash == board::ZobristHashing(0));
+	CHECK(position.m_hash != board::ZobristHashing(0));
+    CHECK(position.m_pawnHash != board::ZobristHashing(0));
 
 	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] == board::BoardConstants::RANK_2);
     CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] == (common::Square::B1.asBitboard() | common::Square::G1.asBitboard()));
@@ -35,6 +35,7 @@ TEST_CASE("PositionState DEFAULT") {
 
     CHECK(position.m_occupancyByColor[0] == common::Bitset(board::BoardConstants::RANK_1 | board::BoardConstants::RANK_2));
     CHECK(position.m_occupancyByColor[1] == common::Bitset(board::BoardConstants::RANK_7 | board::BoardConstants::RANK_8));
+
 	CHECK(position.m_occupancySummary == common::Bitset(board::BoardConstants::RANK_1 | board::BoardConstants::RANK_2 | board::BoardConstants::RANK_7 | board::BoardConstants::RANK_8));
 	CHECK(position.m_enPassant == common::Bitset(0));
 	CHECK(position.m_castling == common::Castling::EVERYTHING);
@@ -45,7 +46,10 @@ TEST_CASE("PositionState DEFAULT") {
 
 	CHECK(position.m_castlingDone[0] == false);
     CHECK(position.m_castlingDone[1] == false);
-	//int32_t m_material[2] = {};
+
+	CHECK(position.m_material[0] != 0);
+	CHECK(position.m_material[1] != 0);
+
 	/*int32_t m_positionEval[2][2] = {};
 
 	std::array<common::PieceType, 64> m_pieceTable = {};*/

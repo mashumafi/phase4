@@ -82,13 +82,13 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 
 inline constexpr ZobristHashing PositionState::calculateHash(Position &position) {
 	(void)position;
-	ZobristHashing hash;
+	ZobristHashing hash(123456);
 	return hash;
 }
 
 inline constexpr ZobristHashing PositionState::calculatePawnHash(Position &position) {
 	(void)position;
-	ZobristHashing pawnHash;
+	ZobristHashing pawnHash(456789);
 	return pawnHash;
 }
 
@@ -135,7 +135,7 @@ inline constexpr Position PositionState::makeDefaultPosition() {
 	return position;
 }
 
-inline const Position PositionState::DEFAULT = makeDefaultPosition();
+inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
 
 } //namespace phase4::engine::board
 
