@@ -26,8 +26,13 @@ namespace phase4::engine::moves::magic {
 
 class MagicBitboards {
 public:
-	using RookMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_ROOK_SHIFT>, 64>;
-	using BishopMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_BISHOP_SHIFT>, 64>;
+	template <size_t SHIFT>
+	struct MagicContainers {
+		bool isValid = false;
+		std::array<MagicContainer<1ULL << SHIFT>, 64> containers = {};
+	};
+	using RookMagicContainers = MagicContainers<MagicShifts::MAX_ROOK_SHIFT>;
+	using BishopMagicContainers = MagicContainers<MagicShifts::MAX_BISHOP_SHIFT>;
 
 	using Masks = std::array<common::Bitset, 64>;
 
@@ -40,9 +45,9 @@ public:
 
 	static common::Bitset getBishopMoves(common::Bitset board, common::Square square);
 
-	static void generateRookAttacks(RookMagicContainers& magicArray, const std::optional<MagicKeys::Array> &keys = {});
+	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
 
-	static void generateBishopAttacks(BishopMagicContainers& magicArray, const std::optional<MagicKeys::Array> &keys = {});
+	static void generateBishopAttacks(BishopMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
 
 private:
 	static constexpr Masks generateRookMasks() {
@@ -115,20 +120,22 @@ inline MagicBitboards::RookMagicContainers MagicBitboards::ROOK_MAGIC_ARRAY;
 inline MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY;
 
 inline common::Bitset MagicBitboards::getRookMoves(common::Bitset board, common::Square square) {
-	board = board & ROOK_MAGIC_ARRAY[square].mask;
-	board = board * ROOK_MAGIC_ARRAY[square].magicNumber;
-	board = board >> ROOK_MAGIC_ARRAY[square].shift;
-	return ROOK_MAGIC_ARRAY[square].attacks[board.asSize()];
+	assert(ROOK_MAGIC_ARRAY.isValid);
+	board = board & ROOK_MAGIC_ARRAY.containers[square].mask;
+	board = board * ROOK_MAGIC_ARRAY.containers[square].magicNumber;
+	board = board >> ROOK_MAGIC_ARRAY.containers[square].shift;
+	return ROOK_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
 }
 
 inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, common::Square square) {
-	board = board & BISHOP_MAGIC_ARRAY[square].mask;
-	board = board * BISHOP_MAGIC_ARRAY[square].magicNumber;
-	board = board >> BISHOP_MAGIC_ARRAY[square].shift;
-	return BISHOP_MAGIC_ARRAY[square].attacks[board.asSize()];
+	assert(BISHOP_MAGIC_ARRAY.isValid);
+	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
+	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
+	board = board >> BISHOP_MAGIC_ARRAY.containers[square].shift;
+	return BISHOP_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
 }
 
-inline void MagicBitboards::generateRookAttacks(RookMagicContainers& magicArray, const std::optional<MagicKeys::Array> &keys) {
+inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {
 	constexpr Masks masks = generateRookMasks();
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_ROOK_SHIFT>();
@@ -140,12 +147,12 @@ inline void MagicBitboards::generateRookAttacks(RookMagicContainers& magicArray,
 			attacks[permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks(magicArray[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
+	magicArray.isValid = true;
 }
 
-inline void MagicBitboards::generateBishopAttacks(BishopMagicContainers& magicArray, const std::optional<MagicKeys::Array> &keys) {
-
+inline void MagicBitboards::generateBishopAttacks(BishopMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {
 	constexpr Masks masks = generateBishopMasks();
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
@@ -157,8 +164,9 @@ inline void MagicBitboards::generateBishopAttacks(BishopMagicContainers& magicAr
 			attacks[permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks(magicArray[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
+	magicArray.isValid = true;
 }
 
 } //namespace phase4::engine::moves::magic

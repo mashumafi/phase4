@@ -7,15 +7,19 @@ int main() {
 
 	MagicBitboards::BishopMagicContainers bishopAttacks;
 	MagicBitboards::generateBishopAttacks(bishopAttacks);
+	if (!bishopAttacks.isValid) {
+	}
 	std::cout << "Bishop magics:" << std::endl;
-	for (size_t i = 0; i < bishopAttacks.size(); ++i) {
-		std::cout << bishopAttacks[i].magicNumber.asSize() << "ULL," << std::endl;
+	for (size_t i = 0; i < bishopAttacks.containers.size(); ++i) {
+		std::cout << bishopAttacks.containers[i].magicNumber.asSize() << "ULL," << std::endl;
 	}
 
 	std::cout << "Rook magics:" << std::endl;
 	MagicBitboards::RookMagicContainers rookAttacks;
 	MagicBitboards::generateRookAttacks(rookAttacks);
-	for (size_t i = 0; i < rookAttacks.size(); ++i) {
-		std::cout << rookAttacks[i].magicNumber.asSize() << "ULL," << std::endl;
+	if (!rookAttacks.isValid) {
+	}
+	for (size_t i = 0; i < rookAttacks.containers.size(); ++i) {
+		std::cout << rookAttacks.containers[i].magicNumber.asSize() << "ULL," << std::endl;
 	}
 }
