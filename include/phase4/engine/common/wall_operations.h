@@ -16,10 +16,10 @@ inline constexpr FieldIndex NorthWest = North + West;
 
 class WallOperations {
 public:
-	static constexpr int FileMax = 8;
-	static constexpr int RankMax = 8;
-	static constexpr int Rank2 = 1;
-	static constexpr int FileB = 1;
+	static constexpr int16_t FileMax = 8;
+	static constexpr int16_t RankMax = 8;
+	static constexpr int16_t Rank2 = 1;
+	static constexpr int16_t FileB = 1;
 
 	static constexpr int16_t Round(int16_t n, int16_t d) {
 		return n / d * d;
