@@ -9,11 +9,11 @@ namespace phase4::engine::board {
 
 class PositionState {
 public:
-	static const Position DEFAULT;
-
 	static constexpr void setDefaultState(Position &position);
 
 	static constexpr void recalculateEvaluationDependentValues(Position &position);
+
+	static const Position DEFAULT;
 
 private:
 	static constexpr ZobristHashing calculateHash(Position &position);
@@ -21,7 +21,7 @@ private:
 	static constexpr ZobristHashing calculatePawnHash(Position &position);
 
 	/// @brief Calculates the piece table based on piece masks
-	/// @param position the Position to update
+	/// @param position the Position to update and compute from
 	static constexpr void calculatePieceTable(Position &position);
 
 	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
@@ -132,6 +132,7 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 inline constexpr Position PositionState::makeDefaultPosition() {
 	Position position = Position();
 	setDefaultState(position);
+	position.m_hash = ZobristHashing(123456);
 	return position;
 }
 
