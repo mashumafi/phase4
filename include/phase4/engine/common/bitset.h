@@ -21,11 +21,11 @@ public:
 	inline constexpr Bitset() noexcept;
 	inline constexpr Bitset(uint64_t bits) noexcept;
 
-	inline constexpr Bitset(const Bitset &that) noexcept;
-	inline constexpr Bitset &operator=(const Bitset &that);
+	inline constexpr Bitset(const Bitset &that) noexcept = default;
+	inline constexpr Bitset &operator=(const Bitset &that) = default;
 
-	inline constexpr Bitset(Bitset &&that) noexcept;
-	inline constexpr Bitset &operator=(Bitset &&that) noexcept;
+	inline constexpr Bitset(Bitset &&that) noexcept = default;
+	inline constexpr Bitset &operator=(Bitset &&that) noexcept = default;
 
 	/// @brief turns off all bits except the least significant bit
 	/// @param bits to keep the LSB
@@ -135,26 +135,8 @@ inline constexpr Bitset::Bitset(uint64_t bits) noexcept :
 		m_bits(bits) {
 }
 
-inline constexpr Bitset::Bitset(const Bitset &that) noexcept :
-		m_bits(that.m_bits) {
-}
-
 inline constexpr Bitset::Bitset() noexcept :
 		Bitset(0) {
-}
-
-inline constexpr Bitset &Bitset::operator=(const Bitset &that) {
-	m_bits = that.m_bits;
-	return *this;
-}
-
-inline constexpr Bitset::Bitset(Bitset &&that) noexcept :
-		m_bits(std::move(that).m_bits) {
-}
-
-inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
-	m_bits = std::move(that).m_bits;
-	return *this;
 }
 
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
