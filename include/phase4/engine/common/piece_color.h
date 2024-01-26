@@ -36,6 +36,10 @@ private:
 	uint8_t m_value;
 };
 
+constexpr bool PieceColor::operator==(const PieceColor &color) const {
+	return color.m_value == m_value;
+}
+
 [[nodiscard]] constexpr inline PieceColor PieceColor::invert() const noexcept {
 	if ((*this) == WHITE) {
 		return BLACK;
@@ -58,10 +62,6 @@ inline constexpr PieceColor PieceColor::BLACK = 1;
 
 [[nodiscard]] constexpr uint8_t PieceColor::get_raw_value() const {
 	return m_value;
-}
-
-constexpr bool PieceColor::operator==(const PieceColor &color) const {
-	return color.m_value == m_value;
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceColor color) {
