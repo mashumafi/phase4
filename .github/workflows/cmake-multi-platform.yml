@@ -88,5 +88,5 @@ jobs:
 
     - name: Benchmark
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ./benchmarks/default_position
+      run: ./benchmarks/valid_move_check
       timeout-minutes: 1
