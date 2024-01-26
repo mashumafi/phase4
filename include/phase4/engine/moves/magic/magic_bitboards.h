@@ -29,7 +29,7 @@ private:
 	using RookMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_ROOK_SHIFT>, 64>;
 	using BishopMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_BISHOP_SHIFT>, 64>;
 
-	static std::unique_ptr<RookMagicContainers> ROOK_MAGIC_ARRAY;
+	static RookMagicContainers ROOK_MAGIC_ARRAY;
 	static BishopMagicContainers BISHOP_MAGIC_ARRAY;
 
 	using Masks = std::array<common::Bitset, 64>;
@@ -44,7 +44,7 @@ public:
 
 	static common::Bitset getBishopMoves(common::Bitset board, common::Square square);
 
-	static std::unique_ptr<RookMagicContainers> generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {});
+	static RookMagicContainers generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {});
 
 	static BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {});
 
@@ -112,16 +112,14 @@ private:
 	}
 };
 
-inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::ROOK_MAGIC_ARRAY;
+inline MagicBitboards::RookMagicContainers MagicBitboards::ROOK_MAGIC_ARRAY;
 inline MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY;
 
 inline common::Bitset MagicBitboards::getRookMoves(common::Bitset board, common::Square square) {
-	assert(ROOK_MAGIC_ARRAY);
-
-	board = board & (*ROOK_MAGIC_ARRAY)[square].mask;
-	board = board * (*ROOK_MAGIC_ARRAY)[square].magicNumber;
-	board = board >> (*ROOK_MAGIC_ARRAY)[square].shift;
-	return (*ROOK_MAGIC_ARRAY)[square].attacks[board.asSize()];
+	board = board & (ROOK_MAGIC_ARRAY)[square].mask;
+	board = board * (ROOK_MAGIC_ARRAY)[square].magicNumber;
+	board = board >> (ROOK_MAGIC_ARRAY)[square].shift;
+	return (ROOK_MAGIC_ARRAY)[square].attacks[board.asSize()];
 }
 
 inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, common::Square square) {
@@ -131,8 +129,8 @@ inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, commo
 	return BISHOP_MAGIC_ARRAY[square].attacks[board.asSize()];
 }
 
-inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::generateRookAttacks(const std::optional<MagicKeys::Array> &keys) {
-	std::unique_ptr<RookMagicContainers> magicArray = std::make_unique<RookMagicContainers>();
+inline MagicBitboards::RookMagicContainers MagicBitboards::generateRookAttacks(const std::optional<MagicKeys::Array> &keys) {
+	RookMagicContainers magicArray;
 
 	constexpr Masks masks = generateRookMasks();
 
@@ -145,7 +143,7 @@ inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::gene
 			attacks[permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks((*magicArray)[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
 
 	return magicArray;

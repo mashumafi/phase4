@@ -52,17 +52,17 @@ public:
 
 	inline constexpr ZobristHashing(uint64_t hash = 0);
 
-	[[nodiscard]] constexpr ZobristHashing movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const;
+	[[nodiscard]] constexpr ZobristHashing movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const noexcept;
 
-	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const;
+	[[nodiscard]] constexpr ZobristHashing addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const noexcept;
 
-	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const;
+	[[nodiscard]] constexpr ZobristHashing removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const noexcept;
 
-	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(uint8_t enPassantRank) const;
+	[[nodiscard]] constexpr ZobristHashing toggleEnPassant(uint8_t enPassantRank) const noexcept;
 
-	[[nodiscard]] constexpr ZobristHashing changeSide() const;
+	[[nodiscard]] constexpr ZobristHashing changeSide() const noexcept;
 
-	[[nodiscard]] constexpr ZobristHashing toggleWalls(common::Bitset walls) const;
+	[[nodiscard]] constexpr ZobristHashing toggleWalls(common::Bitset walls) const noexcept;
 
 	inline constexpr bool operator==(ZobristHashing other) const;
 	inline constexpr bool operator!=(ZobristHashing other) const;
@@ -89,17 +89,17 @@ inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 		m_hash(hash) {
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const noexcept {
 	const uint64_t fromHash = G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), from);
 	const uint64_t toHash = G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), to);
 	return m_hash ^ fromHash ^ toHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::addOrRemovePiece(common::PieceColor color, common::PieceType piece, common::Square at) const noexcept {
 	return m_hash ^ G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), at);
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const noexcept {
 	if (likely((currentCastling & castlingChange) != common::Castling::NONE)) {
 		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange.get_raw_value()).fastBitScan()];
 	}
@@ -107,15 +107,15 @@ inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(uint8_t enPassantRank) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleEnPassant(uint8_t enPassantRank) const noexcept {
 	return m_hash ^ G_KEYS.m_enPassantHashes[enPassantRank];
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::changeSide() const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::changeSide() const noexcept {
 	return m_hash ^ G_KEYS.m_sideHash;
 }
 
-[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(common::Bitset walls) const {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::toggleWalls(common::Bitset walls) const noexcept {
 	return m_hash ^ G_KEYS.m_wallHash[walls.bitScan()];
 }
 
