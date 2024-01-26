@@ -13,7 +13,7 @@ int main() {
 
 	std::cout << "Rook magics:" << std::endl;
 	auto rookAttacks = MagicBitboards::generateRookAttacks();
-	for (size_t i = 0; i < rookAttacks->size(); ++i) {
+	for (size_t i = 0; i < rookAttacks.size(); ++i) {
 		std::cout << rookAttacks[i].magicNumber.asSize() << "ULL," << std::endl;
 	}
 }
