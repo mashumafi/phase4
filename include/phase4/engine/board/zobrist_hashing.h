@@ -64,8 +64,8 @@ public:
 
 	[[nodiscard]] constexpr ZobristHashing toggleWalls(common::Bitset walls) const;
 
-	constexpr bool operator==(ZobristHashing other) const;
-	constexpr bool operator!=(ZobristHashing other) const;
+	inline constexpr bool operator==(ZobristHashing other) const;
+	inline constexpr bool operator!=(ZobristHashing other) const;
 
 	friend std::ostream &operator<<(std::ostream &os, const ZobristHashing bits);
 
