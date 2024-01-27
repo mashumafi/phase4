@@ -69,6 +69,24 @@ private:
 	}
 
 	template <size_t N>
+	static constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitset, N> &permutations, const std::array<common::Bitset, N> &attacks) {
+		const size_t length = 1ull << shift;
+		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
+			const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
+			const common::Bitset attackIndex = hash >> container.shift;
+			const common::Bitset attack = container.attacks[attackIndex.asSize()];
+
+			if (attack != 0 && attack != attacks[permutationIndex]) {
+				return false;
+			}
+
+			container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
+		}
+
+		return true;
+	}
+
+	template <size_t N>
 	static bool generateAttacks(
 			MagicContainer<N> &container,
 			common::Bitset mask,
@@ -86,26 +104,9 @@ private:
 			64 - shift,
 		};
 
-		const auto validate = [shift, &permutations, &container, &attacks]() -> bool {
-			const size_t length = 1ull << shift;
-			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
-				const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
-				const common::Bitset attackIndex = hash >> container.shift;
-				const common::Bitset attack = container.attacks[attackIndex.asSize()];
-
-				if (attack != 0 && attack != attacks[permutationIndex]) {
-					return false;
-				}
-
-				container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
-			}
-
-			return true;
-		};
-
 		const size_t retryLimit = key ? 1 : 100'000;
 		for (size_t i = 0; i < retryLimit; ++i) {
-			if (validate()) {
+			if (validate(container, shift, permutations, attacks)) {
 				return true;
 			}
 
