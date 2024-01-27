@@ -94,8 +94,6 @@ private:
 				const common::Bitset attack = container.attacks[attackIndex.asSize()];
 
 				if (attack != 0 && attack != attacks[permutationIndex]) {
-					container.magicNumber = rand.fewBits();
-					std::memset((void *)container.attacks.data(), 0, container.attacks.size() * sizeof(common::Bitset));
 					return false;
 				}
 
@@ -105,16 +103,21 @@ private:
 			return true;
 		};
 
-		const size_t limit = key ? 1 : 100000;
-		for (size_t i = 0; i < limit; ++i) {
+		const size_t retryLimit = key ? 1 : 100'000;
+		for (size_t i = 0; i < retryLimit; ++i) {
 			if (validate()) {
 				return true;
 			}
+
+			container.magicNumber = rand.fewBits();
 
 			if (container.magicNumber == first) {
 				std::cout << "Repeated the first number in the random sequence" << std::endl;
 				return false;
 			}
+
+			static constexpr std::array<common::Bitset, N> empty = {};
+			container.attacks = empty;
 		}
 
 		return false;
