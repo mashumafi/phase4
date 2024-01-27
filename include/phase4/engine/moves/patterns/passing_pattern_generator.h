@@ -20,13 +20,13 @@ public:
 
 private:
 	static constexpr common::Bitset getPatternForField(common::PieceColor color, common::Square fieldIndex) {
-		int8_t offset = color == common::PieceColor::WHITE ? 8 : -8;
-		int8_t currentField = fieldIndex + 2 * offset;
+		common::Square::Direction direction = color == common::PieceColor::WHITE ? &common::Square::north : &common::Square::south;
+		common::Square currentField = (fieldIndex.*direction)(2);
 		common::Bitset result = 0ul;
 
-		while (currentField >= 0 && currentField < 64) {
-			result |= BoxPatternGenerator::getPattern(common::Square(currentField));
-			currentField += offset;
+		while (currentField.isValid()) {
+			result |= BoxPatternGenerator::getPattern(currentField);
+			currentField = (currentField.*direction)(1);
 		}
 
 		return result;

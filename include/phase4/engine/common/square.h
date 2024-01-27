@@ -11,6 +11,8 @@ namespace phase4::engine::common {
 
 class Square {
 public:
+	using Direction = Square (Square::*)(int8_t) const;
+
 	static const Square BEGIN;
 
 	static const Square H1;
@@ -115,6 +117,11 @@ public:
 	explicit constexpr Square(std::string_view move);
 
 	constexpr bool isValid() const;
+
+	inline constexpr Square north(int8_t scalar) const;
+	inline constexpr Square east(int8_t scalar) const;
+	inline constexpr Square south(int8_t scalar) const;
+	inline constexpr Square west(int8_t scalar) const;
 
 	inline constexpr bool operator!=(Square piece) const;
 	inline constexpr Square operator++();
@@ -233,6 +240,22 @@ constexpr Square::Square(std::string_view square) :
 
 constexpr bool Square::isValid() const {
 	return m_value < Square::INVALID.m_value;
+}
+
+inline constexpr Square Square::north(int8_t scalar) const {
+	return Square(m_value + 8 * scalar);
+}
+
+inline constexpr Square Square::east(int8_t scalar) const {
+	return Square(m_value - scalar);
+}
+
+inline constexpr Square Square::south(int8_t scalar) const {
+	return Square(m_value - 8 * scalar);
+}
+
+inline constexpr Square Square::west(int8_t scalar) const {
+	return Square(m_value + scalar);
 }
 
 inline constexpr bool Square::operator!=(Square piece) const {
