@@ -1,18 +1,21 @@
 #ifndef PHASE4_ENGINE_BOARD_POSITION_H
 #define PHASE4_ENGINE_BOARD_POSITION_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h> // TODO: remove cycle
-#include <phase4/engine/ai/score/piece_square_tables/piece_square_table_data.h>
+#include <phase4/engine/ai/score/piece_square_tables/piece_square_table_data.h> // TODO: remove cycle
+
 #include <phase4/engine/board/zobrist_hashing.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
+#include <phase4/engine/common/evaluation_constants.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/wall_operations.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
 
 #include <array>
 #include <cstdint>

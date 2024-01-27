@@ -1,14 +1,16 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_ROOK_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_ROOK_OPERATOR_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/evaluation_constants.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
 
 #include <cstdint>
 #include <tuple>
@@ -105,8 +107,8 @@ public:
 			const Square from(piece.fastBitScan());
 			const Bitset availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from);
 
-			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).fastCount();
-			outsideMobility += (availableMoves & ai::score::EvaluationConstants::Outside).fastCount();
+			centerMobility += (availableMoves & common::EvaluationConstants::ExtendedCenter).fastCount();
+			outsideMobility += (availableMoves & common::EvaluationConstants::Outside).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}

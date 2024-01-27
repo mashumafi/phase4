@@ -3,6 +3,7 @@
 
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/zobrist_hashing.h>
+
 #include <phase4/engine/common/util.h>
 
 namespace phase4::engine::board {
@@ -47,7 +48,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	int32_t material = 0;
 
 	for (size_t i = 0; i < 6; i++) {
-		material += common::Bitset(position.m_colorPieceMasks[color.get_raw_value()][i]).count() * ai::score::EvaluationConstants::Pieces[i];
+		material += common::Bitset(position.m_colorPieceMasks[color.get_raw_value()][i]).count() * common::EvaluationConstants::Pieces[i];
 	}
 
 	return material;

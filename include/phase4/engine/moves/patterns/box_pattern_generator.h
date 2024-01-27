@@ -1,7 +1,8 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_BOX_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_BOX_PATTERN_GENERATOR_H
 
-#include <phase4/engine/board/board_constants.h> // TODO: Remove circular dependency
+#include <phase4/engine/common/position_constants.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/square.h>
 
@@ -26,14 +27,14 @@ private:
 
 constexpr common::Bitset BoxPatternGenerator::getPatternForField(common::Square square) {
 	const uint64_t field = 1ull << square;
-	return ((field & ~board::BoardConstants::FILE_A) << 1) |
-			((field & ~board::BoardConstants::FILE_H) << 7) |
+	return ((field & ~common::PositionConstants::FILE_A) << 1) |
+			((field & ~common::PositionConstants::FILE_H) << 7) |
 			(field << 8) |
-			((field & ~board::BoardConstants::FILE_A) << 9) |
-			((field & ~board::BoardConstants::FILE_H) >> 1) |
-			((field & ~board::BoardConstants::FILE_A) >> 7) |
+			((field & ~common::PositionConstants::FILE_A) << 9) |
+			((field & ~common::PositionConstants::FILE_H) >> 1) |
+			((field & ~common::PositionConstants::FILE_A) >> 7) |
 			(field >> 8) |
-			((field & ~board::BoardConstants::FILE_H) >> 9);
+			((field & ~common::PositionConstants::FILE_H) >> 9);
 }
 
 constexpr BoxPatternGenerator::Array BoxPatternGenerator::generatePatterns() {

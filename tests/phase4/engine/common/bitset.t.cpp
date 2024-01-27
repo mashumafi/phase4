@@ -1,8 +1,8 @@
 #include <phase4/engine/common/bitset.h>
 
-#include <sstream>
-
 #include <doctest/doctest.h>
+
+#include <sstream>
 
 TEST_CASE("Bitset getLsb") {
 	using namespace phase4::engine::common;

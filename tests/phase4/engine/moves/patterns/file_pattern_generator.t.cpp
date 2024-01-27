@@ -1,6 +1,6 @@
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 
-#include <phase4/engine/board/board_constants.h>
+#include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
 #include <doctest/doctest.h>
@@ -23,16 +23,15 @@ TEST_CASE("FilePatternGenerator getPatternForField") {
 }
 
 TEST_CASE("FilePatternGenerator getPatternForFile") {
-	using namespace phase4::engine::board;
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves::patterns;
 
-	CHECK(FilePatternGenerator::getPatternForFile(0) == BoardConstants::FILE_H);
-	CHECK(FilePatternGenerator::getPatternForFile(1) == BoardConstants::FILE_G);
-	CHECK(FilePatternGenerator::getPatternForFile(2) == BoardConstants::FILE_F);
-	CHECK(FilePatternGenerator::getPatternForFile(3) == BoardConstants::FILE_E);
-	CHECK(FilePatternGenerator::getPatternForFile(4) == BoardConstants::FILE_D);
-	CHECK(FilePatternGenerator::getPatternForFile(5) == BoardConstants::FILE_C);
-	CHECK(FilePatternGenerator::getPatternForFile(6) == BoardConstants::FILE_B);
-	CHECK(FilePatternGenerator::getPatternForFile(7) == BoardConstants::FILE_A);
+	CHECK(FilePatternGenerator::getPatternForFile(0) == PositionConstants::FILE_H);
+	CHECK(FilePatternGenerator::getPatternForFile(1) == PositionConstants::FILE_G);
+	CHECK(FilePatternGenerator::getPatternForFile(2) == PositionConstants::FILE_F);
+	CHECK(FilePatternGenerator::getPatternForFile(3) == PositionConstants::FILE_E);
+	CHECK(FilePatternGenerator::getPatternForFile(4) == PositionConstants::FILE_D);
+	CHECK(FilePatternGenerator::getPatternForFile(5) == PositionConstants::FILE_C);
+	CHECK(FilePatternGenerator::getPatternForFile(6) == PositionConstants::FILE_B);
+	CHECK(FilePatternGenerator::getPatternForFile(7) == PositionConstants::FILE_A);
 }

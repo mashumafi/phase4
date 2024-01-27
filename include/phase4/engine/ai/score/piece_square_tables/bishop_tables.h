@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_AI_SCORE_PIECE_SQUARE_TABLES_BISHOP_TABLES_H
 
 #include <phase4/engine/ai/score/piece_square_tables/table_operations.h>
+
 #include <phase4/engine/common/game_phase.h>
 
 #include <array>

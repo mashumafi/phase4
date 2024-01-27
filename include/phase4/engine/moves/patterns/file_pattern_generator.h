@@ -1,9 +1,9 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_FILE_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_FILE_PATTERN_GENERATOR_H
 
-#include <phase4/engine/board/board_constants.h> // TODO: Remove circular dependency
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/field_index.h>
+#include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -28,7 +28,7 @@ private:
 };
 
 constexpr common::Bitset FilePatternGenerator::generatePatternForField(size_t file) {
-	return board::BoardConstants::FILE_H << file;
+	return common::PositionConstants::FILE_H << file;
 }
 
 constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {

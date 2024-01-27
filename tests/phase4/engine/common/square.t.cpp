@@ -1,8 +1,8 @@
 #include <phase4/engine/common/square.h>
 
-#include <sstream>
-
 #include <doctest/doctest.h>
+
+#include <sstream>
 
 TEST_CASE("Square output valid") {
 	using namespace phase4::engine::common;

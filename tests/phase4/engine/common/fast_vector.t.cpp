@@ -1,8 +1,8 @@
 #include <phase4/engine/common/fast_vector.h>
 
-#include <functional>
-
 #include <doctest/doctest.h>
+
+#include <functional>
 
 TEST_CASE("FastVector constructor") {
 	using namespace phase4::engine::common;

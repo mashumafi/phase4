@@ -1,7 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_OUTER_FILES_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_OUTER_FILES_PATTERN_GENERATOR_H
 
-#include <phase4/engine/board/board_constants.h>
+#include <phase4/engine/common/position_constants.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/square.h>
@@ -21,11 +21,11 @@ private:
 	static constexpr common::Bitset generatePatternForField(size_t fieldIndex) {
 		common::Bitset result = 0ul;
 		if (fieldIndex + 1 < 8) {
-			result |= board::BoardConstants::FILE_H << (fieldIndex + 1);
+			result |= common::PositionConstants::FILE_H << (fieldIndex + 1);
 		}
 
 		if (fieldIndex - 1 < 8) {
-			result |= board::BoardConstants::FILE_H << (fieldIndex - 1);
+			result |= common::PositionConstants::FILE_H << (fieldIndex - 1);
 		}
 
 		return result;
