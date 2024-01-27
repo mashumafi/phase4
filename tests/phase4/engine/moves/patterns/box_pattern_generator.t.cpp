@@ -8,8 +8,8 @@ TEST_CASE("BoxPatternGenerator getPattern") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves::patterns;
 
-	//                                                     HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-	//                                                     87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	//                                                     ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+	//                                                     88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 	CHECK(BoxPatternGenerator::getPattern(Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000011'00000010);
 	CHECK(BoxPatternGenerator::getPattern(Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000111'00000101);
 	CHECK(BoxPatternGenerator::getPattern(Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000111'00000101'00000111);

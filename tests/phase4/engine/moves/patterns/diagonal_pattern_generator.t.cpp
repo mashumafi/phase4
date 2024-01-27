@@ -8,8 +8,8 @@ TEST_CASE("DiagonalPatternGenerator getPattern") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves::patterns;
 
-	//                                                          HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-	//                                                          87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	//                                                          ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+	//                                                          88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 	CHECK(DiagonalPatternGenerator::getPattern(Square::H1) == 0b10000000'01000000'00100000'00010000'00001000'00000100'00000010'00000000);
 	CHECK(DiagonalPatternGenerator::getPattern(Square::G1) == 0b00000000'10000000'01000000'00100000'00010000'00001000'00000101'00000000);
 	CHECK(DiagonalPatternGenerator::getPattern(Square::G2) == 0b10000000'01000000'00100000'00010000'00001000'00000101'00000000'00000101);

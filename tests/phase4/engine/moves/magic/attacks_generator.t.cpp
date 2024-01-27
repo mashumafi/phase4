@@ -14,8 +14,8 @@ TEST_CASE("AttacksGenerator getFileRankAttacks") {
 	using namespace phase4::engine::moves::magic;
 
 	SUBCASE("Empty occupancy") {
-		//                                                                      HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                      87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                      ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                      88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(AttacksGenerator::getFileRankAttacks(EMPTY_BOARD, Square::H1) == 0b00000001'00000001'00000001'00000001'00000001'00000001'00000001'11111110);
 		CHECK(AttacksGenerator::getFileRankAttacks(EMPTY_BOARD, Square::G1) == 0b00000010'00000010'00000010'00000010'00000010'00000010'00000010'11111101);
 		CHECK(AttacksGenerator::getFileRankAttacks(EMPTY_BOARD, Square::G2) == 0b00000010'00000010'00000010'00000010'00000010'00000010'11111101'00000010);
@@ -34,8 +34,8 @@ TEST_CASE("AttacksGenerator getDiagonalAttacks") {
 	using namespace phase4::engine::moves::magic;
 
 	SUBCASE("Empty occupancy") {
-		//                                                                       HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                       87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                       ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                       88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(AttacksGenerator::getDiagonalAttacks(EMPTY_BOARD, Square::H1) == 0b1000000'00100000'00010000'00001000'00000100'00000010'00000001'000000000);
 		CHECK(AttacksGenerator::getDiagonalAttacks(EMPTY_BOARD, Square::G1) == 0b0000000'01000000'00100000'00010000'00001000'00000100'00000010'100000000);
 		CHECK(AttacksGenerator::getDiagonalAttacks(EMPTY_BOARD, Square::G2) == 0b1000000'00100000'00010000'00001000'00000100'00000010'10000000'000000101);

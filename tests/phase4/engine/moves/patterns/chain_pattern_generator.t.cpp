@@ -8,8 +8,8 @@ TEST_CASE("ChainPatternGenerator getPattern") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves::patterns;
 
-	//                                                       HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-	//                                                       87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	//                                                       ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+	//                                                       88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 	CHECK(ChainPatternGenerator::getPattern(Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000010'00000000);
 	CHECK(ChainPatternGenerator::getPattern(Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000101'00000000);
 	CHECK(ChainPatternGenerator::getPattern(Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000101'00000000'00000101);

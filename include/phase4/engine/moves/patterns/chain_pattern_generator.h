@@ -1,3 +1,6 @@
+#ifndef PHASE4_ENGINE_MOVES_PATTERNS_CHAIN_PATTERN_GENERATOR_H
+#define PHASE4_ENGINE_MOVES_PATTERNS_CHAIN_PATTERN_GENERATOR_H
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
@@ -37,3 +40,4 @@ constexpr common::Bitset ChainPatternGenerator::getPattern(common::Square fieldI
 }
 
 } //namespace phase4::engine::moves::patterns
+#endif

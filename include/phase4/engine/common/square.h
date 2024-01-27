@@ -114,6 +114,8 @@ public:
 
 	explicit constexpr Square(std::string_view move);
 
+	constexpr bool isValid() const;
+
 	inline constexpr bool operator!=(Square piece) const;
 	inline constexpr Square operator++();
 
@@ -227,6 +229,10 @@ inline constexpr Square Square::INVALID(64);
 
 constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {
+}
+
+constexpr bool Square::isValid() const {
+	return m_value < Square::INVALID.m_value;
 }
 
 inline constexpr bool Square::operator!=(Square piece) const {

@@ -10,6 +10,7 @@ class PieceColor {
 public:
 	static const PieceColor WHITE;
 	static const PieceColor BLACK;
+	static const PieceColor INVALID;
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
@@ -25,7 +26,10 @@ public:
 	constexpr PieceColor(PieceColor &&that) noexcept = default;
 	constexpr PieceColor &operator=(PieceColor &&that) noexcept = default;
 
-	constexpr bool operator==(const PieceColor &) const;
+	inline constexpr PieceColor operator++();
+
+	inline constexpr bool operator==(const PieceColor &) const;
+	inline constexpr bool operator!=(PieceColor piece) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceColor color);
 
@@ -47,13 +51,22 @@ constexpr PieceColor &PieceColor::operator=(uint64_t value) {
 
 inline constexpr PieceColor PieceColor::WHITE = 0;
 inline constexpr PieceColor PieceColor::BLACK = 1;
+inline constexpr PieceColor PieceColor::INVALID = 2;
 
 [[nodiscard]] constexpr uint8_t PieceColor::get_raw_value() const {
 	return m_value;
 }
 
+constexpr PieceColor PieceColor::operator++() {
+	return PieceColor(++m_value);
+}
+
 constexpr bool PieceColor::operator==(const PieceColor &color) const {
 	return color.m_value == m_value;
+}
+
+constexpr bool PieceColor::operator!=(PieceColor color) const {
+	return color.m_value != m_value;
 }
 
 [[nodiscard]] constexpr inline PieceColor PieceColor::invert() const noexcept {
