@@ -17,8 +17,8 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 #include <memory>
 #include <optional>
 
@@ -95,7 +95,7 @@ private:
 
 				if (attack != 0 && attack != attacks[permutationIndex]) {
 					container.magicNumber = rand.fewBits();
-					std::memset((void*)container.attacks.data(), 0, container.attacks.size() * sizeof(common::Bitset));
+					std::memset((void *)container.attacks.data(), 0, container.attacks.size() * sizeof(common::Bitset));
 					return false;
 				}
 
