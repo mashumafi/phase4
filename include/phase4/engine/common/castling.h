@@ -25,11 +25,11 @@ public:
 
 	constexpr Castling();
 
-	constexpr Castling(Castling const &that);
-	constexpr Castling &operator=(const Castling &that);
+	constexpr Castling(Castling const &that) = default;
+	constexpr Castling &operator=(const Castling &that) = default;
 
-	constexpr Castling(Castling &&that) noexcept;
-	constexpr Castling &operator=(Castling &&that) noexcept;
+	constexpr Castling(Castling &&that) noexcept = default;
+	constexpr Castling &operator=(Castling &&that) noexcept = default;
 
 	constexpr Castling operator|(Castling that) const;
 
@@ -75,24 +75,6 @@ constexpr Castling Castling::operator&(Castling that) const {
 
 constexpr Castling Castling::operator~() const {
 	return Castling(~m_value);
-}
-
-constexpr Castling::Castling(const Castling &that) :
-		m_value{ that.m_value } {
-}
-
-constexpr Castling &Castling::operator=(const Castling &that) {
-	m_value = that.m_value;
-	return *this;
-}
-
-constexpr Castling::Castling(Castling &&that) noexcept :
-		m_value{ std::move(that).m_value } {
-}
-
-constexpr Castling &Castling::operator=(Castling &&that) noexcept {
-	m_value = std::move(that).m_value;
-	return *this;
 }
 
 inline constexpr Castling Castling::NONE;

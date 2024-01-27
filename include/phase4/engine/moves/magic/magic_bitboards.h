@@ -18,35 +18,36 @@
 #include <array>
 #include <cstdint>
 #include <cstdlib>
-#include <exception> // exceptions
+#include <cstring>
 #include <memory>
 #include <optional>
 
 namespace phase4::engine::moves::magic {
 
 class MagicBitboards {
-private:
-	using RookMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_ROOK_SHIFT>, 64>;
-	using BishopMagicContainers = std::array<MagicContainer<1ULL << MagicShifts::MAX_BISHOP_SHIFT>, 64>;
-
-	static std::unique_ptr<RookMagicContainers> ROOK_MAGIC_ARRAY;
-	static BishopMagicContainers BISHOP_MAGIC_ARRAY;
+public:
+	template <size_t SHIFT>
+	struct MagicContainers {
+		bool isValid = false;
+		std::array<MagicContainer<1ULL << SHIFT>, 64> containers = {};
+	};
+	using RookMagicContainers = MagicContainers<MagicShifts::MAX_ROOK_SHIFT>;
+	using BishopMagicContainers = MagicContainers<MagicShifts::MAX_BISHOP_SHIFT>;
 
 	using Masks = std::array<common::Bitset, 64>;
 
-public:
 	static void initWithInternalKeys() {
-		ROOK_MAGIC_ARRAY = generateRookAttacks(MagicKeys::ROOK_KEYS);
-		BISHOP_MAGIC_ARRAY = generateBishopAttacks(MagicKeys::BISHOP_KEYS);
+		generateRookAttacks(ROOK_MAGIC_ARRAY, MagicKeys::ROOK_KEYS);
+		generateBishopAttacks(BISHOP_MAGIC_ARRAY, MagicKeys::BISHOP_KEYS);
 	}
 
 	static common::Bitset getRookMoves(common::Bitset board, common::Square square);
 
 	static common::Bitset getBishopMoves(common::Bitset board, common::Square square);
 
-	static std::unique_ptr<RookMagicContainers> generateRookAttacks(const std::optional<MagicKeys::Array> &keys = {});
+	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
 
-	static BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {});
+	static void generateBishopAttacks(BishopMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
 
 private:
 	static constexpr Masks generateRookMasks() {
@@ -68,7 +69,25 @@ private:
 	}
 
 	template <size_t N>
-	static void generateAttacks(
+	static constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitset, N> &permutations, const std::array<common::Bitset, N> &attacks) {
+		const size_t length = 1ull << shift;
+		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
+			const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
+			const common::Bitset attackIndex = hash >> container.shift;
+			const common::Bitset attack = container.attacks[attackIndex.asSize()];
+
+			if (attack != 0 && attack != attacks[permutationIndex]) {
+				return false;
+			}
+
+			container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
+		}
+
+		return true;
+	}
+
+	template <size_t N>
+	static bool generateAttacks(
 			MagicContainer<N> &container,
 			common::Bitset mask,
 			int32_t shift,
@@ -85,55 +104,50 @@ private:
 			64 - shift,
 		};
 
-		bool success = false;
-		while (!success) {
-			success = true;
-
-			const size_t length = 1ull << shift;
-			for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
-				const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
-				const common::Bitset attackIndex = hash >> container.shift;
-				const common::Bitset attack = container.attacks[attackIndex.asSize()];
-
-				if (attack != 0 && attack != attacks[permutationIndex]) {
-					const uint64_t next = rand.fewBits();
-					if (next == first) {
-						throw std::invalid_argument("Repeated the first number in the random sequence");
-					}
-					container.magicNumber = next;
-					std::fill(container.attacks.begin(), container.attacks.end(), 0);
-					success = false;
-					break;
-				}
-
-				container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
+		const size_t retryLimit = key ? 1 : 100'000;
+		for (size_t i = 0; i < retryLimit; ++i) {
+			if (validate(container, shift, permutations, attacks)) {
+				return true;
 			}
+
+			container.magicNumber = rand.fewBits();
+
+			if (container.magicNumber == first) {
+				std::cout << "Repeated the first number in the random sequence" << std::endl;
+				return false;
+			}
+
+			static constexpr std::array<common::Bitset, N> empty = {};
+			container.attacks = empty;
 		}
+
+		return false;
 	}
+
+	static RookMagicContainers ROOK_MAGIC_ARRAY;
+	static BishopMagicContainers BISHOP_MAGIC_ARRAY;
 };
 
-inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::ROOK_MAGIC_ARRAY;
+inline MagicBitboards::RookMagicContainers MagicBitboards::ROOK_MAGIC_ARRAY;
 inline MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY;
 
 inline common::Bitset MagicBitboards::getRookMoves(common::Bitset board, common::Square square) {
-	assert(ROOK_MAGIC_ARRAY);
-
-	board = board & (*ROOK_MAGIC_ARRAY)[square].mask;
-	board = board * (*ROOK_MAGIC_ARRAY)[square].magicNumber;
-	board = board >> (*ROOK_MAGIC_ARRAY)[square].shift;
-	return (*ROOK_MAGIC_ARRAY)[square].attacks[board.asSize()];
+	assert(ROOK_MAGIC_ARRAY.isValid);
+	board = board & ROOK_MAGIC_ARRAY.containers[square].mask;
+	board = board * ROOK_MAGIC_ARRAY.containers[square].magicNumber;
+	board = board >> ROOK_MAGIC_ARRAY.containers[square].shift;
+	return ROOK_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
 }
 
 inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, common::Square square) {
-	board = board & BISHOP_MAGIC_ARRAY[square].mask;
-	board = board * BISHOP_MAGIC_ARRAY[square].magicNumber;
-	board = board >> BISHOP_MAGIC_ARRAY[square].shift;
-	return BISHOP_MAGIC_ARRAY[square].attacks[board.asSize()];
+	assert(BISHOP_MAGIC_ARRAY.isValid);
+	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
+	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
+	board = board >> BISHOP_MAGIC_ARRAY.containers[square].shift;
+	return BISHOP_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
 }
 
-inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::generateRookAttacks(const std::optional<MagicKeys::Array> &keys) {
-	std::unique_ptr<RookMagicContainers> magicArray = std::make_unique<RookMagicContainers>();
-
+inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {
 	constexpr Masks masks = generateRookMasks();
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_ROOK_SHIFT>();
@@ -145,15 +159,12 @@ inline std::unique_ptr<MagicBitboards::RookMagicContainers> MagicBitboards::gene
 			attacks[permutationIndex] = AttacksGenerator::getFileRankAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks((*magicArray)[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::ROOK_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
-
-	return magicArray;
+	magicArray.isValid = true;
 }
 
-inline MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) {
-	BishopMagicContainers magicArray;
-
+inline void MagicBitboards::generateBishopAttacks(BishopMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {
 	constexpr Masks masks = generateBishopMasks();
 
 	auto permutations = std::array<common::Bitset, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
@@ -165,10 +176,9 @@ inline MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttac
 			attacks[permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks(magicArray[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
-
-	return magicArray;
+	magicArray.isValid = true;
 }
 
 } //namespace phase4::engine::moves::magic

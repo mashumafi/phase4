@@ -35,7 +35,7 @@ public:
 	}
 
 	bool isMoveLegal(moves::Move move) const {
-		Position positionCopy = m_position;
+		Position positionCopy = Position(m_position);
 		positionCopy.makeMove(move);
 		return !positionCopy.isKingChecked(m_position.m_colorToMove);
 	}

@@ -106,13 +106,15 @@ public:
 
 	explicit constexpr Square(const FieldIndex &fieldIndex);
 
-	constexpr Square(Square const &that);
-	constexpr Square &operator=(const Square &that);
+	constexpr Square(Square const &that) = default;
+	constexpr Square &operator=(const Square &that) = default;
 
-	constexpr Square(Square &&that) noexcept;
-	constexpr Square &operator=(Square &&that) noexcept;
+	constexpr Square(Square &&that) noexcept = default;
+	constexpr Square &operator=(Square &&that) noexcept = default;
 
 	explicit constexpr Square(std::string_view move);
+
+	constexpr bool isValid() const;
 
 	inline constexpr bool operator!=(Square piece) const;
 	inline constexpr Square operator++();
@@ -225,26 +227,12 @@ inline constexpr Square Square::B8(62);
 inline constexpr Square Square::A8(63);
 inline constexpr Square Square::INVALID(64);
 
-constexpr Square::Square(const Square &that) :
-		m_value{ that.m_value } {
-}
-
-constexpr Square &Square::operator=(const Square &that) {
-	m_value = that.m_value;
-	return *this;
-}
-
-constexpr Square::Square(Square &&that) noexcept :
-		m_value{ std::move(that).m_value } {
-}
-
-constexpr Square &Square::operator=(Square &&that) noexcept {
-	m_value = std::move(that).m_value;
-	return *this;
-}
-
 constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {
+}
+
+constexpr bool Square::isValid() const {
+	return m_value < Square::INVALID.m_value;
 }
 
 inline constexpr bool Square::operator!=(Square piece) const {

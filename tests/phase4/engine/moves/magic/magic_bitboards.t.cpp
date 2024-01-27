@@ -2,18 +2,34 @@
 
 #include <doctest/doctest.h>
 
+#include <memory>
+
 TEST_CASE("MagicBitboards generateBishopAttacks") {
 	using namespace phase4::engine::moves::magic;
 
-	auto bishopAttacks = MagicBitboards::generateBishopAttacks();
-	CHECK(bishopAttacks[0].magicNumber.asSize() == 2325088863497781376ULL);
-	CHECK(bishopAttacks[1].magicNumber.asSize() == 585545056993181728ULL);
-	CHECK(bishopAttacks[2].magicNumber.asSize() == 18595494716637184ULL);
-	CHECK(bishopAttacks[4].magicNumber.asSize() == 4901055626601824324ULL);
-	CHECK(bishopAttacks[8].magicNumber.asSize() == 288301036979093760ULL);
-	CHECK(bishopAttacks[16].magicNumber.asSize() == 1168684245170849824ULL);
-	CHECK(bishopAttacks[32].magicNumber.asSize() == 6953874552997285968ULL);
+	auto bishopAttacks = std::make_unique<MagicBitboards::BishopMagicContainers>();
+	MagicBitboards::generateBishopAttacks(*bishopAttacks);
+	CHECK(bishopAttacks->isValid);
+	CHECK(bishopAttacks->containers[0].magicNumber.asSize() == 4613379283715375620ull);
+	CHECK(bishopAttacks->containers[1].magicNumber.asSize() == 1134706804948992ull);
+	CHECK(bishopAttacks->containers[2].magicNumber.asSize() == 1193454665762160640ull);
+	CHECK(bishopAttacks->containers[4].magicNumber.asSize() == 6199115847304256ull);
+	CHECK(bishopAttacks->containers[8].magicNumber.asSize() == 10090389800902263041ull);
+	CHECK(bishopAttacks->containers[16].magicNumber.asSize() == 4728788474122995968ull);
+	CHECK(bishopAttacks->containers[32].magicNumber.asSize() == 9511919209872884740ull);
 }
 
 TEST_CASE("MagicBitboards generateRookAttacks") {
+	using namespace phase4::engine::moves::magic;
+
+	auto rookAttacks = std::make_unique<MagicBitboards::RookMagicContainers>();
+	MagicBitboards::generateRookAttacks(*rookAttacks);
+	CHECK(rookAttacks->isValid);
+	CHECK(rookAttacks->containers[0].magicNumber.asSize() == 36028866283716608ull);
+	CHECK(rookAttacks->containers[1].magicNumber.asSize() == 54078380169052160ull);
+	CHECK(rookAttacks->containers[2].magicNumber.asSize() == 293859888579350528ull);
+	CHECK(rookAttacks->containers[4].magicNumber.asSize() == 293859888579350528ull);
+	CHECK(rookAttacks->containers[8].magicNumber.asSize() == 18155154251546664ull);
+	CHECK(rookAttacks->containers[16].magicNumber.asSize() == 598684085518480ull);
+	CHECK(rookAttacks->containers[32].magicNumber.asSize() == 576603963768439842ull);
 }

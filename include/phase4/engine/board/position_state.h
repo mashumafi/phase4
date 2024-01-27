@@ -11,9 +11,9 @@ class PositionState {
 public:
 	static const Position DEFAULT;
 
-	static CONSTEXPR_OR_NONE void setDefaultState(Position &position);
+	static constexpr void setDefaultState(Position &position);
 
-	static CONSTEXPR_OR_NONE void recalculateEvaluationDependentValues(Position &position);
+	static constexpr void recalculateEvaluationDependentValues(Position &position);
 
 private:
 	static constexpr ZobristHashing calculateHash(Position &position);
@@ -21,14 +21,14 @@ private:
 	static constexpr ZobristHashing calculatePawnHash(Position &position);
 
 	/// @brief Calculates the piece table based on piece masks
-	/// @param position the Position to update
+	/// @param position the Position to update and compute from
 	static constexpr void calculatePieceTable(Position &position);
 
 	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
 
-	static CONSTEXPR_OR_NONE int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
+	static constexpr int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
 
-	static CONSTEXPR_OR_NONE Position makeDefaultPosition();
+	static constexpr Position makeDefaultPosition();
 };
 
 inline constexpr void PositionState::calculatePieceTable(Position &position) {
@@ -53,7 +53,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	return material;
 }
 
-inline CONSTEXPR_OR_NONE int32_t PositionState::calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) {
+inline constexpr int32_t PositionState::calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) {
 	int32_t result = 0;
 
 	for (size_t pieceIndex = 0; pieceIndex < 6; pieceIndex++) {
@@ -70,7 +70,7 @@ inline CONSTEXPR_OR_NONE int32_t PositionState::calculatePosition(const Position
 	return result;
 }
 
-inline CONSTEXPR_OR_NONE void PositionState::recalculateEvaluationDependentValues(Position &position) {
+inline constexpr void PositionState::recalculateEvaluationDependentValues(Position &position) {
 	position.m_material[common::PieceColor::WHITE.get_raw_value()] = calculateMaterial(position, common::PieceColor::WHITE);
 	position.m_material[common::PieceColor::BLACK.get_raw_value()] = calculateMaterial(position, common::PieceColor::BLACK);
 
@@ -82,17 +82,17 @@ inline CONSTEXPR_OR_NONE void PositionState::recalculateEvaluationDependentValue
 
 inline constexpr ZobristHashing PositionState::calculateHash(Position &position) {
 	(void)position;
-	ZobristHashing hash;
+	ZobristHashing hash(123456);
 	return hash;
 }
 
 inline constexpr ZobristHashing PositionState::calculatePawnHash(Position &position) {
 	(void)position;
-	ZobristHashing pawnHash;
+	ZobristHashing pawnHash(456789);
 	return pawnHash;
 }
 
-inline CONSTEXPR_OR_NONE void PositionState::setDefaultState(Position &position) {
+inline constexpr void PositionState::setDefaultState(Position &position) {
 	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 65280;
 	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 129;
 	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 66;
@@ -129,13 +129,13 @@ inline CONSTEXPR_OR_NONE void PositionState::setDefaultState(Position &position)
 	recalculateEvaluationDependentValues(position);
 }
 
-inline CONSTEXPR_OR_NONE Position PositionState::makeDefaultPosition() {
-	Position position = Position();
+inline constexpr Position PositionState::makeDefaultPosition() {
+	Position position;
 	setDefaultState(position);
 	return position;
 }
 
-inline CONSTEXPR_OR_CONST Position PositionState::DEFAULT = makeDefaultPosition();
+inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
 
 } //namespace phase4::engine::board
 

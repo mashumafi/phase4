@@ -26,8 +26,8 @@ public:
 	ZobristHashing m_hash;
 	ZobristHashing m_pawnHash;
 
-	common::Bitset m_colorPieceMasks[2][6] = {};
-	common::Bitset m_occupancyByColor[2] = {};
+	std::array<std::array<common::Bitset, 6>, 2> m_colorPieceMasks;
+	std::array<common::Bitset, 2> m_occupancyByColor = {};
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
 	common::Castling m_castling = common::Castling::EVERYTHING;
@@ -36,13 +36,21 @@ public:
 	uint8_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
-	bool m_castlingDone[2] = {};
-	int32_t m_material[2] = {};
-	int32_t m_positionEval[2][2] = {};
+	std::array<bool, 2> m_castlingDone = {};
+	std::array<int32_t, 2> m_material = {};
+	std::array<std::array<int32_t, 2>, 2> m_positionEval = {};
 
 	std::array<common::PieceType, 64> m_pieceTable = {};
 
 	common::Bitset m_walls = 0;
+
+	inline constexpr Position() noexcept = default;
+
+	inline constexpr Position(const Position &that) noexcept = default;
+	inline constexpr Position &operator=(const Position &that) = default;
+
+	inline constexpr Position(Position &&that) noexcept = default;
+	inline constexpr Position &operator=(Position &&that) noexcept = default;
 
 	void clearWalls() {
 		if (likely(m_walls > 0)) {

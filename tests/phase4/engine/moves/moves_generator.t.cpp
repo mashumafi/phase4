@@ -21,8 +21,8 @@ TEST_CASE("MovesGenerator getKnightMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
 
-	//                                                    HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-	//                                                    87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	//                                                    ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+	//                                                    88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 	CHECK(MovesGenerator::getKnightMoves(Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000010'00000100'00000000);
 	CHECK(MovesGenerator::getKnightMoves(Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000101'00001000'00000000);
 	CHECK(MovesGenerator::getKnightMoves(Square::G2) == 0b00000000'00000000'00000000'00000000'00000101'00001000'00000000'00001000);
@@ -42,8 +42,8 @@ TEST_CASE("MovesGenerator getBishopMoves") {
 	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
-		//                                                                 HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                 87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                 ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                 88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getBishopMoves(EMPTY_BOARD, Square::H1) == 0b10000000'01000000'00100000'00010000'00001000'00000100'00000010'00000000);
 		CHECK(MovesGenerator::getBishopMoves(EMPTY_BOARD, Square::G1) == 0b00000000'10000000'01000000'00100000'00010000'00001000'00000101'00000000);
 		CHECK(MovesGenerator::getBishopMoves(EMPTY_BOARD, Square::G2) == 0b10000000'01000000'00100000'00010000'00001000'00000101'00000000'00000101);
@@ -56,8 +56,8 @@ TEST_CASE("MovesGenerator getBishopMoves") {
 	}
 
 	SUBCASE("Sparse occupancy") {
-		//                                                                  HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                  87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                  ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                  88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getBishopMoves(SPARSE_BOARD, Square::H1) == 0b00000000'00000000'00000000'00010000'00001000'00000100'00000010'00000000);
 		CHECK(MovesGenerator::getBishopMoves(SPARSE_BOARD, Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000101'00000000);
 		CHECK(MovesGenerator::getBishopMoves(SPARSE_BOARD, Square::G2) == 0b00000000'00000000'00000000'00010000'00001000'00000101'00000000'00000101);
@@ -70,8 +70,8 @@ TEST_CASE("MovesGenerator getBishopMoves") {
 	}
 
 	SUBCASE("Dense occupancy") {
-		//                                                                 HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                 87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                 ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                 88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getBishopMoves(DENSE_BOARD, Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000100'00000010'00000000);
 		CHECK(MovesGenerator::getBishopMoves(DENSE_BOARD, Square::G1) == 0b00000000'00000000'00000000'00000000'00010000'00001000'00000101'00000000);
 		CHECK(MovesGenerator::getBishopMoves(DENSE_BOARD, Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000101'00000000'00000101);
@@ -92,8 +92,8 @@ TEST_CASE("MovesGenerator getRookMoves") {
 	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
-		//                                                               HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                               87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                               ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                               88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getRookMoves(EMPTY_BOARD, Square::H1) == 0b00000001'00000001'00000001'00000001'00000001'00000001'00000001'11111110);
 		CHECK(MovesGenerator::getRookMoves(EMPTY_BOARD, Square::G1) == 0b00000010'00000010'00000010'00000010'00000010'00000010'00000010'11111101);
 		CHECK(MovesGenerator::getRookMoves(EMPTY_BOARD, Square::G2) == 0b00000010'00000010'00000010'00000010'00000010'00000010'11111101'00000010);
@@ -106,8 +106,8 @@ TEST_CASE("MovesGenerator getRookMoves") {
 	}
 
 	SUBCASE("Sparse occupancy") {
-		//                                                               HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                               87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                               ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                               88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getRookMoves(SPARSE_BOARD, Square::H1) == 0b0000000'00000000'00000000'10000000'10000000'10000000'10000000'100001110);
 		CHECK(MovesGenerator::getRookMoves(SPARSE_BOARD, Square::G1) == 0b0000000'00000000'00000001'00000001'00000001'00000001'00000001'000001101);
 		CHECK(MovesGenerator::getRookMoves(SPARSE_BOARD, Square::G2) == 0b0000000'00000000'00000001'00000001'00000001'00000001'00000010'100000010);
@@ -120,8 +120,8 @@ TEST_CASE("MovesGenerator getRookMoves") {
 	}
 
 	SUBCASE("Dense occupancy") {
-		//                                                               HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                               87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                               ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                               88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getRookMoves(DENSE_BOARD, Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000001'00000010);
 		CHECK(MovesGenerator::getRookMoves(DENSE_BOARD, Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000010'00000010'00000101);
 		CHECK(MovesGenerator::getRookMoves(DENSE_BOARD, Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000010'00001101'00000010);
@@ -142,8 +142,8 @@ TEST_CASE("MovesGenerator getQueenMoves") {
 	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
-		//                                                                HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getQueenMoves(EMPTY_BOARD, Square::H1) == 0b10000001'01000001'00100001'00010001'00001001'00000101'00000011'11111110);
 		CHECK(MovesGenerator::getQueenMoves(EMPTY_BOARD, Square::G1) == 0b00000010'10000010'01000010'00100010'00010010'00001010'00000111'11111101);
 		CHECK(MovesGenerator::getQueenMoves(EMPTY_BOARD, Square::G2) == 0b10000010'01000010'00100010'00010010'00001010'00000111'11111101'00000111);
@@ -156,8 +156,8 @@ TEST_CASE("MovesGenerator getQueenMoves") {
 	}
 
 	SUBCASE("Sparse occupancy") {
-		//                                                                HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getQueenMoves(SPARSE_BOARD, Square::H1) == 0b0000000'00000000'00000000'10001000'10000100'10000010'10000001'100001110);
 		CHECK(MovesGenerator::getQueenMoves(SPARSE_BOARD, Square::G1) == 0b0000000'00000000'00000001'00000001'00000001'00000001'00000011'100001101);
 		CHECK(MovesGenerator::getQueenMoves(SPARSE_BOARD, Square::G2) == 0b0000000'00000000'00000001'00001001'00000101'00000011'10000010'100000111);
@@ -170,8 +170,8 @@ TEST_CASE("MovesGenerator getQueenMoves") {
 	}
 
 	SUBCASE("Dense occupancy") {
-		//                                                                HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-		//                                                                87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+		//                                                                ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+		//                                                                88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 		CHECK(MovesGenerator::getQueenMoves(DENSE_BOARD, Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000100'00000011'00000010);
 		CHECK(MovesGenerator::getQueenMoves(DENSE_BOARD, Square::G1) == 0b00000000'00000000'00000000'00000000'00010000'00001010'00000111'00000101);
 		CHECK(MovesGenerator::getQueenMoves(DENSE_BOARD, Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000111'00001101'00000111);
@@ -188,8 +188,8 @@ TEST_CASE("MovesGenerator getKingMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
 
-	//                                                  HHHHHHHH GGGGGGGG FFFFFFFF EEEEEEEE DDDDDDDD CCCCCCCC BBBBBBBB AAAAAAAA
-	//                                                  87654321 87654321 87654321 87654321 87654321 87654321 87654321 87654321
+	//                                                  ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
+	//                                                  88888888 77777777 66666666 55555555 44444444 33333333 22222222 11111111
 	CHECK(MovesGenerator::getKingMoves(Square::H1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000011'00000010);
 	CHECK(MovesGenerator::getKingMoves(Square::G1) == 0b00000000'00000000'00000000'00000000'00000000'00000000'00000111'00000101);
 	CHECK(MovesGenerator::getKingMoves(Square::G2) == 0b00000000'00000000'00000000'00000000'00000000'00000111'00000101'00000111);

@@ -21,11 +21,11 @@ public:
 	inline constexpr Bitset() noexcept;
 	inline constexpr Bitset(uint64_t bits) noexcept;
 
-	inline constexpr Bitset(const Bitset &that) noexcept;
-	inline constexpr Bitset &operator=(const Bitset &that);
+	inline constexpr Bitset(const Bitset &that) noexcept = default;
+	inline constexpr Bitset &operator=(const Bitset &that) = default;
 
-	inline constexpr Bitset(Bitset &&that) noexcept;
-	inline constexpr Bitset &operator=(Bitset &&that) noexcept;
+	inline constexpr Bitset(Bitset &&that) noexcept = default;
+	inline constexpr Bitset &operator=(Bitset &&that) noexcept = default;
 
 	/// @brief turns off all bits except the least significant bit
 	/// @param bits to keep the LSB
@@ -135,26 +135,8 @@ inline constexpr Bitset::Bitset(uint64_t bits) noexcept :
 		m_bits(bits) {
 }
 
-inline constexpr Bitset::Bitset(const Bitset &that) noexcept :
-		m_bits(that.m_bits) {
-}
-
 inline constexpr Bitset::Bitset() noexcept :
 		Bitset(0) {
-}
-
-inline constexpr Bitset &Bitset::operator=(const Bitset &that) {
-	m_bits = that.m_bits;
-	return *this;
-}
-
-inline constexpr Bitset::Bitset(Bitset &&that) noexcept :
-		m_bits(std::move(that).m_bits) {
-}
-
-inline constexpr Bitset &Bitset::operator=(Bitset &&that) noexcept {
-	m_bits = std::move(that).m_bits;
-	return *this;
 }
 
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
@@ -176,9 +158,9 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	return g_popCount[v.u[0]] + g_popCount[v.u[1]] + g_popCount[v.u[2]] + g_popCount[v.u[3]];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
+	return __builtin_popcountll(m_bits);
 #elif defined(_MSC_VER)
-	return static_cast<std::size_t>(__popcnt64(m_bits));
+	return __popcnt64(m_bits);
 #else
 	static_assert(false, "Define USE_SLOW_BITSET_COUNT to use internal implementation.")
 #endif

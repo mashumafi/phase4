@@ -10,6 +10,7 @@ class PieceColor {
 public:
 	static const PieceColor WHITE;
 	static const PieceColor BLACK;
+	static const PieceColor INVALID;
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
@@ -19,13 +20,16 @@ public:
 	/// @return the inverted color
 	[[nodiscard]] constexpr inline PieceColor invert() const noexcept;
 
-	constexpr PieceColor(PieceColor const &that);
-	constexpr PieceColor &operator=(const PieceColor &that);
+	constexpr PieceColor(PieceColor const &that) = default;
+	constexpr PieceColor &operator=(const PieceColor &that) = default;
 
-	constexpr PieceColor(PieceColor &&that) noexcept;
-	constexpr PieceColor &operator=(PieceColor &&that) noexcept;
+	constexpr PieceColor(PieceColor &&that) noexcept = default;
+	constexpr PieceColor &operator=(PieceColor &&that) noexcept = default;
 
-	constexpr bool operator==(const PieceColor &) const;
+	inline constexpr PieceColor operator++();
+
+	inline constexpr bool operator==(const PieceColor &) const;
+	inline constexpr bool operator!=(PieceColor piece) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceColor color);
 
@@ -35,14 +39,6 @@ private:
 
 	uint8_t m_value;
 };
-
-[[nodiscard]] constexpr inline PieceColor PieceColor::invert() const noexcept {
-	if ((*this) == WHITE) {
-		return BLACK;
-	} else {
-		return WHITE;
-	}
-}
 
 constexpr PieceColor::PieceColor(uint64_t value) :
 		m_value{ static_cast<uint8_t>(value) } {
@@ -55,31 +51,30 @@ constexpr PieceColor &PieceColor::operator=(uint64_t value) {
 
 inline constexpr PieceColor PieceColor::WHITE = 0;
 inline constexpr PieceColor PieceColor::BLACK = 1;
+inline constexpr PieceColor PieceColor::INVALID = 2;
 
 [[nodiscard]] constexpr uint8_t PieceColor::get_raw_value() const {
 	return m_value;
 }
 
-constexpr PieceColor::PieceColor(const PieceColor &that) :
-		m_value{ that.m_value } {
-}
-
-constexpr PieceColor &PieceColor::operator=(const PieceColor &that) {
-	m_value = that.m_value;
-	return *this;
-}
-
-constexpr PieceColor::PieceColor(PieceColor &&that) noexcept :
-		m_value{ std::move(that).m_value } {
-}
-
-constexpr PieceColor &PieceColor::operator=(PieceColor &&that) noexcept {
-	m_value = std::move(that).m_value;
-	return *this;
+constexpr PieceColor PieceColor::operator++() {
+	return PieceColor(++m_value);
 }
 
 constexpr bool PieceColor::operator==(const PieceColor &color) const {
 	return color.m_value == m_value;
+}
+
+constexpr bool PieceColor::operator!=(PieceColor color) const {
+	return color.m_value != m_value;
+}
+
+[[nodiscard]] constexpr inline PieceColor PieceColor::invert() const noexcept {
+	if (*this == WHITE) {
+		return BLACK;
+	} else {
+		return WHITE;
+	}
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceColor color) {
