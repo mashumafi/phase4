@@ -4,6 +4,8 @@
 
 #include <doctest/doctest.h>
 
+#include <unordered_set>
+
 TEST_CASE("Random seed next") {
 	using namespace phase4::engine::common;
 
@@ -16,4 +18,14 @@ TEST_CASE("Random seed next") {
 	CHECK(Bitset(rand.next()) == 0b0001010110001110101100011100001111110010100110011010100110011000);
 	CHECK(Bitset(rand.next()) == 0b0001000011110100110001001001010010110001101100011011000111101100);
 	CHECK(Bitset(rand.next()) == 0b0011001101100101100001100111000011000100011100101101011110110100);
+}
+
+TEST_CASE("Random no repeats") {
+	using namespace phase4::engine::common;
+
+	Random rand(42);
+	std::unordered_set<size_t> results;
+	for (size_t i = 0; i < 500'000; ++i) {
+		REQUIRE(results.insert(rand.next()).second);
+	}
 }
