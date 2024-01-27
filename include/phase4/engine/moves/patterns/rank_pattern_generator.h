@@ -41,7 +41,7 @@ constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
 inline constexpr RankPatternGenerator::Array RankPatternGenerator::PATTERNS = generatePatterns();
 
 constexpr common::Bitset RankPatternGenerator::getPatternForField(common::Square square) {
-	return PATTERNS[square / 8] & ~(1ull << square);
+	return PATTERNS[square / 8] & ~(square.asBitboard());
 }
 
 constexpr common::Bitset RankPatternGenerator::getPatternForRank(uint8_t rank) {

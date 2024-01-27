@@ -20,7 +20,7 @@ public:
 
 private:
 	static constexpr common::Bitset getPatternForField(common::PieceColor color, common::Square fieldIndex) {
-		common::Square::Direction direction = color == common::PieceColor::WHITE ? &common::Square::north : &common::Square::south;
+		const common::Square::Direction direction = color == common::PieceColor::WHITE ? &common::Square::north : &common::Square::south;
 		common::Square currentField = (fieldIndex.*direction)(2);
 		common::Bitset result = 0ul;
 
