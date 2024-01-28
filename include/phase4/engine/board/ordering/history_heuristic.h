@@ -1,71 +1,61 @@
 #ifndef PHASE4_ENGINE_BOARD_ORDERING_HISTORY_HEURISTIC_H
 #define PHASE4_ENGINE_BOARD_ORDERING_HISTORY_HEURISTIC_H
 
+#include <phase4/engine/common/math.h>
 #include <phase4/engine/common/piece_color.h>
+#include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/common/square.h>
 
+#include <array>
 #include <cstdint>
 
 namespace phase4::engine::board::ordering {
 
 class HistoryHeuristic {
 public:
-	static HistoryHeuristic() {
-		_historyMoves = new uint[2][][];
-		_historyMoves[Color.White] = new uint[6][];
-		_historyMoves[Color.Black] = new uint[6][];
+	using Array = std::array<std::array<std::array<uint32_t, 64>, 6>, 2>;
 
-		for (var piece = 0; piece < 6; piece++) {
-			_historyMoves[Color.White][piece] = new uint[64];
-			_historyMoves[Color.Black][piece] = new uint[64];
-		}
+	inline void addHistoryMove(common::PieceColor color, common::PieceType piece, common::Square to, int depth) {
+		const uint32_t newValue = m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] + static_cast<uint32_t>(depth * depth);
 
-		_max = 1;
+		m_max = common::Math::max_uint32(m_max, newValue);
+		m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] = newValue;
 	}
 
-	static void AddHistoryMove(int color, int piece, int to, int depth) {
-		var newValue = _historyMoves[color][piece][to] + (uint)(depth * depth);
-
-		_max = Math.Max(_max, newValue);
-		_historyMoves[color][piece][to] = newValue;
+	inline int32_t getMoveValue(common::PieceColor color, common::PieceType piece, common::Square to, uint32_t scale) {
+		return static_cast<int32_t>(m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] * scale / m_max);
 	}
 
-	static short GetMoveValue(int color, int piece, int to, uint scale) {
-		return (short)(_historyMoves[color][piece][to] * scale / _max);
+	inline uint32_t getRawMoveValue(common::PieceColor color, common::PieceType piece, common::Square to) {
+		return m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to];
 	}
 
-	static uint GetRawMoveValue(int color, int piece, int to) {
-		return _historyMoves[color][piece][to];
+	uint32_t getMaxValue() {
+		return m_max;
 	}
 
-	static uint GetMaxValue() {
-		return _max;
-	}
-
-	static void AgeValues() {
-		for (var color = 0; color < 2; color++) {
-			for (var piece = 0; piece < 6; piece++) {
-				for (var to = 0; to < 64; to++) {
-					_historyMoves[color][piece][to] /= 2;
+	inline void ageValues() {
+		for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
+			for (common::PieceType piece = common::PieceType::PAWN; piece != common::PieceType::INVALID; ++piece) {
+				for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
+					m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] /= 2;
 				}
 			}
 		}
 
-		_max = Math.Max(_max / 2, 1);
+		m_max = common::Math::max_uint32(m_max / 2, 1);
 	}
 
-	static void Clear() {
-		for (var color = 0; color < 2; color++) {
-			for (var piece = 0; piece < 6; piece++) {
-				Array.Clear(_historyMoves[color][piece], 0, 64);
-			}
-		}
+	inline void clear() {
+		static constexpr Array blank = {};
+		m_historyMoves = blank;
 
-		_max = 1;
+		m_max = 1;
 	}
 
 private:
-	static readonly uint[][][] _historyMoves;
-	static uint _max;
+	Array m_historyMoves;
+	size_t m_max = 1;
 };
 
 } //namespace phase4::engine::board::ordering
