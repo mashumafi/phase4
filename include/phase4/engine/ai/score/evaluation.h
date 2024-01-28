@@ -3,6 +3,7 @@
 
 #include <phase4/engine/ai/score/evaluation_statistics.h>
 
+#include <phase4/engine/ai/score/evaluators/king_safety_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/material_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/mobility_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/pawn_structure_evaluator.h>
@@ -21,8 +22,8 @@ public:
 	static int32_t evaluate(board::Session &session, bool enableCache, EvaluationStatistics &statistics) {
 		using namespace evaluators;
 
-		int32_t openingPhase = session.m_position.getPhaseRatio();
-		int32_t endingPhase = common::PositionConstants::PHASE_RESOLUTION - openingPhase;
+		const int32_t openingPhase = session.m_position.getPhaseRatio();
+		const int32_t endingPhase = common::PositionConstants::PHASE_RESOLUTION - openingPhase;
 
 		int32_t result = MaterialEvaluator::evaluate(session.m_position);
 		result += enableCache ? PawnStructureEvaluator::evaluate(session, statistics, openingPhase, endingPhase) : PawnStructureEvaluator::evaluateWithoutCache(session, statistics, openingPhase, endingPhase);
@@ -33,6 +34,7 @@ public:
 			common::Bitset fieldsAttackedByBlack = 0ul;
 
 			result += MobilityEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+			result += KingSafetyEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 		}
 
 		return result;

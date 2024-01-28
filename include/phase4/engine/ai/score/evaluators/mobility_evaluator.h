@@ -21,13 +21,13 @@ namespace phase4::engine::ai::score::evaluators {
 
 class MobilityEvaluator {
 public:
-	static int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByWhite, common::Bitset &fieldsAttackedByBlack) {
+	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByWhite, common::Bitset &fieldsAttackedByBlack) {
 		int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase, fieldsAttackedByWhite);
 		int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase, fieldsAttackedByBlack);
 		return whiteEvaluation - blackEvaluation;
 	}
 
-	static int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByColor) {
+	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByColor) {
 		const auto [knightCenter, knightOutside] = board::operators::KnightOperator::getMobility(position, color, fieldsAttackedByColor);
 		const auto [bishopCenter, bishopOutside] = board::operators::BishopOperator::getMobility(position, color, fieldsAttackedByColor);
 		const auto [rookCenter, rookOutside] = board::operators::RookOperator::getMobility(position, color, fieldsAttackedByColor);
