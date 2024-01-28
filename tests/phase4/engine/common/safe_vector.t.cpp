@@ -9,10 +9,12 @@ TEST_CASE("SafeVector constructor") {
 
 	SUBCASE("No size") {
 		SafeVector<uint64_t> numbers;
+		(void)numbers;
 	}
 
 	SUBCASE("Sized") {
 		SafeVector<uint64_t, 256> numbers;
+		(void)numbers;
 	}
 }
 

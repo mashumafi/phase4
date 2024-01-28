@@ -44,7 +44,10 @@ add_executable(phase4_test
     phase4/engine/fen/position_to_fen.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
-target_compile_options(phase4_test PRIVATE -fconstexpr-ops-limit=335544320)
+target_compile_options(phase4_test PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
+    $<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=335544320>
+)
 
 include(doctest)
 doctest_discover_tests(phase4_test)
