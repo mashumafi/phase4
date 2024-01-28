@@ -107,8 +107,8 @@ public:
 			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from);
 
-			centerMobility += (availableMoves & common::EvaluationConstants::ExtendedCenter).fastCount();
-			outsideMobility += (availableMoves & common::EvaluationConstants::Outside).fastCount();
+			centerMobility += (availableMoves & common::EvaluationConstants::EXTENDED_CENTER).fastCount();
+			outsideMobility += (availableMoves & common::EvaluationConstants::OUTSIDE).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}

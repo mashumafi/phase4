@@ -249,19 +249,19 @@ public:
 				m_pawnHash = m_pawnHash.addOrRemovePiece(enemyColor, killedPiece, move.to());
 			} else if (killedPiece == PieceType::ROOK) {
 				switch (move.to()) {
-					case 0:
+					case Square::H1.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 						m_castling &= ~Castling::WHITE_SHORT;
 						break;
-					case 7:
+					case Square::A1.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 						m_castling &= ~Castling::WHITE_LONG;
 						break;
-					case 56:
+					case Square::H8.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 						m_castling &= ~Castling::BLACK_SHORT;
 						break;
-					case 63:
+					case Square::A8.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 						m_castling &= ~Castling::BLACK_LONG;
 						break;
@@ -373,18 +373,23 @@ public:
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
-			if (move.from() == Square::H1) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-				m_castling &= ~Castling::WHITE_SHORT;
-			} else if (move.from() == Square::A1) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
-				m_castling &= ~Castling::WHITE_LONG;
-			} else if (move.from() == Square::H8) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-				m_castling &= ~Castling::BLACK_SHORT;
-			} else if (move.from() == Square::A8) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
-				m_castling &= ~Castling::BLACK_LONG;
+			switch (move.from().get_raw_value()) {
+				case Square::H1.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+					m_castling &= ~Castling::WHITE_SHORT;
+					break;
+				case Square::A1.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+					m_castling &= ~Castling::WHITE_LONG;
+					break;
+				case Square::H8.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+					m_castling &= ~Castling::BLACK_SHORT;
+					break;
+				case Square::A8.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+					m_castling &= ~Castling::BLACK_LONG;
+					break;
 			}
 		}
 
@@ -434,18 +439,23 @@ public:
 								m_castling &= ~Castling::BLACK_CASTLING;
 							}
 						} else if (resultType == PieceType::ROOK) {
-							if (from == 0) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-								m_castling &= ~Castling::WHITE_SHORT;
-							} else if (from == 7) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
-								m_castling &= ~Castling::WHITE_LONG;
-							} else if (from == 56) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-								m_castling &= ~Castling::BLACK_SHORT;
-							} else if (from == 63) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
-								m_castling &= ~Castling::BLACK_LONG;
+							switch (from.get_raw_value()) {
+								case Square::H1.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+									m_castling &= ~Castling::WHITE_SHORT;
+									break;
+								case Square::A1.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+									m_castling &= ~Castling::WHITE_LONG;
+									break;
+								case Square::H8.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+									m_castling &= ~Castling::BLACK_SHORT;
+									break;
+								case Square::A8.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+									m_castling &= ~Castling::BLACK_LONG;
+									break;
 							}
 						}
 					}
