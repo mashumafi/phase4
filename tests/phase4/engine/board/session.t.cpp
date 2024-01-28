@@ -16,7 +16,10 @@ TEST_CASE("Session standard move/check/undo") {
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
+	board::Session session;
+
 	SUBCASE("Long castle") {
+		session.makeMove(moves::Move("d2d4"));
 	}
 
 	SUBCASE("Short castle") {
