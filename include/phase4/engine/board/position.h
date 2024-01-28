@@ -93,7 +93,7 @@ public:
 		m_occupancyByColor[color.get_raw_value()] ^= field;
 		m_occupancySummary = m_occupancySummary ^ field;
 
-		m_material[color.get_raw_value()] += EvaluationConstants::Pieces[piece.get_raw_value()];
+		m_material[color.get_raw_value()] += EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -111,7 +111,7 @@ public:
 		m_occupancyByColor[color.get_raw_value()] ^= field;
 		m_occupancySummary ^= field;
 
-		m_material[color.get_raw_value()] -= EvaluationConstants::Pieces[piece.get_raw_value()];
+		m_material[color.get_raw_value()] -= EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];

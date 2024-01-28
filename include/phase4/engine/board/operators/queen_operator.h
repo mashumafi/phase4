@@ -27,7 +27,7 @@ public:
 		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
 
 		while (queens != 0) {
-			Bitset piece = queens.getLsb();
+			Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -35,7 +35,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -51,7 +51,7 @@ public:
 		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb();
+			const Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -59,7 +59,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -76,14 +76,14 @@ public:
 		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb();
+			const Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -101,7 +101,7 @@ public:
 		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb();
+			const Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());

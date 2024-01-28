@@ -35,7 +35,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -59,7 +59,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -76,14 +76,14 @@ public:
 		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
-			const Bitset piece = bishops.getLsb();
+			const Bitset piece = bishops.getLsb(); // TODO: skip lsb
 			bishops = bishops.popLsb();
 
 			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -101,7 +101,7 @@ public:
 		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
-			const Bitset piece = bishops.getLsb();
+			const Bitset piece = bishops.getLsb(); // TODO: skip lsb
 			bishops = bishops.popLsb();
 
 			const Square from(piece.fastBitScan());

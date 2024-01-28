@@ -36,7 +36,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -76,7 +76,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -99,7 +99,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 

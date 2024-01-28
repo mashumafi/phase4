@@ -136,12 +136,12 @@ public:
 	}
 
 	static constexpr uint32_t calculateMaterialAtOpening() {
-		return common::EvaluationConstants::Pieces[common::PieceType::KING.get_raw_value()] +
-				common::EvaluationConstants::Pieces[common::PieceType::QUEEN.get_raw_value()] +
-				common::EvaluationConstants::Pieces[common::PieceType::ROOK.get_raw_value()] * 2 +
-				common::EvaluationConstants::Pieces[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				common::EvaluationConstants::Pieces[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				common::EvaluationConstants::Pieces[common::PieceType::PAWN.get_raw_value()] * 8;
+		return common::EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
+				common::EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
+				common::EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
+				common::EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
+				common::EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
+				common::EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
 	}
 
 	void clearWalls() {

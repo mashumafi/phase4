@@ -27,7 +27,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -51,7 +51,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -76,7 +76,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -101,7 +101,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());

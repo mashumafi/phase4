@@ -27,7 +27,7 @@ public:
 		Bitset rooks = position.m_colorPieceMasks[color.get_raw_value()][PieceType::ROOK.get_raw_value()];
 
 		while (rooks != 0) {
-			const Bitset piece = rooks.getLsb();
+			const Bitset piece = rooks.getLsb(); // TODO: skip lsb
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -35,7 +35,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -51,7 +51,7 @@ public:
 		Bitset rooks = position.m_colorPieceMasks[color.get_raw_value()][PieceType::ROOK.get_raw_value()];
 
 		while (rooks != 0) {
-			const Bitset piece = rooks.getLsb();
+			const Bitset piece = rooks.getLsb(); // TODO: skip lsb
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -59,7 +59,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -76,14 +76,14 @@ public:
 		Bitset rooks = position.m_colorPieceMasks[color.get_raw_value()][PieceType::ROOK.get_raw_value()];
 
 		while (rooks != 0) {
-			const Bitset piece = rooks.getLsb();
+			const Bitset piece = rooks.getLsb(); // TODO: skip lsb
 			rooks = rooks.popLsb();
 
 			Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -101,7 +101,7 @@ public:
 		Bitset rooks = position.m_colorPieceMasks[color.get_raw_value()][PieceType::ROOK.get_raw_value()];
 
 		while (rooks != 0) {
-			const Bitset piece = rooks.getLsb();
+			const Bitset piece = rooks.getLsb(); // TODO: skip lsb
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());

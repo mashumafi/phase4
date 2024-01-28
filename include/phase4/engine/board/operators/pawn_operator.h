@@ -56,7 +56,7 @@ public:
 					return true;
 				}
 			} else if (move.flags().isDoublePush()) {
-				const Square middleField(1ull << ((move.from() + move.to()) / 2));
+				const Bitset middleField((move.from().middle(move.to()).asBitboard()));
 				if ((position.m_occupancySummary & middleField) == 0 && (position.m_occupancySummary & toField) == 0) {
 					return true;
 				}
@@ -115,7 +115,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
@@ -158,7 +158,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
@@ -191,7 +191,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
