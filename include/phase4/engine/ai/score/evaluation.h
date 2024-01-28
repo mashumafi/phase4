@@ -4,22 +4,22 @@
 #include <phase4/engine/ai/score/evaluation_statistics.h>
 
 #include <phase4/engine/ai/score/evaluators/material_evaluator.h>
+#include <phase4/engine/ai/score/evaluators/mobility_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/pawn_structure_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/position_evaluator.h>
-#include <phase4/engine/ai/score/evaluators/mobility_evaluator.h>
 
 #include <phase4/engine/board/position.h>
 
+#include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/position_constants.h>
-#include <phase4/engine/common/bitset.h>
 
 namespace phase4::engine::ai::score {
 
 class Evaluation {
 public:
 	static int32_t evaluate(board::Session &session, bool enableCache, EvaluationStatistics &statistics) {
-        using namespace evaluators;
+		using namespace evaluators;
 
 		int32_t openingPhase = session.m_position.getPhaseRatio();
 		int32_t endingPhase = common::PositionConstants::PHASE_RESOLUTION - openingPhase;
@@ -39,7 +39,7 @@ public:
 	}
 
 	static int32_t fastEvaluate(board::Session &session, EvaluationStatistics &statistics) {
-        using namespace evaluators;
+		using namespace evaluators;
 
 		int32_t openingPhase = session.m_position.getPhaseRatio();
 		int32_t endingPhase = common::PositionConstants::PHASE_RESOLUTION - openingPhase;
