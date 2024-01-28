@@ -8,6 +8,7 @@
 #include <phase4/engine/ai/score/evaluators/mobility_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/pawn_structure_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/position_evaluator.h>
+#include <phase4/engine/ai/score/evaluators/rook_evaluator.h>
 
 #include <phase4/engine/board/position.h>
 
@@ -35,6 +36,7 @@ public:
 
 			result += MobilityEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += KingSafetyEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+			result += RookEvaluator::evaluate(session.m_position, openingPhase, endingPhase);
 		}
 
 		return result;
