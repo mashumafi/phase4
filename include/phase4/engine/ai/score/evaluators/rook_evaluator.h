@@ -18,13 +18,14 @@ namespace phase4::engine::ai::score::evaluators {
 
 class RookEvaluator {
 public:
-	static int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
+	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
 		const int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase);
 		const int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase);
 		return whiteEvaluation - blackEvaluation;
 	}
 
-	static int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
+private:
+	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
 		int32_t doubledRooks = 0;
 		int32_t rooksOnOpenFile = 0;
 		const common::PieceColor enemyColor = color.invert();

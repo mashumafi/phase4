@@ -28,6 +28,7 @@ public:
 		return whiteEvaluation - blackEvaluation;
 	}
 
+private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset fieldsAttackedByEnemy) {
 		const common::Bitset king = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
 		const common::Square kingField(king.bitScan());

@@ -21,6 +21,7 @@ public:
 		return whiteEvaluation - blackEvaluation;
 	}
 
+private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
 		int32_t pairOfBishops = 0;
 		if (position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::BISHOP.get_raw_value()].count() > 1) {
@@ -49,7 +50,6 @@ public:
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);
 	}
 
-private:
 	static constexpr common::Bitset WhiteKingFianchettoPattern = 7;
 	static constexpr common::Bitset WhitePawnsFianchettoPattern = 132352;
 	static constexpr common::Bitset WhiteBishopFianchettoPattern = 512;

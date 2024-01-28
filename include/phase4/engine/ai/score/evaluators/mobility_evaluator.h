@@ -22,11 +22,12 @@ namespace phase4::engine::ai::score::evaluators {
 class MobilityEvaluator {
 public:
 	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByWhite, common::Bitset &fieldsAttackedByBlack) {
-		int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase, fieldsAttackedByWhite);
-		int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase, fieldsAttackedByBlack);
+		const int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase, fieldsAttackedByWhite);
+		const int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase, fieldsAttackedByBlack);
 		return whiteEvaluation - blackEvaluation;
 	}
 
+private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByColor) {
 		const auto [knightCenter, knightOutside] = board::operators::KnightOperator::getMobility(position, color, fieldsAttackedByColor);
 		const auto [bishopCenter, bishopOutside] = board::operators::BishopOperator::getMobility(position, color, fieldsAttackedByColor);
