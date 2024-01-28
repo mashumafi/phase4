@@ -45,12 +45,12 @@ public:
 		}
 #endif
 
-		auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
-		auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
 
-		int32_t openingScore = openingWhiteScore - openingBlackScore;
-		int32_t endingScore = endingWhiteScore - endingBlackScore;
-		int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+		const int32_t openingScore = openingWhiteScore - openingBlackScore;
+		const int32_t endingScore = endingWhiteScore - endingBlackScore;
+		const int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 
 		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), (short)openingScore, (short)endingScore);
 
@@ -63,11 +63,11 @@ public:
 	static inline int32_t evaluateWithoutCache(const board::Session &session, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
-		auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
 
-		int32_t openingScore = openingWhiteScore - openingBlackScore;
-		int32_t endingScore = endingWhiteScore - endingBlackScore;
+		const int32_t openingScore = openingWhiteScore - openingBlackScore;
+		const int32_t endingScore = endingWhiteScore - endingBlackScore;
 
 		return TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 	}

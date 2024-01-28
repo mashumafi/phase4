@@ -45,7 +45,7 @@ private:
 	static const Patterns PATTERNS;
 };
 
-constexpr PassingPatternGenerator::Patterns PassingPatternGenerator::PATTERNS = generate();
+inline constexpr PassingPatternGenerator::Patterns PassingPatternGenerator::PATTERNS = generate();
 
 constexpr common::Bitset PassingPatternGenerator::getPattern(common::PieceColor color, common::Square fieldIndex) {
 	return PATTERNS[color.get_raw_value()][fieldIndex];

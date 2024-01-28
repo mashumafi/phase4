@@ -42,7 +42,7 @@ private:
 	static const Patterns PATTERNS;
 };
 
-constexpr OuterFilesPatternGenerator::Patterns OuterFilesPatternGenerator::PATTERNS = generate();
+inline constexpr OuterFilesPatternGenerator::Patterns OuterFilesPatternGenerator::PATTERNS = generate();
 
 constexpr common::Bitset OuterFilesPatternGenerator::getPatternForFile(size_t file) {
 	return PATTERNS[file];
