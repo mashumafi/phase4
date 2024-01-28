@@ -8,11 +8,11 @@
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
-#include <phase4/engine/common/evaluation_constants.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/common/util.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>

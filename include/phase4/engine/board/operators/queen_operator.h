@@ -7,10 +7,10 @@
 #include <phase4/engine/moves/moves_generator.h>
 
 #include <phase4/engine/common/bitset.h>
-#include <phase4/engine/common/evaluation_constants.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>
@@ -107,8 +107,8 @@ public:
 			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from);
 
-			centerMobility += (availableMoves & common::EvaluationConstants::EXTENDED_CENTER).fastCount();
-			outsideMobility += (availableMoves & common::EvaluationConstants::OUTSIDE).fastCount();
+			centerMobility += (availableMoves & score::EvaluationConstants::EXTENDED_CENTER).fastCount();
+			outsideMobility += (availableMoves & score::EvaluationConstants::OUTSIDE).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}

@@ -1,16 +1,16 @@
 #ifndef PHASE4_ENGINE_BOARD_POSITION_H
 #define PHASE4_ENGINE_BOARD_POSITION_H
 
-#include <phase4/engine/ai/score/piece_square_tables/piece_square_table_data.h> // TODO: remove cycle
-
 #include <phase4/engine/board/zobrist_hashing.h>
+
+#include <phase4/engine/score/piece_square_tables/piece_square_table_data.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
-#include <phase4/engine/common/evaluation_constants.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
@@ -65,7 +65,7 @@ public:
 
 	inline void MovePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) {
 		using namespace common;
-		using namespace ai::score::piece_square_tables;
+		using namespace score::piece_square_tables;
 
 		common::Bitset move = from.asBitboard() | to.asBitboard();
 
@@ -85,7 +85,7 @@ public:
 
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
-		using namespace phase4::engine::ai::score;
+		using namespace score;
 
 		common::Bitset field = fieldIndex.asBitboard();
 
@@ -93,7 +93,7 @@ public:
 		m_occupancyByColor[color.get_raw_value()] ^= field;
 		m_occupancySummary = m_occupancySummary ^ field;
 
-		m_material[color.get_raw_value()] += EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		m_material[color.get_raw_value()] += score::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -103,7 +103,7 @@ public:
 
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
-		using namespace phase4::engine::ai::score;
+		using namespace score;
 
 		common::Bitset field = fieldIndex.asBitboard();
 

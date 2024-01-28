@@ -1,10 +1,10 @@
-#ifndef PHASE4_ENGINE_COMMON_EVALUATION_CONSTANTS_H
-#define PHASE4_ENGINE_COMMON_EVALUATION_CONSTANTS_H
+#ifndef PHASE4_ENGINE_SCORE_EVALUATION_CONSTANTS_H
+#define PHASE4_ENGINE_SCORE_EVALUATION_CONSTANTS_H
 
 #include <array>
 #include <cstdint>
 
-namespace phase4::engine::common {
+namespace phase4::engine::score {
 
 struct EvaluationConstants {
 	static const std::array<int32_t, 6> PIECE_VALUES;
@@ -72,5 +72,5 @@ inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER = 0x3c3c3c3c0000;
 inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER_RING = EvaluationConstants::EXTENDED_CENTER & ~EvaluationConstants::CENTER;
 inline constexpr uint64_t EvaluationConstants::OUTSIDE = 0xffffc3c3c3c3ffff;
 
-} //namespace phase4::engine::common
+} //namespace phase4::engine::score
 #endif
