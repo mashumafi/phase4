@@ -19,6 +19,7 @@ public:
 	using Array = std::array<std::array<KillerMovesArray, SearchConstants::MAX_DEPTH>, 2>;
 
 	void addKillerMove(moves::Move move, common::PieceColor color, int ply) {
+        // TODO: use size()
 		for (int8_t slot = MoveOrderingConstants::KILLER_SLOTS - 2; slot >= 0; slot--) {
 			m_killerMoves[color.get_raw_value()][ply][slot + 1] = m_killerMoves[color.get_raw_value()][ply][slot];
 		}
@@ -27,6 +28,7 @@ public:
 	}
 
 	bool killerMoveExists(moves::Move move, common::PieceColor color, int ply) const {
+        // TODO: use size()
 		for (int8_t slot = 0; slot < ordering::MoveOrderingConstants::KILLER_SLOTS; slot++) {
 			if (m_killerMoves[color.get_raw_value()][ply][slot] == move) {
 				return true;
@@ -37,12 +39,14 @@ public:
 	}
 
 	void ageKillers() {
+        // TODO: use size()
 		for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
 			for (int8_t ply = 0; ply < SearchConstants::MAX_DEPTH - 2; ply++) {
 				m_killerMoves[color.get_raw_value()][ply] = m_killerMoves[color.get_raw_value()][ply + 2];
 			}
 		}
 
+        // TODO: use size()
 		for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
 			for (int8_t ply = SearchConstants::MAX_DEPTH - 2; ply < SearchConstants::MAX_DEPTH; ply++) {
 				static constexpr KillerMovesArray empty;

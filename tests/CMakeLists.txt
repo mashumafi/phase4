@@ -37,6 +37,7 @@ add_executable(phase4_test
     phase4/engine/board/zobrist_hashing.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
+    phase4/engine/ai/search/iterative_deepening.t.cpp
 
     phase4/engine/fen/fen_to_position.t.cpp
     phase4/engine/fen/position_to_fen.t.cpp
