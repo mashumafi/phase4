@@ -47,6 +47,7 @@ target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
 target_compile_options(phase4_test PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
     $<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=335544320>
+    $<$<CXX_COMPILER_ID:AppleClang>:-fconstexpr-steps=335544320>
 )
 
 include(doctest)
