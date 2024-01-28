@@ -38,6 +38,17 @@ struct EvaluationConstants {
 	static const uint64_t EXTENDED_CENTER;
 	static const uint64_t EXTENDED_CENTER_RING;
 	static const uint64_t OUTSIDE;
+
+	static constexpr uint32_t calculateMaterialAtOpening() {
+		return score::EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
+	}
+
+	static const int32_t MATERIAL_AT_OPENING;
 };
 
 inline constexpr std::array<int32_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
@@ -71,6 +82,8 @@ inline constexpr uint64_t EvaluationConstants::CENTER = 0x1818000000;
 inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER = 0x3c3c3c3c0000;
 inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER_RING = EvaluationConstants::EXTENDED_CENTER & ~EvaluationConstants::CENTER;
 inline constexpr uint64_t EvaluationConstants::OUTSIDE = 0xffffc3c3c3c3ffff;
+
+inline constexpr int32_t EvaluationConstants::MATERIAL_AT_OPENING = calculateMaterialAtOpening();
 
 } //namespace phase4::engine::score
 #endif

@@ -5,6 +5,8 @@
 #include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/zobrist_hashing.h>
 
+#include <phase4/engine/transposition/hash_tables.h>
+
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/field_index.h>
@@ -135,22 +137,14 @@ public:
 		}
 	}
 
-	static constexpr uint32_t calculateMaterialAtOpening() {
-		return score::EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
-	}
-
 	void clearWalls() {
 		m_position.clearWalls();
 	}
 
 private:
 	Position m_position;
-	static const int32_t MATERIAL_AT_OPENING;
+
+	transposition::HashTables<> m_hashTables;
 
 	common::FastVector<common::PieceType> m_killedPieces;
 	common::FastVector<common::Bitset> m_enPassants;
@@ -161,8 +155,6 @@ private:
 	common::FastVector<uint8_t> m_irreversibleMovesCounts;
 	common::FastVector<common::FieldIndex> m_wallSlides;
 };
-
-inline constexpr int32_t Session::MATERIAL_AT_OPENING = Session::calculateMaterialAtOpening();
 
 } //namespace phase4::engine::board
 

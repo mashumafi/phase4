@@ -3,13 +3,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${doctest_SOURCE_DIR}/scripts/cmake)
 message(${doctest_SOURCE_DIR}/scripts/cmake)
 
 add_executable(phase4_test
-    phase4/engine/board/operators.t.cpp
-    phase4/engine/board/position.t.cpp
-    phase4/engine/board/position_state.t.cpp
-    phase4/engine/board/session.t.cpp
-    phase4/engine/board/zobrist_hashing.t.cpp
-    phase4/engine/fen/fen_to_position.t.cpp
-    phase4/engine/fen/position_to_fen.t.cpp
     phase4/engine/common/bitset.t.cpp
     phase4/engine/common/castling.t.cpp
     phase4/engine/common/distance.t.cpp
@@ -21,6 +14,7 @@ add_executable(phase4_test
     phase4/engine/common/square.t.cpp
     phase4/engine/common/wall_operations.t.cpp
     phase4/engine/common/util.t.cpp
+
     phase4/engine/moves/magic/attacks_generator.t.cpp
     phase4/engine/moves/magic/magic_bitboards.t.cpp
     phase4/engine/moves/magic/permutations_generator.t.cpp
@@ -35,6 +29,17 @@ add_executable(phase4_test
     phase4/engine/moves/patterns/outer_files_pattern_generator.t.cpp
     phase4/engine/moves/patterns/passing_pattern_generator.t.cpp
     phase4/engine/moves/patterns/rank_pattern_generator.t.cpp
+
+    phase4/engine/board/operators.t.cpp
+    phase4/engine/board/position.t.cpp
+    phase4/engine/board/position_state.t.cpp
+    phase4/engine/board/session.t.cpp
+    phase4/engine/board/zobrist_hashing.t.cpp
+
+    phase4/engine/ai/score/evaluation.t.cpp
+
+    phase4/engine/fen/fen_to_position.t.cpp
+    phase4/engine/fen/position_to_fen.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
 
