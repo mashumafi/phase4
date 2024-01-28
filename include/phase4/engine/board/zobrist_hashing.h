@@ -64,6 +64,10 @@ public:
 
 	[[nodiscard]] constexpr ZobristHashing toggleWalls(common::Bitset walls) const noexcept;
 
+	[[nodiscard]] constexpr common::Bitset asBitboard() const noexcept {
+		return common::Bitset(m_hash);
+	}
+
 	inline constexpr bool operator==(ZobristHashing other) const;
 	inline constexpr bool operator!=(ZobristHashing other) const;
 

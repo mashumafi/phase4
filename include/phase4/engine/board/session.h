@@ -141,11 +141,10 @@ public:
 		m_position.clearWalls();
 	}
 
-private:
 	Position m_position;
-
 	transposition::HashTables<> m_hashTables;
 
+private:
 	common::FastVector<common::PieceType> m_killedPieces;
 	common::FastVector<common::Bitset> m_enPassants;
 	common::FastVector<common::Castling> m_castlings;

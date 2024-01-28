@@ -2,135 +2,132 @@
 #define PHASE4_ENGINE_AI_SCORE_EVALUATORS_PAWN_STRUCTURE_EVALUATOR_H
 
 #include <phase4/engine/ai/score/evaluation_statistics.h>
+#include <phase4/engine/ai/score/tapered_evaluation.h>
+
+#include <phase4/engine/board/session.h>
 
 #include <phase4/engine/transposition/pawn_hash_table.h>
+#include <phase4/engine/transposition/pawn_hash_table_entry.h>
 
-#include <phase4/engine/board/position.h>
+#include <phase4/engine/moves/patterns/chain_pattern_generator.h>
+#include <phase4/engine/moves/patterns/file_pattern_generator.h>
+#include <phase4/engine/moves/patterns/outer_files_pattern_generator.h>
 
+#include <phase4/engine/score/evaluation_constants.h>
+
+#include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
+
+#include <cstdint>
+#include <tuple>
 
 namespace phase4::engine::ai::score::evaluators {
 
 class PawnStructureEvaluator {
 public:
-#ifdef TODO
-	static int Evaluate(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase) {
-		var entry = PawnHashTable.Get(board.PawnHash);
-		if (entry.IsKeyValid(board.PawnHash)) {
-#if DEBUG
-			statistics.PHTHits++;
-#endif
-			return TaperedEvaluation.AdjustToPhase(entry.OpeningScore, entry.EndingScore, openingPhase, endingPhase);
-		}
-#if DEBUG
-		else {
-			statistics.PHTNonHits++;
+	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
+		(void)statistics;
 
-			if (entry.Key != 0 || entry.OpeningScore != 0 || entry.EndingScore != 0) {
-				statistics.PHTReplacements++;
+		const transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.m_position.m_pawnHash.asBitboard());
+		if (entry.isKeyValid(session.m_position.m_pawnHash.asBitboard())) {
+#if NDEBUG
+			statistics.m_pawnHashTableHits++;
+#endif
+			return TaperedEvaluation::adjustToPhase(entry.openingScore(), entry.endingScore(), openingPhase, endingPhase);
+		}
+#if NDEBUG
+		else {
+			statistics.m_pawnHashTableNonHits++;
+
+			if (entry.key() != 0 || entry.openingScore() != 0 || entry.endingScore() != 0) {
+				statistics.m_pawnHashTableReplacements++;
 			}
 		}
 #endif
 
-		var(openingWhiteScore, endingWhiteScore) = Evaluate(board, Color.White, openingPhase, endingPhase);
-		var(openingBlackScore, endingBlackScore) = Evaluate(board, Color.Black, openingPhase, endingPhase);
+		auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
+		auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
 
-		var openingScore = openingWhiteScore - openingBlackScore;
-		var endingScore = endingWhiteScore - endingBlackScore;
-		var result = TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+		int32_t openingScore = openingWhiteScore - openingBlackScore;
+		int32_t endingScore = endingWhiteScore - endingBlackScore;
+		int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 
-		PawnHashTable.Add(board.PawnHash, (short)openingScore, (short)endingScore);
+		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), (short)openingScore, (short)endingScore);
 
-#if DEBUG
-		statistics.PHTAddedEntries++;
+#if NDEBUG
+		statistics.m_pawnHashTableAddedEntries++;
 #endif
 		return result;
 	}
 
-public:
-	static int EvaluateWithoutCache(BoardState board, EvaluationStatistics statistics, int openingPhase, int endingPhase) {
-		var(openingWhiteScore, endingWhiteScore) = Evaluate(board, Color.White, openingPhase, endingPhase);
-		var(openingBlackScore, endingBlackScore) = Evaluate(board, Color.Black, openingPhase, endingPhase);
+	static inline int32_t evaluateWithoutCache(const board::Session &session, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
+		(void)statistics;
 
-		var openingScore = openingWhiteScore - openingBlackScore;
-		var endingScore = endingWhiteScore - endingBlackScore;
+		auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
+		auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
 
-		return TaperedEvaluation.AdjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
+		int32_t openingScore = openingWhiteScore - openingBlackScore;
+		int32_t endingScore = endingWhiteScore - endingBlackScore;
+
+		return TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 	}
 
 private:
-	static(int openingScore, int endingScore) Evaluate(BoardState board, int color, int openingPhase, int endingPhase) {
-		var doubledPawns = 0;
-		var isolatedPawns = 0;
-		var chainedPawns = 0;
-		var passingPawns = 0;
+	static inline std::tuple<int32_t, int32_t> evaluate(const board::Position &position, common::PieceColor color) {
+		int32_t doubledPawns = 0;
+		int32_t isolatedPawns = 0;
+		int32_t chainedPawns = 0;
+		int32_t passingPawns = 0;
 
-		for (var file = 0; file < 8; file++) {
-			var friendlyPawnsOnInnerMask = board.Pieces[color][Piece.Pawn] & FilePatternGenerator.GetPatternForFile(file);
-			var friendlyPawnsOnOuterMask = board.Pieces[color][Piece.Pawn] & OuterFilesPatternGenerator.GetPatternForFile(file);
+		for (uint8_t file = 0; file < 8; ++file) {
+			const common::Bitset friendlyPawnsOnInnerMask = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()] & moves::patterns::FilePatternGenerator::getPatternForFile(file);
+			const common::Bitset friendlyPawnsOnOuterMask = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()] & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
-			var pawnsCount = BitOperations.Count(friendlyPawnsOnInnerMask);
+			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
 			if (pawnsCount > 1) {
-				doubledPawns += (int)(pawnsCount - 1);
+				doubledPawns += (pawnsCount.asSize() - 1); // TODO: Cast?
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {
 				if (friendlyPawnsOnOuterMask == 0) {
-					isolatedPawns += (int)BitOperations.Count(pawnsCount);
+					isolatedPawns += pawnsCount.count(); // TODO: understand this
 				}
 			}
 		}
 
-		var pieces = board.Pieces[color][Piece.Pawn];
+		common::Bitset pieces = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
 		while (pieces != 0) {
-			var lsb = BitOperations.GetLsb(pieces);
-			var field = BitOperations.BitScan(lsb);
-			pieces = BitOperations.PopLsb(pieces);
+			const common::Bitset lsb = pieces.getLsb(); // TODO: skip lsb
+			const common::Square field(lsb.bitScan());
+			pieces = pieces.popLsb();
 
-			var chain = ChainPatternGenerator.GetPattern(field) & board.Pieces[color][Piece.Pawn];
+			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
 			if (chain != 0) {
-				chainedPawns += (int)BitOperations.Count(chain);
+				chainedPawns += chain.count(); // TODO: cast?
 			}
 
-			if (board.IsFieldPassing(color, field)) {
+			if (position.isFieldPassing(color, field)) {
 				passingPawns++;
 			}
 		}
 
-		var doubledPawnsOpeningScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Opening];
-		var doubledPawnsEndingScore = doubledPawns * EvaluationConstants.DoubledPawns[GamePhase.Ending];
+		const int32_t doubledPawnsOpeningScore = doubledPawns * engine::score::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::OPENING];
+		const int32_t doubledPawnsEndingScore = doubledPawns * engine::score::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::ENDING];
 
-		var isolatedPawnsOpeningScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Opening];
-		var isolatedPawnsEndingScore = isolatedPawns * EvaluationConstants.IsolatedPawns[GamePhase.Ending];
+		const int32_t isolatedPawnsOpeningScore = isolatedPawns * engine::score::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::OPENING];
+		const int32_t isolatedPawnsEndingScore = isolatedPawns * engine::score::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::ENDING];
 
-		var chainedPawnsOpeningScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Opening];
-		var chainedPawnsEndingScore = chainedPawns * EvaluationConstants.ChainedPawns[GamePhase.Ending];
+		const int32_t chainedPawnsOpeningScore = chainedPawns * engine::score::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::OPENING];
+		const int32_t chainedPawnsEndingScore = chainedPawns * engine::score::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::ENDING];
 
-		var passingPawnsOpeningScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Opening];
-		var passingPawnsEndingScore = passingPawns * EvaluationConstants.PassingPawns[GamePhase.Ending];
+		const int32_t passingPawnsOpeningScore = passingPawns * engine::score::EvaluationConstants::PASSING_PAWNS[common::GamePhase::OPENING];
+		const int32_t passingPawnsEndingScore = passingPawns * engine::score::EvaluationConstants::PASSING_PAWNS[common::GamePhase::ENDING];
 
-		var openingScore = doubledPawnsOpeningScore + isolatedPawnsOpeningScore + chainedPawnsOpeningScore + passingPawnsOpeningScore;
-		var endingScore = doubledPawnsEndingScore + isolatedPawnsEndingScore + chainedPawnsEndingScore + passingPawnsEndingScore;
+		const int32_t openingScore = doubledPawnsOpeningScore + isolatedPawnsOpeningScore + chainedPawnsOpeningScore + passingPawnsOpeningScore;
+		const int32_t endingScore = doubledPawnsEndingScore + isolatedPawnsEndingScore + chainedPawnsEndingScore + passingPawnsEndingScore;
 
-		return (openingScore, endingScore);
+		return std::make_tuple(openingScore, endingScore);
 	}
-#else
-	static int32_t evaluate(board::Position &position, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
-		(void)position;
-		(void)statistics;
-		(void)openingPhase;
-		(void)endingPhase;
-		return 0;
-	}
-
-	static int32_t evaluateWithoutCache(board::Position &position, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
-		(void)position;
-		(void)statistics;
-		(void)openingPhase;
-		(void)endingPhase;
-		return 0;
-	}
-#endif
 };
 
 } //namespace phase4::engine::ai::score::evaluators

@@ -10,6 +10,7 @@ namespace phase4::engine::transposition {
 
 template <size_t MB = HashTableConstants::DEFAULT_HASH_TABLES_SIZE>
 class HashTables {
+public:
 	PawnHashTable<common::Math::max_size(1, MB / HashTableConstants::PAWN_HASH_TABLE_SIZE_DIVIDER)> m_pawnHashTable;
 };
 

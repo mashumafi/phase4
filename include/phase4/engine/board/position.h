@@ -8,6 +8,7 @@
 
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/moves/patterns/passing_pattern_generator.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
@@ -567,7 +568,7 @@ public:
 		return (attackingPawns != 0);
 	}
 
-	constexpr int32_t getPhaseRatio() {
+	constexpr int32_t getPhaseRatio() const {
 		using namespace common;
 
 		const int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
@@ -576,6 +577,13 @@ public:
 		const int32_t boardDelta = materialOfWeakerSide - score::EvaluationConstants::OPENING_ENDGAME_EDGE;
 
 		return Math::max_int32(boardDelta, 0) * PositionConstants::PHASE_RESOLUTION / openingDelta;
+	}
+
+	bool isFieldPassing(common::PieceColor color, common::Square field) const {
+		const common::PieceColor enemyColor = color.invert();
+		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
+
+		return (passingArea & m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0;
 	}
 };
 

@@ -12,12 +12,12 @@ namespace phase4::engine::ai::score::evaluators {
 
 class PositionEvaluator {
 public:
-	static inline int32_t evaluate(board::Position &position, int openingPhase, int endingPhase) {
+	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
 		return evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase) -
 				evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase);
 	}
 
-	static inline int32_t evaluate(board::Position &position, common::PieceColor color, int openingPhase, int endingPhase) {
+	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
 		int32_t positionOpeningScore = position.m_positionEval[color.get_raw_value()][common::GamePhase::OPENING];
 		int32_t positionEndingScore = position.m_positionEval[color.get_raw_value()][common::GamePhase::ENDING];
 		return TaperedEvaluation::adjustToPhase(positionOpeningScore, positionEndingScore, openingPhase, endingPhase);
