@@ -11,6 +11,8 @@ namespace phase4::engine::common {
 
 class Square {
 public:
+	using Direction = Square (Square::*)(int8_t) const;
+
 	static const Square BEGIN;
 
 	static const Square H1;
@@ -93,9 +95,9 @@ public:
 
 	/// @brief converts the square index to a point
 	/// @return the point
-	constexpr FieldIndex asFieldIndex() const;
+	constexpr FieldIndex asFieldIndex() const noexcept;
 
-	inline constexpr Bitset asBitboard() const;
+	inline constexpr Bitset asBitboard() const noexcept;
 
 	constexpr operator uint64_t() const;
 
@@ -114,7 +116,14 @@ public:
 
 	explicit constexpr Square(std::string_view move);
 
-	constexpr bool isValid() const;
+	constexpr bool isValid() const noexcept;
+
+	inline constexpr Square north(int8_t scalar) const noexcept;
+	inline constexpr Square east(int8_t scalar) const noexcept;
+	inline constexpr Square south(int8_t scalar) const noexcept;
+	inline constexpr Square west(int8_t scalar) const noexcept;
+
+	inline constexpr Square middle(Square that) const noexcept;
 
 	inline constexpr bool operator!=(Square piece) const;
 	inline constexpr Square operator++();
@@ -129,13 +138,13 @@ private:
 	return m_value;
 }
 
-constexpr FieldIndex Square::asFieldIndex() const {
+constexpr FieldIndex Square::asFieldIndex() const noexcept {
 	const int16_t x = 7 - m_value % 8;
 	const int16_t y = m_value / 8;
 	return FieldIndex{ x, y };
 }
 
-inline constexpr Bitset Square::asBitboard() const {
+inline constexpr Bitset Square::asBitboard() const noexcept {
 	return Bitset(1ull << m_value);
 }
 
@@ -231,8 +240,28 @@ constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {
 }
 
-constexpr bool Square::isValid() const {
+constexpr bool Square::isValid() const noexcept {
 	return m_value < Square::INVALID.m_value;
+}
+
+inline constexpr Square Square::north(int8_t scalar) const noexcept {
+	return Square(m_value + 8 * scalar);
+}
+
+inline constexpr Square Square::east(int8_t scalar) const noexcept {
+	return Square(m_value - scalar);
+}
+
+inline constexpr Square Square::south(int8_t scalar) const noexcept {
+	return Square(m_value - 8 * scalar);
+}
+
+inline constexpr Square Square::west(int8_t scalar) const noexcept {
+	return Square(m_value + scalar);
+}
+
+inline constexpr Square Square::middle(Square that) const noexcept {
+	return Square((m_value + that.m_value) / 2);
 }
 
 inline constexpr bool Square::operator!=(Square piece) const {

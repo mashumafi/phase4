@@ -1,9 +1,9 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_RANK_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_RANK_PATTERN_GENERATOR_H
 
-#include <phase4/engine/board/board_constants.h> // TODO: Remove circular dependency
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/field_index.h>
+#include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -27,7 +27,7 @@ private:
 };
 
 constexpr common::Bitset RankPatternGenerator::generatePatternForField(size_t rank) {
-	return (board::BoardConstants::RANK_1) << (rank * 8);
+	return (common::PositionConstants::RANK_1) << (rank * 8);
 }
 
 constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
@@ -41,7 +41,7 @@ constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
 inline constexpr RankPatternGenerator::Array RankPatternGenerator::PATTERNS = generatePatterns();
 
 constexpr common::Bitset RankPatternGenerator::getPatternForField(common::Square square) {
-	return PATTERNS[square / 8] & ~(1ull << square);
+	return PATTERNS[square / 8] & ~(square.asBitboard());
 }
 
 constexpr common::Bitset RankPatternGenerator::getPatternForRank(uint8_t rank) {

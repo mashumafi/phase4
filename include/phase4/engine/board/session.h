@@ -4,6 +4,7 @@
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/zobrist_hashing.h>
+
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/field_index.h>
@@ -135,12 +136,12 @@ public:
 	}
 
 	static constexpr uint32_t calculateMaterialAtOpening() {
-		return ai::score::EvaluationConstants::Pieces[common::PieceType::KING.get_raw_value()] +
-				ai::score::EvaluationConstants::Pieces[common::PieceType::QUEEN.get_raw_value()] +
-				ai::score::EvaluationConstants::Pieces[common::PieceType::ROOK.get_raw_value()] * 2 +
-				ai::score::EvaluationConstants::Pieces[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				ai::score::EvaluationConstants::Pieces[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				ai::score::EvaluationConstants::Pieces[common::PieceType::PAWN.get_raw_value()] * 8;
+		return score::EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
+				score::EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
 	}
 
 	void clearWalls() {

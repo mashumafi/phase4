@@ -1,16 +1,18 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_PAWN_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_PAWN_OPERATOR_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h>
-#include <phase4/engine/board/board_constants.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/common/wall_operations.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 
@@ -24,8 +26,8 @@ public:
 		PieceColor color = position.m_colorToMove;
 
 		getSinglePush(position, moves, true, evasionMask);
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, evasionMask);
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, evasionMask);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, evasionMask);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, evasionMask);
 	}
 
 	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
@@ -38,8 +40,8 @@ public:
 
 		PieceColor color = position.m_colorToMove;
 
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, BoardConstants::FILE_A, moves, Bitset::MAX);
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, BoardConstants::FILE_H, moves, Bitset::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, Bitset::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, Bitset::MAX);
 	}
 
 	static bool isMoveLegal(const Position &position, moves::Move move) {
@@ -54,7 +56,7 @@ public:
 					return true;
 				}
 			} else if (move.flags().isDoublePush()) {
-				const Square middleField(1ull << ((move.from() + move.to()) / 2));
+				const Bitset middleField((move.from().middle(move.to()).asBitboard()));
 				if ((position.m_occupancySummary & middleField) == 0 && (position.m_occupancySummary & toField) == 0) {
 					return true;
 				}
@@ -87,25 +89,25 @@ private:
 
 		if (color == PieceColor::WHITE) {
 			shift = 8;
-			promotionRank = BoardConstants::RANK_8;
+			promotionRank = PositionConstants::RANK_8;
 			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
 
 			if (promotionsMode) {
-				pawns &= BoardConstants::NEAR_PROMOTION_AREA_WHITE;
+				pawns &= PositionConstants::NEAR_PROMOTION_AREA_WHITE;
 			} else {
-				pawns &= ~BoardConstants::NEAR_PROMOTION_AREA_WHITE;
+				pawns &= ~PositionConstants::NEAR_PROMOTION_AREA_WHITE;
 			}
 
 			pawns = (pawns << 8) & ~position.m_occupancySummary;
 		} else {
 			shift = -8;
-			promotionRank = BoardConstants::RANK_1;
+			promotionRank = PositionConstants::RANK_1;
 			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
 
 			if (promotionsMode) {
-				pawns &= BoardConstants::NEAR_PROMOTION_AREA_BLACK;
+				pawns &= PositionConstants::NEAR_PROMOTION_AREA_BLACK;
 			} else {
-				pawns &= ~BoardConstants::NEAR_PROMOTION_AREA_BLACK;
+				pawns &= ~PositionConstants::NEAR_PROMOTION_AREA_BLACK;
 			}
 
 			pawns = (pawns >> 8) & ~position.m_occupancySummary;
@@ -113,7 +115,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
@@ -142,13 +144,13 @@ private:
 
 		if (color == PieceColor::WHITE) {
 			shift = 16;
-			startRank = BoardConstants::RANK_2;
+			startRank = PositionConstants::RANK_2;
 			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & startRank) << 8) & ~position.m_occupancySummary;
 			pawns = (pawns << 8) & ~position.m_occupancySummary;
 		} else {
 			shift = -16;
-			startRank = BoardConstants::RANK_7;
+			startRank = PositionConstants::RANK_7;
 			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & startRank) >> 8) & ~position.m_occupancySummary;
 			pawns = (pawns >> 8) & ~position.m_occupancySummary;
@@ -156,7 +158,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
@@ -175,13 +177,13 @@ private:
 
 		if (color == PieceColor::WHITE) {
 			shift = dir;
-			promotionRank = BoardConstants::RANK_8;
+			promotionRank = PositionConstants::RANK_8;
 			enemyOccupancy = position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] | position.m_enPassant;
 			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
 		} else {
 			shift = -dir;
-			promotionRank = BoardConstants::RANK_1;
+			promotionRank = PositionConstants::RANK_1;
 			enemyOccupancy = position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] | position.m_enPassant;
 			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
 			pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
@@ -189,7 +191,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb();
+			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);

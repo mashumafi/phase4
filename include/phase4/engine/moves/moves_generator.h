@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_MOVES_MOVES_GENERATOR_H
 
 #include <phase4/engine/moves/magic/magic_bitboards.h>
+
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
 #include <phase4/engine/moves/patterns/jump_pattern_generator.h>
 

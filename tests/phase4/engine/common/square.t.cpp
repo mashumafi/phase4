@@ -1,8 +1,8 @@
 #include <phase4/engine/common/square.h>
 
-#include <sstream>
-
 #include <doctest/doctest.h>
+
+#include <sstream>
 
 TEST_CASE("Square output valid") {
 	using namespace phase4::engine::common;
@@ -85,4 +85,22 @@ TEST_CASE("Square increment and compare") {
 	CHECK(square == Square::F1);
 	++square;
 	CHECK(square == Square::E1);
+}
+
+TEST_CASE("Square directions") {
+	using namespace phase4::engine::common;
+
+	Square::Direction direction = &Square::north;
+
+	CHECK((Square::D4.*direction)(2) == Square::D6);
+
+	CHECK(Square::C3.north(1) == Square::C4);
+	CHECK(Square::C3.east(1) == Square::D3);
+	CHECK(Square::C3.south(1) == Square::C2);
+	CHECK(Square::C3.west(1) == Square::B3);
+
+	CHECK(Square::E5.north(3) == Square::E8);
+	CHECK(Square::E5.east(3) == Square::H5);
+	CHECK(Square::E5.south(3) == Square::E2);
+	CHECK(Square::E5.west(3) == Square::B5);
 }

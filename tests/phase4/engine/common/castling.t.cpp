@@ -1,8 +1,8 @@
 #include <phase4/engine/common/castling.h>
 
-#include <sstream>
-
 #include <doctest/doctest.h>
+
+#include <sstream>
 
 TEST_CASE("Castling::EVERYTHING is set correctly") {
 	using namespace phase4::engine::common;

@@ -1,8 +1,8 @@
 #include <phase4/engine/moves/move.h>
 
-#include <sstream>
-
 #include <doctest/doctest.h>
+
+#include <sstream>
 
 TEST_CASE("Move raw constructor") {
 	using namespace phase4::engine::common;

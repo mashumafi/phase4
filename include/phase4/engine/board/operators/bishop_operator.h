@@ -1,14 +1,16 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_BISHOP_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_BISHOP_OPERATOR_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>
@@ -33,7 +35,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -57,7 +59,7 @@ public:
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -74,14 +76,14 @@ public:
 		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
-			const Bitset piece = bishops.getLsb();
+			const Bitset piece = bishops.getLsb(); // TODO: skip lsb
 			bishops = bishops.popLsb();
 
 			const Square from(piece.fastBitScan());
 			Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb();
+				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 				Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -99,14 +101,14 @@ public:
 		Bitset bishops = position.m_colorPieceMasks[color.get_raw_value()][PieceType::BISHOP.get_raw_value()];
 
 		while (bishops != 0) {
-			const Bitset piece = bishops.getLsb();
+			const Bitset piece = bishops.getLsb(); // TODO: skip lsb
 			bishops = bishops.popLsb();
 
 			const Square from(piece.fastBitScan());
 			const Bitset availableMoves = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, from);
 
-			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).fastCount();
-			outsideMobility += (availableMoves & ai::score::EvaluationConstants::Outside).fastCount();
+			centerMobility += (availableMoves & score::EvaluationConstants::EXTENDED_CENTER).fastCount();
+			outsideMobility += (availableMoves & score::EvaluationConstants::OUTSIDE).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}

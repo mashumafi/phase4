@@ -1,8 +1,8 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_JUMP_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_JUMP_PATTERN_GENERATOR_H
 
-#include <phase4/engine/board/board_constants.h>
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -26,14 +26,14 @@ private:
 
 constexpr common::Bitset JumpPatternGenerator::generatePatternForField(common::Square square) {
 	uint64_t field = 1ull << square;
-	return ((field & ~board::BoardConstants::FILE_A) << 17) |
-			((field & ~board::BoardConstants::FILE_H) << 15) |
-			((field & ~board::BoardConstants::FILE_A & ~board::BoardConstants::FILE_B) << 10) |
-			((field & ~board::BoardConstants::FILE_G & ~board::BoardConstants::FILE_H) << 6) |
-			((field & ~board::BoardConstants::FILE_A & ~board::BoardConstants::FILE_B) >> 6) |
-			((field & ~board::BoardConstants::FILE_G & ~board::BoardConstants::FILE_H) >> 10) |
-			((field & ~board::BoardConstants::FILE_A) >> 15) |
-			((field & ~board::BoardConstants::FILE_H) >> 17);
+	return ((field & ~common::PositionConstants::FILE_A) << 17) |
+			((field & ~common::PositionConstants::FILE_H) << 15) |
+			((field & ~common::PositionConstants::FILE_A & ~common::PositionConstants::FILE_B) << 10) |
+			((field & ~common::PositionConstants::FILE_G & ~common::PositionConstants::FILE_H) << 6) |
+			((field & ~common::PositionConstants::FILE_A & ~common::PositionConstants::FILE_B) >> 6) |
+			((field & ~common::PositionConstants::FILE_G & ~common::PositionConstants::FILE_H) >> 10) |
+			((field & ~common::PositionConstants::FILE_A) >> 15) |
+			((field & ~common::PositionConstants::FILE_H) >> 17);
 }
 
 constexpr JumpPatternGenerator::Array JumpPatternGenerator::generatePatterns() {

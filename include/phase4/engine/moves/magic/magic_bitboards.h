@@ -1,10 +1,6 @@
 #ifndef PHASE4_ENGINE_MOVES_MAGIC_MAGIC_BITBOARDS_H
 #define PHASE4_ENGINE_MOVES_MAGIC_MAGIC_BITBOARDS_H
 
-#include <phase4/engine/board/board_constants.h> // TODO: Remove circular dependency
-#include <phase4/engine/common/bitset.h>
-#include <phase4/engine/common/random.h>
-#include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/magic/attacks_generator.h>
 #include <phase4/engine/moves/magic/magic_container.h>
 #include <phase4/engine/moves/magic/magic_keys.h>
@@ -13,6 +9,11 @@
 #include <phase4/engine/moves/patterns/diagonal_pattern_generator.h>
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 #include <phase4/engine/moves/patterns/rank_pattern_generator.h>
+
+#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/position_constants.h>
+#include <phase4/engine/common/random.h>
+#include <phase4/engine/common/square.h>
 
 #include <algorithm>
 #include <array>
@@ -54,8 +55,8 @@ private:
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] =
-					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::TOP_BOTTOM_EDGE) |
-					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~board::BoardConstants::RIGHT_LEFT_EDGE);
+					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~common::PositionConstants::TOP_BOTTOM_EDGE) |
+					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~common::PositionConstants::RIGHT_LEFT_EDGE);
 		}
 		return masks;
 	}
@@ -63,7 +64,7 @@ private:
 	static constexpr Masks generateBishopMasks() {
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
-			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~board::BoardConstants::EDGES;
+			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~common::PositionConstants::EDGES;
 		}
 		return masks;
 	}

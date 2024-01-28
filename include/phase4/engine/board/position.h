@@ -1,9 +1,14 @@
 #ifndef PHASE4_ENGINE_BOARD_POSITION_H
 #define PHASE4_ENGINE_BOARD_POSITION_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h> // TODO: remove cycle
-#include <phase4/engine/ai/score/piece_square_tables/piece_square_table_data.h>
 #include <phase4/engine/board/zobrist_hashing.h>
+
+#include <phase4/engine/score/piece_square_tables/piece_square_table_data.h>
+#include <phase4/engine/score/evaluation_constants.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
@@ -11,8 +16,6 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/wall_operations.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
 
 #include <array>
 #include <cstdint>
@@ -62,7 +65,7 @@ public:
 
 	inline void MovePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) {
 		using namespace common;
-		using namespace ai::score::piece_square_tables;
+		using namespace score::piece_square_tables;
 
 		common::Bitset move = from.asBitboard() | to.asBitboard();
 
@@ -82,7 +85,7 @@ public:
 
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
-		using namespace phase4::engine::ai::score;
+		using namespace score;
 
 		common::Bitset field = fieldIndex.asBitboard();
 
@@ -90,7 +93,7 @@ public:
 		m_occupancyByColor[color.get_raw_value()] ^= field;
 		m_occupancySummary = m_occupancySummary ^ field;
 
-		m_material[color.get_raw_value()] += EvaluationConstants::Pieces[piece.get_raw_value()];
+		m_material[color.get_raw_value()] += score::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -100,7 +103,7 @@ public:
 
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
-		using namespace phase4::engine::ai::score;
+		using namespace score;
 
 		common::Bitset field = fieldIndex.asBitboard();
 
@@ -108,7 +111,7 @@ public:
 		m_occupancyByColor[color.get_raw_value()] ^= field;
 		m_occupancySummary ^= field;
 
-		m_material[color.get_raw_value()] -= EvaluationConstants::Pieces[piece.get_raw_value()];
+		m_material[color.get_raw_value()] -= EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -246,19 +249,19 @@ public:
 				m_pawnHash = m_pawnHash.addOrRemovePiece(enemyColor, killedPiece, move.to());
 			} else if (killedPiece == PieceType::ROOK) {
 				switch (move.to()) {
-					case 0:
+					case Square::H1.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
 						m_castling &= ~Castling::WHITE_SHORT;
 						break;
-					case 7:
+					case Square::A1.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
 						m_castling &= ~Castling::WHITE_LONG;
 						break;
-					case 56:
+					case Square::H8.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
 						m_castling &= ~Castling::BLACK_SHORT;
 						break;
-					case 63:
+					case Square::A8.get_raw_value():
 						m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
 						m_castling &= ~Castling::BLACK_LONG;
 						break;
@@ -370,18 +373,23 @@ public:
 				m_castling &= ~Castling::BLACK_CASTLING;
 			}
 		} else if (pieceType == PieceType::ROOK && m_castling != Castling::NONE) {
-			if (move.from() == Square::H1) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-				m_castling &= ~Castling::WHITE_SHORT;
-			} else if (move.from() == Square::A1) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
-				m_castling &= ~Castling::WHITE_LONG;
-			} else if (move.from() == Square::H8) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-				m_castling &= ~Castling::BLACK_SHORT;
-			} else if (move.from() == Square::A8) {
-				m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
-				m_castling &= ~Castling::BLACK_LONG;
+			switch (move.from().get_raw_value()) {
+				case Square::H1.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+					m_castling &= ~Castling::WHITE_SHORT;
+					break;
+				case Square::A1.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+					m_castling &= ~Castling::WHITE_LONG;
+					break;
+				case Square::H8.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+					m_castling &= ~Castling::BLACK_SHORT;
+					break;
+				case Square::A8.get_raw_value():
+					m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+					m_castling &= ~Castling::BLACK_LONG;
+					break;
 			}
 		}
 
@@ -431,18 +439,23 @@ public:
 								m_castling &= ~Castling::BLACK_CASTLING;
 							}
 						} else if (resultType == PieceType::ROOK) {
-							if (from == 0) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
-								m_castling &= ~Castling::WHITE_SHORT;
-							} else if (from == 7) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
-								m_castling &= ~Castling::WHITE_LONG;
-							} else if (from == 56) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
-								m_castling &= ~Castling::BLACK_SHORT;
-							} else if (from == 63) {
-								m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
-								m_castling &= ~Castling::BLACK_LONG;
+							switch (from.get_raw_value()) {
+								case Square::H1.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_SHORT);
+									m_castling &= ~Castling::WHITE_SHORT;
+									break;
+								case Square::A1.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::WHITE_LONG);
+									m_castling &= ~Castling::WHITE_LONG;
+									break;
+								case Square::H8.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_SHORT);
+									m_castling &= ~Castling::BLACK_SHORT;
+									break;
+								case Square::A8.get_raw_value():
+									m_hash = m_hash.removeCastlingFlag(m_castling, Castling::BLACK_LONG);
+									m_castling &= ~Castling::BLACK_LONG;
+									break;
 							}
 						}
 					}

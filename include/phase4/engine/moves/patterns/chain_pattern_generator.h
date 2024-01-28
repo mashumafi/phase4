@@ -1,10 +1,11 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_CHAIN_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_CHAIN_PATTERN_GENERATOR_H
 
-#include <phase4/engine/common/bitset.h>
-#include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
 #include <phase4/engine/moves/patterns/diagonal_pattern_generator.h>
+
+#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/square.h>
 
 #include <array>
 #include <cstdint>

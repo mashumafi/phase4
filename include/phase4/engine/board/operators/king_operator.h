@@ -1,16 +1,18 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_KING_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_KING_OPERATOR_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/common/util.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>
@@ -34,7 +36,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -74,7 +76,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -97,7 +99,7 @@ public:
 		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb();
+			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 

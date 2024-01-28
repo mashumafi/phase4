@@ -1,14 +1,16 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 
-#include <phase4/engine/ai/score/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
-#include <phase4/engine/moves/move.h>
-#include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>
@@ -25,7 +27,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -49,7 +51,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -74,7 +76,7 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
@@ -99,14 +101,14 @@ public:
 		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
 
 		while (knights != 0) {
-			const Bitset piece = knights.getLsb();
+			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
 			const Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from);
 
-			centerMobility += (availableMoves & ai::score::EvaluationConstants::ExtendedCenter).fastCount();
-			outsideMobility += (availableMoves & ai::score::EvaluationConstants::Outside).fastCount();
+			centerMobility += (availableMoves & score::EvaluationConstants::EXTENDED_CENTER).fastCount();
+			outsideMobility += (availableMoves & score::EvaluationConstants::OUTSIDE).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}

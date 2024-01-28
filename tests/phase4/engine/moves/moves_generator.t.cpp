@@ -1,9 +1,5 @@
 #include <phase4/engine/moves/moves_generator.h>
 
-#include <doctest/doctest.h>
-
-#include <phase4/engine/moves/moves_generator.h>
-
 #include <phase4/engine/common/square.h>
 
 #include <doctest/doctest.h>

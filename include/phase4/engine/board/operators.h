@@ -8,9 +8,11 @@
 #include <phase4/engine/board/operators/queen_operator.h>
 #include <phase4/engine/board/operators/rook_operator.h>
 #include <phase4/engine/board/position.h>
+
+#include <phase4/engine/moves/move.h>
+
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/util.h>
-#include <phase4/engine/moves/move.h>
 
 namespace phase4::engine::board {
 
