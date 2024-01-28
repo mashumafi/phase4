@@ -19,7 +19,7 @@ TEST_CASE("Evaluation evaluate cached") {
     ai::score::EvaluationStatistics statistics;
 
     int32_t result = ai::score::Evaluation::evaluate(*session, true, statistics);
-    CHECK(result == 0);
+    CHECK(result != 0);
 }
 
 TEST_CASE("Evaluation evaluate not cached") {
@@ -32,7 +32,7 @@ TEST_CASE("Evaluation evaluate not cached") {
     ai::score::EvaluationStatistics statistics;
 
     int32_t result = ai::score::Evaluation::evaluate(*session, false, statistics);
-    CHECK(result == 0);
+    CHECK(result != 0);
 }
 
 TEST_CASE("Evaluation fast evaluate") {

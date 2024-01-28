@@ -41,4 +41,5 @@ constexpr common::Bitset ChainPatternGenerator::getPattern(common::Square fieldI
 }
 
 } //namespace phase4::engine::moves::patterns
+
 #endif
