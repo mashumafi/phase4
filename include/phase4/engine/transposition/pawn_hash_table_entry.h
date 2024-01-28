@@ -35,7 +35,7 @@ public:
 		return result < 512 ? result : (int16_t)(result - 1024);
 	}
 
-	bool isKeyValid(common::Bitset hash) {
+	bool isKeyValid(common::Bitset hash) const {
 		return key() == hash.asSize() >> 52;
 	}
 

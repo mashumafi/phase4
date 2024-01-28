@@ -2,6 +2,7 @@
 #define PHASE4_ENGINE_COMMON_MATH_H
 
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 
 // [Bit Twiddling Hacks](https://graphics.stanford.edu/~seander/bithacks.html)
