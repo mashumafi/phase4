@@ -91,32 +91,32 @@ public:
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
-	[[nodiscard]] constexpr uint8_t get_raw_value() const;
+	[[nodiscard]] inline constexpr uint8_t get_raw_value() const;
 
 	/// @brief converts the square index to a point
 	/// @return the point
-	constexpr FieldIndex asFieldIndex() const noexcept;
+	constexpr inline FieldIndex asFieldIndex() const noexcept;
 
 	inline constexpr Bitset asBitboard() const noexcept;
 
-	constexpr operator uint64_t() const;
+	inline constexpr operator uint64_t() const;
 
-	constexpr Square();
+	inline constexpr Square();
 
-	constexpr explicit Square(uint64_t value);
-	constexpr Square &operator=(uint64_t value);
+	inline constexpr explicit Square(uint64_t value);
+	inline constexpr Square &operator=(uint64_t value);
 
-	explicit constexpr Square(const FieldIndex &fieldIndex);
+	inline explicit constexpr Square(const FieldIndex &fieldIndex);
 
-	constexpr Square(Square const &that) = default;
-	constexpr Square &operator=(const Square &that) = default;
+	inline constexpr Square(Square const &that) = default;
+	inline constexpr Square &operator=(const Square &that) = default;
 
-	constexpr Square(Square &&that) noexcept = default;
-	constexpr Square &operator=(Square &&that) noexcept = default;
+	inline constexpr Square(Square &&that) noexcept = default;
+	inline constexpr Square &operator=(Square &&that) noexcept = default;
 
-	explicit constexpr Square(std::string_view move);
+	inline explicit constexpr Square(std::string_view move);
 
-	constexpr bool isValid() const noexcept;
+	inline constexpr bool isValid() const noexcept;
 
 	inline constexpr Square north(int8_t scalar) const noexcept;
 	inline constexpr Square east(int8_t scalar) const noexcept;
@@ -134,11 +134,11 @@ private:
 	uint8_t m_value;
 };
 
-[[nodiscard]] constexpr uint8_t Square::get_raw_value() const {
+[[nodiscard]] inline constexpr uint8_t Square::get_raw_value() const {
 	return m_value;
 }
 
-constexpr FieldIndex Square::asFieldIndex() const noexcept {
+inline constexpr FieldIndex Square::asFieldIndex() const noexcept {
 	const int16_t x = 7 - m_value % 8;
 	const int16_t y = m_value / 8;
 	return FieldIndex{ x, y };
@@ -148,24 +148,24 @@ inline constexpr Bitset Square::asBitboard() const noexcept {
 	return Bitset(1ull << m_value);
 }
 
-constexpr Square::operator uint64_t() const {
+inline constexpr Square::operator uint64_t() const {
 	return m_value;
 }
 
-constexpr Square::Square() :
+inline constexpr Square::Square() :
 		m_value(64) {
 }
 
-constexpr Square::Square(uint64_t value) :
+inline constexpr Square::Square(uint64_t value) :
 		m_value{ static_cast<uint8_t>(value) } {
 }
 
-constexpr Square &Square::operator=(uint64_t value) {
+inline constexpr Square &Square::operator=(uint64_t value) {
 	m_value = static_cast<uint8_t>(value);
 	return *this;
 }
 
-constexpr Square::Square(const FieldIndex &fieldIndex) :
+inline constexpr Square::Square(const FieldIndex &fieldIndex) :
 		Square(7 - fieldIndex.x + fieldIndex.y * 8) {
 }
 
@@ -236,11 +236,11 @@ inline constexpr Square Square::B8(62);
 inline constexpr Square Square::A8(63);
 inline constexpr Square Square::INVALID(64);
 
-constexpr Square::Square(std::string_view square) :
+inline constexpr Square::Square(std::string_view square) :
 		Square(FieldIndex(square)) {
 }
 
-constexpr bool Square::isValid() const noexcept {
+inline constexpr bool Square::isValid() const noexcept {
 	return m_value < Square::INVALID.m_value;
 }
 

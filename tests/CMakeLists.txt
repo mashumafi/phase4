@@ -11,6 +11,7 @@ add_executable(phase4_test
     phase4/engine/common/piece_color.t.cpp
     phase4/engine/common/piece_type.t.cpp
     phase4/engine/common/random.t.cpp
+    phase4/engine/common/safe_vector.t.cpp
     phase4/engine/common/square.t.cpp
     phase4/engine/common/wall_operations.t.cpp
     phase4/engine/common/util.t.cpp
@@ -43,6 +44,7 @@ add_executable(phase4_test
     phase4/engine/fen/position_to_fen.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
+target_compile_options(phase4_test PRIVATE -fconstexpr-ops-limit=335544320)
 
 include(doctest)
 doctest_discover_tests(phase4_test)
