@@ -1,14 +1,14 @@
-#ifndef PHASE4_ENGINE_SCORE_PIECE_SQUARE_TABLES_KING_TABLES_H
-#define PHASE4_ENGINE_SCORE_PIECE_SQUARE_TABLES_KING_TABLES_H
+#ifndef PHASE4_ENGINE_BOARD_PIECE_SQUARE_TABLES_KING_TABLES_H
+#define PHASE4_ENGINE_BOARD_PIECE_SQUARE_TABLES_KING_TABLES_H
 
-#include <phase4/engine/score/piece_square_tables/table_operations.h>
+#include <phase4/engine/board/piece_square_tables/table_operations.h>
 
 #include <phase4/engine/common/game_phase.h>
 
 #include <array>
 #include <cstdint>
 
-namespace phase4::engine::score::piece_square_tables {
+namespace phase4::engine::board::piece_square_tables {
 
 class KingTables {
 public:
@@ -62,5 +62,5 @@ public:
 	}
 };
 
-} //namespace phase4::engine::score::piece_square_tables
+} //namespace phase4::engine::board::piece_square_tables
 #endif

@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_KING_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_KING_OPERATOR_H
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/move.h>
@@ -12,7 +13,6 @@
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/common/util.h>
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>

@@ -3,9 +3,8 @@
 
 #include <phase4/engine/ai/score/tapered_evaluation.h>
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
-
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
@@ -42,9 +41,9 @@ private:
 			}
 		}
 
-		const int32_t pairOfBishopsOpeningScore = pairOfBishops * engine::score::EvaluationConstants::PAIR_OF_BISHOPS;
-		const int32_t fianchettosScore = fianchettos * engine::score::EvaluationConstants::FIANCHETTO;
-		const int32_t fianchettosWithoutBishopScore = fianchettosWithoutBishop * engine::score::EvaluationConstants::FIANCHETTO_WITHOUT_BISHOP;
+		const int32_t pairOfBishopsOpeningScore = pairOfBishops * board::EvaluationConstants::PAIR_OF_BISHOPS;
+		const int32_t fianchettosScore = fianchettos * board::EvaluationConstants::FIANCHETTO;
+		const int32_t fianchettosWithoutBishopScore = fianchettosWithoutBishop * board::EvaluationConstants::FIANCHETTO_WITHOUT_BISHOP;
 		const int32_t openingScore = pairOfBishopsOpeningScore + fianchettosScore + fianchettosWithoutBishopScore;
 
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);

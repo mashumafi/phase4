@@ -1,11 +1,11 @@
-#ifndef PHASE4_ENGINE_TRANSPOSITION_PAWN_HASH_TABLE_ENTRY_H
-#define PHASE4_ENGINE_TRANSPOSITION_PAWN_HASH_TABLE_ENTRY_H
+#ifndef PHASE4_ENGINE_BOARD_TRANSPOSITION_PAWN_HASH_TABLE_ENTRY_H
+#define PHASE4_ENGINE_BOARD_TRANSPOSITION_PAWN_HASH_TABLE_ENTRY_H
 
 #include <phase4/engine/common/bitset.h>
 
 #include <cstdint>
 
-namespace phase4::engine::transposition {
+namespace phase4::engine::board::transposition {
 
 class PawnHashTableEntry {
 public:
@@ -43,6 +43,6 @@ private:
 	uint32_t _data;
 };
 
-} //namespace phase4::engine::transposition
+} //namespace phase4::engine::board::transposition
 
 #endif

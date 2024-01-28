@@ -3,9 +3,8 @@
 
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/position_state.h>
+#include <phase4/engine/board/transposition/hash_tables.h>
 #include <phase4/engine/board/zobrist_hashing.h>
-
-#include <phase4/engine/transposition/hash_tables.h>
 
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>

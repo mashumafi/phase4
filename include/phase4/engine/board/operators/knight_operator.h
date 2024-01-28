@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 #define PHASE4_ENGINE_BOARD_OPERATORS_KNIGHT_OPERATOR_H
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/move.h>
@@ -10,7 +11,6 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <cstdint>
 #include <tuple>
@@ -107,8 +107,8 @@ public:
 			const Square from(piece.fastBitScan());
 			const Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from);
 
-			centerMobility += (availableMoves & score::EvaluationConstants::EXTENDED_CENTER).fastCount();
-			outsideMobility += (availableMoves & score::EvaluationConstants::OUTSIDE).fastCount();
+			centerMobility += (availableMoves & board::EvaluationConstants::EXTENDED_CENTER).fastCount();
+			outsideMobility += (availableMoves & board::EvaluationConstants::OUTSIDE).fastCount();
 
 			fieldsAttackedByColor |= availableMoves;
 		}
