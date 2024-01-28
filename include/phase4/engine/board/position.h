@@ -3,16 +3,18 @@
 
 #include <phase4/engine/board/zobrist_hashing.h>
 
-#include <phase4/engine/score/piece_square_tables/piece_square_table_data.h>
 #include <phase4/engine/score/evaluation_constants.h>
+#include <phase4/engine/score/piece_square_tables/piece_square_table_data.h>
 
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
+#include <phase4/engine/moves/patterns/passing_pattern_generator.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
+#include <phase4/engine/common/math.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/wall_operations.h>
@@ -564,6 +566,24 @@ public:
 		const Bitset attackingPawns = (color.get_raw_value() == PieceColor::WHITE.get_raw_value()) ? field & ((potentialPawns >> 7) | (potentialPawns >> 9)) : field & ((potentialPawns << 7) | (potentialPawns << 9));
 
 		return (attackingPawns != 0);
+	}
+
+	constexpr int32_t getPhaseRatio() const {
+		using namespace common;
+
+		const int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
+
+		constexpr int32_t openingDelta = score::EvaluationConstants::MATERIAL_AT_OPENING - score::EvaluationConstants::OPENING_ENDGAME_EDGE;
+		const int32_t boardDelta = materialOfWeakerSide - score::EvaluationConstants::OPENING_ENDGAME_EDGE;
+
+		return Math::max_int32(boardDelta, 0) * PositionConstants::PHASE_RESOLUTION / openingDelta;
+	}
+
+	bool isFieldPassing(common::PieceColor color, common::Square field) const {
+		const common::PieceColor enemyColor = color.invert();
+		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
+
+		return (passingArea & m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0;
 	}
 };
 

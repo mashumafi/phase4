@@ -11,12 +11,17 @@
 
 #include <doctest/doctest.h>
 
+#include <memory>
+
 TEST_CASE("Session standard move/check/undo") {
 	using namespace phase4::engine;
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
+	auto session = std::make_unique<board::Session>();
+
 	SUBCASE("Long castle") {
+		session->makeMove(moves::Move("d2d4"));
 	}
 
 	SUBCASE("Short castle") {

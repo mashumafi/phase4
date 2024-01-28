@@ -47,7 +47,8 @@ private:
 	static const Array PATTERNS;
 };
 
-constexpr ForwardBoxPatternGenerator::Array ForwardBoxPatternGenerator::PATTERNS = generate();
+inline constexpr ForwardBoxPatternGenerator::Array ForwardBoxPatternGenerator::PATTERNS = generate();
 
 } //namespace phase4::engine::moves::patterns
+
 #endif

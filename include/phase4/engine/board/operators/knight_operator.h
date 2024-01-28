@@ -19,7 +19,7 @@ namespace phase4::engine::board::operators {
 
 class KnightOperator {
 public:
-	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	inline static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
@@ -44,7 +44,7 @@ public:
 		}
 	}
 
-	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	inline static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
@@ -68,7 +68,7 @@ public:
 		}
 	}
 
-	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
+	inline static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
@@ -92,7 +92,7 @@ public:
 		}
 	}
 
-	std::tuple<int32_t, int32_t> getMobility(const Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
+	inline static std::tuple<int32_t, int32_t> getMobility(const Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
 		using namespace common;
 
 		int32_t centerMobility = 0;

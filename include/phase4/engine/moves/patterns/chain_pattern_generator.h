@@ -34,11 +34,12 @@ private:
 	static const Array PATTERNS;
 };
 
-constexpr ChainPatternGenerator::Array ChainPatternGenerator::PATTERNS = populate();
+inline constexpr ChainPatternGenerator::Array ChainPatternGenerator::PATTERNS = populate();
 
 constexpr common::Bitset ChainPatternGenerator::getPattern(common::Square fieldIndex) {
 	return PATTERNS[fieldIndex];
 }
 
 } //namespace phase4::engine::moves::patterns
+
 #endif
