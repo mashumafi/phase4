@@ -28,6 +28,9 @@ public:
 
 	void clear();
 
+	T &operator[](size_t index);
+	const T &operator[](size_t index) const;
+
 	const T &at(std::size_t index) const;
 	const T &peek() const;
 
@@ -68,6 +71,20 @@ T &&FastVector<T, N>::pop_back() {
 template <typename T, std::size_t N>
 void FastVector<T, N>::clear() {
 	m_size = 0;
+}
+
+template <typename T, std::size_t N>
+const T &FastVector<T, N>::operator[](size_t index) const {
+	assert(index < m_size);
+
+	return m_items[index];
+}
+
+template <typename T, std::size_t N>
+T &FastVector<T, N>::operator[](size_t index) {
+	assert(index < m_size);
+
+	return m_items[index];
 }
 
 template <typename T, std::size_t N>

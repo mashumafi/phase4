@@ -8,6 +8,7 @@
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/safe_vector.h>
 #include <phase4/engine/common/square.h>
+#include <phase4/engine/common/util.h>
 
 #include <array>
 #include <cstdint>
@@ -19,31 +20,31 @@ public:
 	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
 	using Array = std::array<AttackersDefendersArray, 6>;
 
-	static constexpr int16_t evaluate(int attackingPiece, int capturedPiece, int attacker, int defender);
+	FAST_STATIC_CONSTEXPR int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender);
 
 private:
-	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
+	FAST_STATIC_CONSTEXPR common::PieceType getPieceBySeeIndex(int16_t index) {
 		switch (index) {
-			case SeePiece::PAWN:
+			case SeePiece::PAWN.get_raw_value():
 				return common::PieceType::PAWN;
-			case SeePiece::KNIGHT1:
-			case SeePiece::KNIGHT2:
+			case SeePiece::KNIGHT1.get_raw_value():
+			case SeePiece::KNIGHT2.get_raw_value():
 				return common::PieceType::KNIGHT;
-			case SeePiece::BISHOP:
+			case SeePiece::BISHOP.get_raw_value():
 				return common::PieceType::BISHOP;
-			case SeePiece::ROOK1:
-			case SeePiece::ROOK2:
+			case SeePiece::ROOK1.get_raw_value():
+			case SeePiece::ROOK2.get_raw_value():
 				return common::PieceType::ROOK;
-			case SeePiece::QUEEN:
+			case SeePiece::QUEEN.get_raw_value():
 				return common::PieceType::QUEEN;
-			case SeePiece::KING:
+			case SeePiece::KING.get_raw_value():
 				return common::PieceType::KING;
 		}
 
 		return common::PieceType::INVALID;
 	}
 
-	static constexpr int16_t getSeeIndexByPiece(common::PieceType piece) {
+	FAST_STATIC_CONSTEXPR SeePiece getSeeIndexByPiece(common::PieceType piece) {
 		switch (piece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
 				return SeePiece::PAWN;
@@ -59,20 +60,20 @@ private:
 				return SeePiece::KING;
 		}
 
-		return -1;
+		return SeePiece::INVALID;
 	}
 
-	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
+	FAST_STATIC_CONSTEXPR common::PieceType getLeastValuablePiece(common::Bitset data) {
 		const common::Bitset leastValuableDefenderField = data.getLsb();
 		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
-	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
+	FAST_STATIC_CONSTEXPR int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
 		common::SafeVector<int16_t, 128> gainList = {};
 
-		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece));
+		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
 		common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex.asBitboard();
 		common::Bitset defenders(defenderIndex);
 
@@ -126,7 +127,7 @@ private:
 		return result;
 	}
 
-	static constexpr AttackersDefendersArray populate(common::PieceType attackingPiece) {
+	FAST_STATIC_CONSTEXPR AttackersDefendersArray populate(common::PieceType attackingPiece) {
 		AttackersDefendersArray table = {};
 
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
@@ -141,7 +142,7 @@ private:
 	static const Array TABLE;
 };
 
-inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
+FAST_INLINE_CONSTEXPR StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
 	populate(common::PieceType::PAWN),
 	populate(common::PieceType::KNIGHT),
 	populate(common::PieceType::BISHOP),
@@ -150,8 +151,8 @@ inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE
 	populate(common::PieceType::KING),
 };
 
-constexpr int16_t StaticExchangeEvaluation::evaluate(int attackingPiece, int capturedPiece, int attacker, int defender) {
-	return static_cast<short>(board::EvaluationConstants::PIECE_VALUES[capturedPiece] + TABLE[attackingPiece][attacker][defender]);
+FAST_CONSTEXPR int16_t StaticExchangeEvaluation::evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
+	return static_cast<short>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
 }
 
 } //namespace phase4::engine::board::ordering
