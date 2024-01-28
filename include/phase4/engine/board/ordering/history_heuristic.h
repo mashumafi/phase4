@@ -55,7 +55,7 @@ public:
 
 private:
 	Array m_historyMoves;
-	size_t m_max = 1;
+	uint32_t m_max = 1;
 };
 
 } //namespace phase4::engine::board::ordering

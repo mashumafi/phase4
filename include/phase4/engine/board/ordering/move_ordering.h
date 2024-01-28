@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace phase4::engine::ai::ordering {
+namespace phase4::engine::board::ordering {
 
 }
 

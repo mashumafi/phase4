@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace phase4::engine::ai::ordering {
+namespace phase4::engine::board::ordering {
 
 class MoveOrderingConstants {
 public:
@@ -19,6 +19,6 @@ public:
 	static constexpr int8_t KILLER_SLOTS = 3;
 };
 
-} //namespace phase4::engine::ai::ordering
+} //namespace phase4::engine::board::ordering
 
 #endif
