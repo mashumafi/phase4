@@ -50,4 +50,5 @@ private:
 inline constexpr ForwardBoxPatternGenerator::Array ForwardBoxPatternGenerator::PATTERNS = generate();
 
 } //namespace phase4::engine::moves::patterns
+
 #endif

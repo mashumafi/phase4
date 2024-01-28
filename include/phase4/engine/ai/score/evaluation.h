@@ -3,6 +3,7 @@
 
 #include <phase4/engine/ai/score/evaluation_statistics.h>
 
+#include <phase4/engine/ai/score/evaluators/bishop_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/king_safety_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/material_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/mobility_evaluator.h>
@@ -37,6 +38,7 @@ public:
 			result += MobilityEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += KingSafetyEvaluator::evaluate(session.m_position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += RookEvaluator::evaluate(session.m_position, openingPhase, endingPhase);
+			result += BishopEvaluator::evaluate(session.m_position, openingPhase, endingPhase);
 		}
 
 		return result;
