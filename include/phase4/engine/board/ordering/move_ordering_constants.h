@@ -13,7 +13,7 @@ public:
 	static constexpr int16_t PAWN_NEAR_PROMOTION = 300;
 	static constexpr int16_t CAPTURE = 200;
 	static constexpr int16_t EN_PASSANT = 100;
-	static constexpr int16_t KILLERMOVE = 90;
+	static constexpr int16_t KILLER_MOVE = 90;
 
 	static constexpr uint32_t HISTORY_HEURISTIC_MAX_SCORE = 80;
 	static constexpr int8_t KILLER_SLOTS = 3;

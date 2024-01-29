@@ -22,15 +22,15 @@ public:
 		m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] = newValue;
 	}
 
-	inline int32_t getMoveValue(common::PieceColor color, common::PieceType piece, common::Square to, uint32_t scale) {
+	inline int32_t getMoveValue(common::PieceColor color, common::PieceType piece, common::Square to, uint32_t scale) const {
 		return static_cast<int32_t>(m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] * scale / m_max);
 	}
 
-	inline uint32_t getRawMoveValue(common::PieceColor color, common::PieceType piece, common::Square to) {
+	inline uint32_t getRawMoveValue(common::PieceColor color, common::PieceType piece, common::Square to) const {
 		return m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to];
 	}
 
-	uint32_t getMaxValue() {
+	uint32_t getMaxValue() const {
 		return m_max;
 	}
 
