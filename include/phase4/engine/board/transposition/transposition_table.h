@@ -1,6 +1,7 @@
 #ifndef PHASE4_ENGINE_BOARD_TRANSPOSITION_TRANSPOSITION_TABLE_H
 #define PHASE4_ENGINE_BOARD_TRANSPOSITION_TRANSPOSITION_TABLE_H
 
+#include <phase4/engine/board/search_constants.h>
 #include <phase4/engine/board/transposition/transposition_table_entry.h>
 
 #include <phase4/engine/common/bitset.h>
@@ -27,28 +28,26 @@ public:
 		m_table = blank;
 	}
 
-	int regularToTranpositionTableScore(int score, int ply) const {
-        (void)ply;
-		/*if (IterativeDeepening.IsScoreNearCheckmate(score)) {
+	int32_t regularToTranpositionTableScore(int32_t score, int32_t ply) const {
+		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score + ply;
 			} else {
 				return score - ply;
 			}
-		}*/
+		}
 
 		return score;
 	}
 
-	int transpositionTableToRegularScore(int score, int ply) const {
-        (void)ply;
-		/*if (IterativeDeepening.IsScoreNearCheckmate(score)) {
+	int32_t transpositionTableToRegularScore(int32_t score, int32_t ply) const {
+		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score - ply;
 			} else {
 				return score + ply;
 			}
-		}*/
+		}
 
 		return score;
 	}
