@@ -85,7 +85,6 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) {
 	using namespace common;
 
-	(void)position;
 	ZobristHashing hash(0);
 
 	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
