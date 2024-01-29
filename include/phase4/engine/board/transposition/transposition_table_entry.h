@@ -10,6 +10,7 @@
 namespace phase4::engine::board::transposition {
 
 class TranspositionTableEntry {
+public:
 	inline TranspositionTableEntry() :
 			m_key(0),
 			m_score(0),
