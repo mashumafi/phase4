@@ -1,6 +1,10 @@
 #ifndef PHASE4_ENGINE_BOARD_SEARCH_CONSTANTS_H
 #define PHASE4_ENGINE_BOARD_SEARCH_CONSTANTS_H
 
+#include <phase4/engine/board/evaluation_constants.h>
+
+#include <phase4/engine/common/math.h>
+
 #include <cstdint>
 #include <limits>
 
@@ -49,6 +53,12 @@ public:
 	static constexpr int32_t LMP_MAX_DEPTH = 2;
 	static constexpr int32_t LMP_BASE_PERCENT_MOVES_TO_PRUNE = 50;
 	static constexpr int32_t LMP_PERCENT_INCREASE_PER_DEPTH = 25;
+
+	static constexpr bool isScoreNearCheckmate(int16_t score) {
+		int16_t scoreAbs = common::Math::abs_int16(score);
+		return scoreAbs >= EvaluationConstants::CHECKMATE - MAX_DEPTH &&
+				scoreAbs <= EvaluationConstants::CHECKMATE + MAX_DEPTH;
+	}
 };
 
 } //namespace phase4::engine::board
