@@ -1,0 +1,41 @@
+#ifndef PHASE4_ENGINE_BOARD_TRANSPOSITION_EVALUATION_HASH_TABLE_ENTRY_H
+#define PHASE4_ENGINE_BOARD_TRANSPOSITION_EVALUATION_HASH_TABLE_ENTRY_H
+
+#include <phase4/engine/board/transposition/evaluation_hash_table_entry.h>
+
+#include <phase4/engine/common/bitset.h>
+
+#include <cstdint>
+
+namespace phase4::engine::board::transposition {
+
+class EvaluationHashTableEntry {
+public:
+	EvaluationHashTableEntry() :
+			m_key(0), m_score(0) {
+	}
+
+	EvaluationHashTableEntry(common::Bitset hash, int16_t score) {
+		m_key = static_cast<uint16_t>(hash.asSize() >> 48);
+		m_score = score;
+	}
+
+	uint16_t key() const {
+		return m_key;
+	}
+	int16_t score() const {
+		return m_score;
+	}
+
+	bool isKeyValid(common::Bitset hash) const {
+		return m_key == hash.asSize() >> 48;
+	}
+
+private:
+	uint16_t m_key;
+	int16_t m_score;
+};
+
+} //namespace phase4::engine::board::transposition
+
+#endif
