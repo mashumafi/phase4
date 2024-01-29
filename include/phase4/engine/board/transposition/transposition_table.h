@@ -7,6 +7,7 @@ namespace phase4::engine::board::transposition {
 
 template <size_t MB>
 class TranspositionTable {
+public:
 };
 
 } //namespace phase4::engine::board::transposition
