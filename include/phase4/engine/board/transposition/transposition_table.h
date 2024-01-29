@@ -3,6 +3,8 @@
 
 #include <phase4/engine/board/transposition/transposition_table_entry.h>
 
+#include <phase4/engine/common/bitset.h>
+
 #include <array>
 
 namespace phase4::engine::board::transposition {
@@ -16,8 +18,8 @@ public:
 		m_table[hash.asSize() % m_table.size()] = entry;
 	}
 
-	TranspositionTableEntry get(ulong hash) {
-		return m_table[hash % m_table.size()];
+	TranspositionTableEntry get(common::Bitset hash) {
+		return m_table[hash.asSize() % m_table.size()];
 	}
 
 	void clear() {

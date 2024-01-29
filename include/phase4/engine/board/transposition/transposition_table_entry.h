@@ -5,6 +5,8 @@
 
 #include <phase4/engine/moves/move.h>
 
+#include <phase4/engine/common/bitset.h>
+
 #include <cstdint>
 
 namespace phase4::engine::board::transposition {
