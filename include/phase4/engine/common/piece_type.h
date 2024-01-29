@@ -21,38 +21,38 @@ public:
 	/// @return the raw internal value
 	[[nodiscard]] constexpr uint8_t get_raw_value() const;
 
-	constexpr PieceType();
+	inline constexpr PieceType();
 
-	constexpr PieceType(PieceType const &that) = default;
-	constexpr PieceType &operator=(const PieceType &that) = default;
+	inline constexpr PieceType(PieceType const &that) = default;
+	inline constexpr PieceType &operator=(const PieceType &that) = default;
 
-	constexpr PieceType(PieceType &&that) noexcept = default;
-	constexpr PieceType &operator=(PieceType &&that) noexcept = default;
+	inline constexpr PieceType(PieceType &&that) noexcept = default;
+	inline constexpr PieceType &operator=(PieceType &&that) noexcept = default;
 
-	constexpr bool operator==(const PieceType &that) const;
-	constexpr bool operator!=(const PieceType &that) const;
+	inline constexpr bool operator==(const PieceType &that) const;
+	inline constexpr bool operator!=(const PieceType &that) const;
 
-	constexpr PieceType operator++();
+	inline constexpr PieceType operator++();
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
 private:
-	constexpr PieceType(uint64_t value);
-	constexpr PieceType &operator=(uint64_t value);
+	inline constexpr PieceType(uint64_t value);
+	inline constexpr PieceType &operator=(uint64_t value);
 
 	uint8_t m_piece;
 };
 
-constexpr PieceType::PieceType(uint64_t value) :
+inline constexpr PieceType::PieceType(uint64_t value) :
 		m_piece{ static_cast<uint8_t>(value) } {
 }
 
-constexpr PieceType &PieceType::operator=(uint64_t value) {
+inline constexpr PieceType &PieceType::operator=(uint64_t value) {
 	m_piece = static_cast<uint8_t>(value);
 	return *this;
 }
 
-constexpr PieceType::PieceType() :
+inline constexpr PieceType::PieceType() :
 		PieceType(6) {
 }
 
@@ -64,7 +64,7 @@ inline constexpr PieceType PieceType::QUEEN = 4;
 inline constexpr PieceType PieceType::KING = 5;
 inline constexpr PieceType PieceType::INVALID = 6;
 
-[[nodiscard]] constexpr uint8_t PieceType::get_raw_value() const {
+[[nodiscard]] inline constexpr uint8_t PieceType::get_raw_value() const {
 	return m_piece;
 }
 

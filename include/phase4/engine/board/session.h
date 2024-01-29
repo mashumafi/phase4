@@ -1,11 +1,12 @@
 #ifndef PHASE4_ENGINE_BOARD_SESSION_H
 #define PHASE4_ENGINE_BOARD_SESSION_H
 
+#include <phase4/engine/board/ordering/history_heuristic.h>
+#include <phase4/engine/board/ordering/killer_heuristic.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/position_state.h>
+#include <phase4/engine/board/transposition/hash_tables.h>
 #include <phase4/engine/board/zobrist_hashing.h>
-
-#include <phase4/engine/transposition/hash_tables.h>
 
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
@@ -143,6 +144,8 @@ public:
 
 	Position m_position;
 	transposition::HashTables<> m_hashTables;
+	ordering::HistoryHeuristic m_historyHeuristic;
+	ordering::KillerHeuristic m_killerHeuristic;
 
 private:
 	common::FastVector<common::PieceType> m_killedPieces;

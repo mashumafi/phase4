@@ -1,10 +1,9 @@
 #ifndef PHASE4_ENGINE_BOARD_POSITION_STATE_H
 #define PHASE4_ENGINE_BOARD_POSITION_STATE_H
 
+#include <phase4/engine/board/piece_square_tables/piece_square_table_data.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/zobrist_hashing.h>
-
-#include <phase4/engine/score/piece_square_tables/piece_square_table_data.h>
 
 #include <phase4/engine/common/util.h>
 
@@ -50,7 +49,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	int32_t material = 0;
 
 	for (size_t i = 0; i < 6; i++) {
-		material += common::Bitset(position.m_colorPieceMasks[color.get_raw_value()][i]).count() * score::EvaluationConstants::PIECE_VALUES[i];
+		material += common::Bitset(position.m_colorPieceMasks[color.get_raw_value()][i]).count() * board::EvaluationConstants::PIECE_VALUES[i];
 	}
 
 	return material;
@@ -66,7 +65,7 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 			pieces = pieces.popLsb();
 			common::Bitset fieldIndex = lsb.bitScan();
 
-			result += score::piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.asSize()];
+			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.asSize()];
 		}
 	}
 

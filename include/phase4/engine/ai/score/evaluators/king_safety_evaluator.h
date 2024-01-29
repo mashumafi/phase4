@@ -3,12 +3,11 @@
 
 #include <phase4/engine/ai/score/tapered_evaluation.h>
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 #include <phase4/engine/moves/patterns/forward_box_pattern_generator.h>
-
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/field_index.h>
@@ -37,7 +36,7 @@ private:
 
 		const common::Bitset attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
 		const int8_t attackersCount = attackedFieldsAroundKing.count();
-		const int32_t attackersCountOpeningScore = attackersCount * engine::score::EvaluationConstants::KING_IN_DANGER;
+		const int32_t attackersCountOpeningScore = attackersCount * board::EvaluationConstants::KING_IN_DANGER;
 
 		int32_t pawnShieldOpeningScore = 0;
 		int32_t openFilesNextToKingScore = 0;
@@ -45,13 +44,13 @@ private:
 			const common::Bitset pawnsNearKing = fieldsAroundKing & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
 			const int32_t pawnShield = pawnsNearKing.count();
 
-			pawnShieldOpeningScore = pawnShield * engine::score::EvaluationConstants::PAWN_SHIELD;
+			pawnShieldOpeningScore = pawnShield * board::EvaluationConstants::PAWN_SHIELD;
 
 			const int16_t openFileCheckFrom = common::Math::max_int16(0, kingPosition.x - 1);
 			const int16_t openFileCheckTo = common::Math::min_int16(7, kingPosition.x + 1);
 			for (uint8_t file = openFileCheckFrom; file <= openFileCheckTo; ++file) {
 				if ((moves::patterns::FilePatternGenerator::getPatternForFile(7 - file) & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0) {
-					openFilesNextToKingScore += engine::score::EvaluationConstants::OPEN_FILE_NEXT_TO_KING;
+					openFilesNextToKingScore += board::EvaluationConstants::OPEN_FILE_NEXT_TO_KING;
 				}
 			}
 		}

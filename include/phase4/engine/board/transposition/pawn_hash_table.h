@@ -1,13 +1,13 @@
-#ifndef PHASE4_ENGINE_TRANSPOSITION_PAWN_HASH_TABLE_H
-#define PHASE4_ENGINE_TRANSPOSITION_PAWN_HASH_TABLE_H
+#ifndef PHASE4_ENGINE_BOARD_TRANSPOSITION_PAWN_HASH_TABLE_H
+#define PHASE4_ENGINE_BOARD_TRANSPOSITION_PAWN_HASH_TABLE_H
 
-#include <phase4/engine/transposition/pawn_hash_table_entry.h>
+#include <phase4/engine/board/transposition/pawn_hash_table_entry.h>
 
 #include <phase4/engine/common/bitset.h>
 
 #include <array>
 
-namespace phase4::engine::transposition {
+namespace phase4::engine::board::transposition {
 
 template <size_t MB>
 class PawnHashTable {
@@ -31,6 +31,6 @@ private:
 	Array m_table;
 };
 
-} //namespace phase4::engine::transposition
+} //namespace phase4::engine::board::transposition
 
 #endif

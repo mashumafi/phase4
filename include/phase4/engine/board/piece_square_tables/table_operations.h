@@ -1,12 +1,12 @@
-#ifndef PHASE4_ENGINE_SCORE_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
-#define PHASE4_ENGINE_SCORE_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
+#ifndef PHASE4_ENGINE_BOARD_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
+#define PHASE4_ENGINE_BOARD_PIECE_SQUARE_TABLES_TABLE_OPERATIONS_H
 
 #include <phase4/engine/common/square.h>
 
 #include <array>
 #include <cstdint>
 
-namespace phase4::engine::score::piece_square_tables {
+namespace phase4::engine::board::piece_square_tables {
 
 class TableOperations {
 public:
@@ -29,5 +29,5 @@ public:
 	}
 };
 
-} //namespace phase4::engine::score::piece_square_tables
+} //namespace phase4::engine::board::piece_square_tables
 #endif

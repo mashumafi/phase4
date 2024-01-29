@@ -3,21 +3,17 @@
 
 #include <phase4/engine/common/util.h>
 
-#include <array>
 #include <cassert>
-#include <memory>
 #include <type_traits>
 
 namespace phase4::engine::common {
 
-/// @brief Provides a fixed capacity std::array with a size
+/// @brief Provides a fixed capacity raw array with a size
 /// @tparam T element type used for the array
 /// @tparam N the capacity of the array
 template <typename T, std::size_t N = 512>
 class FastVector {
 public:
-	/// @brief
-	/// @param upstream the upstream std::memory_resource if allocation is requried
 	FastVector();
 
 	void push_back(const T &value);
@@ -31,6 +27,9 @@ public:
 	T &&pop_back();
 
 	void clear();
+
+	T &operator[](size_t index);
+	const T &operator[](size_t index) const;
 
 	const T &at(std::size_t index) const;
 	const T &peek() const;
@@ -72,6 +71,20 @@ T &&FastVector<T, N>::pop_back() {
 template <typename T, std::size_t N>
 void FastVector<T, N>::clear() {
 	m_size = 0;
+}
+
+template <typename T, std::size_t N>
+const T &FastVector<T, N>::operator[](size_t index) const {
+	assert(index < m_size);
+
+	return m_items[index];
+}
+
+template <typename T, std::size_t N>
+T &FastVector<T, N>::operator[](size_t index) {
+	assert(index < m_size);
+
+	return m_items[index];
 }
 
 template <typename T, std::size_t N>

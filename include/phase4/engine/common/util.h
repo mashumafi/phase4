@@ -67,4 +67,22 @@ private:
 	std::array<T, computeSize(Dims...)> m_data;
 };
 
+#if NDEBUG // NOTE: faster builds on debug
+#define FAST_INLINE_CONSTEXPR inline constexpr
+#else
+#define FAST_INLINE_CONSTEXPR inline const
+#endif
+
+#if NDEBUG // NOTE: faster builds on debug
+#define FAST_STATIC_CONSTEXPR static constexpr
+#else
+#define FAST_STATIC_CONSTEXPR static
+#endif
+
+#if NDEBUG // NOTE: faster builds on debug
+#define FAST_CONSTEXPR constexpr
+#else
+#define FAST_CONSTEXPR
+#endif
+
 #endif

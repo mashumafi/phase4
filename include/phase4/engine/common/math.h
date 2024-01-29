@@ -18,6 +18,9 @@ public:
 	static inline constexpr int32_t min_int32(int32_t x, int32_t y);
 	static inline constexpr int32_t max_int32(int32_t x, int32_t y);
 
+	static inline constexpr uint32_t min_uint32(uint32_t x, uint32_t y);
+	static inline constexpr uint32_t max_uint32(uint32_t x, uint32_t y);
+
 	static inline constexpr std::size_t min_size(std::size_t x, std::size_t y);
 	static inline constexpr std::size_t max_size(std::size_t x, std::size_t y);
 };
@@ -40,6 +43,14 @@ inline constexpr int32_t Math::min_int32(int32_t x, int32_t y) {
 }
 
 inline constexpr int32_t Math::max_int32(int32_t x, int32_t y) {
+	return x ^ ((x ^ y) & -(x < y));
+}
+
+inline constexpr uint32_t Math::min_uint32(uint32_t x, uint32_t y) {
+	return y ^ ((x ^ y) & -(x < y));
+}
+
+inline constexpr uint32_t Math::max_uint32(uint32_t x, uint32_t y) {
 	return x ^ ((x ^ y) & -(x < y));
 }
 

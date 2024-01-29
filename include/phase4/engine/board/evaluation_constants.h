@@ -1,10 +1,14 @@
-#ifndef PHASE4_ENGINE_SCORE_EVALUATION_CONSTANTS_H
-#define PHASE4_ENGINE_SCORE_EVALUATION_CONSTANTS_H
+#ifndef PHASE4_ENGINE_BOARD_EVALUATION_CONSTANTS_H
+#define PHASE4_ENGINE_BOARD_EVALUATION_CONSTANTS_H
+
+#include <phase4/engine/board/evaluation_constants.h>
+
+#include <phase4/engine/common/piece_type.h>
 
 #include <array>
 #include <cstdint>
 
-namespace phase4::engine::score {
+namespace phase4::engine::board {
 
 struct EvaluationConstants {
 	static const std::array<int32_t, 6> PIECE_VALUES;
@@ -40,12 +44,12 @@ struct EvaluationConstants {
 	static const uint64_t OUTSIDE;
 
 	static constexpr uint32_t calculateMaterialAtOpening() {
-		return score::EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				score::EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
+		return EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
+				EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
+				EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
+				EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
+				EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
+				EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
 	}
 
 	static const int32_t MATERIAL_AT_OPENING;
@@ -85,5 +89,5 @@ inline constexpr uint64_t EvaluationConstants::OUTSIDE = 0xffffc3c3c3c3ffff;
 
 inline constexpr int32_t EvaluationConstants::MATERIAL_AT_OPENING = calculateMaterialAtOpening();
 
-} //namespace phase4::engine::score
+} //namespace phase4::engine::board
 #endif

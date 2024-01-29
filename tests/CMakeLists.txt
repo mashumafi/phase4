@@ -11,6 +11,7 @@ add_executable(phase4_test
     phase4/engine/common/piece_color.t.cpp
     phase4/engine/common/piece_type.t.cpp
     phase4/engine/common/random.t.cpp
+    phase4/engine/common/safe_vector.t.cpp
     phase4/engine/common/square.t.cpp
     phase4/engine/common/wall_operations.t.cpp
     phase4/engine/common/util.t.cpp
@@ -37,11 +38,17 @@ add_executable(phase4_test
     phase4/engine/board/zobrist_hashing.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
+    phase4/engine/ai/search/iterative_deepening.t.cpp
 
     phase4/engine/fen/fen_to_position.t.cpp
     phase4/engine/fen/position_to_fen.t.cpp
 )
 target_link_libraries(phase4_test PRIVATE phase4 doctest_main)
+target_compile_options(phase4_test PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
+    $<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=335544320>
+    $<$<CXX_COMPILER_ID:AppleClang>:-fconstexpr-steps=335544320>
+)
 
 include(doctest)
 doctest_discover_tests(phase4_test)

@@ -1,9 +1,9 @@
-#ifndef PHASE4_ENGINE_TRANSPOSITION_HASH_TABLE_CONSTANTS_H
-#define PHASE4_ENGINE_TRANSPOSITION_HASH_TABLE_CONSTANTS_H
+#ifndef PHASE4_ENGINE_BOARD_TRANSPOSITION_HASH_TABLE_CONSTANTS_H
+#define PHASE4_ENGINE_BOARD_TRANSPOSITION_HASH_TABLE_CONSTANTS_H
 
 #include <cstdint>
 
-namespace phase4::engine::transposition {
+namespace phase4::engine::board::transposition {
 
 class HashTableConstants {
 public:
@@ -21,6 +21,6 @@ public:
 	static constexpr size_t EVALUATION_HASH_TABLE_SIZE_DIVIDER = 6;
 };
 
-} //namespace phase4::engine::transposition
+} //namespace phase4::engine::board::transposition
 
 #endif

@@ -3,11 +3,10 @@
 
 #include <phase4/engine/ai/score/tapered_evaluation.h>
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
-
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
@@ -51,8 +50,8 @@ private:
 			}
 		}
 
-		const int32_t doubledRooksOpeningScore = doubledRooks * engine::score::EvaluationConstants::DOUBLED_ROOKS;
-		const int32_t rooksOnOpenFileOpeningScore = rooksOnOpenFile * engine::score::EvaluationConstants::ROOK_ON_OPEN_FILE;
+		const int32_t doubledRooksOpeningScore = doubledRooks * board::EvaluationConstants::DOUBLED_ROOKS;
+		const int32_t rooksOnOpenFileOpeningScore = rooksOnOpenFile * board::EvaluationConstants::ROOK_ON_OPEN_FILE;
 		const int32_t openingScore = doubledRooksOpeningScore + rooksOnOpenFileOpeningScore;
 
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);

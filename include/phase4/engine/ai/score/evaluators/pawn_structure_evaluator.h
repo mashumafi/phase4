@@ -4,16 +4,14 @@
 #include <phase4/engine/ai/score/evaluation_statistics.h>
 #include <phase4/engine/ai/score/tapered_evaluation.h>
 
+#include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/session.h>
-
-#include <phase4/engine/transposition/pawn_hash_table.h>
-#include <phase4/engine/transposition/pawn_hash_table_entry.h>
+#include <phase4/engine/board/transposition/pawn_hash_table.h>
+#include <phase4/engine/board/transposition/pawn_hash_table_entry.h>
 
 #include <phase4/engine/moves/patterns/chain_pattern_generator.h>
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 #include <phase4/engine/moves/patterns/outer_files_pattern_generator.h>
-
-#include <phase4/engine/score/evaluation_constants.h>
 
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
@@ -28,7 +26,7 @@ public:
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.m_position.m_pawnHash.asBitboard());
+		const board::transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.m_position.m_pawnHash.asBitboard());
 		if (entry.isKeyValid(session.m_position.m_pawnHash.asBitboard())) {
 #if NDEBUG
 			statistics.m_pawnHashTableHits++;
@@ -85,7 +83,7 @@ private:
 
 			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
 			if (pawnsCount > 1) {
-				doubledPawns += (pawnsCount.asSize() - 1); // TODO: Cast?
+				doubledPawns += (pawnsCount.asSize() - 1); // TODO: cast?
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {
@@ -111,17 +109,17 @@ private:
 			}
 		}
 
-		const int32_t doubledPawnsOpeningScore = doubledPawns * engine::score::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::OPENING];
-		const int32_t doubledPawnsEndingScore = doubledPawns * engine::score::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::ENDING];
+		const int32_t doubledPawnsOpeningScore = doubledPawns * board::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::OPENING];
+		const int32_t doubledPawnsEndingScore = doubledPawns * board::EvaluationConstants::DOUBLED_PAWNS[common::GamePhase::ENDING];
 
-		const int32_t isolatedPawnsOpeningScore = isolatedPawns * engine::score::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::OPENING];
-		const int32_t isolatedPawnsEndingScore = isolatedPawns * engine::score::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::ENDING];
+		const int32_t isolatedPawnsOpeningScore = isolatedPawns * board::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::OPENING];
+		const int32_t isolatedPawnsEndingScore = isolatedPawns * board::EvaluationConstants::ISOLATED_PAWNS[common::GamePhase::ENDING];
 
-		const int32_t chainedPawnsOpeningScore = chainedPawns * engine::score::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::OPENING];
-		const int32_t chainedPawnsEndingScore = chainedPawns * engine::score::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::ENDING];
+		const int32_t chainedPawnsOpeningScore = chainedPawns * board::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::OPENING];
+		const int32_t chainedPawnsEndingScore = chainedPawns * board::EvaluationConstants::CHAINED_PAWNS[common::GamePhase::ENDING];
 
-		const int32_t passingPawnsOpeningScore = passingPawns * engine::score::EvaluationConstants::PASSING_PAWNS[common::GamePhase::OPENING];
-		const int32_t passingPawnsEndingScore = passingPawns * engine::score::EvaluationConstants::PASSING_PAWNS[common::GamePhase::ENDING];
+		const int32_t passingPawnsOpeningScore = passingPawns * board::EvaluationConstants::PASSING_PAWNS[common::GamePhase::OPENING];
+		const int32_t passingPawnsEndingScore = passingPawns * board::EvaluationConstants::PASSING_PAWNS[common::GamePhase::ENDING];
 
 		const int32_t openingScore = doubledPawnsOpeningScore + isolatedPawnsOpeningScore + chainedPawnsOpeningScore + passingPawnsOpeningScore;
 		const int32_t endingScore = doubledPawnsEndingScore + isolatedPawnsEndingScore + chainedPawnsEndingScore + passingPawnsEndingScore;
