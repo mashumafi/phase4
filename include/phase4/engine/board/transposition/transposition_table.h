@@ -26,6 +26,7 @@ public:
 	}
 
 	int regularToTranpositionTableScore(int score, int ply) const {
+        (void)ply;
 		/*if (IterativeDeepening.IsScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score + ply;
@@ -38,6 +39,7 @@ public:
 	}
 
 	int transpositionTableToRegularScore(int score, int ply) const {
+        (void)ply;
 		/*if (IterativeDeepening.IsScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score - ply;
