@@ -100,33 +100,33 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 			}
 		}
 	}
-	/*
-		if ((position.m_castling & Castling::WHITE_SHORT) != 0) {
-			result ^= _castlingHashes[0];
-		}
-		if ((position.m_castling & Castling::WHITE_LONG) != 0) {
-			result ^= _castlingHashes[1];
-		}
-		if ((position.m_castling & Castling::BLACK_SHORT) != 0) {
-			result ^= _castlingHashes[2];
-		}
-		if ((position.m_castling & Castling::BLACK_LONG) != 0) {
-			result ^= _castlingHashes[3];
-		}
-*/
-		if (position.m_enPassant != 0) {
-			uint8_t fieldIndex = position.m_enPassant.bitScan();
-			hash = hash.toggleEnPassant(fieldIndex % 8);
-		}
 
-		if (position.m_walls > 0) {
-			hash = hash.slowToggleWalls(position.m_walls);
-		}
+	if ((position.m_castling & Castling::WHITE_SHORT) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::WHITE_SHORT);
+	}
+	if ((position.m_castling & Castling::WHITE_LONG) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::WHITE_LONG);
+	}
+	if ((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::BLACK_SHORT);
+	}
+	if ((position.m_castling & Castling::BLACK_LONG) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::BLACK_LONG);
+	}
 
-		if (position.m_colorToMove == PieceColor::BLACK) {
-			hash = hash.changeSide();
-		}
-	
+	if (position.m_enPassant != 0) {
+		uint8_t fieldIndex = position.m_enPassant.bitScan();
+		hash = hash.toggleEnPassant(fieldIndex % 8);
+	}
+
+	if (position.m_walls > 0) {
+		hash = hash.slowToggleWalls(position.m_walls);
+	}
+
+	if (position.m_colorToMove == PieceColor::BLACK) {
+		hash = hash.changeSide();
+	}
+
 	return hash;
 }
 
