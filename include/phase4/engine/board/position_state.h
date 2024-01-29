@@ -120,7 +120,7 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 		}
 
 		if (position.m_walls > 0) {
-			hash = hash.toggleWalls(position.m_walls);
+			hash = hash.slowToggleWalls(position.m_walls);
 		}
 
 		if (position.m_colorToMove == PieceColor::BLACK) {
