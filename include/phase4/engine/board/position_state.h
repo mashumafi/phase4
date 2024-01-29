@@ -18,9 +18,9 @@ public:
 	static constexpr void recalculateEvaluationDependentValues(Position &position);
 
 private:
-	static constexpr ZobristHashing calculateHash(Position &position);
+	static constexpr ZobristHashing calculateHash(const Position &position);
 
-	static constexpr ZobristHashing calculatePawnHash(Position &position);
+	static constexpr ZobristHashing calculatePawnHash(const Position &position);
 
 	/// @brief Calculates the piece table based on piece masks
 	/// @param position the Position to update and compute from
@@ -82,15 +82,67 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 	position.m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::ENDING);
 }
 
-inline constexpr ZobristHashing PositionState::calculateHash(Position &position) {
+inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) {
 	(void)position;
 	ZobristHashing hash(123456);
+/*
+	var result = 0ul;
+	for (var color = 0; color < 2; color++) {
+		for (var piece = 0; piece < 6; piece++) {
+			var piecesToParse = board.Pieces[color][piece];
+			while (piecesToParse != 0) {
+				var lsb = BitOperations.GetLsb(piecesToParse);
+				piecesToParse = BitOperations.PopLsb(piecesToParse);
+
+				var fieldIndex = BitOperations.BitScan(lsb);
+				result ^= _fieldHashes[color][piece][fieldIndex];
+			}
+		}
+	}
+
+	if ((board.Castling & Castling.WhiteShort) != 0) {
+		result ^= _castlingHashes[0];
+	}
+	if ((board.Castling & Castling.WhiteLong) != 0) {
+		result ^= _castlingHashes[1];
+	}
+	if ((board.Castling & Castling.BlackShort) != 0) {
+		result ^= _castlingHashes[2];
+	}
+	if ((board.Castling & Castling.BlackLong) != 0) {
+		result ^= _castlingHashes[3];
+	}
+
+	if (board.EnPassant != 0) {
+		var fieldIndex = BitOperations.BitScan(board.EnPassant);
+		result ^= _enPassantHashes[fieldIndex % 8];
+	}
+
+	if (board.Walls > 0) {
+		result = ToggleWalls(result, board.Walls);
+	}
+
+	if (board.ColorToMove == Color.Black) {
+		result ^= _blackSideHash;
+	}
+*/
 	return hash;
 }
 
-inline constexpr ZobristHashing PositionState::calculatePawnHash(Position &position) {
-	(void)position;
+inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position &position) {
 	ZobristHashing pawnHash(456789);
+
+	for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
+		common::Bitset piecesToParse = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+		while (piecesToParse != 0) {
+			const common::Bitset lsb = piecesToParse.getLsb();
+			piecesToParse = piecesToParse.popLsb();
+
+			common::Square fieldIndex(lsb.bitScan());
+			pawnHash = pawnHash.addOrRemovePiece(color, common::PieceType::PAWN, fieldIndex);
+		}
+	}
+
 	return pawnHash;
 }
 
