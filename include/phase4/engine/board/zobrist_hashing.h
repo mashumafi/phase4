@@ -63,7 +63,7 @@ public:
 
 	[[nodiscard]] constexpr ZobristHashing changeSide() const noexcept;
 
-	[[nodiscard]] inline constexpr ZobristHashing slowToggleWalls(common::Bitset walls) const noexcept;
+	[[nodiscard]] constexpr ZobristHashing slowToggleWalls(common::Bitset walls) const noexcept;
 	[[nodiscard]] inline ZobristHashing toggleWalls(common::Bitset walls) const noexcept;
 
 	[[nodiscard]] constexpr common::Bitset asBitboard() const noexcept {
@@ -105,7 +105,7 @@ inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash ^ G_KEYS.m_fieldHashes.at(color.get_raw_value(), piece.get_raw_value(), at);
 }
 
-[[nodiscard]] ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const noexcept {
+[[nodiscard]] inline ZobristHashing ZobristHashing::removeCastlingFlag(common::Castling currentCastling, common::Castling castlingChange) const noexcept {
 	if (likely((currentCastling & castlingChange) != common::Castling::NONE)) {
 		return m_hash ^ G_KEYS.m_castlingHashes[common::Bitset(castlingChange.get_raw_value()).fastBitScan()];
 	}
@@ -125,7 +125,7 @@ inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
 	return m_hash ^ G_KEYS.m_sideHash;
 }
 
-[[nodiscard]] inline constexpr ZobristHashing ZobristHashing::slowToggleWalls(common::Bitset walls) const noexcept {
+[[nodiscard]] constexpr ZobristHashing ZobristHashing::slowToggleWalls(common::Bitset walls) const noexcept {
 	return m_hash ^ G_KEYS.m_wallHash[walls.bitScan()];
 }
 
