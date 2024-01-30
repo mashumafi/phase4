@@ -19,7 +19,7 @@ public:
 		m_table[hash.asSize() % m_table.size()] = entry;
 	}
 
-	TranspositionTableEntry get(common::Bitset hash) {
+	TranspositionTableEntry get(common::Bitset hash) const {
 		return m_table[hash.asSize() % m_table.size()];
 	}
 

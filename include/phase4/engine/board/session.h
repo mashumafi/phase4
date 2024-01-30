@@ -76,13 +76,13 @@ public:
 		m_position.m_colorToMove = m_position.m_colorToMove;
 
 		if (move.flags().isSinglePush() || move.flags().isDoublePush()) {
-			m_position.MovePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
+			m_position.movePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
 		} else if (move.flags().isEnPassant()) {
 			const PieceColor enemyColor = m_position.m_colorToMove.invert();
 			const Square enemyPieceField(m_position.m_colorToMove == PieceColor::WHITE ? static_cast<uint8_t>(move.to() - 8) : static_cast<uint8_t>(move.to() + 8));
 			const PieceType killedPiece = m_killedPieces.pop_back();
 
-			m_position.MovePiece(m_position.m_colorToMove, PieceType::PAWN, move.to(), move.from());
+			m_position.movePiece(m_position.m_colorToMove, PieceType::PAWN, move.to(), move.from());
 			m_position.addPiece(enemyColor, killedPiece, enemyPieceField);
 		} else if (move.flags().isCapture()) {
 			PieceColor enemyColor = m_position.m_colorToMove.invert();
@@ -94,7 +94,7 @@ public:
 				m_position.removePiece(m_position.m_colorToMove, promotionPiece, move.to());
 				m_position.addPiece(m_position.m_colorToMove, PieceType::PAWN, move.from());
 			} else {
-				m_position.MovePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
+				m_position.movePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());
 			}
 
 			m_position.addPiece(enemyColor, killedPiece, move.to());
@@ -102,21 +102,21 @@ public:
 			// Short castling
 			if (move.flags().isKingCastling()) {
 				if (m_position.m_colorToMove == PieceColor::WHITE) {
-					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::G1, Square::E1);
-					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::F1, Square::H1);
+					m_position.movePiece(PieceColor::WHITE, PieceType::KING, Square::G1, Square::E1);
+					m_position.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::F1, Square::H1);
 				} else {
-					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::G8, Square::E8);
-					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::F8, Square::H8);
+					m_position.movePiece(PieceColor::BLACK, PieceType::KING, Square::G8, Square::E8);
+					m_position.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::F8, Square::H8);
 				}
 			}
 			// Long castling
 			else {
 				if (m_position.m_colorToMove == PieceColor::WHITE) {
-					m_position.MovePiece(PieceColor::WHITE, PieceType::KING, Square::C1, Square::E1);
-					m_position.MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::D1, Square::A1);
+					m_position.movePiece(PieceColor::WHITE, PieceType::KING, Square::C1, Square::E1);
+					m_position.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::D1, Square::A1);
 				} else {
-					m_position.MovePiece(PieceColor::BLACK, PieceType::KING, Square::C8, Square::E8);
-					m_position.MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::D8, Square::A8);
+					m_position.movePiece(PieceColor::BLACK, PieceType::KING, Square::C8, Square::E8);
+					m_position.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::D8, Square::A8);
 				}
 			}
 
@@ -135,6 +135,37 @@ public:
 
 		if (m_position.m_colorToMove == PieceColor::WHITE) {
 			m_position.m_movesCount--;
+		}
+	}
+
+	void makeNullMove() {
+		m_position.m_nullMoves++;
+		if (m_position.m_colorToMove == common::PieceColor::WHITE) {
+			++m_position.m_movesCount;
+		}
+
+		m_enPassants.push_back(m_position.m_enPassant);
+		m_hashes.push_back(m_position.m_hash);
+
+		if (m_position.m_enPassant != 0) {
+			uint8_t enPassantRank = m_position.m_enPassant.bitScan() % 8;
+			m_position.m_hash = m_position.m_hash.toggleEnPassant(enPassantRank);
+			m_position.m_enPassant = 0;
+		}
+
+		m_position.m_colorToMove = m_position.m_colorToMove.invert();
+		m_position.m_hash = m_position.m_hash.changeSide();
+	}
+
+	void undoNullMove() {
+		m_position.m_nullMoves--;
+		m_position.m_colorToMove = m_position.m_colorToMove.invert();
+
+		m_position.m_hash = m_hashes.pop_back();
+		m_position.m_enPassant = m_enPassants.pop_back();
+
+		if (m_position.m_colorToMove == common::PieceColor::WHITE) {
+			--m_position.m_movesCount;
 		}
 	}
 
