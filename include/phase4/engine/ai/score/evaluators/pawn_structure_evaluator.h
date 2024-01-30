@@ -28,12 +28,12 @@ public:
 
 		const board::transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.m_position.m_pawnHash.asBitboard());
 		if (entry.isKeyValid(session.m_position.m_pawnHash.asBitboard())) {
-#if NDEBUG
+#ifndef NDEBUG
 			statistics.m_pawnHashTableHits++;
 #endif
 			return TaperedEvaluation::adjustToPhase(entry.openingScore(), entry.endingScore(), openingPhase, endingPhase);
 		}
-#if NDEBUG
+#ifndef NDEBUG
 		else {
 			statistics.m_pawnHashTableNonHits++;
 
@@ -52,7 +52,7 @@ public:
 
 		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), (short)openingScore, (short)endingScore);
 
-#if NDEBUG
+#ifndef NDEBUG
 		statistics.m_pawnHashTableAddedEntries++;
 #endif
 		return result;

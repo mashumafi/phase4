@@ -18,9 +18,9 @@ public:
 	static constexpr void recalculateEvaluationDependentValues(Position &position);
 
 private:
-	static constexpr ZobristHashing calculateHash(Position &position);
+	static constexpr ZobristHashing calculateHash(const Position &position);
 
-	static constexpr ZobristHashing calculatePawnHash(Position &position);
+	static constexpr ZobristHashing calculatePawnHash(const Position &position);
 
 	/// @brief Calculates the piece table based on piece masks
 	/// @param position the Position to update and compute from
@@ -82,15 +82,69 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 	position.m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::ENDING);
 }
 
-inline constexpr ZobristHashing PositionState::calculateHash(Position &position) {
-	(void)position;
-	ZobristHashing hash(123456);
+inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) {
+	using namespace common;
+
+	ZobristHashing hash(0);
+
+	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
+		for (PieceType piece = PieceType::PAWN; piece != PieceType::INVALID; ++piece) {
+			Bitset piecesToParse = position.m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+			while (piecesToParse != 0) {
+				const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
+				piecesToParse = piecesToParse.popLsb();
+
+				Square fieldIndex(lsb.bitScan());
+				hash = hash.addOrRemovePiece(color, piece, fieldIndex);
+			}
+		}
+	}
+
+	if ((position.m_castling & Castling::WHITE_SHORT) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::WHITE_SHORT);
+	}
+	if ((position.m_castling & Castling::WHITE_LONG) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::WHITE_LONG);
+	}
+	if ((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::BLACK_SHORT);
+	}
+	if ((position.m_castling & Castling::BLACK_LONG) != Castling::NONE) {
+		hash = hash.toggleCastlingFlag(Castling::BLACK_LONG);
+	}
+
+	if (position.m_enPassant != 0) {
+		uint8_t fieldIndex = position.m_enPassant.bitScan();
+		hash = hash.toggleEnPassant(fieldIndex % 8);
+	}
+
+	if (position.m_walls > 0) {
+		hash = hash.slowToggleWalls(position.m_walls);
+	}
+
+	if (position.m_colorToMove == PieceColor::BLACK) {
+		hash = hash.changeSide();
+	}
+
 	return hash;
 }
 
-inline constexpr ZobristHashing PositionState::calculatePawnHash(Position &position) {
-	(void)position;
-	ZobristHashing pawnHash(456789);
+inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position &position) {
+	using namespace common;
+
+	ZobristHashing pawnHash(0);
+
+	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
+		Bitset piecesToParse = position.m_colorPieceMasks[color.get_raw_value()][PieceType::PAWN.get_raw_value()];
+		while (piecesToParse != 0) {
+			const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
+			piecesToParse = piecesToParse.popLsb();
+
+			const Square fieldIndex(lsb.bitScan());
+			pawnHash = pawnHash.addOrRemovePiece(color, PieceType::PAWN, fieldIndex);
+		}
+	}
+
 	return pawnHash;
 }
 

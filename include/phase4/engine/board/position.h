@@ -64,7 +64,7 @@ public:
 		}
 	}
 
-	inline void MovePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) {
+	inline void movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) {
 		using namespace common;
 		using namespace piece_square_tables;
 
@@ -204,7 +204,7 @@ public:
 		}
 
 		if (move.flags().isSinglePush()) {
-			MovePiece(m_colorToMove, pieceType, move.from(), move.to());
+			movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
 			m_hash = m_hash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 
@@ -212,7 +212,7 @@ public:
 				m_pawnHash = m_pawnHash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			}
 		} else if (move.flags().isDoublePush()) {
-			MovePiece(m_colorToMove, pieceType, move.from(), move.to());
+			movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
 			m_hash = m_hash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			m_pawnHash = m_pawnHash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
@@ -231,7 +231,7 @@ public:
 			m_hash = m_hash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 			m_pawnHash = m_pawnHash.addOrRemovePiece(enemyColor, killedPiece, enemyPieceField);
 
-			MovePiece(m_colorToMove, pieceType, move.from(), move.to());
+			movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			result.moved.push_back({ move.from(), move.to() });
 			m_hash = m_hash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			m_pawnHash = m_pawnHash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
@@ -281,7 +281,7 @@ public:
 
 				result.promotion = promotionPiece;
 			} else {
-				MovePiece(m_colorToMove, pieceType, move.from(), move.to());
+				movePiece(m_colorToMove, pieceType, move.from(), move.to());
 				result.moved.push_back({ move.from(), move.to() });
 				m_hash = m_hash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 
@@ -295,8 +295,8 @@ public:
 			// Short castling
 			if (move.flags().isKingCastling()) {
 				if (m_colorToMove == PieceColor::WHITE) {
-					MovePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
-					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
+					movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
+					movePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
 
 					result.moved.push_back({ Square::E1, Square::G1 });
 					result.moved.push_back({ Square::H1, Square::F1 });
@@ -304,8 +304,8 @@ public:
 					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
 					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
 				} else {
-					MovePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::G8);
-					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::F8);
+					movePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::G8);
+					movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::F8);
 
 					result.moved.push_back({ Square::E8, Square::G8 });
 					result.moved.push_back({ Square::H8, Square::F8 });
@@ -315,8 +315,8 @@ public:
 				}
 			} else { // Long castling
 				if (m_colorToMove == PieceColor::WHITE) {
-					MovePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
-					MovePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);
+					movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
+					movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);
 
 					result.moved.push_back({ Square::E1, Square::C1 });
 					result.moved.push_back({ Square::A1, Square::D1 });
@@ -324,8 +324,8 @@ public:
 					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
 					m_hash = m_hash.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);
 				} else {
-					MovePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::C8);
-					MovePiece(PieceColor::BLACK, PieceType::ROOK, Square::A8, Square::D8);
+					movePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::C8);
+					movePiece(PieceColor::BLACK, PieceType::ROOK, Square::A8, Square::D8);
 
 					result.moved.push_back({ Square::E8, Square::C8 });
 					result.moved.push_back({ Square::A8, Square::D8 });
@@ -405,7 +405,7 @@ public:
 					result.moved.push_back(MakeMoveResult::Movement{ from, to });
 					if (auto pieceResult = GetPiece(from)) {
 						auto [resultColor, resultType] = *pieceResult;
-						MovePiece(resultColor, resultType, from, to);
+						movePiece(resultColor, resultType, from, to);
 						result.moved.push_back({ from, to });
 						m_hash = m_hash.movePiece(resultColor, resultType, from, to);
 						if (resultType == PieceType::PAWN) {
@@ -514,7 +514,7 @@ public:
 			result.moves.push_back({ from, to });
 			if (auto pieceResult = GetPiece(from)) {
 				const auto [resultColor, resultType] = *pieceResult;
-				MovePiece(resultColor, resultType, from, to);
+				movePiece(resultColor, resultType, from, to);
 			}
 
 			original = original.popLsb();
