@@ -39,6 +39,10 @@ public:
 		return m_score;
 	}
 
+	inline int16_t &score() {
+		return m_score;
+	}
+
 	inline moves::Move bestMove() const {
 		return m_bestMove;
 	}
