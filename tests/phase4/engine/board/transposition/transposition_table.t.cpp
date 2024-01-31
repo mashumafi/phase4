@@ -5,20 +5,22 @@
 
 #include <doctest/doctest.h>
 
+#include <memory>
+
 TEST_CASE("TranspositionTable references") {
 	using namespace phase4::engine;
 	using namespace phase4::engine::board::transposition;
 
-	TranspositionTable<1> table;
+	auto table = std::make_shared<TranspositionTable<1>>();
 
-	TranspositionTableEntry &entry = table.get(common::Bitset(123));
+	TranspositionTableEntry &entry = table->get(common::Bitset(123));
 	entry.score() = 42;
 
 	CHECK(entry.score() == 42);
-	CHECK(table.get(common::Bitset(123)).score() == 42);
+	CHECK(table->get(common::Bitset(123)).score() == 42);
 
-	table.clear();
+	table->clear();
 
 	CHECK(entry.score() == 0);
-	CHECK(table.get(common::Bitset(123)).score() == 0);
+	CHECK(table->get(common::Bitset(123)).score() == 0);
 }
