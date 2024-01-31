@@ -26,5 +26,5 @@ TEST_CASE("QuiescenceSearch default state") {
 	const int32_t beta = board::SearchConstants::MAX_VALUE;
 
 	const int32_t eval = ai::search::QuiescenceSearch::findBestMove(context, 1, 0, alpha, beta);
-	CHECK(eval != 0);
+	CHECK(-100 <= eval && eval <= 100);
 }

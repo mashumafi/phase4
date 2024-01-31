@@ -26,5 +26,5 @@ TEST_CASE("IterativeDeepening default state") {
 	const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
 
 	CHECK(bestMove != moves::Move::Empty);
-	CHECK(context.statistics.score != 0);
+	CHECK(-100 <= context.statistics.score && context.statistics.score <= 100);
 }

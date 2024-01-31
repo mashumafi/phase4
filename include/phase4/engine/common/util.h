@@ -25,7 +25,7 @@ public:
 		std::array<size_t, sizeof...(Dims)> dimensions = { Dims... };
 		std::array<size_t, sizeof...(Indices)> indexValues = { static_cast<size_t>(indices)... };
 
-		for (int i = sizeof...(Dims) - 1; i >= 0; --i) {
+		for (size_t i = sizeof...(Dims) - 1; i >= 0; --i) {
 			if (unlikely(indexValues[i] >= dimensions[i])) {
 				return 0;
 			}

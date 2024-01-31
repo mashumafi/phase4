@@ -17,12 +17,12 @@ namespace phase4::engine::board {
 class ZobristHashing {
 public:
 	struct Keys {
-		static constexpr int BOARD_SIZE = 64;
-		static constexpr int NUM_COLORS = 2;
-		static constexpr int NUM_PIECES = 6;
-		static constexpr int NUM_CASTLING_OPTIONS = 4;
-		static constexpr int NUM_EN_PASSANT_OPTIONS = 8;
-		static constexpr int NUM_FIELD_HASHES = NUM_COLORS * NUM_PIECES * BOARD_SIZE;
+		static constexpr uint32_t BOARD_SIZE = 64;
+		static constexpr uint32_t NUM_COLORS = 2;
+		static constexpr uint32_t NUM_PIECES = 6;
+		static constexpr uint32_t NUM_CASTLING_OPTIONS = 4;
+		static constexpr uint32_t NUM_EN_PASSANT_OPTIONS = 8;
+		static constexpr uint32_t NUM_FIELD_HASHES = NUM_COLORS * NUM_PIECES * BOARD_SIZE;
 
 		template <size_t Size>
 		static constexpr std::array<uint64_t, Size> populateHashArray(common::Random &random) {

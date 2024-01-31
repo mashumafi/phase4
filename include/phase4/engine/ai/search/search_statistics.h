@@ -14,9 +14,9 @@ public:
 	board::Session *session;
 	ai::score::EvaluationStatistics evaluationStatistics;
 
-	int depth;
-	int selectiveDepth;
-	int score;
+	uint8_t depth;
+	uint8_t selectiveDepth;
+	int32_t score;
 	uint64_t searchTime;
 
 	uint64_t nodes;
@@ -47,13 +47,13 @@ public:
 	float transpositionTableHitsPercent() const { return static_cast<float>(transpositionTableHits) * 100 / (transpositionTableHits + transpositionTableNonHits); }
 	float transpositionTableReplacesPercent() const { return static_cast<float>(transpositionTableReplacements) * 100 / transpositionTableAddedEntries; }
 
-	int betaCutoffsAtFirstMove;
-	int qBetaCutoffsAtFirstMove;
-	int totalBetaCutoffsAtFirstMove() const { return betaCutoffsAtFirstMove + qBetaCutoffsAtFirstMove; }
+	int32_t betaCutoffsAtFirstMove;
+	int32_t qBetaCutoffsAtFirstMove;
+	int32_t totalBetaCutoffsAtFirstMove() const { return betaCutoffsAtFirstMove + qBetaCutoffsAtFirstMove; }
 
-	int betaCutoffsNotAtFirstMove;
-	int qBetaCutoffsNotAtFirstMove;
-	int totalBetaCutoffsAtNotFirstMove() const { return betaCutoffsNotAtFirstMove + qBetaCutoffsNotAtFirstMove; }
+	int32_t betaCutoffsNotAtFirstMove;
+	int32_t qBetaCutoffsNotAtFirstMove;
+	int32_t totalBetaCutoffsAtNotFirstMove() const { return betaCutoffsNotAtFirstMove + qBetaCutoffsNotAtFirstMove; }
 
 	float betaCutoffsAtFirstMovePercent() const {
 		return static_cast<float>(betaCutoffsAtFirstMove) * 100 / (betaCutoffsAtFirstMove + betaCutoffsNotAtFirstMove);

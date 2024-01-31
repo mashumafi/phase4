@@ -413,7 +413,7 @@ public:
 						}
 
 						if (resultType == PieceType::PAWN && m_enPassant != 0) {
-							int offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
+							int8_t offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
 							uint8_t enPassantField = m_enPassant.fastBitScan();
 							if (enPassantField == from.get_raw_value() + offset) {
 								uint8_t enPassantRank = enPassantField % 8;

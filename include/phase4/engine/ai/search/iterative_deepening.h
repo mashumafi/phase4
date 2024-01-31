@@ -76,7 +76,7 @@ public:
 
 			if (lastSearchTime != 0) {
 				float ratio = (float)context.statistics.searchTime / lastSearchTime;
-				expectedExecutionTime = (int)(context.statistics.searchTime * ratio);
+				expectedExecutionTime = (int32_t)(context.statistics.searchTime * ratio);
 			}
 
 			lastSearchTime = context.statistics.searchTime;
@@ -93,7 +93,7 @@ public:
 		return bestMove;
 	}
 
-	static bool shouldContinueDeepening(const SearchContext &context, int depth, uint32_t expectedExecutionTime) {
+	static bool shouldContinueDeepening(const SearchContext &context, uint8_t depth, uint32_t expectedExecutionTime) {
 		if (board::SearchConstants::isScoreNearCheckmate(context.statistics.score)) {
 			if (depth - 1 >= getMovesToCheckmate(context.statistics.score) * 2) {
 				return false;
@@ -103,8 +103,8 @@ public:
 		return depth < context.maxDepth && expectedExecutionTime <= context.maxTime;
 	}
 
-	static int getMovesToCheckmate(int score) {
-		return (int)std::ceil((float)std::abs(std::abs(score) - board::EvaluationConstants::CHECKMATE) / 2);
+	static int32_t getMovesToCheckmate(int32_t score) {
+		return (int32_t)std::ceil((float)std::abs(std::abs(score) - board::EvaluationConstants::CHECKMATE) / 2);
 	}
 
 private:
