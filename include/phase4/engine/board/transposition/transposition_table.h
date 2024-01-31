@@ -23,12 +23,15 @@ public:
 		return m_table[hash.asSize() % m_table.size()];
 	}
 
-	void clear() {
-		static constexpr Table blank = {};
-		m_table = blank;
+	TranspositionTableEntry &get(common::Bitset hash) {
+		return m_table[hash.asSize() % m_table.size()];
 	}
 
-	int32_t regularToTranpositionTableScore(int32_t score, int32_t ply) const {
+	void clear() {
+		m_table.fill(TranspositionTableEntry());
+	}
+
+	static int32_t regularToTranspositionTableScore(int32_t score, int32_t ply) {
 		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score + ply;
@@ -40,7 +43,7 @@ public:
 		return score;
 	}
 
-	int32_t transpositionTableToRegularScore(int32_t score, int32_t ply) const {
+	static int32_t transpositionTableToRegularScore(int32_t score, int32_t ply) {
 		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score - ply;

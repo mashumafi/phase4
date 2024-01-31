@@ -23,8 +23,7 @@ public:
 	}
 
 	void clear() {
-		static constexpr Table blank = {};
-		m_table = blank;
+		m_table.fill(PawnHashTableEntry());
 	}
 
 private:

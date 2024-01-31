@@ -21,8 +21,7 @@ public:
 	}
 
 	void clear() {
-		static constexpr Table blank = {};
-		m_table = blank;
+		m_table.fill(EvaluationHashTableEntry());
 	}
 
 private:

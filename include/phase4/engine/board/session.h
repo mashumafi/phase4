@@ -12,6 +12,7 @@
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/field_index.h>
 
+#include <cmath>
 #include <cstdint>
 
 namespace phase4::engine::board {
@@ -167,6 +168,23 @@ public:
 		if (m_position.m_colorToMove == common::PieceColor::WHITE) {
 			--m_position.m_movesCount;
 		}
+	}
+
+	bool isThreefoldRepetition() const {
+		size_t positionsToCheck = std::min(m_hashes.size(), m_position.m_irreversibleMovesCount + 1);
+		if (m_position.m_nullMoves == 0 && positionsToCheck >= 8) {
+			size_t repetitionsCount = 1;
+			for (size_t positionIndex = 1; positionIndex < positionsToCheck; positionIndex += 2) {
+				if (m_hashes[positionIndex] == m_position.m_hash) {
+					repetitionsCount++;
+					if (repetitionsCount >= 3) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	void clearWalls() {

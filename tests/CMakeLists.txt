@@ -36,6 +36,7 @@ add_executable(phase4_test
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/session.t.cpp
     phase4/engine/board/zobrist_hashing.t.cpp
+    phase4/engine/board/transposition/transposition_table.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
     phase4/engine/ai/search/iterative_deepening.t.cpp

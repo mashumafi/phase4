@@ -37,7 +37,7 @@ public:
 	common::Castling m_castling = common::Castling::EVERYTHING;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 0;
-	uint8_t m_irreversibleMovesCount = 0;
+	size_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
 	std::array<bool, 2> m_castlingDone = {};
@@ -576,11 +576,46 @@ public:
 		return Math::max_int32(boardDelta, 0) * PositionConstants::PHASE_RESOLUTION / openingDelta;
 	}
 
+	int32_t getGamePhase() const {
+		using namespace common;
+
+		int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
+		return materialOfWeakerSide > EvaluationConstants::OPENING_ENDGAME_EDGE ? GamePhase::OPENING : GamePhase::ENDING;
+	}
+
 	bool isFieldPassing(common::PieceColor color, common::Square field) const {
 		const common::PieceColor enemyColor = color.invert();
 		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
 
 		return (passingArea & m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0;
+	}
+
+	bool isFiftyMoveRuleDraw() const {
+		if (m_nullMoves == 0 && m_irreversibleMovesCount >= 100) {
+			return true;
+		}
+
+		return false;
+	}
+
+	bool isInsufficientMaterial() const {
+		using namespace common;
+
+		int32_t drawEdge = EvaluationConstants::PIECE_VALUES[PieceType::KING.get_raw_value()] + 4 * EvaluationConstants::PIECE_VALUES[PieceType::PAWN.get_raw_value()];
+		if (m_material[PieceColor::WHITE.get_raw_value()] < drawEdge && m_material[PieceColor::BLACK.get_raw_value()] < drawEdge) {
+			const Bitset whiteKnightOrBishopPresent = (m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::KNIGHT.get_raw_value()] | m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::BISHOP.get_raw_value()]) != 0;
+			const Bitset blackKnightOrBishopPresent = (m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::KNIGHT.get_raw_value()] | m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::BISHOP.get_raw_value()]) != 0;
+
+			if (whiteKnightOrBishopPresent != 0 && blackKnightOrBishopPresent != 0) {
+				return false;
+			}
+
+			if (m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()] == 0 && m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()] == 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 };
 
