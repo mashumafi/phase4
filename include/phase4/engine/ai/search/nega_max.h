@@ -77,7 +77,7 @@ public:
 		}
 
 		int32_t originalAlpha = alpha;
-		int32_t pvNode = beta - alpha > 1;
+		bool pvNode = beta - alpha > 1;
 
 		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->m_position.m_hash.asBitboard());
 		moves::Move hashMove = moves::Move::Empty;
@@ -514,7 +514,7 @@ private:
 				moveIndex >= (board::SearchConstants::LMP_BASE_PERCENT_MOVES_TO_PRUNE + (depth - 1) * board::SearchConstants::LMP_PERCENT_INCREASE_PER_DEPTH) * movesCount / 100;
 	}
 
-	static bool LMRCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, moves::Moves &moves, moves::MoveValues &moveValues) {
+	static bool LMRCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
 		if (depth >= board::SearchConstants::LMR_MIN_DEPTH && moveIndex >= board::SearchConstants::LMR_MOVES_WITHOUT_REDUCTION &&
 				(moves[moveIndex].flags().isQuiet() || (moves[moveIndex].flags().isCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck) {
 			const common::PieceColor enemyColor = context.session->m_position.m_colorToMove.invert();

@@ -532,7 +532,7 @@ public:
 	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) const {
 		using namespace common;
 
-		PieceColor enemyColor = color.invert();
+		const PieceColor enemyColor = color.invert();
 
 		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & m_occupancyByColor[enemyColor.get_raw_value()];
 		const Bitset attackingRooks = fileRankAttacks & (m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::ROOK.get_raw_value()] | m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);

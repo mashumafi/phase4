@@ -50,8 +50,8 @@ public:
 		context.session->m_killerHeuristic.ageKillers();
 
 		uint32_t expectedExecutionTime = 0;
-		int16_t alpha = board::SearchConstants::MIN_VALUE;
-		int16_t beta = board::SearchConstants::MAX_VALUE;
+		const int32_t alpha = board::SearchConstants::MIN_VALUE;
+		const int32_t beta = board::SearchConstants::MAX_VALUE;
 		uint32_t lastSearchTime = 0ul;
 		moves::Move bestMove = moves::Move::Empty;
 		Stopwatch stopwatch;
@@ -69,7 +69,8 @@ public:
 			}
 
 			getPrincipalVariation(*context.session, context.statistics.principalVariation);
-			bestMove = context.statistics.principalVariation[0];
+			if (!context.statistics.principalVariation.is_empty()) // TODO: Why is it empty
+				bestMove = context.statistics.principalVariation[0];
 
 			searchUpdateCallback(context.statistics);
 
@@ -112,7 +113,7 @@ private:
 
 		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
 		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.m_position.m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
-			if (!session.isMoveLegal(entry.bestMove())) {
+			if (!board::Operators::isMoveLegal(session.m_position, entry.bestMove())) {
 				return;
 			}
 

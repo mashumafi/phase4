@@ -74,7 +74,7 @@ public:
 		}
 
 		PieceType pieceType = m_position.m_pieceTable[move.to()];
-		m_position.m_colorToMove = m_position.m_colorToMove;
+		m_position.m_colorToMove = m_position.m_colorToMove.invert();
 
 		if (move.flags().isSinglePush() || move.flags().isDoublePush()) {
 			m_position.movePiece(m_position.m_colorToMove, pieceType, move.to(), move.from());

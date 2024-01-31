@@ -21,8 +21,9 @@ public:
 	void push_back(T &&value);
 
 	template <class... Args>
-	void emplace_back(Args &&...args) {
+	T &emplace_back(Args &&...args) {
 		m_items[m_size++] = T(args...);
+		return m_items[m_size - 1];
 	}
 
 	T &&pop_back();
@@ -36,6 +37,8 @@ public:
 
 	const T &at(std::size_t index) const;
 	const T &peek() const;
+
+	void resize(std::size_t);
 
 	std::size_t size() const;
 	bool is_empty() const;
@@ -108,6 +111,12 @@ const T &FastVector<T, N>::peek() const {
 	assert(!is_empty());
 
 	return m_items[m_size - 1];
+}
+
+template <typename T, std::size_t N>
+void FastVector<T, N>::resize(size_t size) {
+	assert(size <= N);
+	m_size = size;
 }
 
 template <typename T, std::size_t N>

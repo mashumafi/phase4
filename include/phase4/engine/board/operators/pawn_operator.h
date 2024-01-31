@@ -198,7 +198,7 @@ private:
 			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle en passant after sliding
-			Bitset slideRank = WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
+			Bitset slideRank = position.m_walls == 0 ? promotionRank : WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
 
 			if ((piece & promotionRank) != 0 || (slideRank & promotionRank) != 0) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE);
