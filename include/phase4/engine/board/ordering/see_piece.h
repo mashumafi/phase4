@@ -90,15 +90,15 @@ constexpr SeePiece &SeePiece::operator=(uint64_t value) {
 	return *this;
 }
 
-constexpr SeePiece SeePiece::PAWN = 0;
-constexpr SeePiece SeePiece::KNIGHT1 = 1;
-constexpr SeePiece SeePiece::KNIGHT2 = 2;
-constexpr SeePiece SeePiece::BISHOP = 3;
-constexpr SeePiece SeePiece::ROOK1 = 4;
-constexpr SeePiece SeePiece::ROOK2 = 5;
-constexpr SeePiece SeePiece::QUEEN = 6;
-constexpr SeePiece SeePiece::KING = 7;
-constexpr SeePiece SeePiece::INVALID = 8;
+inline constexpr SeePiece SeePiece::PAWN = 0;
+inline constexpr SeePiece SeePiece::KNIGHT1 = 1;
+inline constexpr SeePiece SeePiece::KNIGHT2 = 2;
+inline constexpr SeePiece SeePiece::BISHOP = 3;
+inline constexpr SeePiece SeePiece::ROOK1 = 4;
+inline constexpr SeePiece SeePiece::ROOK2 = 5;
+inline constexpr SeePiece SeePiece::QUEEN = 6;
+inline constexpr SeePiece SeePiece::KING = 7;
+inline constexpr SeePiece SeePiece::INVALID = 8;
 
 } //namespace phase4::engine::board::ordering
 
