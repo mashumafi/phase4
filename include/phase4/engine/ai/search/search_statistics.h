@@ -63,18 +63,18 @@ public:
 		return static_cast<float>(qBetaCutoffsAtFirstMove) * 100 / (qBetaCutoffsAtFirstMove + qBetaCutoffsNotAtFirstMove);
 	}
 
-	int iidHits;
-	int loudMovesGenerated;
-	int quietMovesGenerated;
-	int extensions;
-	int nullMovePrunes;
-	int staticNullMovePrunes;
-	int futilityPrunes;
-	int qSeePrunes;
-	int qFutilityPrunes;
-	int razorings;
-	int razoringsRejected;
-	int lmrReductions;
+	int32_t iidHits;
+	int32_t loudMovesGenerated;
+	int32_t quietMovesGenerated;
+	int32_t extensions;
+	int32_t nullMovePrunes;
+	int32_t staticNullMovePrunes;
+	int32_t futilityPrunes;
+	int32_t qSeePrunes;
+	int32_t qFutilityPrunes;
+	int32_t razorings;
+	int32_t razoringsRejected;
+	int32_t lmrReductions;
 
 	moves::Moves principalVariation;
 

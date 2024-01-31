@@ -31,7 +31,7 @@ public:
 		m_table.fill(TranspositionTableEntry());
 	}
 
-	static int32_t regularToTranpositionTableScore(int32_t score, int32_t ply) {
+	static int32_t regularToTranspositionTableScore(int32_t score, int32_t ply) {
 		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score + ply;

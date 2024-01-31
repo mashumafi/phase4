@@ -9,7 +9,7 @@ namespace phase4::engine::ai::search {
 
 class QuiescenceSearch {
 public:
-	static int findBestMove(SearchContext &context, int depth, int ply, int alpha, int beta) {
+	static int32_t findBestMove(SearchContext &context, int32_t depth, int32_t ply, int32_t alpha, int32_t beta) {
 		(void)context;
 		(void)depth;
 		(void)ply;

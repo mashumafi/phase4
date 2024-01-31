@@ -3,6 +3,7 @@
 
 #include <phase4/engine/common/util.h>
 
+#include <algorithm>
 #include <cassert>
 #include <type_traits>
 
@@ -27,6 +28,8 @@ public:
 	T &&pop_back();
 
 	void clear();
+
+	bool contains(const T &value) const;
 
 	T &operator[](size_t index);
 	const T &operator[](size_t index) const;
@@ -66,6 +69,12 @@ T &&FastVector<T, N>::pop_back() {
 	assert(!is_empty());
 
 	return std::move(m_items[--m_size]);
+}
+
+template <typename T, std::size_t N>
+bool FastVector<T, N>::contains(const T &value) const {
+	const auto end = std::begin(m_items) + m_size;
+	return std::find(std::begin(m_items), end, value) != end;
 }
 
 template <typename T, std::size_t N>

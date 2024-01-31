@@ -110,7 +110,7 @@ private:
 	static void getPrincipalVariation(board::Session &session, moves::Moves &moves) {
 		using namespace board::transposition;
 
-		const TranspositionTableEntry entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
+		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
 		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.m_position.m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
 			if (!session.isMoveLegal(entry.bestMove())) {
 				return;

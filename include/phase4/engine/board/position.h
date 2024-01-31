@@ -576,6 +576,13 @@ public:
 		return Math::max_int32(boardDelta, 0) * PositionConstants::PHASE_RESOLUTION / openingDelta;
 	}
 
+	int32_t getGamePhase() const {
+		using namespace common;
+
+		int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
+		return materialOfWeakerSide > EvaluationConstants::OPENING_ENDGAME_EDGE ? GamePhase::OPENING : GamePhase::ENDING;
+	}
+
 	bool isFieldPassing(common::PieceColor color, common::Square field) const {
 		const common::PieceColor enemyColor = color.invert();
 		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
