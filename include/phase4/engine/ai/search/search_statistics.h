@@ -14,17 +14,17 @@ public:
 	board::Session *session;
 	ai::score::EvaluationStatistics evaluationStatistics;
 
-	uint8_t depth;
-	uint8_t selectiveDepth;
-	int32_t score;
-	uint64_t searchTime;
+	uint8_t depth = 0;
+	uint8_t selectiveDepth = 0;
+	int32_t score = 0;
+	uint64_t searchTime = 0;
 
-	uint64_t nodes;
-	uint64_t qNodes;
+	uint64_t nodes = 0;
+	uint64_t qNodes = 0;
 	uint64_t totalNodes() const { return nodes + qNodes; }
 
-	uint64_t leafs;
-	uint64_t qLeafs;
+	uint64_t leafs = 0;
+	uint64_t qLeafs = 0;
 	uint64_t totalLeafs() const { return leafs + qLeafs; }
 
 	uint64_t totalNodesPerSecond() const { return totalNodes() / (searchTime / 1000); }
@@ -34,25 +34,25 @@ public:
 	float qBranchingFactor() const { return static_cast<float>(qNodes) / (qNodes - qLeafs); }
 	float totalBranchingFactor() const { return static_cast<float>(totalNodes()) / (totalNodes() - totalLeafs()); }
 
-	uint64_t betaCutoffs;
-	uint64_t qBetaCutoffs;
+	uint64_t betaCutoffs = 0;
+	uint64_t qBetaCutoffs = 0;
 	uint64_t totalBetaCutoffs() const { return betaCutoffs + qBetaCutoffs; }
 
-	uint64_t transpositionTableAddedEntries;
-	uint64_t transpositionTableReplacements;
-	uint64_t transpositionTableHits;
-	uint64_t transpositionTableNonHits;
-	uint64_t transpositionTableInvalidMoves;
-	uint64_t transpositionTableValidMoves;
+	uint64_t transpositionTableAddedEntries = 0;
+	uint64_t transpositionTableReplacements = 0;
+	uint64_t transpositionTableHits = 0;
+	uint64_t transpositionTableNonHits = 0;
+	uint64_t transpositionTableInvalidMoves = 0;
+	uint64_t transpositionTableValidMoves = 0;
 	float transpositionTableHitsPercent() const { return static_cast<float>(transpositionTableHits) * 100 / (transpositionTableHits + transpositionTableNonHits); }
 	float transpositionTableReplacesPercent() const { return static_cast<float>(transpositionTableReplacements) * 100 / transpositionTableAddedEntries; }
 
-	int32_t betaCutoffsAtFirstMove;
-	int32_t qBetaCutoffsAtFirstMove;
+	int32_t betaCutoffsAtFirstMove = 0;
+	int32_t qBetaCutoffsAtFirstMove = 0;
 	int32_t totalBetaCutoffsAtFirstMove() const { return betaCutoffsAtFirstMove + qBetaCutoffsAtFirstMove; }
 
-	int32_t betaCutoffsNotAtFirstMove;
-	int32_t qBetaCutoffsNotAtFirstMove;
+	int32_t betaCutoffsNotAtFirstMove = 0;
+	int32_t qBetaCutoffsNotAtFirstMove = 0;
 	int32_t totalBetaCutoffsAtNotFirstMove() const { return betaCutoffsNotAtFirstMove + qBetaCutoffsNotAtFirstMove; }
 
 	float betaCutoffsAtFirstMovePercent() const {
@@ -63,18 +63,18 @@ public:
 		return static_cast<float>(qBetaCutoffsAtFirstMove) * 100 / (qBetaCutoffsAtFirstMove + qBetaCutoffsNotAtFirstMove);
 	}
 
-	int32_t iidHits;
-	int32_t loudMovesGenerated;
-	int32_t quietMovesGenerated;
-	int32_t extensions;
-	int32_t nullMovePrunes;
-	int32_t staticNullMovePrunes;
-	int32_t futilityPrunes;
-	int32_t qSeePrunes;
-	int32_t qFutilityPrunes;
-	int32_t razorings;
-	int32_t razoringsRejected;
-	int32_t lmrReductions;
+	int32_t iidHits = 0;
+	int32_t loudMovesGenerated = 0;
+	int32_t quietMovesGenerated = 0;
+	int32_t extensions = 0;
+	int32_t nullMovePrunes = 0;
+	int32_t staticNullMovePrunes = 0;
+	int32_t futilityPrunes = 0;
+	int32_t qSeePrunes = 0;
+	int32_t qFutilityPrunes = 0;
+	int32_t razorings = 0;
+	int32_t razoringsRejected = 0;
+	int32_t lmrReductions = 0;
 
 	moves::Moves principalVariation;
 
