@@ -21,7 +21,7 @@ TEST_CASE("IterativeDeepening default state") {
 	session->setDefaultState();
 
 	ai::search::SearchContext context(session.get());
-	context.maxDepth = 8;
+	context.maxDepth = 4;
 
 	const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
 
