@@ -4,8 +4,6 @@
 
 #include <phase4/engine/board/session.h>
 
-#include <phase4/engine/moves/magic/magic_bitboards.h>
-
 #include <doctest/doctest.h>
 
 #include <memory>
@@ -13,10 +11,7 @@
 TEST_CASE("NegaMax default state") {
 	using namespace phase4::engine;
 
-	moves::magic::MagicBitboards::initWithInternalKeys();
-
 	auto session = std::make_shared<board::Session>();
-	session->setDefaultState();
 
 	ai::search::SearchContext context(session.get());
 

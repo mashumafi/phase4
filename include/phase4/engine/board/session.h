@@ -19,11 +19,12 @@ namespace phase4::engine::board {
 
 class Session {
 public:
-	Session() {
+	Session(const Position &position = PositionState::DEFAULT) {
+		m_position = position;
 	}
 
-	void setDefaultState() {
-		m_position = PositionState::DEFAULT;
+	void setPosition(const Position &position) {
+		m_position = position;
 
 		m_killedPieces.clear();
 		m_enPassants.clear();

@@ -33,9 +33,6 @@ TEST_CASE("MovesGenerator getKnightMoves") {
 TEST_CASE("MovesGenerator getBishopMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
-	using namespace phase4::engine::moves::magic;
-
-	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                                 ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
@@ -83,9 +80,6 @@ TEST_CASE("MovesGenerator getBishopMoves") {
 TEST_CASE("MovesGenerator getRookMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
-	using namespace phase4::engine::moves::magic;
-
-	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                               ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
@@ -133,9 +127,6 @@ TEST_CASE("MovesGenerator getRookMoves") {
 TEST_CASE("MovesGenerator getQueenMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
-	using namespace phase4::engine::moves::magic;
-
-	MagicBitboards::initWithInternalKeys();
 
 	SUBCASE("Empty occupancy") {
 		//                                                                ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH ABCDEFGH
