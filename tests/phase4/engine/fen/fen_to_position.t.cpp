@@ -7,6 +7,9 @@
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/session.h>
 
+#include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/move_flags.h>
+
 #include <doctest/doctest.h>
 
 #include <memory>
@@ -26,21 +29,47 @@ TEST_CASE("FenToPosition mateIn2") {
 		ai::search::SearchContext context(session.get());
 		context.maxDepth = 4;
 
-		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
+		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
 		CHECK(bestMove.from() == common::Square::E8);
-		CHECK(bestMove.to() == common::Square::D7);
+		CHECK(bestMove.to() == common::Square::D8);
 
-		session->makeMove(bestMove);
+		session->makeMove(moves::Move(common::Square::E8, common::Square::D7, moves::MoveFlags::QUIET)); // Make the bad move
 	}
 
 	{
 		ai::search::SearchContext context(session.get());
 		context.maxDepth = 8;
 
-		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
+		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
 		CHECK(bestMove.from() == common::Square::A2);
 		CHECK(bestMove.to() == common::Square::E6);
+
+        session->makeMove(bestMove);
+	}
+
+	{
+		ai::search::SearchContext context(session.get());
+		context.maxDepth = 8;
+
+		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
+
+		CHECK(bestMove.from() == common::Square::D7);
+		CHECK(bestMove.to() == common::Square::D8);
+
+        session->makeMove(bestMove);
+	}
+
+	{
+		ai::search::SearchContext context(session.get());
+		context.maxDepth = 8;
+
+		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
+
+		CHECK(bestMove.from() == common::Square::F7);
+		CHECK(bestMove.to() == common::Square::F8);
+
+        session->makeMove(bestMove);
 	}
 }

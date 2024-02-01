@@ -14,8 +14,8 @@ public:
 	board::Session *session;
 	ai::score::EvaluationStatistics evaluationStatistics;
 
-	uint8_t depth = 0;
-	uint8_t selectiveDepth = 0;
+	int32_t depth = 0;
+	int32_t selectiveDepth = 0;
 	int32_t score = 0;
 	uint64_t searchTime = 0;
 

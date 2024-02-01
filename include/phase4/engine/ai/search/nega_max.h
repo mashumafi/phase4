@@ -88,7 +88,7 @@ public:
 			++context.statistics.transpositionTableHits;
 #endif
 			if (entry.flags() != TranspositionTableEntryFlags::ALPHA_SCORE) {
-				const bool isMoveLegal = context.session->isMoveLegal(entry.bestMove());
+				const bool isMoveLegal = board::Operators::isMoveLegal(context.session->m_position, entry.bestMove());
 				if (isMoveLegal) {
 					hashMove = entry.bestMove();
 					bestMove = entry.bestMove();
@@ -144,7 +144,7 @@ public:
 #ifndef NDEBUG
 		else {
 			entry = TranspositionTableEntry();
-			context.statistics.transpositionTableNonHits++;
+			++context.statistics.transpositionTableNonHits;
 		}
 #endif
 
@@ -379,6 +379,7 @@ public:
 				break;
 
 			if (!loudMovesGenerated) {
+				moves.clear(); // TODO: confirm this is needed
 				board::Operators::getLoudMoves(context.session->m_position, moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->m_position, moves, moveValues, hashMove);
 				moveIndex = -1;
@@ -500,7 +501,7 @@ private:
 		return !pvMove && !move.flags().isPromotion();
 	}
 
-	static int32_t futilityPruningGetGain(SearchContext &context, moves::Move move) {
+	static int32_t futilityPruningGetGain(const SearchContext &context, moves::Move move) {
 		if (move.flags().isCapture()) {
 			common::PieceType capturedPiece = context.session->m_position.m_pieceTable[move.to()];
 			return capturedPiece != common::PieceType::INVALID ? board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] : 100;
