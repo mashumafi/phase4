@@ -15,7 +15,7 @@ class TranspositionTable {
 public:
 	using Table = std::array<TranspositionTableEntry, MB * 1024ul * 1024ul / sizeof(TranspositionTableEntry)>;
 
-	void add(common::Bitset hash, TranspositionTableEntry entry) {
+	void add(common::Bitset hash, const TranspositionTableEntry &entry) {
 		m_table[hash.asSize() % m_table.size()] = entry;
 	}
 

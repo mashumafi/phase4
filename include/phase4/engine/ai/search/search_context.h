@@ -38,7 +38,7 @@ public:
 	CancellationToken cancellation;
 	uint8_t maxDepth;
 	uint32_t maxTime;
-	bool abortSearch;
+	bool abortSearch = false;
 	bool waitForStopCommand;
 	uint64_t maxNodesCount;
 	moves::Moves moveRestrictions;

@@ -82,7 +82,7 @@ private:
 #if NDEBUG // NOTE: faster builds on debug
 #define FAST_CONSTEXPR constexpr
 #else
-#define FAST_CONSTEXPR
+#define FAST_CONSTEXPR inline
 #endif
 
 #endif

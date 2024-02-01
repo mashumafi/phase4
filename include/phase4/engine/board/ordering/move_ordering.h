@@ -18,7 +18,8 @@ namespace phase4::engine::board::ordering {
 
 class MoveOrdering {
 public:
-	static void assignLoudValues(const Position &position, moves::Moves &moves, moves::MoveValues &moveValues, moves::Move hashOrPvMove) {
+	static void assignLoudValues(const Position &position, const moves::Moves &moves, moves::MoveValues &moveValues, moves::Move hashOrPvMove) {
+		moveValues.resize(moves.size());
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			if (hashOrPvMove == moves[moveIndex]) {
 				moveValues[moveIndex] = MoveOrderingConstants::HASH_MOVE;
@@ -45,7 +46,8 @@ public:
 		}
 	}
 
-	static void assignQuietValues(const Session &session, moves::Moves &moves, moves::MoveValues &moveValues, int startIndex, int ply) {
+	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, int startIndex, int ply) {
+		moveValues.resize(moves.size());
 		const Position &position = session.m_position;
 		for (size_t moveIndex = startIndex; moveIndex < moves.size(); ++moveIndex) {
 			if (session.m_killerHeuristic.killerMoveExists(moves[moveIndex], position.m_colorToMove, ply)) {
@@ -56,7 +58,8 @@ public:
 		}
 	}
 
-	static void assignQValues(const Position &position, moves::Moves &moves, moves::MoveValues &moveValues) {
+	static void assignQValues(const Position &position, const moves::Moves &moves, moves::MoveValues &moveValues) {
+		moveValues.resize(moves.size());
 		const common::PieceColor enemyColor = position.m_colorToMove.invert();
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			if (moves[moveIndex].flags().isEnPassant()) {
@@ -65,9 +68,9 @@ public:
 				const common::PieceType attackingPiece = position.m_pieceTable[moves[moveIndex].from()];
 				const common::PieceType capturedPiece = position.m_pieceTable[moves[moveIndex].to()];
 
-				uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
-				uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
+				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
+				const int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
 				moveValues[moveIndex] = seeEvaluation;
 			}
@@ -75,12 +78,14 @@ public:
 	}
 
 	static void sortNextBestMove(moves::Moves moves, moves::MoveValues &moveValues, size_t currentIndex) {
+		assert(moves.size() == moveValues.size());
+
 		if (moves.size() <= 1) {
 			return;
 		}
 
-		int16_t max = currentIndex;
-		size_t maxIndex = moveValues[currentIndex];
+		int16_t max = moveValues[currentIndex];
+		size_t maxIndex = currentIndex;
 
 		for (size_t i = currentIndex + 1; i < moves.size(); ++i) {
 			if (moveValues[i] > max) {

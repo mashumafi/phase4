@@ -413,7 +413,7 @@ public:
 						}
 
 						if (resultType == PieceType::PAWN && m_enPassant != 0) {
-							int offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
+							int8_t offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
 							uint8_t enPassantField = m_enPassant.fastBitScan();
 							if (enPassantField == from.get_raw_value() + offset) {
 								uint8_t enPassantRank = enPassantField % 8;
@@ -532,7 +532,7 @@ public:
 	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) const {
 		using namespace common;
 
-		PieceColor enemyColor = color.invert();
+		const PieceColor enemyColor = color.invert();
 
 		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & m_occupancyByColor[enemyColor.get_raw_value()];
 		const Bitset attackingRooks = fileRankAttacks & (m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::ROOK.get_raw_value()] | m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);

@@ -50,8 +50,8 @@ public:
 		context.session->m_killerHeuristic.ageKillers();
 
 		uint32_t expectedExecutionTime = 0;
-		int16_t alpha = board::SearchConstants::MIN_VALUE;
-		int16_t beta = board::SearchConstants::MAX_VALUE;
+		const int32_t alpha = board::SearchConstants::MIN_VALUE;
+		const int32_t beta = board::SearchConstants::MAX_VALUE;
 		uint32_t lastSearchTime = 0ul;
 		moves::Move bestMove = moves::Move::Empty;
 		Stopwatch stopwatch;
@@ -69,13 +69,14 @@ public:
 			}
 
 			getPrincipalVariation(*context.session, context.statistics.principalVariation);
-			bestMove = context.statistics.principalVariation[0];
+			if (!context.statistics.principalVariation.is_empty()) // TODO: Why is it empty
+				bestMove = context.statistics.principalVariation[0];
 
 			searchUpdateCallback(context.statistics);
 
 			if (lastSearchTime != 0) {
 				float ratio = (float)context.statistics.searchTime / lastSearchTime;
-				expectedExecutionTime = (int)(context.statistics.searchTime * ratio);
+				expectedExecutionTime = (int32_t)(context.statistics.searchTime * ratio);
 			}
 
 			lastSearchTime = context.statistics.searchTime;
@@ -92,7 +93,7 @@ public:
 		return bestMove;
 	}
 
-	static bool shouldContinueDeepening(const SearchContext &context, int depth, uint32_t expectedExecutionTime) {
+	static bool shouldContinueDeepening(const SearchContext &context, uint8_t depth, uint32_t expectedExecutionTime) {
 		if (board::SearchConstants::isScoreNearCheckmate(context.statistics.score)) {
 			if (depth - 1 >= getMovesToCheckmate(context.statistics.score) * 2) {
 				return false;
@@ -102,8 +103,8 @@ public:
 		return depth < context.maxDepth && expectedExecutionTime <= context.maxTime;
 	}
 
-	static int getMovesToCheckmate(int score) {
-		return (int)std::ceil((float)std::abs(std::abs(score) - board::EvaluationConstants::CHECKMATE) / 2);
+	static int32_t getMovesToCheckmate(int32_t score) {
+		return (int32_t)std::ceil((float)std::abs(std::abs(score) - board::EvaluationConstants::CHECKMATE) / 2);
 	}
 
 private:
@@ -112,7 +113,7 @@ private:
 
 		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
 		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.m_position.m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
-			if (!session.isMoveLegal(entry.bestMove())) {
+			if (!board::Operators::isMoveLegal(session.m_position, entry.bestMove())) {
 				return;
 			}
 

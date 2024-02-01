@@ -19,9 +19,9 @@ TEST_CASE("Session standard move/check/undo") {
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
 	auto session = std::make_unique<board::Session>();
+	session->setDefaultState();
 
 	SUBCASE("Long castle") {
-		session->makeMove(moves::Move("d2d4"));
 	}
 
 	SUBCASE("Short castle") {

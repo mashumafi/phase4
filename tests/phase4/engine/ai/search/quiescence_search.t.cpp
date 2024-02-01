@@ -1,4 +1,4 @@
-#include <phase4/engine/ai/search/iterative_deepening.h>
+#include <phase4/engine/ai/search/quiescence_search.h>
 
 #include <phase4/engine/ai/search/search_context.h>
 
@@ -12,7 +12,7 @@
 
 #include <memory>
 
-TEST_CASE("IterativeDeepening default state") {
+TEST_CASE("QuiescenceSearch default state") {
 	using namespace phase4::engine;
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
@@ -21,11 +21,11 @@ TEST_CASE("IterativeDeepening default state") {
 	session->setDefaultState();
 
 	ai::search::SearchContext context(session.get());
-	context.maxDepth = 4;
 
-	const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
+	const int32_t alpha = board::SearchConstants::MIN_VALUE;
+	const int32_t beta = board::SearchConstants::MAX_VALUE;
 
-	CHECK(bestMove != moves::Move::Empty);
-	CHECK(-100 <= context.statistics.score);
-	CHECK(context.statistics.score <= 100);
+	const int32_t eval = ai::search::QuiescenceSearch::findBestMove(context, 1, 0, alpha, beta);
+	CHECK(-100 <= eval);
+	CHECK(eval <= 100);
 }
