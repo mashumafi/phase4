@@ -45,7 +45,8 @@ private:
 
 class IterativeDeepening {
 public:
-	static moves::Move findBestMove(SearchContext &context, const std::function<void(const SearchStatistics &)> &searchUpdateCallback = [](const ai::search::SearchStatistics &) {}) {
+	static moves::Move findBestMove(
+			SearchContext &context, const std::function<void(const SearchStatistics &)> &searchUpdateCallback = [](const ai::search::SearchStatistics &) {}) {
 		context.session->m_historyHeuristic.ageValues();
 		context.session->m_killerHeuristic.ageKillers();
 

@@ -46,7 +46,7 @@ TEST_CASE("FenToPosition mateIn2") {
 		CHECK(bestMove.from() == common::Square::A2);
 		CHECK(bestMove.to() == common::Square::E6);
 
-        session->makeMove(bestMove);
+		session->makeMove(bestMove);
 	}
 
 	{
@@ -58,7 +58,7 @@ TEST_CASE("FenToPosition mateIn2") {
 		CHECK(bestMove.from() == common::Square::D7);
 		CHECK(bestMove.to() == common::Square::D8);
 
-        session->makeMove(bestMove);
+		session->makeMove(bestMove);
 	}
 
 	{
@@ -70,6 +70,6 @@ TEST_CASE("FenToPosition mateIn2") {
 		CHECK(bestMove.from() == common::Square::F7);
 		CHECK(bestMove.to() == common::Square::F8);
 
-        session->makeMove(bestMove);
+		session->makeMove(bestMove);
 	}
 }
