@@ -15,7 +15,6 @@ static void MakeMoveUndo(benchmark::State &state) {
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
 	board::Session session;
-	session.setDefaultState();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
@@ -33,7 +32,6 @@ static void isMoveLegal(benchmark::State &state) {
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
 	board::Session session;
-	session.setDefaultState();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {

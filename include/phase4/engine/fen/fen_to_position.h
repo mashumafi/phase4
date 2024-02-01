@@ -99,9 +99,9 @@ private:
 				field += common::FieldIndex(c - '0', 0);
 			} else if (c == '*') {
 				if (position.m_walls != 0) {
-					//assert(((1ul << field.getHashCode()) & position.m_walls) != 0);
+					assert((common::Square(field).asBitboard() & position.m_walls) != 0);
 				} else {
-					//position.m_walls = common::WallOperations::SLIDE_FROM[file][rank];
+					position.m_walls = common::WallOperations::SLIDE_FROM[field.x][field.y];
 				}
 				field += common::FieldIndex(1, 0);
 			} else if (c == '/') {
