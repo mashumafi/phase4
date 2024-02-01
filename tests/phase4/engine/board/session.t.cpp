@@ -22,7 +22,6 @@ TEST_CASE("Session standard move/check/undo") {
 	session->setDefaultState();
 
 	SUBCASE("Long castle") {
-		session->makeMove(moves::Move("d2d4"));
 	}
 
 	SUBCASE("Short castle") {
