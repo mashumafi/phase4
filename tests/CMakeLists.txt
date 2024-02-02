@@ -13,14 +13,14 @@ add_executable(phase4_test
     phase4/engine/common/random.t.cpp
     phase4/engine/common/safe_vector.t.cpp
     phase4/engine/common/square.t.cpp
-    phase4/engine/common/wall_operations.t.cpp
     phase4/engine/common/util.t.cpp
+    phase4/engine/common/wall_operations.t.cpp
 
     phase4/engine/moves/magic/attacks_generator.t.cpp
     phase4/engine/moves/magic/magic_bitboards.t.cpp
     phase4/engine/moves/magic/permutations_generator.t.cpp
-    phase4/engine/moves/move.t.cpp
     phase4/engine/moves/move_flags.t.cpp
+    phase4/engine/moves/move.t.cpp
     phase4/engine/moves/moves_generator.t.cpp
     phase4/engine/moves/patterns/box_pattern_generator.t.cpp
     phase4/engine/moves/patterns/chain_pattern_generator.t.cpp
@@ -32,11 +32,11 @@ add_executable(phase4_test
     phase4/engine/moves/patterns/rank_pattern_generator.t.cpp
 
     phase4/engine/board/operators.t.cpp
-    phase4/engine/board/position.t.cpp
     phase4/engine/board/position_state.t.cpp
+    phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp
-    phase4/engine/board/zobrist_hashing.t.cpp
     phase4/engine/board/transposition/transposition_table.t.cpp
+    phase4/engine/board/zobrist_hashing.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
     phase4/engine/ai/search/iterative_deepening.t.cpp
@@ -49,7 +49,7 @@ add_executable(phase4_test
 
     phase4/main.t.cpp
 )
-target_link_libraries(phase4_test PRIVATE phase4 doctest)
+target_link_libraries(phase4_test PRIVATE phase4_fast doctest)
 target_compile_options(phase4_test PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
     $<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=335544320>

@@ -20,7 +20,9 @@ public:
 	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
 	using Array = std::array<AttackersDefendersArray, 6>;
 
-	static constexpr int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender);
+	static int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
+		return static_cast<int16_t>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
+	}
 
 private:
 	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
@@ -142,19 +144,10 @@ private:
 	static const Array TABLE;
 };
 
-inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
-	populate(common::PieceType::PAWN),
-	populate(common::PieceType::KNIGHT),
-	populate(common::PieceType::BISHOP),
-	populate(common::PieceType::ROOK),
-	populate(common::PieceType::QUEEN),
-	populate(common::PieceType::KING),
-};
-
-constexpr int16_t StaticExchangeEvaluation::evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
-	return static_cast<int16_t>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
-}
-
 } //namespace phase4::engine::board::ordering
+
+#ifndef FAST_BUILD
+#include "static_exchange_evaluation.cpp"
+#endif
 
 #endif

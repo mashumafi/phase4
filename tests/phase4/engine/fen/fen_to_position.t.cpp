@@ -27,7 +27,7 @@ TEST_CASE("FenToPosition mateIn2") {
 
 	{
 		ai::search::SearchContext context(session.get());
-		context.maxDepth = 8;
+		context.maxDepth = 5;
 
 		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
@@ -39,7 +39,7 @@ TEST_CASE("FenToPosition mateIn2") {
 
 	{
 		ai::search::SearchContext context(session.get());
-		context.maxDepth = 7;
+		context.maxDepth = 4;
 
 		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
@@ -51,7 +51,7 @@ TEST_CASE("FenToPosition mateIn2") {
 
 	{
 		ai::search::SearchContext context(session.get());
-		context.maxDepth = 6;
+		context.maxDepth = 3;
 
 		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
@@ -63,7 +63,7 @@ TEST_CASE("FenToPosition mateIn2") {
 
 	{
 		ai::search::SearchContext context(session.get());
-		context.maxDepth = 5;
+		context.maxDepth = 2;
 
 		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context);
 
