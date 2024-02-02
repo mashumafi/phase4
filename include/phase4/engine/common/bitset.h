@@ -57,7 +57,7 @@ public:
 	/// @return
 	[[nodiscard]] inline constexpr uint8_t bitScan() const noexcept;
 
-	inline constexpr size_t get_raw_value() const;
+	inline constexpr uint64_t get_raw_value() const;
 
 	inline constexpr bool operator==(Bitset bits) const noexcept;
 	inline constexpr bool operator==(uint64_t bits) const noexcept;
