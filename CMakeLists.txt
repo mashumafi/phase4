@@ -16,7 +16,7 @@ target_include_directories(phase4 INTERFACE include)
 add_library(phase4_fast STATIC
     include/phase4/engine/board/ordering/static_exchange_evaluation.cpp
 )
-target_compile_definitions(phase4_fast PRIVATE FAST_BUILD)
+target_compile_definitions(phase4_fast PUBLIC FAST_BUILD)
 target_link_libraries(phase4_fast PUBLIC phase4)
 target_compile_options(phase4_fast PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
