@@ -4,7 +4,7 @@
 
 namespace phase4::engine::board::ordering {
 
-inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
+constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
 	populate(common::PieceType::PAWN),
 	populate(common::PieceType::KNIGHT),
 	populate(common::PieceType::BISHOP),
