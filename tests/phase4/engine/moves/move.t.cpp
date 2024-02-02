@@ -16,7 +16,7 @@ TEST_CASE("Move raw constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4");
+		CHECK(ss.str() == "g2c4");
 	}
 
 	SUBCASE("Promotion") {
@@ -27,7 +27,7 @@ TEST_CASE("Move raw constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4q");
+		CHECK(ss.str() == "g2c4q");
 	}
 }
 
@@ -43,7 +43,7 @@ TEST_CASE("Move string constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "B2D6");
+		CHECK(ss.str() == "b2d6");
 	}
 
 	SUBCASE("Promotion") {
@@ -54,6 +54,6 @@ TEST_CASE("Move string constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "B2D6q");
+		CHECK(ss.str() == "b2d6q");
 	}
 }

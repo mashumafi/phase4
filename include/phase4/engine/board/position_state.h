@@ -170,7 +170,7 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 	position.m_enPassant = 0;
 	position.m_castling = common::Castling::EVERYTHING;
 	position.m_colorToMove = common::PieceColor::WHITE;
-	position.m_movesCount = 0;
+	position.m_movesCount = 1;
 	position.m_irreversibleMovesCount = 0;
 	position.m_nullMoves = 0;
 

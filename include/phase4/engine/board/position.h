@@ -36,7 +36,7 @@ public:
 	common::Bitset m_enPassant;
 	common::Castling m_castling = common::Castling::EVERYTHING;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
-	uint16_t m_movesCount = 0;
+	uint16_t m_movesCount = 1;
 	size_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
@@ -187,8 +187,8 @@ public:
 		PieceType pieceType = m_pieceTable[move.from()];
 		PieceColor enemyColor = m_colorToMove.invert();
 
-		if (m_colorToMove == PieceColor::WHITE) {
-			m_movesCount++;
+		if (m_colorToMove == PieceColor::BLACK) {
+			++m_movesCount;
 		}
 
 		if (pieceType == PieceType::PAWN || move.flags().isCapture() || move.flags().isCastling()) {

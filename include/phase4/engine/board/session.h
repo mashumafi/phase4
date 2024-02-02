@@ -135,8 +135,8 @@ public:
 		m_position.m_castling = m_castlings.pop_back();
 		m_position.m_enPassant = m_enPassants.pop_back();
 
-		if (m_position.m_colorToMove == PieceColor::WHITE) {
-			m_position.m_movesCount--;
+		if (m_position.m_colorToMove == PieceColor::BLACK) {
+			--m_position.m_movesCount;
 		}
 	}
 

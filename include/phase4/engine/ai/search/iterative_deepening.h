@@ -97,10 +97,8 @@ public:
 	}
 
 	static bool shouldContinueDeepening(const SearchContext &context, int32_t depth, int32_t expectedExecutionTime) {
-		std::cout << "depth:" << depth << " expectedExecutionTime:" << expectedExecutionTime << std::endl;
 		if (board::SearchConstants::isScoreNearCheckmate(context.statistics.score)) {
 			if (depth - 1 >= getMovesToCheckmate(context.statistics.score) * 2) {
-				std::cout << "Checkmate!" << std::endl;
 				return false;
 			}
 		}

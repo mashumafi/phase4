@@ -273,7 +273,7 @@ inline constexpr Square Square::operator++() {
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Square &square) {
-	constexpr char fileLabels[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
+	constexpr char fileLabels[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 	const FieldIndex field = square.asFieldIndex();
 
 	if (unlikely(field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8)) {
