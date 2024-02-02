@@ -24,38 +24,48 @@ public:
 		using namespace common;
 
 		const size_t spacePos = fen.find(' ');
+		if (spacePos == std::string_view::npos)
+			return {};
 
 		const std::string_view pieces = fen.substr(0, spacePos);
 
 		fen.remove_prefix(spacePos + 1);
 
 		size_t nextSpacePos = fen.find(' ');
+		if (nextSpacePos == std::string_view::npos)
+			return {};
 		const std::string_view sideToMove = fen.substr(0, nextSpacePos);
 
 		fen.remove_prefix(nextSpacePos + 1);
 
 		nextSpacePos = fen.find(' ');
+		if (nextSpacePos == std::string_view::npos)
+			return {};
 		const std::string_view castlingRights = fen.substr(0, nextSpacePos);
 
 		// Move the position to the next character after the space
 		fen.remove_prefix(nextSpacePos + 1);
 
 		nextSpacePos = fen.find(' ');
+		if (nextSpacePos == std::string_view::npos)
+			return {};
 		const std::string_view enPassantSquare = fen.substr(0, nextSpacePos);
 
 		fen.remove_prefix(nextSpacePos + 1);
 
 		nextSpacePos = fen.find(' ');
+		if (nextSpacePos == std::string_view::npos)
+			return {};
 		const std::string_view halfmoveClock = fen.substr(0, nextSpacePos);
 
-		uint16_t halfmoveClockNumber;
+		uint16_t halfmoveClockNumber = 0;
 		std::from_chars(halfmoveClock.data(), halfmoveClock.data() + halfmoveClock.size(), halfmoveClockNumber);
 
 		fen.remove_prefix(nextSpacePos + 1);
 
 		const std::string_view fullmove = fen;
 
-		uint16_t fullmoveNumber;
+		uint16_t fullmoveNumber = 0;
 		std::from_chars(fullmove.data(), fullmove.data() + fullmove.size(), fullmoveNumber);
 
 		board::Position result;
