@@ -40,7 +40,7 @@ public:
 
 	static const std::array<uint8_t, 64> DISTANCE_FROM_CENTER;
 
-	static const int PHASE_RESOLUTION;
+	static const int32_t PHASE_RESOLUTION;
 };
 
 inline constexpr uint64_t PositionConstants::FULL = UINT64_MAX;
@@ -84,7 +84,7 @@ inline constexpr std::array<uint8_t, 64> PositionConstants::DISTANCE_FROM_CENTER
 	3, 3, 3, 3, 3, 3, 3, 3
 };
 
-inline constexpr int PositionConstants::PHASE_RESOLUTION = 1024;
+inline constexpr int32_t PositionConstants::PHASE_RESOLUTION = 1024;
 
 } //namespace phase4::engine::common
 

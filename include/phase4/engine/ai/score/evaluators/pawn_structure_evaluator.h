@@ -50,7 +50,7 @@ public:
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;
 		const int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 
-		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), (short)openingScore, (short)endingScore);
+		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
 
 #ifndef NDEBUG
 		statistics.m_pawnHashTableAddedEntries++;

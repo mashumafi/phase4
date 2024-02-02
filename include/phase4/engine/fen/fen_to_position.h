@@ -48,14 +48,14 @@ public:
 		nextSpacePos = fen.find(' ');
 		const std::string_view halfmoveClock = fen.substr(0, nextSpacePos);
 
-		int halfmoveClockNumber;
+		uint16_t halfmoveClockNumber;
 		std::from_chars(halfmoveClock.data(), halfmoveClock.data() + halfmoveClock.size(), halfmoveClockNumber);
 
 		fen.remove_prefix(nextSpacePos + 1);
 
 		const std::string_view fullmove = fen;
 
-		int fullmoveNumber;
+		uint16_t fullmoveNumber;
 		std::from_chars(fullmove.data(), fullmove.data() + fullmove.size(), fullmoveNumber);
 
 		board::Position result;

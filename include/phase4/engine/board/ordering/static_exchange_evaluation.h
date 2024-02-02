@@ -152,7 +152,7 @@ inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE
 };
 
 constexpr int16_t StaticExchangeEvaluation::evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
-	return static_cast<short>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
+	return static_cast<int16_t>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
 }
 
 } //namespace phase4::engine::board::ordering

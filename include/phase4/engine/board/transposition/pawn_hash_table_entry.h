@@ -25,12 +25,12 @@ public:
 		return (uint16_t)(_data >> 20);
 	}
 
-	short endingScore() const {
+	int16_t endingScore() const {
 		const int16_t result = (int16_t)((_data >> 10) & 0x3FF);
 		return result < 512 ? result : (int16_t)(result - 1024);
 	}
 
-	short openingScore() const {
+	int16_t openingScore() const {
 		const int16_t result = (int16_t)(_data & 0x3FF);
 		return result < 512 ? result : (int16_t)(result - 1024);
 	}

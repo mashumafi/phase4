@@ -26,7 +26,7 @@ public:
 			} else if (moves[moveIndex].flags().isEnPassant()) {
 				moveValues[moveIndex] = MoveOrderingConstants::EN_PASSANT;
 			} else if (moves[moveIndex].flags().isPromotion()) {
-				moveValues[moveIndex] = (short)(MoveOrderingConstants::PROMOTION + moves[moveIndex].flags().get_raw_value()); // TODO: cast?
+				moveValues[moveIndex] = static_cast<int16_t>((MoveOrderingConstants::PROMOTION + moves[moveIndex].flags().get_raw_value())); // TODO: cast?
 			} else if (moves[moveIndex].flags().isCapture()) {
 				const common::PieceColor enemyColor = position.m_colorToMove.invert();
 
@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, int startIndex, int ply) {
+	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, int32_t startIndex, int32_t ply) {
 		moveValues.resize(moves.size());
 		const Position &position = session.m_position;
 		for (size_t moveIndex = startIndex; moveIndex < moves.size(); ++moveIndex) {

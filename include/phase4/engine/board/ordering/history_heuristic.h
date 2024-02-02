@@ -15,7 +15,7 @@ class HistoryHeuristic {
 public:
 	using Array = std::array<std::array<std::array<uint32_t, 64>, 6>, 2>;
 
-	inline void addHistoryMove(common::PieceColor color, common::PieceType piece, common::Square to, int depth) {
+	inline void addHistoryMove(common::PieceColor color, common::PieceType piece, common::Square to, int32_t depth) {
 		const uint32_t newValue = m_historyMoves[color.get_raw_value()][piece.get_raw_value()][to] + static_cast<uint32_t>(depth * depth);
 
 		m_max = common::Math::max_uint32(m_max, newValue);
