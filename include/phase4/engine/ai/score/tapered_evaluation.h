@@ -7,7 +7,7 @@ namespace phase4::engine::ai::score::evaluators {
 
 class TaperedEvaluation {
 public:
-	static inline int32_t adjustToPhase(int openingScore, int endingScore, int openingPhase, int endingPhase) {
+	static inline int32_t adjustToPhase(int32_t openingScore, int32_t endingScore, int32_t openingPhase, int32_t endingPhase) {
 		return (openingScore * openingPhase + endingScore * endingPhase) / common::PositionConstants::PHASE_RESOLUTION;
 	}
 };

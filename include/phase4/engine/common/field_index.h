@@ -26,6 +26,8 @@ struct FieldIndex {
 	constexpr bool isValid() const;
 
 	constexpr int16_t offset() const;
+
+	constexpr FieldIndex operator+=(FieldIndex that);
 };
 
 constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
@@ -75,6 +77,12 @@ constexpr bool operator!=(const FieldIndex left, const FieldIndex right) {
 
 constexpr FieldIndex operator+(FieldIndex left, FieldIndex right) {
 	return FieldIndex(left.x + right.x, left.y + right.y);
+}
+
+constexpr FieldIndex FieldIndex::operator+=(FieldIndex that) {
+	x += that.x;
+	y += that.y;
+	return *this;
 }
 
 constexpr FieldIndex operator-(FieldIndex that) {

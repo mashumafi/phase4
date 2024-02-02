@@ -14,7 +14,7 @@ int main() {
 		}
 		std::cout << "Bishop magics:" << std::endl;
 		for (size_t i = 0; i < bishopAttacks->containers.size(); ++i) {
-			std::cout << bishopAttacks->containers[i].magicNumber.asSize() << "ULL," << std::endl;
+			std::cout << bishopAttacks->containers[i].magicNumber.get_raw_value() << "ULL," << std::endl;
 		}
 	}
 
@@ -27,7 +27,7 @@ int main() {
 			return 1;
 		}
 		for (size_t i = 0; i < rookAttacks->containers.size(); ++i) {
-			std::cout << rookAttacks->containers[i].magicNumber.asSize() << "ULL," << std::endl;
+			std::cout << rookAttacks->containers[i].magicNumber.get_raw_value() << "ULL," << std::endl;
 		}
 	}
 

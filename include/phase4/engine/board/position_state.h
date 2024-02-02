@@ -17,15 +17,15 @@ public:
 
 	static constexpr void recalculateEvaluationDependentValues(Position &position);
 
-private:
-	static constexpr ZobristHashing calculateHash(const Position &position);
-
-	static constexpr ZobristHashing calculatePawnHash(const Position &position);
-
 	/// @brief Calculates the piece table based on piece masks
 	/// @param position the Position to update and compute from
 	static constexpr void calculatePieceTable(Position &position);
 
+	static constexpr ZobristHashing calculateHash(const Position &position);
+
+	static constexpr ZobristHashing calculatePawnHash(const Position &position);
+
+private:
 	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
 
 	static constexpr int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
@@ -65,7 +65,7 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 			pieces = pieces.popLsb();
 			common::Bitset fieldIndex = lsb.bitScan();
 
-			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.asSize()];
+			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.get_raw_value()];
 		}
 	}
 

@@ -75,13 +75,13 @@ private:
 		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 			const common::Bitset hash = permutations[permutationIndex] * container.magicNumber;
 			const common::Bitset attackIndex = hash >> container.shift;
-			const common::Bitset attack = container.attacks[attackIndex.asSize()];
+			const common::Bitset attack = container.attacks[attackIndex.get_raw_value()];
 
 			if (attack != 0 && attack != attacks[permutationIndex]) {
 				return false;
 			}
 
-			container.attacks[attackIndex.asSize()] = attacks[permutationIndex];
+			container.attacks[attackIndex.get_raw_value()] = attacks[permutationIndex];
 		}
 
 		return true;
@@ -137,7 +137,7 @@ inline common::Bitset MagicBitboards::getRookMoves(common::Bitset board, common:
 	board = board & ROOK_MAGIC_ARRAY.containers[square].mask;
 	board = board * ROOK_MAGIC_ARRAY.containers[square].magicNumber;
 	board = board >> ROOK_MAGIC_ARRAY.containers[square].shift;
-	return ROOK_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
+	return ROOK_MAGIC_ARRAY.containers[square].attacks[board.get_raw_value()];
 }
 
 inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, common::Square square) {
@@ -145,7 +145,7 @@ inline common::Bitset MagicBitboards::getBishopMoves(common::Bitset board, commo
 	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
 	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
 	board = board >> BISHOP_MAGIC_ARRAY.containers[square].shift;
-	return BISHOP_MAGIC_ARRAY.containers[square].attacks[board.asSize()];
+	return BISHOP_MAGIC_ARRAY.containers[square].attacks[board.get_raw_value()];
 }
 
 inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {

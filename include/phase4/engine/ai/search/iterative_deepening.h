@@ -45,7 +45,8 @@ private:
 
 class IterativeDeepening {
 public:
-	static moves::Move findBestMove(SearchContext &context, const std::function<void(const SearchStatistics &)> &searchUpdateCallback) {
+	static moves::Move findBestMove(
+			SearchContext &context, const std::function<void(const SearchStatistics &)> &searchUpdateCallback = [](const ai::search::SearchStatistics &) {}) {
 		context.session->m_historyHeuristic.ageValues();
 		context.session->m_killerHeuristic.ageKillers();
 
@@ -68,6 +69,7 @@ public:
 				break;
 			}
 
+			context.statistics.principalVariation.clear();
 			getPrincipalVariation(*context.session, context.statistics.principalVariation);
 			if (!context.statistics.principalVariation.is_empty()) // TODO: Why is it empty
 				bestMove = context.statistics.principalVariation[0];

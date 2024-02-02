@@ -50,7 +50,7 @@ public:
 #endif
 		} else {
 			standPat = score::Evaluation::evaluate(*context.session, true, context.statistics.evaluationStatistics);
-			context.session->m_hashTables.m_evaluationHashTable.add(context.session->m_position.m_hash.asBitboard(), (short)standPat);
+			context.session->m_hashTables.m_evaluationHashTable.add(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(standPat));
 
 #if DEBUG
 			context.Statistics.EvaluationStatistics.EHTNonHits++;

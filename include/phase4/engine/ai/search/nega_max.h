@@ -88,7 +88,7 @@ public:
 			++context.statistics.transpositionTableHits;
 #endif
 			if (entry.flags() != TranspositionTableEntryFlags::ALPHA_SCORE) {
-				const bool isMoveLegal = context.session->isMoveLegal(entry.bestMove());
+				const bool isMoveLegal = board::Operators::isMoveLegal(context.session->m_position, entry.bestMove());
 				if (isMoveLegal) {
 					hashMove = entry.bestMove();
 					bestMove = entry.bestMove();
@@ -144,7 +144,7 @@ public:
 #ifndef NDEBUG
 		else {
 			entry = TranspositionTableEntry();
-			context.statistics.transpositionTableNonHits++;
+			++context.statistics.transpositionTableNonHits;
 		}
 #endif
 
@@ -379,6 +379,7 @@ public:
 				break;
 
 			if (!loudMovesGenerated) {
+				moves.clear(); // TODO: confirm this is needed
 				board::Operators::getLoudMoves(context.session->m_position, moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->m_position, moves, moveValues, hashMove);
 				moveIndex = -1;
@@ -437,13 +438,22 @@ public:
 
 		if (entry.flags() == TranspositionTableEntryFlags::INVALID || alpha != originalAlpha) {
 			if (entry.age() != context.transpositionTableEntryAge || entry.depth() <= depth) {
-				int32_t valueToSave = alpha;
-				TranspositionTableEntryFlags entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags::ALPHA_SCORE : alpha >= beta ? TranspositionTableEntryFlags::BETA_SCORE
-																																			: TranspositionTableEntryFlags::EXACT_SCORE;
+				const TranspositionTableEntryFlags entryType = std::invoke([originalAlpha, alpha, beta]() -> TranspositionTableEntryFlags {
+					if (alpha <= originalAlpha) {
+						return TranspositionTableEntryFlags::ALPHA_SCORE;
+					}
 
-				valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+					if (alpha >= beta) {
+						return TranspositionTableEntryFlags::BETA_SCORE;
+					}
 
-				context.session->m_hashTables.m_transpositionTable.add(context.session->m_position.m_hash.asBitboard(), TranspositionTableEntry(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, (uint8_t)depth, entryType, (uint8_t)context.transpositionTableEntryAge));
+					return TranspositionTableEntryFlags::EXACT_SCORE;
+				});
+
+				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+
+				const TranspositionTableEntry newEntry(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
+				context.session->m_hashTables.m_transpositionTable.add(context.session->m_position.m_hash.asBitboard(), newEntry);
 
 #ifndef NDEBUG
 				if (entry.flags() != TranspositionTableEntryFlags::INVALID) {
@@ -500,7 +510,7 @@ private:
 		return !pvMove && !move.flags().isPromotion();
 	}
 
-	static int32_t futilityPruningGetGain(SearchContext &context, moves::Move move) {
+	static int32_t futilityPruningGetGain(const SearchContext &context, moves::Move move) {
 		if (move.flags().isCapture()) {
 			common::PieceType capturedPiece = context.session->m_position.m_pieceTable[move.to()];
 			return capturedPiece != common::PieceType::INVALID ? board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] : 100;

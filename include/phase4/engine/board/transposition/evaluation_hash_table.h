@@ -13,11 +13,11 @@ public:
 	using Table = std::array<EvaluationHashTableEntry, MB * 1024ull * 1024ull / sizeof(EvaluationHashTableEntry)>;
 
 	void add(common::Bitset hash, int16_t score) {
-		m_table[hash.asSize() % m_table.size()] = EvaluationHashTableEntry(hash, score);
+		m_table[hash.get_raw_value() % m_table.size()] = EvaluationHashTableEntry(hash, score);
 	}
 
 	EvaluationHashTableEntry get(common::Bitset hash) const {
-		return m_table[hash.asSize() % m_table.size()];
+		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 
 	void clear() {

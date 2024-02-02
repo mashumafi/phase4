@@ -32,6 +32,7 @@ public:
 	constexpr Castling &operator=(Castling &&that) noexcept = default;
 
 	constexpr Castling operator|(Castling that) const;
+	constexpr Castling operator|=(Castling that);
 
 	constexpr Castling operator&(Castling that) const;
 
@@ -67,6 +68,11 @@ constexpr Castling::Castling() :
 
 constexpr Castling Castling::operator|(Castling that) const {
 	return Castling(m_value | that.m_value);
+}
+
+constexpr Castling Castling::operator|=(Castling that) {
+	m_value |= that.m_value;
+	return *this;
 }
 
 constexpr Castling Castling::operator&(Castling that) const {

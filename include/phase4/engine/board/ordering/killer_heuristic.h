@@ -18,7 +18,7 @@ public:
 	using KillerMovesArray = std::array<moves::Move, ordering::MoveOrderingConstants::KILLER_SLOTS>;
 	using Array = std::array<std::array<KillerMovesArray, SearchConstants::MAX_DEPTH>, 2>;
 
-	void addKillerMove(moves::Move move, common::PieceColor color, int ply) {
+	void addKillerMove(moves::Move move, common::PieceColor color, int32_t ply) {
 		// TODO: use size()
 		for (int8_t slot = MoveOrderingConstants::KILLER_SLOTS - 2; slot >= 0; slot--) {
 			m_killerMoves[color.get_raw_value()][ply][slot + 1] = m_killerMoves[color.get_raw_value()][ply][slot];
@@ -27,7 +27,7 @@ public:
 		m_killerMoves[color.get_raw_value()][ply][0] = move;
 	}
 
-	bool killerMoveExists(moves::Move move, common::PieceColor color, int ply) const {
+	bool killerMoveExists(moves::Move move, common::PieceColor color, int32_t ply) const {
 		// TODO: use size()
 		for (int8_t slot = 0; slot < ordering::MoveOrderingConstants::KILLER_SLOTS; slot++) {
 			if (m_killerMoves[color.get_raw_value()][ply][slot] == move) {

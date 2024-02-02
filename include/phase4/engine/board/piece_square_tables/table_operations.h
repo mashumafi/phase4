@@ -20,8 +20,8 @@ public:
 
 	static constexpr std::array<int32_t, 64> flipHorizontally(const std::array<int32_t, 64> &array) {
 		std::array<int32_t, 64> result{};
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
+		for (int32_t y = 0; y < 8; y++) {
+			for (int32_t x = 0; x < 8; x++) {
 				result[x + y * 8] = array[(7 - x) + y * 8];
 			}
 		}

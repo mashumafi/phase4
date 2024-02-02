@@ -57,7 +57,7 @@ public:
 	/// @return
 	[[nodiscard]] inline constexpr uint8_t bitScan() const noexcept;
 
-	inline constexpr size_t asSize() const;
+	inline constexpr uint64_t get_raw_value() const;
 
 	inline constexpr bool operator==(Bitset bits) const noexcept;
 	inline constexpr bool operator==(uint64_t bits) const noexcept;
@@ -110,7 +110,7 @@ public:
 
 private:
 #ifdef USE_SLOW_BITSET_LSB
-	static constexpr int g_bitScanValues[] = {
+	static constexpr int32_t g_bitScanValues[] = {
 		0, 1, 48, 2, 57, 49, 28, 3,
 		61, 58, 50, 42, 38, 29, 17, 4,
 		62, 55, 59, 36, 53, 51, 43, 22,
@@ -250,7 +250,7 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #endif
 }
 
-inline constexpr size_t Bitset::asSize() const {
+inline constexpr uint64_t Bitset::get_raw_value() const {
 	return m_bits;
 }
 

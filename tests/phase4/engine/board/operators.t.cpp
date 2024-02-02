@@ -3,7 +3,6 @@
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/position_state.h>
 
-#include <phase4/engine/moves/magic/magic_bitboards.h>
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/move_flags.h>
 
@@ -15,8 +14,6 @@ TEST_CASE("Operators standard getAllMoves") {
 	using namespace phase4::engine::common;
 	using namespace phase4::engine::moves;
 	using namespace phase4::engine::board;
-
-	magic::MagicBitboards::initWithInternalKeys();
 
 	Position position;
 

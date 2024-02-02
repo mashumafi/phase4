@@ -168,7 +168,7 @@ private:
 		}
 	}
 
-	static void getDiagonalAttacks(const Position &position, int dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDiagonalAttacks(const Position &position, int32_t dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		int8_t shift;
