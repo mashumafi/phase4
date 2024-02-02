@@ -142,7 +142,7 @@ private:
 	static const Array TABLE;
 };
 
-constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
+inline constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
 	populate(common::PieceType::PAWN),
 	populate(common::PieceType::KNIGHT),
 	populate(common::PieceType::BISHOP),
