@@ -438,13 +438,22 @@ public:
 
 		if (entry.flags() == TranspositionTableEntryFlags::INVALID || alpha != originalAlpha) {
 			if (entry.age() != context.transpositionTableEntryAge || entry.depth() <= depth) {
-				int32_t valueToSave = alpha;
-				TranspositionTableEntryFlags entryType = alpha <= originalAlpha ? TranspositionTableEntryFlags::ALPHA_SCORE : alpha >= beta ? TranspositionTableEntryFlags::BETA_SCORE
-																																			: TranspositionTableEntryFlags::EXACT_SCORE;
+				const TranspositionTableEntryFlags entryType = std::invoke([originalAlpha, alpha, beta]() -> TranspositionTableEntryFlags {
+					if (alpha <= originalAlpha) {
+						return TranspositionTableEntryFlags::ALPHA_SCORE;
+					}
 
-				valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+					if (alpha >= beta) {
+						return TranspositionTableEntryFlags::BETA_SCORE;
+					}
 
-				context.session->m_hashTables.m_transpositionTable.add(context.session->m_position.m_hash.asBitboard(), TranspositionTableEntry(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, (uint8_t)depth, entryType, (uint8_t)context.transpositionTableEntryAge));
+					return TranspositionTableEntryFlags::EXACT_SCORE;
+				});
+
+				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+
+				const TranspositionTableEntry newEntry(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
+				context.session->m_hashTables.m_transpositionTable.add(context.session->m_position.m_hash.asBitboard(), newEntry);
 
 #ifndef NDEBUG
 				if (entry.flags() != TranspositionTableEntryFlags::INVALID) {

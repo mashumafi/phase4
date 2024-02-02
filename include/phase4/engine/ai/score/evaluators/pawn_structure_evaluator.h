@@ -83,7 +83,7 @@ private:
 
 			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
 			if (pawnsCount > 1) {
-				doubledPawns += (pawnsCount.asSize() - 1); // TODO: cast?
+				doubledPawns += (pawnsCount.get_raw_value() - 1); // TODO: cast?
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {

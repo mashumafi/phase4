@@ -57,7 +57,7 @@ public:
 	/// @return
 	[[nodiscard]] inline constexpr uint8_t bitScan() const noexcept;
 
-	inline constexpr size_t asSize() const;
+	inline constexpr size_t get_raw_value() const;
 
 	inline constexpr bool operator==(Bitset bits) const noexcept;
 	inline constexpr bool operator==(uint64_t bits) const noexcept;
@@ -250,7 +250,7 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #endif
 }
 
-inline constexpr size_t Bitset::asSize() const {
+inline constexpr uint64_t Bitset::get_raw_value() const {
 	return m_bits;
 }
 

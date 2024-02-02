@@ -16,19 +16,20 @@ public:
 	}
 
 	EvaluationHashTableEntry(common::Bitset hash, int16_t score) {
-		m_key = static_cast<uint16_t>(hash.asSize() >> 48);
+		m_key = static_cast<uint16_t>(hash.get_raw_value() >> 48);
 		m_score = score;
 	}
 
 	uint16_t key() const {
 		return m_key;
 	}
+
 	int16_t score() const {
 		return m_score;
 	}
 
 	bool isKeyValid(common::Bitset hash) const {
-		return m_key == hash.asSize() >> 48;
+		return m_key == hash.get_raw_value() >> 48;
 	}
 
 private:

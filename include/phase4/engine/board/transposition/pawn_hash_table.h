@@ -15,11 +15,11 @@ public:
 	using Table = std::array<PawnHashTableEntry, MB * 1024ull * 1024ull / sizeof(PawnHashTableEntry)>;
 
 	void add(common::Bitset hash, int16_t openingScore, int16_t endingScore) {
-		m_table[hash.asSize() % m_table.size()] = PawnHashTableEntry(hash, openingScore, endingScore);
+		m_table[hash.get_raw_value() % m_table.size()] = PawnHashTableEntry(hash, openingScore, endingScore);
 	}
 
 	PawnHashTableEntry get(common::Bitset hash) const {
-		return m_table[hash.asSize() % m_table.size()];
+		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 
 	void clear() {

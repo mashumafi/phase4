@@ -14,7 +14,7 @@ public:
 	}
 
 	PawnHashTableEntry(common::Bitset hash, int16_t openingScore, int16_t endingScore) {
-		const uint32_t hashPart = (uint32_t)((hash.asSize() >> 52) << 20);
+		const uint32_t hashPart = (uint32_t)((hash.get_raw_value() >> 52) << 20);
 		const uint32_t endingScorePart = (uint32_t)((endingScore & 0x3FF) << 10);
 		const uint32_t openingScorePart = (uint32_t)(openingScore & 0x3FF);
 
@@ -36,7 +36,7 @@ public:
 	}
 
 	bool isKeyValid(common::Bitset hash) const {
-		return key() == hash.asSize() >> 52;
+		return key() == hash.get_raw_value() >> 52;
 	}
 
 private:

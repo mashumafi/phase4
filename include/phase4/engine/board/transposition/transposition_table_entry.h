@@ -22,7 +22,7 @@ public:
 	}
 
 	inline TranspositionTableEntry(common::Bitset hash, int16_t score, moves::Move bestMove, uint8_t depth, TranspositionTableEntryFlags flags, uint8_t age) {
-		m_key = static_cast<uint16_t>(hash.asSize() >> 48);
+		m_key = static_cast<uint16_t>(hash.get_raw_value() >> 48);
 		m_score = score;
 		m_bestMove = bestMove;
 		m_depth = depth;
@@ -60,7 +60,7 @@ public:
 	}
 
 	inline bool isKeyValid(common::Bitset hash) const {
-		return m_key == static_cast<uint16_t>(hash.asSize() >> 48);
+		return m_key == static_cast<uint16_t>(hash.get_raw_value() >> 48);
 	}
 
 private:

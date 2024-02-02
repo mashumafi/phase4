@@ -65,7 +65,7 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 			pieces = pieces.popLsb();
 			common::Bitset fieldIndex = lsb.bitScan();
 
-			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.asSize()];
+			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.get_raw_value()];
 		}
 	}
 

@@ -15,23 +15,23 @@ class TranspositionTable {
 public:
 	using Table = std::array<TranspositionTableEntry, MB * 1024ul * 1024ul / sizeof(TranspositionTableEntry)>;
 
-	void add(common::Bitset hash, const TranspositionTableEntry &entry) {
-		m_table[hash.asSize() % m_table.size()] = entry;
+	inline void add(common::Bitset hash, const TranspositionTableEntry &entry) {
+		m_table[hash.get_raw_value() % m_table.size()] = entry;
 	}
 
-	TranspositionTableEntry get(common::Bitset hash) const {
-		return m_table[hash.asSize() % m_table.size()];
+	inline const TranspositionTableEntry &get(common::Bitset hash) const {
+		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 
-	TranspositionTableEntry &get(common::Bitset hash) {
-		return m_table[hash.asSize() % m_table.size()];
+	inline TranspositionTableEntry &get(common::Bitset hash) {
+		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 
 	void clear() {
 		m_table.fill(TranspositionTableEntry());
 	}
 
-	static int32_t regularToTranspositionTableScore(int32_t score, int32_t ply) {
+	inline static int32_t regularToTranspositionTableScore(int32_t score, int32_t ply) {
 		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score + ply;
@@ -43,7 +43,7 @@ public:
 		return score;
 	}
 
-	static int32_t transpositionTableToRegularScore(int32_t score, int32_t ply) {
+	inline static int32_t transpositionTableToRegularScore(int32_t score, int32_t ply) {
 		if (SearchConstants::isScoreNearCheckmate(score)) {
 			if (score > 0) {
 				return score - ply;

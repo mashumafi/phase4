@@ -20,10 +20,10 @@ public:
 	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
 	using Array = std::array<AttackersDefendersArray, 6>;
 
-	FAST_STATIC_CONSTEXPR int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender);
+	static constexpr int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender);
 
 private:
-	FAST_STATIC_CONSTEXPR common::PieceType getPieceBySeeIndex(int16_t index) {
+	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
 		switch (index) {
 			case SeePiece::PAWN.get_raw_value():
 				return common::PieceType::PAWN;
@@ -44,7 +44,7 @@ private:
 		return common::PieceType::INVALID;
 	}
 
-	FAST_STATIC_CONSTEXPR SeePiece getSeeIndexByPiece(common::PieceType piece) {
+	static constexpr SeePiece getSeeIndexByPiece(common::PieceType piece) {
 		switch (piece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
 				return SeePiece::PAWN;
@@ -63,14 +63,14 @@ private:
 		return SeePiece::INVALID;
 	}
 
-	FAST_STATIC_CONSTEXPR common::PieceType getLeastValuablePiece(common::Bitset data) {
+	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
 		const common::Bitset leastValuableDefenderField = data.getLsb();
 		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
-	FAST_STATIC_CONSTEXPR int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
+	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
 		common::SafeVector<int16_t, 128> gainList = {};
 
 		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
@@ -127,7 +127,7 @@ private:
 		return result;
 	}
 
-	FAST_STATIC_CONSTEXPR AttackersDefendersArray populate(common::PieceType attackingPiece) {
+	static constexpr AttackersDefendersArray populate(common::PieceType attackingPiece) {
 		AttackersDefendersArray table = {};
 
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
@@ -142,7 +142,7 @@ private:
 	static const Array TABLE;
 };
 
-FAST_INLINE_CONSTEXPR StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
+constexpr StaticExchangeEvaluation::Array StaticExchangeEvaluation::TABLE = {
 	populate(common::PieceType::PAWN),
 	populate(common::PieceType::KNIGHT),
 	populate(common::PieceType::BISHOP),
@@ -151,7 +151,7 @@ FAST_INLINE_CONSTEXPR StaticExchangeEvaluation::Array StaticExchangeEvaluation::
 	populate(common::PieceType::KING),
 };
 
-FAST_CONSTEXPR int16_t StaticExchangeEvaluation::evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
+constexpr int16_t StaticExchangeEvaluation::evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
 	return static_cast<short>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
 }
 
