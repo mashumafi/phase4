@@ -59,14 +59,22 @@ public:
 		const std::string_view halfmoveClock = fen.substr(0, nextSpacePos);
 
 		uint16_t halfmoveClockNumber = 0;
-		std::from_chars(halfmoveClock.data(), halfmoveClock.data() + halfmoveClock.size(), halfmoveClockNumber);
+		{
+			const auto [_, ec] = std::from_chars(halfmoveClock.data(), halfmoveClock.data() + halfmoveClock.size(), halfmoveClockNumber);
+			if (ec != std::errc())
+				return {};
+		}
 
 		fen.remove_prefix(nextSpacePos + 1);
 
 		const std::string_view fullmove = fen;
 
 		uint16_t fullmoveNumber = 0;
-		std::from_chars(fullmove.data(), fullmove.data() + fullmove.size(), fullmoveNumber);
+		{
+			const auto [_, ec] = std::from_chars(fullmove.data(), fullmove.data() + fullmove.size(), fullmoveNumber);
+			if (ec != std::errc())
+				return {};
+		}
 
 		board::Position result;
 		const PieceColor currentColor = parseSideToMove(sideToMove);

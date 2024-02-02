@@ -36,19 +36,19 @@ public:
 	board::Session *session;
 	SearchStatistics statistics;
 	CancellationToken cancellation;
-	uint8_t maxDepth;
-	uint32_t maxTime;
+	int32_t maxDepth;
+	int32_t maxTime;
 	bool abortSearch = false;
 	bool waitForStopCommand;
 	uint64_t maxNodesCount;
 	moves::Moves moveRestrictions;
-	uint16_t transpositionTableEntryAge;
+	int16_t transpositionTableEntryAge;
 
 	SearchContext(board::Session *session) :
 			session(session),
 			statistics(),
 			maxDepth(board::SearchConstants::MAX_DEPTH),
-			maxTime(std::numeric_limits<uint32_t>::max()),
+			maxTime(std::numeric_limits<int32_t>::max()),
 			waitForStopCommand(false),
 			maxNodesCount(std::numeric_limits<uint64_t>::max()),
 			moveRestrictions(),

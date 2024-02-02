@@ -32,6 +32,15 @@ TEST_CASE("Square output valid") {
 	}
 }
 
+TEST_CASE("Square parsing") {
+	using namespace phase4::engine::common;
+
+	CHECK(Square("f2") == Square::F2);
+	CHECK(Square("g3") == Square::G3);
+	CHECK(Square("e6") == Square::E6);
+	CHECK(Square("e7") == Square::E7);
+}
+
 TEST_CASE("Square output invalid") {
 	using namespace phase4::engine::common;
 
