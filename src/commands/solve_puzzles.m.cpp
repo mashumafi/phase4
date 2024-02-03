@@ -80,7 +80,6 @@ public:
 
 				std::string token;
 				while (iss >> token) {
-					std::cout << "parsing:" << token << std::endl;
 					moves.emplace_back(token);
 				}
 			}
@@ -115,7 +114,8 @@ public:
 			context.maxDepth = 16;
 			moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
 
-			if (bestMove != moves[1]) {
+			if (bestMove.to() != moves[1].to() || bestMove.from() != moves[1].from()) {
+				std::cerr << "FEN:" << FEN << std::endl;
 				std::cerr << "Rating:" << fields[3] << std::endl;
 				for (size_t i = 0; i < context.statistics.principalVariation.size(); ++i) {
 					std::cerr << "Found: " << context.statistics.principalVariation[i] << std::endl;
@@ -123,6 +123,7 @@ public:
 				for (size_t i = 0; i < moves.size(); ++i) {
 					std::cerr << "Expected: " << moves[i] << std::endl;
 				}
+				std::cerr << "Failed after " << count << " puzzles." << std::endl;
 				return 4;
 			}
 		}

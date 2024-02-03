@@ -10,7 +10,7 @@ namespace phase4::engine::board::transposition {
 class PawnHashTableEntry {
 public:
 	PawnHashTableEntry() :
-			_data(0) {
+			m_data(0) {
 	}
 
 	PawnHashTableEntry(common::Bitset hash, int16_t openingScore, int16_t endingScore) {
@@ -18,20 +18,20 @@ public:
 		const uint32_t endingScorePart = (uint32_t)((endingScore & 0x3FF) << 10);
 		const uint32_t openingScorePart = (uint32_t)(openingScore & 0x3FF);
 
-		_data = hashPart | endingScorePart | openingScorePart;
+		m_data = hashPart | endingScorePart | openingScorePart;
 	}
 
 	uint16_t key() const {
-		return (uint16_t)(_data >> 20);
+		return (uint16_t)(m_data >> 20);
 	}
 
 	int16_t endingScore() const {
-		const int16_t result = (int16_t)((_data >> 10) & 0x3FF);
+		const int16_t result = (int16_t)((m_data >> 10) & 0x3FF);
 		return result < 512 ? result : (int16_t)(result - 1024);
 	}
 
 	int16_t openingScore() const {
-		const int16_t result = (int16_t)(_data & 0x3FF);
+		const int16_t result = (int16_t)(m_data & 0x3FF);
 		return result < 512 ? result : (int16_t)(result - 1024);
 	}
 
@@ -40,7 +40,7 @@ public:
 	}
 
 private:
-	uint32_t _data;
+	uint32_t m_data;
 };
 
 } //namespace phase4::engine::board::transposition

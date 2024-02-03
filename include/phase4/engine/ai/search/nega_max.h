@@ -264,7 +264,7 @@ public:
 		int32_t bestScore = 0;
 		bool allMovesPruned = true;
 
-		for (size_t moveIndex = 0; moveIndex < moves.size(); moveIndex++) {
+		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			bool postLoopOperations = std::invoke([&]() -> bool {
 				if (LMPCanBeApplied(depth, friendlyKingInCheck, quietMovesGenerated, moveIndex, moves.size(), pvNode)) {
 					return false;
@@ -302,7 +302,7 @@ public:
 				context.session->makeMove(moves[moveIndex]);
 
 				const bool enemyKingInCheck = context.session->m_position.isKingChecked(context.session->m_position.m_colorToMove);
-				int32_t extension = getExtensions(depth, extensionsCount, enemyKingInCheck);
+				const int32_t extension = getExtensions(depth, extensionsCount, enemyKingInCheck);
 
 #ifndef NDEBUG
 				context.statistics.extensions += extension;
