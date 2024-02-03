@@ -30,6 +30,8 @@ TEST_CASE("Session scholar's mate") {
 	session->makeMove(moves::Move(common::Square::E8, common::Square::F7, moves::MoveFlags::CAPTURE));
 	session->makeMove(moves::Move(common::Square::C4, common::Square::F7, moves::MoveFlags::CAPTURE));
 
+	CHECK(session->m_position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KING.get_raw_value()] == 0);
+
 	session->undoMove(moves::Move(common::Square::C4, common::Square::F7, moves::MoveFlags::CAPTURE));
 	session->undoMove(moves::Move(common::Square::E8, common::Square::F7, moves::MoveFlags::CAPTURE));
 	session->undoMove(moves::Move(common::Square::H5, common::Square::F7, moves::MoveFlags::CAPTURE));
