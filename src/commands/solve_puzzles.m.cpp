@@ -30,7 +30,7 @@ namespace phase4::engine {
 class ThreadPool {
 public:
 	ThreadPool(size_t numThreads, size_t maxTasks) :
-			m_maxTasks(maxTasks), m_stop(false) {
+			m_maxTasks(maxTasks) {
 		for (size_t i = 0; i < numThreads; ++i) {
 			m_threads.emplace_back([this] { workerThread(); });
 		}
@@ -66,12 +66,12 @@ public:
 	}
 
 private:
-	std::vector<std::thread> m_threads;
-	std::queue<std::function<void(board::Session &)>> m_tasks;
+	std::vector<std::thread> m_threads = std::vector<std::thread>();
+	std::queue<std::function<void(board::Session &)>> m_tasks = std::queue<std::function<void(board::Session &)>>();
 	std::mutex m_queueMutex;
 	std::condition_variable m_condition;
 	size_t m_maxTasks;
-	bool m_stop;
+	bool m_stop = false;
 
 	void workerThread() {
 		auto session = std::make_unique<board::Session>();
@@ -271,17 +271,20 @@ public:
 					++statistics.checkmate;
 					++statistics.success;
 					++statistics.bestMoveFound;
-					if (ec == std::errc())
+					if (ec == std::errc()) {
 						atomic_max(statistics.highestSuccess, rating);
+					}
 				} else if (movesMatch()) {
 					++statistics.success;
 					++statistics.bestMoveFound;
-					if (ec == std::errc())
+					if (ec == std::errc()) {
 						atomic_max(statistics.highestSuccess, rating);
+					}
 				} else if (bestMove.to() == moves[1].to() || bestMove.from() == moves[1].from()) {
 					++statistics.bestMoveFound;
-					if (ec == std::errc())
+					if (ec == std::errc()) {
 						atomic_min(statistics.lowestFailure, rating);
+					}
 				}
 				++statistics.completed;
 			};
