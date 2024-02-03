@@ -289,6 +289,10 @@ public:
 					if (ec == std::errc()) {
 						atomic_min(statistics.lowestFailure, rating);
 					}
+				} else {
+					if (rating < 1000) {
+						std::cout << rating << " " << FEN << " " << *badMove << std::endl;
+					}
 				}
 				++statistics.completed;
 			};
