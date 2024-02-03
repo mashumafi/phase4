@@ -39,16 +39,16 @@ private:
 		for (int32_t rank = 7; rank >= 0; rank--) {
 			uint8_t emptyFields = 0;
 
-			for (int32_t file = 7; file >= 0; file--) {
-				const int32_t fieldIndex = rank * 8 + file;
+			for (int32_t file = 0; file < 8; file++) {
+				const Square fieldIndex(FieldIndex(file, rank));
 
 				const PieceType possibleWhitePiece = position.m_pieceTable[fieldIndex];
 				const PieceType possibleBlackPiece = position.m_pieceTable[fieldIndex];
 
 				const PieceColor color = std::invoke([&]() -> PieceColor {
-					if ((position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] & (1ull << fieldIndex)) != 0) {
+					if ((position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] & fieldIndex.asBitboard()) != 0) {
 						return PieceColor::WHITE;
-					} else if ((position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] & (1ull << fieldIndex)) != 0) {
+					} else if ((position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] & fieldIndex.asBitboard()) != 0) {
 						return PieceColor::BLACK;
 					}
 					return PieceColor::INVALID;
@@ -63,7 +63,7 @@ private:
 					return PieceType::INVALID;
 				});
 
-				const bool hasWall = (position.m_walls & (1ull << fieldIndex)) != 0;
+				const bool hasWall = (position.m_walls & fieldIndex.asBitboard()) != 0;
 
 				if (piece != PieceType::INVALID) {
 					if (emptyFields != 0) {
