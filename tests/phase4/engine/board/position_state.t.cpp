@@ -41,7 +41,7 @@ TEST_CASE("PositionState DEFAULT") {
 	CHECK(position.m_enPassant == common::Bitset(0));
 	CHECK(position.m_castling == common::Castling::EVERYTHING);
 	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
-	CHECK(position.m_movesCount == 0);
+	CHECK(position.m_movesCount == 1);
 	CHECK(position.m_irreversibleMovesCount == 0);
 	CHECK(position.m_nullMoves == 0);
 

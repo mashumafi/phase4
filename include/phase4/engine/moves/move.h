@@ -5,6 +5,8 @@
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/move_flags.h>
 
+#include <sstream>
+
 namespace phase4::engine::moves {
 
 class Move {

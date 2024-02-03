@@ -3,6 +3,7 @@
 #include <phase4/engine/ai/search/iterative_deepening.h>
 #include <phase4/engine/ai/search/search_context.h>
 
+#include <phase4/engine/board/operators.h>
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/session.h>
 
@@ -39,6 +40,8 @@ public:
 			std::cerr << "Error opening the file." << std::endl;
 			return 1;
 		}
+
+		auto session = std::make_unique<board::Session>();
 
 		std::string line;
 		std::vector<std::string> fields;
@@ -88,8 +91,25 @@ public:
 				return 3;
 			}
 
-			auto session = std::make_unique<board::Session>(*position);
-			session->makeMove(moves[0]);
+			session->setPosition(*position);
+			auto findRealMove = [&session](moves::Move badMove) -> std::optional<moves::Move> {
+				moves::Moves moves;
+				board::Operators::getAllMoves(session->m_position, moves);
+				for (size_t i = 0; i < moves.size(); ++i) {
+					const bool isQuiet = badMove.flags() == moves::MoveFlags::QUIET;
+					const bool correctFlags = isQuiet || moves[i].flags() == badMove.flags();
+					if (moves[i].from() == badMove.from() && moves[i].to() == badMove.to() && correctFlags) {
+						return moves[i];
+					}
+				}
+				return std::nullopt;
+			};
+			std::optional<moves::Move> badMove = findRealMove(moves[0]);
+			if (!badMove) {
+				std::cerr << "Could not find the move" << std::endl;
+				return 5;
+			}
+			session->makeMove(*badMove);
 
 			ai::search::SearchContext context(session.get());
 			context.maxDepth = 16;
@@ -119,7 +139,7 @@ int main() {
 
 	MagicBitboards::initWithInternalKeys();
 
-	CsvReader csvReader("../../../puzzles/lichess_db_puzzle.csv");
+	CsvReader csvReader("/workspaces/phase4/puzzles/lichess_db_puzzle.csv");
 
 	return csvReader.processFile();
 }
