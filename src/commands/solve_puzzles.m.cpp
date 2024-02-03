@@ -10,6 +10,7 @@
 #include <phase4/engine/moves/magic/magic_bitboards.h>
 #include <phase4/engine/moves/move.h>
 
+#include <algorithm>
 #include <atomic>
 #include <condition_variable>
 #include <fstream>
@@ -163,10 +164,12 @@ public:
 			return 1;
 		}
 
-		ThreadPool pool(9, 100);
+		const uint32_t NUM_THREADS = std::max(std::thread::hardware_concurrency() - 1, 1u);
+		ThreadPool pool(NUM_THREADS, 100);
 
 		PuzzleStatistics statistics;
 		std::string line;
+		line.reserve(100);
 		while (std::getline(file, line)) {
 			if (statistics.count >= CSV_LINE_LIMIT) {
 				break;
@@ -236,7 +239,8 @@ public:
 				session.makeMove(*badMove);
 
 				ai::search::SearchContext context(&session);
-				context.maxDepth = (moves.size() + 4);
+				context.maxDepth = (moves.size() + 8);
+				context.maxTime = 5'000;
 
 				auto movesMatch = [&moves, &context]() -> bool {
 					if (moves.size() > context.statistics.principalVariation.size()) {
