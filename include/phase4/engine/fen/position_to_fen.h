@@ -19,7 +19,7 @@ namespace phase4::engine::fen {
 class PositionToFen {
 public:
 	static std::string encode(const board::Position &position) {
-		return encodeBoardState(position) + " " +
+		return encodePieces(position) + " " +
 				encodeColor(position) + " " +
 				encodeCastling(position) + " " +
 				encodeEnPassant(position) + " " +
@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	static std::string encodeBoardState(const board::Position &position) {
+	static std::string encodePieces(const board::Position &position) {
 		using namespace common;
 
 		std::string resultBuilder;
@@ -40,7 +40,7 @@ private:
 			uint8_t emptyFields = 0;
 
 			for (int32_t file = 7; file >= 0; file--) {
-				const int32_t fieldIndex = rank * 8 + file;
+				const uint64_t fieldIndex = rank * 8 + file;
 
 				const PieceType possibleWhitePiece = position.m_pieceTable[fieldIndex];
 				const PieceType possibleBlackPiece = position.m_pieceTable[fieldIndex];
