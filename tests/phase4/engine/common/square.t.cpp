@@ -10,26 +10,35 @@ TEST_CASE("Square output valid") {
 	SUBCASE("Square H1") {
 		std::stringstream ss;
 		ss << Square::H1;
-		CHECK(ss.str() == "H1");
+		CHECK(ss.str() == "h1");
 	}
 
 	SUBCASE("Square D4") {
 		std::stringstream ss;
 		ss << Square::D4;
-		CHECK(ss.str() == "D4");
+		CHECK(ss.str() == "d4");
 	}
 
 	SUBCASE("Square G2") {
 		std::stringstream ss;
 		ss << Square::G2;
-		CHECK(ss.str() == "G2");
+		CHECK(ss.str() == "g2");
 	}
 
 	SUBCASE("Square A8") {
 		std::stringstream ss;
 		ss << Square::A8;
-		CHECK(ss.str() == "A8");
+		CHECK(ss.str() == "a8");
 	}
+}
+
+TEST_CASE("Square parsing") {
+	using namespace phase4::engine::common;
+
+	CHECK(Square("f2") == Square::F2);
+	CHECK(Square("g3") == Square::G3);
+	CHECK(Square("e6") == Square::E6);
+	CHECK(Square("e7") == Square::E7);
 }
 
 TEST_CASE("Square output invalid") {

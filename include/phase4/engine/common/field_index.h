@@ -42,8 +42,8 @@ constexpr FieldIndex::FieldIndex() :
 }
 
 constexpr FieldIndex::FieldIndex(std::string_view move) :
-		x{ static_cast<int16_t>('8' - move[1]) },
-		y{ static_cast<int16_t>(move[0] - 'a') } {
+		x{ static_cast<int16_t>(move[0] - 'a') },
+		y{ static_cast<int16_t>(move[1] - '1') } {
 }
 
 /**

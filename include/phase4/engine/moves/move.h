@@ -5,6 +5,8 @@
 #include <phase4/engine/common/square.h>
 #include <phase4/engine/moves/move_flags.h>
 
+#include <sstream>
+
 namespace phase4::engine::moves {
 
 class Move {
@@ -26,7 +28,7 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const Move &move);
 
 private:
-	uint16_t _data;
+	uint16_t m_data;
 
 	friend constexpr bool operator==(const Move a, const Move b);
 	friend constexpr bool operator!=(const Move a, const Move b);
@@ -37,24 +39,24 @@ using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
 using MoveValues = common::FastVector<int16_t, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
-	return common::Square(_data & 0x3F);
+	return common::Square(m_data & 0x3F);
 }
 
 constexpr common::Square Move::to() const {
-	return common::Square((_data >> 6) & 0x3F);
+	return common::Square((m_data >> 6) & 0x3F);
 }
 
 constexpr MoveFlags Move::flags() const {
-	return MoveFlags(_data >> 12);
+	return MoveFlags(m_data >> 12);
 }
 
 constexpr Move::Move() :
-		_data(0) {}
+		m_data(0) {}
 
 inline constexpr Move Move::Empty;
 
 constexpr Move::Move(common::Square from, common::Square to, MoveFlags flags) :
-		_data(
+		m_data(
 				static_cast<uint16_t>(from.get_raw_value()) |
 				static_cast<uint16_t>(to.get_raw_value() << 6) |
 				static_cast<uint16_t>(flags.get_raw_value() << 12)) {
@@ -76,11 +78,11 @@ inline std::ostream &operator<<(std::ostream &os, const Move &move) {
 }
 
 inline constexpr bool operator==(const Move a, const Move b) {
-	return a._data == b._data;
+	return a.m_data == b.m_data;
 }
 
 inline constexpr bool operator!=(const Move a, const Move b) {
-	return a._data != b._data;
+	return a.m_data != b.m_data;
 }
 
 } //namespace phase4::engine::moves

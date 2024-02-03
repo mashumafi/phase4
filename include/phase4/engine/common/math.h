@@ -15,6 +15,9 @@ public:
 	static inline constexpr int16_t min_int16(int16_t x, int16_t y);
 	static inline constexpr int16_t max_int16(int16_t x, int16_t y);
 
+	static inline constexpr uint16_t min_uint16(uint16_t x, uint16_t y);
+	static inline constexpr uint16_t max_uint16(uint16_t x, uint16_t y);
+
 	static inline constexpr int32_t min_int32(int32_t x, int32_t y);
 	static inline constexpr int32_t max_int32(int32_t x, int32_t y);
 
@@ -35,6 +38,14 @@ inline constexpr int16_t Math::min_int16(int16_t x, int16_t y) {
 }
 
 inline constexpr int16_t Math::max_int16(int16_t x, int16_t y) {
+	return x ^ ((x ^ y) & -(x < y));
+}
+
+inline constexpr uint16_t Math::min_uint16(uint16_t x, uint16_t y) {
+	return y ^ ((x ^ y) & -(x < y));
+}
+
+inline constexpr uint16_t Math::max_uint16(uint16_t x, uint16_t y) {
 	return x ^ ((x ^ y) & -(x < y));
 }
 

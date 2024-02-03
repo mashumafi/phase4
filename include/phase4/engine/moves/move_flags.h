@@ -217,7 +217,7 @@ constexpr MoveFlags &MoveFlags::operator=(MoveFlags &&that) noexcept {
 			return KNIGHT_PROMOTION;
 	}
 
-	return MoveFlags(0);
+	return MoveFlags::QUIET;
 }
 
 constexpr bool MoveFlags::operator==(const MoveFlags &flags) const {

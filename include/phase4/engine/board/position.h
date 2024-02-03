@@ -34,9 +34,9 @@ public:
 	std::array<common::Bitset, 2> m_occupancyByColor = {};
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
-	common::Castling m_castling = common::Castling::EVERYTHING;
+	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
-	uint16_t m_movesCount = 0;
+	uint16_t m_movesCount = 1;
 	size_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
@@ -68,11 +68,15 @@ public:
 		using namespace common;
 		using namespace piece_square_tables;
 
-		common::Bitset move = from.asBitboard() | to.asBitboard();
+		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & from.asBitboard()) != 0);
+		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
+		assert((m_colorPieceMasks[color.invert().get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
+
+		const common::Bitset move = from.asBitboard() | to.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= move;
 		m_occupancyByColor[color.get_raw_value()] ^= move;
-		m_occupancySummary = m_occupancySummary ^ move;
+		m_occupancySummary ^= move;
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][to];
@@ -87,11 +91,13 @@ public:
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		common::Bitset field = fieldIndex.asBitboard();
+		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & fieldIndex.asBitboard()) == 0);
+
+		const common::Bitset field = fieldIndex.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
 		m_occupancyByColor[color.get_raw_value()] ^= field;
-		m_occupancySummary = m_occupancySummary ^ field;
+		m_occupancySummary ^= field;
 
 		m_material[color.get_raw_value()] += board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
@@ -104,7 +110,9 @@ public:
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		common::Bitset field = fieldIndex.asBitboard();
+		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & fieldIndex.asBitboard()) != 0);
+
+		const common::Bitset field = fieldIndex.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
 		m_occupancyByColor[color.get_raw_value()] ^= field;
@@ -184,11 +192,11 @@ public:
 
 		MakeMoveResult result;
 
-		PieceType pieceType = m_pieceTable[move.from()];
-		PieceColor enemyColor = m_colorToMove.invert();
+		const PieceType pieceType = m_pieceTable[move.from()];
+		const PieceColor enemyColor = m_colorToMove.invert();
 
-		if (m_colorToMove == PieceColor::WHITE) {
-			m_movesCount++;
+		if (m_colorToMove == PieceColor::BLACK) {
+			++m_movesCount;
 		}
 
 		if (pieceType == PieceType::PAWN || move.flags().isCapture() || move.flags().isCastling()) {
@@ -198,7 +206,7 @@ public:
 		}
 
 		if (m_enPassant != 0) {
-			uint8_t enPassantRank = m_enPassant.fastBitScan() % 8;
+			const uint8_t enPassantRank = m_enPassant.fastBitScan() % 8;
 			m_hash = m_hash.toggleEnPassant(enPassantRank);
 			m_enPassant = 0;
 		}
@@ -217,14 +225,14 @@ public:
 			m_hash = m_hash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 			m_pawnHash = m_pawnHash.movePiece(m_colorToMove, pieceType, move.from(), move.to());
 
-			Bitset enPassantField = (m_colorToMove == PieceColor::WHITE) ? Square(move.to() - 8).asBitboard() : Square(move.to() + 8).asBitboard();
-			uint8_t enPassantFieldIndex = enPassantField.fastBitScan();
+			const Bitset enPassantField = (m_colorToMove == PieceColor::WHITE) ? move.to().south(1).asBitboard() : move.to().north(1).asBitboard();
+			const uint8_t enPassantFieldIndex = enPassantField.fastBitScan();
 
 			m_enPassant = enPassantField;
 			m_hash = m_hash.toggleEnPassant(enPassantFieldIndex % 8);
 		} else if (move.flags().isEnPassant()) {
-			Square enemyPieceField((m_colorToMove == PieceColor::WHITE) ? move.to() - 8 : move.to() + 8);
-			PieceType killedPiece = m_pieceTable[enemyPieceField];
+			const Square enemyPieceField((m_colorToMove == PieceColor::WHITE) ? move.to().south(1) : move.to().north(1));
+			const PieceType killedPiece = m_pieceTable[enemyPieceField];
 
 			removePiece(enemyColor, killedPiece, enemyPieceField);
 			result.removed.push_back({ killedPiece, enemyPieceField });
@@ -292,8 +300,7 @@ public:
 
 			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, move.to() };
 		} else if (move.flags().isCastling()) {
-			// Short castling
-			if (move.flags().isKingCastling()) {
+			if (move.flags().isKingCastling()) { // Short/King castling
 				if (m_colorToMove == PieceColor::WHITE) {
 					movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::G1);
 					movePiece(PieceColor::WHITE, PieceType::ROOK, Square::H1, Square::F1);
@@ -313,7 +320,7 @@ public:
 					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::KING, Square::E8, Square::G8);
 					m_hash = m_hash.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::H8, Square::F8);
 				}
-			} else { // Long castling
+			} else { // Long/Queen castling
 				if (m_colorToMove == PieceColor::WHITE) {
 					movePiece(PieceColor::WHITE, PieceType::KING, Square::E1, Square::C1);
 					movePiece(PieceColor::WHITE, PieceType::ROOK, Square::A1, Square::D1);

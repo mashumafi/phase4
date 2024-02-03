@@ -35,7 +35,7 @@ public:
 		}
 
 		if (context.session->m_position.isKingChecked(context.session->m_position.m_colorToMove.invert())) {
-			context.statistics.qLeafs++;
+			++context.statistics.qLeafs;
 			return -board::SearchConstants::NO_KING_VALUE;
 		}
 

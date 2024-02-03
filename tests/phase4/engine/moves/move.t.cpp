@@ -16,7 +16,7 @@ TEST_CASE("Move raw constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4");
+		CHECK(ss.str() == "g2c4");
 	}
 
 	SUBCASE("Promotion") {
@@ -27,7 +27,7 @@ TEST_CASE("Move raw constructor") {
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4q");
+		CHECK(ss.str() == "g2c4q");
 	}
 }
 
@@ -37,23 +37,23 @@ TEST_CASE("Move string constructor") {
 
 	SUBCASE("Not a promotion") {
 		Move move("b2d6");
-		CHECK(move.from() == Square::G2);
-		CHECK(move.to() == Square::C4);
+		CHECK(move.from() == Square::B2);
+		CHECK(move.to() == Square::D6);
 		CHECK(move.flags() == MoveFlags::QUIET);
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4");
+		CHECK(ss.str() == "b2d6");
 	}
 
 	SUBCASE("Promotion") {
 		Move move("b2d6q");
-		CHECK(move.from() == Square::G2);
-		CHECK(move.to() == Square::C4);
+		CHECK(move.from() == Square::B2);
+		CHECK(move.to() == Square::D6);
 		CHECK(move.flags() == MoveFlags::QUEEN_PROMOTION);
 
 		std::ostringstream ss;
 		ss << move;
-		CHECK(ss.str() == "G2C4q");
+		CHECK(ss.str() == "b2d6q");
 	}
 }

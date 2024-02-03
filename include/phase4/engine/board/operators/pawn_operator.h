@@ -23,7 +23,7 @@ public:
 	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
-		PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.m_colorToMove;
 
 		getSinglePush(position, moves, true, evasionMask);
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, evasionMask);
@@ -38,7 +38,7 @@ public:
 	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.m_colorToMove;
 
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, Bitset::MAX);
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, Bitset::MAX);
@@ -198,7 +198,7 @@ private:
 			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle en passant after sliding
-			Bitset slideRank = position.m_walls == 0 ? promotionRank : WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
+			Bitset slideRank = position.m_walls == 0 ? 0 : WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
 
 			if ((piece & promotionRank) != 0 || (slideRank & promotionRank) != 0) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE);

@@ -34,6 +34,13 @@ public:
 		m_pawnHashes.clear();
 		m_irreversibleMovesCounts.clear();
 		m_wallSlides.clear();
+
+		m_killerHeuristic.clear();
+		m_historyHeuristic.clear();
+
+		m_hashTables.m_evaluationHashTable.clear();
+		m_hashTables.m_pawnHashTable.clear();
+		m_hashTables.m_transpositionTable.clear();
 	}
 
 	bool isKingChecked(common::PieceColor color) const {
@@ -53,7 +60,7 @@ public:
 		m_enPassants.push_back(m_position.m_enPassant);
 		m_irreversibleMovesCounts.push_back(m_position.m_irreversibleMovesCount);
 
-		Position::MakeMoveResult details = m_position.makeMove(move);
+		const Position::MakeMoveResult &details = m_position.makeMove(move);
 		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
@@ -69,12 +76,12 @@ public:
 	void undoMove(moves::Move move) {
 		using namespace common;
 
-		FieldIndex wallMove = m_wallSlides.pop_back();
+		const FieldIndex wallMove = m_wallSlides.pop_back();
 		if (wallMove != FieldIndex::ZERO) {
 			m_position.slideWall(wallMove);
 		}
 
-		PieceType pieceType = m_position.m_pieceTable[move.to()];
+		const PieceType pieceType = m_position.m_pieceTable[move.to()];
 		m_position.m_colorToMove = m_position.m_colorToMove.invert();
 
 		if (move.flags().isSinglePush() || move.flags().isDoublePush()) {
@@ -87,7 +94,7 @@ public:
 			m_position.movePiece(m_position.m_colorToMove, PieceType::PAWN, move.to(), move.from());
 			m_position.addPiece(enemyColor, killedPiece, enemyPieceField);
 		} else if (move.flags().isCapture()) {
-			PieceColor enemyColor = m_position.m_colorToMove.invert();
+			const PieceColor enemyColor = m_position.m_colorToMove.invert();
 			const PieceType killedPiece = m_killedPieces.pop_back();
 
 			// Promotion
@@ -101,8 +108,7 @@ public:
 
 			m_position.addPiece(enemyColor, killedPiece, move.to());
 		} else if (move.flags().isCastling()) {
-			// Short castling
-			if (move.flags().isKingCastling()) {
+			if (move.flags().isKingCastling()) { // Short/King castling
 				if (m_position.m_colorToMove == PieceColor::WHITE) {
 					m_position.movePiece(PieceColor::WHITE, PieceType::KING, Square::G1, Square::E1);
 					m_position.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::F1, Square::H1);
@@ -110,9 +116,7 @@ public:
 					m_position.movePiece(PieceColor::BLACK, PieceType::KING, Square::G8, Square::E8);
 					m_position.movePiece(PieceColor::BLACK, PieceType::ROOK, Square::F8, Square::H8);
 				}
-			}
-			// Long castling
-			else {
+			} else { // Long/Queen castling
 				if (m_position.m_colorToMove == PieceColor::WHITE) {
 					m_position.movePiece(PieceColor::WHITE, PieceType::KING, Square::C1, Square::E1);
 					m_position.movePiece(PieceColor::WHITE, PieceType::ROOK, Square::D1, Square::A1);
@@ -124,7 +128,7 @@ public:
 
 			m_position.m_castlingDone[m_position.m_colorToMove.get_raw_value()] = false;
 		} else if (move.flags().isPromotion()) {
-			PieceType promotionPiece = m_promotedPieces.pop_back();
+			const PieceType promotionPiece = m_promotedPieces.pop_back();
 			m_position.removePiece(m_position.m_colorToMove, promotionPiece, move.to());
 			m_position.addPiece(m_position.m_colorToMove, PieceType::PAWN, move.from());
 		}
@@ -135,13 +139,13 @@ public:
 		m_position.m_castling = m_castlings.pop_back();
 		m_position.m_enPassant = m_enPassants.pop_back();
 
-		if (m_position.m_colorToMove == PieceColor::WHITE) {
-			m_position.m_movesCount--;
+		if (m_position.m_colorToMove == PieceColor::BLACK) {
+			--m_position.m_movesCount;
 		}
 	}
 
 	void makeNullMove() {
-		m_position.m_nullMoves++;
+		++m_position.m_nullMoves;
 		if (m_position.m_colorToMove == common::PieceColor::WHITE) {
 			++m_position.m_movesCount;
 		}
@@ -150,7 +154,7 @@ public:
 		m_hashes.push_back(m_position.m_hash);
 
 		if (m_position.m_enPassant != 0) {
-			uint8_t enPassantRank = m_position.m_enPassant.bitScan() % 8;
+			const uint8_t enPassantRank = m_position.m_enPassant.bitScan() % 8;
 			m_position.m_hash = m_position.m_hash.toggleEnPassant(enPassantRank);
 			m_position.m_enPassant = 0;
 		}
@@ -160,7 +164,7 @@ public:
 	}
 
 	void undoNullMove() {
-		m_position.m_nullMoves--;
+		--m_position.m_nullMoves;
 		m_position.m_colorToMove = m_position.m_colorToMove.invert();
 
 		m_position.m_hash = m_hashes.pop_back();

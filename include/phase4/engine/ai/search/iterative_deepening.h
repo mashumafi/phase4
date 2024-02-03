@@ -50,16 +50,17 @@ public:
 		context.session->m_historyHeuristic.ageValues();
 		context.session->m_killerHeuristic.ageKillers();
 
-		uint32_t expectedExecutionTime = 0;
+		int32_t expectedExecutionTime = 0;
 		const int32_t alpha = board::SearchConstants::MIN_VALUE;
 		const int32_t beta = board::SearchConstants::MAX_VALUE;
 		uint32_t lastSearchTime = 0ul;
 		moves::Move bestMove = moves::Move::Empty;
 		Stopwatch stopwatch;
+		stopwatch.start();
 
 		context.statistics = SearchStatistics();
 
-		for (uint8_t depth = 1; shouldContinueDeepening(context, depth, expectedExecutionTime); ++depth) {
+		for (int32_t depth = 1; shouldContinueDeepening(context, depth, expectedExecutionTime); ++depth) {
 			context.statistics.session = context.session;
 			context.statistics.depth = depth;
 			context.statistics.score = NegaMax::findBestMove(context, depth, 0, alpha, beta);
@@ -95,7 +96,7 @@ public:
 		return bestMove;
 	}
 
-	static bool shouldContinueDeepening(const SearchContext &context, uint8_t depth, uint32_t expectedExecutionTime) {
+	static bool shouldContinueDeepening(const SearchContext &context, int32_t depth, int32_t expectedExecutionTime) {
 		if (board::SearchConstants::isScoreNearCheckmate(context.statistics.score)) {
 			if (depth - 1 >= getMovesToCheckmate(context.statistics.score) * 2) {
 				return false;
