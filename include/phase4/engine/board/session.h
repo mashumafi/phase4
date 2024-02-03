@@ -34,6 +34,13 @@ public:
 		m_pawnHashes.clear();
 		m_irreversibleMovesCounts.clear();
 		m_wallSlides.clear();
+
+		m_killerHeuristic.clear();
+		m_historyHeuristic.clear();
+
+		m_hashTables.m_evaluationHashTable.clear();
+		m_hashTables.m_pawnHashTable.clear();
+		m_hashTables.m_transpositionTable.clear();
 	}
 
 	bool isKingChecked(common::PieceColor color) const {
@@ -53,7 +60,7 @@ public:
 		m_enPassants.push_back(m_position.m_enPassant);
 		m_irreversibleMovesCounts.push_back(m_position.m_irreversibleMovesCount);
 
-		const Position::MakeMoveResult& details = m_position.makeMove(move);
+		const Position::MakeMoveResult &details = m_position.makeMove(move);
 		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
