@@ -68,11 +68,11 @@ public:
 		using namespace common;
 		using namespace piece_square_tables;
 
-		common::Bitset move = from.asBitboard() | to.asBitboard();
+		const common::Bitset move = from.asBitboard() | to.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= move;
 		m_occupancyByColor[color.get_raw_value()] ^= move;
-		m_occupancySummary = m_occupancySummary ^ move;
+		m_occupancySummary ^= move;
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][to];
@@ -87,11 +87,11 @@ public:
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		common::Bitset field = fieldIndex.asBitboard();
+		const common::Bitset field = fieldIndex.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
 		m_occupancyByColor[color.get_raw_value()] ^= field;
-		m_occupancySummary = m_occupancySummary ^ field;
+		m_occupancySummary ^= field;
 
 		m_material[color.get_raw_value()] += board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
@@ -104,7 +104,7 @@ public:
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		common::Bitset field = fieldIndex.asBitboard();
+		const common::Bitset field = fieldIndex.asBitboard();
 
 		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
 		m_occupancyByColor[color.get_raw_value()] ^= field;
@@ -184,8 +184,8 @@ public:
 
 		MakeMoveResult result;
 
-		PieceType pieceType = m_pieceTable[move.from()];
-		PieceColor enemyColor = m_colorToMove.invert();
+		const PieceType pieceType = m_pieceTable[move.from()];
+		const PieceColor enemyColor = m_colorToMove.invert();
 
 		if (m_colorToMove == PieceColor::BLACK) {
 			++m_movesCount;

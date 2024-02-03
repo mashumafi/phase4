@@ -55,7 +55,7 @@ private:
 			}
 		}
 
-		int32_t openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + openFilesNextToKingScore;
+		const int32_t openingScore = pawnShieldOpeningScore + attackersCountOpeningScore + openFilesNextToKingScore;
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);
 	}
 };

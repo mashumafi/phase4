@@ -15,12 +15,12 @@
 
 #include <memory>
 
-TEST_CASE("MoveOrdering getAvailableCaptureMoves assignQValues") {
+TEST_CASE("MoveOrdering assignQValues 00008") {
 	using namespace phase4::engine;
 
 	const auto position = fen::FenToPosition::parse("r6k/pp2r2p/4Rp1Q/3p4/8/1N1P2R1/PqP2bPP/7K b - - 0 24");
 	REQUIRE(position);
-	auto session = std::make_unique<board::Session>(*position);
+	const auto session = std::make_unique<board::Session>(*position);
 
 	moves::Moves moves;
 	moves::MoveValues moveValues;
