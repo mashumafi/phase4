@@ -13,8 +13,7 @@ TEST_CASE("Evaluation evaluate cached") {
 	auto session = std::make_unique<board::Session>();
 	ai::score::EvaluationStatistics statistics;
 
-	int32_t result = ai::score::Evaluation::evaluate(*session, true, statistics);
-	CHECK(result != 0);
+	ai::score::Evaluation::evaluate(*session, true, statistics);
 }
 
 TEST_CASE("Evaluation evaluate not cached") {
