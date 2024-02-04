@@ -32,39 +32,39 @@ public:
 		uint8_t result = 0;
 
 		const common::Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
-		const common::Bitset attackingKnights = jumpAttacks & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()];
+		const common::Bitset attackingKnights = jumpAttacks & position.colorPieceMask(color, common::PieceType::KNIGHT);
 		const uint8_t attackingKnightsCount = attackingKnights.count();
 		if (attackingKnightsCount != 0) {
 			result |= (uint8_t)((attackingKnightsCount == 1 ? 1 : 3) << SeePiece::KNIGHT1.m_value);
 		}
 
-		const common::Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, fieldIndex) & position.m_occupancyByColor[color.get_raw_value()];
-		const common::Bitset attackingBishops = diagonalAttacks & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::BISHOP.get_raw_value()];
+		const common::Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, fieldIndex) & position.occupancy(color);
+		const common::Bitset attackingBishops = diagonalAttacks & position.colorPieceMask(color, common::PieceType::BISHOP);
 		if (attackingBishops != 0) {
 			result |= 1 << SeePiece::BISHOP.m_value;
 		}
 
-		const common::Bitset occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::ROOK.get_raw_value()] & ~position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::QUEEN.get_raw_value()];
-		const common::Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.m_occupancyByColor[color.get_raw_value()];
-		const common::Bitset attackingRooks = fileRankAttacks & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::ROOK.get_raw_value()];
+		const common::Bitset occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
+		const common::Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
+		const common::Bitset attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
 		uint8_t attackingRooksCount = attackingRooks.count();
 		if (attackingRooksCount != 0) {
 			result |= (uint8_t)((attackingRooksCount == 1 ? 1 : 3) << SeePiece::ROOK1.m_value);
 		}
 
-		const common::Bitset attackingQueens = (fileRankAttacks | diagonalAttacks) & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::QUEEN.get_raw_value()];
+		const common::Bitset attackingQueens = (fileRankAttacks | diagonalAttacks) & position.colorPieceMask(color, common::PieceType::QUEEN);
 		if (attackingQueens != 0) {
 			result |= 1 << SeePiece::QUEEN.m_value;
 		}
 
 		const common::Bitset boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
-		const common::Bitset attackingKings = boxAttacks & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
+		const common::Bitset attackingKings = boxAttacks & position.colorPieceMask(color, common::PieceType::KING);
 		if (attackingKings != 0) {
 			result |= 1 << SeePiece::KING.m_value;
 		}
 
 		const common::Bitset field = fieldIndex.asBitboard();
-		const common::Bitset potentialPawns = boxAttacks & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+		const common::Bitset potentialPawns = boxAttacks & position.colorPieceMask(color, common::PieceType::PAWN);
 		const common::Bitset attackingPawns = color == common::PieceColor::WHITE ? field & ((potentialPawns << 7) | (potentialPawns << 9)) : field & ((potentialPawns >> 7) | (potentialPawns >> 9));
 
 		if (attackingPawns != 0) {

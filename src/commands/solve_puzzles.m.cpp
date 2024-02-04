@@ -151,7 +151,7 @@ int main() {
 			atomic_max(statistics.maxMoves, puzzle->expectedMoves.size());
 
 			ai::search::SearchContext context(&session);
-			context.maxDepth = (puzzle->expectedMoves.size() + 5);
+			context.maxDepth = (puzzle->expectedMoves.size() + 6);
 			context.maxTime = 5'000;
 
 			auto printFen = [&context, &puzzle]() {

@@ -29,16 +29,16 @@ private:
 		int32_t rooksOnOpenFile = 0;
 		const common::PieceColor enemyColor = color.invert();
 
-		common::Bitset rooks = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::ROOK.get_raw_value()];
+		common::Bitset rooks = position.colorPieceMask(color, common::PieceType::ROOK);
 		while (rooks != 0) {
 			const common::Bitset lsb = rooks.getLsb();
 			const common::Square field(lsb.bitScan());
 			rooks = rooks.popLsb();
 
 			const common::Bitset file = moves::patterns::FilePatternGenerator::getPatternForField(field) | lsb;
-			const common::Bitset rooksOnFile = file & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::ROOK.get_raw_value()];
-			const common::Bitset friendlyPawnsOnFile = file & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
-			const common::Bitset enemyPawnsOnFile = file & position.m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+			const common::Bitset rooksOnFile = file & position.colorPieceMask(color, common::PieceType::ROOK);
+			const common::Bitset friendlyPawnsOnFile = file & position.colorPieceMask(color, common::PieceType::PAWN);
+			const common::Bitset enemyPawnsOnFile = file & position.colorPieceMask(enemyColor, common::PieceType::PAWN);
 
 			if (rooksOnFile.count() > 1) {
 				// We don't assume that there will be more than two rooks - even if, then this color is probably anyway winning

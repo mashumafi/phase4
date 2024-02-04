@@ -23,7 +23,7 @@ public:
 private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
 		int32_t pairOfBishops = 0;
-		if (position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::BISHOP.get_raw_value()].count() > 1) {
+		if (position.colorPieceMask(color, common::PieceType::BISHOP).count() > 1) {
 			pairOfBishops = 1;
 		}
 
@@ -33,8 +33,8 @@ private:
 		const common::Bitset pawnsPattern = color == common::PieceColor::WHITE ? WhitePawnsFianchettoPattern : BlackPawnsFianchettoPattern;
 		const common::Bitset bishopPattern = color == common::PieceColor::WHITE ? WhiteBishopFianchettoPattern : BlackBishopFianchettoPattern;
 
-		if (position.m_castlingDone[color.get_raw_value()] && (position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::KING.get_raw_value()] & kingPattern) != 0 && (position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()] & pawnsPattern) == pawnsPattern) {
-			if ((position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] & bishopPattern) == bishopPattern) {
+		if (position.m_castlingDone[color.get_raw_value()] && (position.colorPieceMask(color, common::PieceType::KING) & kingPattern) != 0 && (position.colorPieceMask(color, common::PieceType::PAWN) & pawnsPattern) == pawnsPattern) {
+			if ((position.colorPieceMask(color, common::PieceType::BISHOP) & bishopPattern) == bishopPattern) {
 				fianchettos++;
 			} else {
 				fianchettosWithoutBishop++;

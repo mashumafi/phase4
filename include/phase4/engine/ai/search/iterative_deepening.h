@@ -114,20 +114,20 @@ private:
 	static void getPrincipalVariation(board::Session &session, moves::Moves &moves) {
 		using namespace board::transposition;
 
-		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
-		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.m_position.m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
-			if (!board::Operators::isMoveLegal(session.m_position, entry.bestMove())) {
+		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().m_hash.asBitboard());
+		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.position().m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
+			if (!board::Operators::isMoveLegal(session.position(), entry.bestMove())) {
 				return;
 			}
 
 			moves.push_back(entry.bestMove());
 			session.makeMove(entry.bestMove());
 
-			const common::PieceColor enemyColor = session.m_position.m_colorToMove.invert();
-			const common::Bitset king = session.m_position.m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::KING.get_raw_value()];
+			const common::PieceColor enemyColor = session.position().m_colorToMove.invert();
+			const common::Bitset king = session.position().colorPieceMask(enemyColor, common::PieceType::KING);
 			const common::Square kingField(king.bitScan());
 
-			if (session.m_position.isFieldAttacked(enemyColor, kingField)) {
+			if (session.position().isFieldAttacked(enemyColor, kingField)) {
 				session.undoMove(entry.bestMove());
 				return;
 			}

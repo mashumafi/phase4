@@ -48,7 +48,7 @@ public:
 
 	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, int32_t startIndex, int32_t ply) {
 		moveValues.resize(moves.size());
-		const Position &position = session.m_position;
+		const Position &position = session.position();
 		for (size_t moveIndex = startIndex; moveIndex < moves.size(); ++moveIndex) {
 			if (session.m_killerHeuristic.killerMoveExists(moves[moveIndex], position.m_colorToMove, ply)) {
 				moveValues[moveIndex] = MoveOrderingConstants::KILLER_MOVE;

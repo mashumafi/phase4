@@ -36,7 +36,7 @@ private:
 inline constexpr void PositionState::calculatePieceTable(Position &position) {
 	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
-			common::Bitset bitboard = position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][pieceIndex.get_raw_value()] | position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][pieceIndex.get_raw_value()];
+			common::Bitset bitboard = position.colorPieceMask(common::PieceColor::WHITE, pieceIndex) | position.colorPieceMask(common::PieceColor::BLACK, pieceIndex);
 			if ((bitboard & fieldIndex.asBitboard()) != 0) {
 				position.m_pieceTable[fieldIndex] = pieceIndex;
 				break;
@@ -48,8 +48,8 @@ inline constexpr void PositionState::calculatePieceTable(Position &position) {
 inline constexpr int32_t PositionState::calculateMaterial(const Position &position, common::PieceColor color) {
 	int32_t material = 0;
 
-	for (size_t i = 0; i < 6; i++) {
-		material += common::Bitset(position.m_colorPieceMasks[color.get_raw_value()][i]).count() * board::EvaluationConstants::PIECE_VALUES[i];
+	for (common::PieceType piece = common::PieceType::PAWN; piece != common::PieceType::INVALID; ++piece) {
+		material += common::Bitset(position.colorPieceMask(color, piece)).count() * board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 	}
 
 	return material;
@@ -58,14 +58,14 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 inline constexpr int32_t PositionState::calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) {
 	int32_t result = 0;
 
-	for (size_t pieceIndex = 0; pieceIndex < 6; pieceIndex++) {
-		common::Bitset pieces(position.m_colorPieceMasks[color.get_raw_value()][pieceIndex]);
+	for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
+		common::Bitset pieces(position.colorPieceMask(color, pieceIndex));
 		while (pieces != 0) {
 			common::Bitset lsb = pieces.getLsb();
 			pieces = pieces.popLsb();
 			common::Bitset fieldIndex = lsb.bitScan();
 
-			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex][color.get_raw_value()][phase][fieldIndex.get_raw_value()];
+			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex.get_raw_value()][color.get_raw_value()][phase][fieldIndex.get_raw_value()];
 		}
 	}
 
@@ -73,8 +73,8 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 }
 
 inline constexpr void PositionState::recalculateEvaluationDependentValues(Position &position) {
-	position.m_material[common::PieceColor::WHITE.get_raw_value()] = calculateMaterial(position, common::PieceColor::WHITE);
-	position.m_material[common::PieceColor::BLACK.get_raw_value()] = calculateMaterial(position, common::PieceColor::BLACK);
+	position.material(common::PieceColor::WHITE) = calculateMaterial(position, common::PieceColor::WHITE);
+	position.material(common::PieceColor::BLACK) = calculateMaterial(position, common::PieceColor::BLACK);
 
 	position.m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::OPENING);
 	position.m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::ENDING);
@@ -89,7 +89,7 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 
 	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
 		for (PieceType piece = PieceType::PAWN; piece != PieceType::INVALID; ++piece) {
-			Bitset piecesToParse = position.m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+			Bitset piecesToParse = position.colorPieceMask(color, piece);
 			while (piecesToParse != 0) {
 				const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
 				piecesToParse = piecesToParse.popLsb();
@@ -135,7 +135,7 @@ inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position 
 	ZobristHashing pawnHash(0);
 
 	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
-		Bitset piecesToParse = position.m_colorPieceMasks[color.get_raw_value()][PieceType::PAWN.get_raw_value()];
+		Bitset piecesToParse = position.colorPieceMask(color, PieceType::PAWN);
 		while (piecesToParse != 0) {
 			const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
 			piecesToParse = piecesToParse.popLsb();
@@ -149,23 +149,23 @@ inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position 
 }
 
 inline constexpr void PositionState::setDefaultState(Position &position) {
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 65280;
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 129;
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 66;
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] = 36;
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] = 16;
-	position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KING.get_raw_value()] = 8;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::PAWN) = 65280;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::ROOK) = 129;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KNIGHT) = 66;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::BISHOP) = 36;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::QUEEN) = 16;
+	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KING) = 8;
 
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::PAWN.get_raw_value()] = 71776119061217280;
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::ROOK.get_raw_value()] = 9295429630892703744ULL;
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] = 4755801206503243776;
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] = 2594073385365405696;
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] = 1152921504606846976;
-	position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KING.get_raw_value()] = 576460752303423488;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::PAWN) = 71776119061217280;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::ROOK) = 9295429630892703744ULL;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::KNIGHT) = 4755801206503243776;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::BISHOP) = 2594073385365405696;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::QUEEN) = 1152921504606846976;
+	position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::KING) = 576460752303423488;
 
-	position.m_occupancyByColor[common::PieceColor::WHITE.get_raw_value()] = 65535;
-	position.m_occupancyByColor[common::PieceColor::BLACK.get_raw_value()] = 18446462598732840960ULL;
-	position.m_occupancySummary = position.m_occupancyByColor[common::PieceColor::WHITE.get_raw_value()] | position.m_occupancyByColor[common::PieceColor::BLACK.get_raw_value()] | position.m_walls;
+	position.occupancy(common::PieceColor::WHITE) = 65535;
+	position.occupancy(common::PieceColor::BLACK) = 18446462598732840960ULL;
+	position.m_occupancySummary = position.occupancy(common::PieceColor::WHITE) | position.occupancy(common::PieceColor::BLACK) | position.m_walls;
 
 	position.m_enPassant = 0;
 	position.m_castling = common::Castling::EVERYTHING;

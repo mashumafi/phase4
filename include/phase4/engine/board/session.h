@@ -196,7 +196,13 @@ public:
 		m_position.clearWalls();
 	}
 
+private:
 	Position m_position;
+
+public:
+	const Position &position() const {
+		return m_position;
+	}
 	transposition::HashTables<> m_hashTables;
 	ordering::HistoryHeuristic m_historyHeuristic;
 	ordering::KillerHeuristic m_killerHeuristic;

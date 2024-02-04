@@ -52,7 +52,7 @@ public:
 			waitForStopCommand(false),
 			maxNodesCount(std::numeric_limits<uint64_t>::max()),
 			moveRestrictions(),
-			transpositionTableEntryAge(session->m_position.m_movesCount) {
+			transpositionTableEntryAge(session->position().m_movesCount) {
 	}
 };
 

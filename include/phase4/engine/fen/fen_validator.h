@@ -42,13 +42,13 @@ public:
 			context.session->setPosition(*position);
 		}
 
-		std::optional<moves::Move> realMove = findRealMove(context.session->m_position, badMove);
+		std::optional<moves::Move> realMove = findRealMove(context.session->position(), badMove);
 		if (!realMove) {
 			return BAD_MOVE_FAILURE;
 		}
 		context.session->makeMove(*realMove);
 
-		if (!validatePrincipalVariation(context.session->m_position, expectedMoves, 0)) {
+		if (!validatePrincipalVariation(context.session->position(), expectedMoves)) {
 			return BAD_PRINCIPAL_VARIATION;
 		}
 
@@ -99,20 +99,18 @@ private:
 		return std::nullopt;
 	};
 
-	static bool validatePrincipalVariation(const board::Position &position, const moves::Moves &moves, size_t index) {
-		if (index >= moves.size()) {
-			return true;
-		}
-
+	static bool validatePrincipalVariation(const board::Position &position, const moves::Moves &moves) {
 		board::Position mutablePosition = position;
-		const std::optional<moves::Move> pvMove = findRealMove(mutablePosition, moves[index]);
-		if (!pvMove) {
-			std::cerr << "Could not find move " << moves[index] << std::endl;
-			return false;
+		for (size_t i = 0; i < moves.size(); ++i) {
+			const std::optional<moves::Move> pvMove = findRealMove(mutablePosition, moves[i]);
+			if (!pvMove) {
+				std::cerr << "Could not find move " << moves[i] << std::endl;
+				return false;
+			}
+			mutablePosition.makeMove(*pvMove);
 		}
-		mutablePosition.makeMove(*pvMove);
 
-		return validatePrincipalVariation(mutablePosition, moves, index + 1);
+		return true;
 	}
 };
 

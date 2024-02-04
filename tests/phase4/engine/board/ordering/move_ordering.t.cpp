@@ -24,8 +24,8 @@ TEST_CASE("MoveOrdering assignQValues 00008") {
 
 	moves::Moves moves;
 	moves::MoveValues moveValues;
-	board::Operators::getAvailableCaptureMoves(session->m_position, moves);
-	board::ordering::MoveOrdering::assignQValues(session->m_position, moves, moveValues);
+	board::Operators::getAvailableCaptureMoves(session->position(), moves);
+	board::ordering::MoveOrdering::assignQValues(session->position(), moves, moveValues);
 
 	REQUIRE(moves.size() == 5);
 	REQUIRE(moves.size() == moveValues.size());
