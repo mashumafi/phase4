@@ -38,8 +38,8 @@ public:
 		result += PositionEvaluator::evaluate(session.position(), openingPhase, endingPhase);
 
 		if (endingPhase != common::PositionConstants::PHASE_RESOLUTION) {
-			common::Bitset fieldsAttackedByWhite = 0ul;
-			common::Bitset fieldsAttackedByBlack = 0ul;
+			common::Bitset fieldsAttackedByWhite = 0;
+			common::Bitset fieldsAttackedByBlack = 0;
 
 			result += MobilityEvaluator::evaluate(session.position(), openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += KingSafetyEvaluator::evaluate(session.position(), openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
