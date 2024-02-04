@@ -46,6 +46,7 @@ add_executable(phase4_test
     phase4/engine/ai/time/time_scheduler.t.cpp
 
     phase4/engine/fen/fen_to_position.t.cpp
+    phase4/engine/fen/fen_validator.t.cpp
     phase4/engine/fen/position_to_fen.t.cpp
 
     phase4/main.t.cpp
