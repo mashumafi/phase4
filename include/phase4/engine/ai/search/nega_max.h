@@ -148,7 +148,7 @@ public:
 		}
 #endif
 
-		if (RazoringCanBeApplied(depth, friendlyKingInCheck, pvNode, alpha)) {
+		if (razoringCanBeApplied(depth, friendlyKingInCheck, pvNode, alpha)) {
 			const int32_t fastEvaluation = score::Evaluation::fastEvaluate(*context.session, context.statistics.evaluationStatistics);
 			const int32_t margin = board::SearchConstants::RAZORING_MARGIN + (depth - board::SearchConstants::RAZORING_MIN_DEPTH) * board::SearchConstants::RAZORING_MARGIN_MULTIPLIER;
 			const int32_t futileAlpha = alpha - margin;
@@ -197,15 +197,15 @@ public:
 			}
 		}
 
-		if (IIDCanBeApplied(depth, entry.flags(), hashMove)) {
-			findBestMove(context, depth - 1 - board::SearchConstants::IID_DEPTH_REDUCTION, ply, alpha, beta, allowNullMove, friendlyKingInCheck, extensionsCount);
+		if (internalIterativeDeepeningCanBeApplied(depth, entry.flags(), hashMove)) {
+			findBestMove(context, depth - 1 - board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_DEPTH_REDUCTION, ply, alpha, beta, allowNullMove, friendlyKingInCheck, extensionsCount);
 
-			const TranspositionTableEntry &iidEntry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
-			if (iidEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
-				hashMove = iidEntry.bestMove();
+			const TranspositionTableEntry &internalIterativeDeepeningEntry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
+			if (internalIterativeDeepeningEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
+				hashMove = internalIterativeDeepeningEntry.bestMove();
 
 #ifndef NDEBUG
-				context.statistics.iidHits++;
+				context.statistics.internalIterativeDeepeningHits++;
 #endif
 			}
 		}
@@ -266,7 +266,7 @@ public:
 
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			bool postLoopOperations = std::invoke([&]() -> bool {
-				if (LMPCanBeApplied(depth, friendlyKingInCheck, quietMovesGenerated, moveIndex, moves.size(), pvNode)) {
+				if (lateMovePruningCanBeApplied(depth, friendlyKingInCheck, quietMovesGenerated, moveIndex, moves.size(), pvNode)) {
 					return false;
 				}
 
@@ -326,17 +326,17 @@ public:
 					bestScore = -findBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
 					pvs = false;
 				} else {
-					int32_t lmrReduction = 0;
-					if (LMRCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves, moveValues)) {
-						lmrReduction = LMRGetReduction(pvNode, moveIndex);
+					int32_t lateMoveReductionsReduction = 0;
+					if (lateMoveReductionsCanBeApplied(context, depth, friendlyKingInCheck, enemyKingInCheck, moveIndex, moves, moveValues)) {
+						lateMoveReductionsReduction = lateMoveReductionsGetReduction(pvNode, moveIndex);
 					}
 
-					int32_t score = -findBestMove(context, depth - lmrReduction - 1 + extension, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
+					int32_t score = -findBestMove(context, depth - lateMoveReductionsReduction - 1 + extension, ply + 1, -alpha - 1, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
 					if (score > alpha) {
 						if (pvNode) {
 							score = -findBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
 						} else {
-							if (lmrReduction != 0) {
+							if (lateMoveReductionsReduction != 0) {
 								score = -findBestMove(context, depth - 1 + extension, ply + 1, -beta, -alpha, allowNullMove, enemyKingInCheck, extensionsCount + extension);
 							}
 						}
@@ -469,7 +469,7 @@ public:
 	}
 
 private:
-	static bool RazoringCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
+	static bool razoringCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
 		return !pvNode && depth >= board::SearchConstants::RAZORING_MIN_DEPTH && depth <= board::SearchConstants::RAZORING_MAX_DEPTH && !friendlyKingInCheck && !board::SearchConstants::isScoreNearCheckmate(alpha);
 	}
 
@@ -487,8 +487,8 @@ private:
 		return board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION + (depth - board::SearchConstants::NULL_MOVE_MIN_DEPTH) / board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION_DIVIDER;
 	}
 
-	static bool IIDCanBeApplied(int32_t depth, const board::transposition::TranspositionTableEntryFlags &ttEntryType, moves::Move bestMove) {
-		return ttEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::IID_MIN_DEPTH && bestMove == moves::Move::Empty;
+	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, const board::transposition::TranspositionTableEntryFlags &ttEntryType, moves::Move bestMove) {
+		return ttEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
 	}
 
 	static bool futilityPruningCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
@@ -519,19 +519,19 @@ private:
 		return 0;
 	}
 
-	static bool LMPCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, int32_t moveIndex, int32_t movesCount, bool pvNode) {
-		return depth <= board::SearchConstants::LMP_MAX_DEPTH && !pvNode && !friendlyKingInCheck && quietMovesGenerated &&
-				moveIndex >= (board::SearchConstants::LMP_BASE_PERCENT_MOVES_TO_PRUNE + (depth - 1) * board::SearchConstants::LMP_PERCENT_INCREASE_PER_DEPTH) * movesCount / 100;
+	static bool lateMovePruningCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, int32_t moveIndex, int32_t movesCount, bool pvNode) {
+		return depth <= board::SearchConstants::LATE_MOVE_PRUNING_MAX_DEPTH && !pvNode && !friendlyKingInCheck && quietMovesGenerated &&
+				moveIndex >= (board::SearchConstants::LATE_MOVE_PRUNING_BASE_PERCENT_MOVES_TO_PRUNE + (depth - 1) * board::SearchConstants::LATE_MOVE_PRUNING_PERCENT_INCREASE_PER_DEPTH) * movesCount / 100;
 	}
 
-	static bool LMRCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
-		if (depth >= board::SearchConstants::LMR_MIN_DEPTH && moveIndex >= board::SearchConstants::LMR_MOVES_WITHOUT_REDUCTION &&
+	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
+		if (depth >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MIN_DEPTH && moveIndex >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION &&
 				(moves[moveIndex].flags().isQuiet() || (moves[moveIndex].flags().isCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck) {
 			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
 			const common::PieceType piece = context.session->position().m_pieceTable[moves[moveIndex].to()];
 
 			// TODO: Figure out why piece is sometimes `-1`
-			if (piece != common::PieceType::INVALID && context.session->m_historyHeuristic.getRawMoveValue(enemyColor, piece, moves[moveIndex].to()) >= context.session->m_historyHeuristic.getMaxValue() / board::SearchConstants::LMR_MAX_HISTORY_VALUE_DIVIDER) {
+			if (piece != common::PieceType::INVALID && context.session->m_historyHeuristic.getRawMoveValue(enemyColor, piece, moves[moveIndex].to()) >= context.session->m_historyHeuristic.getMaxValue() / board::SearchConstants::LATE_MOVE_REDUCTIONS_MAX_HISTORY_VALUE_DIVIDER) {
 				return false;
 			}
 
@@ -540,7 +540,7 @@ private:
 			}
 
 #ifndef NDEBUG
-			++context.statistics.lmrReductions;
+			++context.statistics.lateMoveReductionsReductions;
 #endif
 
 			return true;
@@ -549,9 +549,9 @@ private:
 		return false;
 	}
 
-	static int32_t LMRGetReduction(bool pvNode, int32_t moveIndex) {
-		int32_t r = board::SearchConstants::LMR_BASE_REDUCTION + (moveIndex - board::SearchConstants::LMR_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LMR_MOVE_INDEX_DIVIDER;
-		return common::Math::min_int32(pvNode ? board::SearchConstants::LMR_PV_NODE_MAX_REDUCTION : board::SearchConstants::LMR_NON_PV_NODE_MAX_REDUCTION, r);
+	static int32_t lateMoveReductionsGetReduction(bool pvNode, int32_t moveIndex) {
+		int32_t r = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
+		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, r);
 	}
 
 	static int32_t getExtensions(int32_t depth, int32_t extensionsCount, bool enemyKingInCheck) {

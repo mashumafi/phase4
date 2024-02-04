@@ -107,6 +107,7 @@ public:
 	inline constexpr Square &operator=(uint64_t value);
 
 	inline explicit constexpr Square(const FieldIndex &fieldIndex);
+	inline explicit Square(const Bitset &bits);
 
 	inline constexpr Square(Square const &that) = default;
 	inline constexpr Square &operator=(const Square &that) = default;
@@ -167,6 +168,10 @@ inline constexpr Square &Square::operator=(uint64_t value) {
 
 inline constexpr Square::Square(const FieldIndex &fieldIndex) :
 		Square(7 - fieldIndex.x + fieldIndex.y * 8) {
+}
+
+inline Square::Square(const Bitset &bits) :
+		Square(bits.fastBitScan()) {
 }
 
 inline constexpr Square Square::BEGIN(0);

@@ -19,8 +19,8 @@ public:
 	static constexpr int32_t MAX_MOVES_COUNT = 218;
 	static constexpr float DEADLINE_FACTOR = 1.5f;
 
-	static constexpr int32_t IID_MIN_DEPTH = 4;
-	static constexpr int32_t IID_DEPTH_REDUCTION = 2;
+	static constexpr int32_t INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH = 4;
+	static constexpr int32_t INTERNAL_ITERATIVE_DEEPENING_DEPTH_REDUCTION = 2;
 
 	static constexpr int32_t RAZORING_MIN_DEPTH = 1;
 	static constexpr int32_t RAZORING_MAX_DEPTH = 3;
@@ -42,17 +42,17 @@ public:
 	static constexpr int32_t FUTILITY_PRUNING_MARGIN_MULTIPLIER = 100;
 	static constexpr int32_t QFUTILITY_PRUNING_MARGIN = 100;
 
-	static constexpr int32_t LMR_MIN_DEPTH = 2;
-	static constexpr int32_t LMR_MOVES_WITHOUT_REDUCTION = 3;
-	static constexpr int32_t LMR_BASE_REDUCTION = 1;
-	static constexpr int32_t LMR_MOVE_INDEX_DIVIDER = 4;
-	static constexpr int32_t LMR_PV_NODE_MAX_REDUCTION = 2;
-	static constexpr int32_t LMR_NON_PV_NODE_MAX_REDUCTION = 4;
-	static constexpr int32_t LMR_MAX_HISTORY_VALUE_DIVIDER = 2;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_MIN_DEPTH = 2;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION = 3;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_BASE_REDUCTION = 1;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER = 4;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION = 2;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION = 4;
+	static constexpr int32_t LATE_MOVE_REDUCTIONS_MAX_HISTORY_VALUE_DIVIDER = 2;
 
-	static constexpr int32_t LMP_MAX_DEPTH = 2;
-	static constexpr int32_t LMP_BASE_PERCENT_MOVES_TO_PRUNE = 50;
-	static constexpr int32_t LMP_PERCENT_INCREASE_PER_DEPTH = 25;
+	static constexpr int32_t LATE_MOVE_PRUNING_MAX_DEPTH = 2;
+	static constexpr int32_t LATE_MOVE_PRUNING_BASE_PERCENT_MOVES_TO_PRUNE = 50;
+	static constexpr int32_t LATE_MOVE_PRUNING_PERCENT_INCREASE_PER_DEPTH = 25;
 
 	static constexpr bool isScoreNearCheckmate(int16_t score) {
 		int16_t scoreAbs = common::Math::abs_int16(score);
