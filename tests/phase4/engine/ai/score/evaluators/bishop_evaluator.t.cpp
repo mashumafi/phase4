@@ -33,3 +33,16 @@ TEST_CASE("BishopEvaluator Fianchetto white") {
 	int32_t score = ai::score::evaluators::BishopEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0);
 	CHECK(score == whiteScore - blackScore);
 }
+
+TEST_CASE("BishopEvaluator Bad Fianchetto white") {
+	using namespace phase4::engine;
+
+	auto position = fen::FenToPosition::parse("r3kb1r/pbp1p1pp/1pn2n2/3qNp2/2QP4/6P1/PP2PP1P/RNB2RK1 b kq - 2 9");
+	REQUIRE(position);
+
+	const int32_t blackScore = board::EvaluationConstants::PAIR_OF_BISHOPS;
+	const int32_t whiteScore = board::EvaluationConstants::FIANCHETTO_WITHOUT_BISHOP;
+
+	int32_t score = ai::score::evaluators::BishopEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0);
+	CHECK(score == whiteScore - blackScore);
+}
