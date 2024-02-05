@@ -170,9 +170,9 @@ public:
 		}
 
 		if (staticNullMoveCanBeApplied(depth, context.statistics.depth, friendlyKingInCheck, pvNode, beta)) {
-			int32_t fastEvaluation = score::Evaluation::fastEvaluate(*context.session, context.statistics.evaluationStatistics);
-			int32_t margin = board::SearchConstants::STATIC_NULL_MOVE_MARGIN + (depth - 1) * board::SearchConstants::STATIC_NULL_MOVE_MARGIN_MULTIPLIER;
-			int32_t score = fastEvaluation - margin;
+			const int32_t fastEvaluation = score::Evaluation::fastEvaluate(*context.session, context.statistics.evaluationStatistics);
+			const int32_t margin = board::SearchConstants::STATIC_NULL_MOVE_MARGIN + (depth - 1) * board::SearchConstants::STATIC_NULL_MOVE_MARGIN_MULTIPLIER;
+			const int32_t score = fastEvaluation - margin;
 
 			if (score >= beta) {
 #ifndef NDEBUG
