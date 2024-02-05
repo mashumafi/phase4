@@ -5,6 +5,7 @@
 #include <phase4/engine/board/transposition/transposition_table_entry.h>
 
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/util.h>
 
 #include <array>
 
@@ -28,7 +29,7 @@ public:
 	}
 
 	void clear() {
-		m_table.fill(TranspositionTableEntry());
+		common::util::clear(m_table);
 	}
 
 	inline static int32_t regularToTranspositionTableScore(int32_t score, int32_t ply) {

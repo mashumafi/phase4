@@ -14,6 +14,7 @@
 #include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/random.h>
 #include <phase4/engine/common/square.h>
+#include <phase4/engine/common/util.h>
 
 #include <algorithm>
 #include <array>
@@ -118,8 +119,7 @@ private:
 				return false;
 			}
 
-			static constexpr std::array<common::Bitset, N> empty = {};
-			container.attacks = empty;
+			common::util::clear(container.attacks);
 		}
 
 		return false;

@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cassert>
+#include <cstring>
 #include <memory>
 
 #if defined(__GNUC__)
@@ -66,5 +67,14 @@ public:
 private:
 	std::array<T, computeSize(Dims...)> m_data;
 };
+
+namespace phase4::engine::common::util {
+
+template <typename T, size_t N>
+void clear(std::array<T, N> &array) {
+	std::memset(static_cast<void *>(array.data()), 0, array.size() * sizeof(T));
+}
+
+} //namespace phase4::engine::common::util
 
 #endif

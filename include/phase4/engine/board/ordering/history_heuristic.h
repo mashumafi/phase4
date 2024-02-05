@@ -5,6 +5,7 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
+#include <phase4/engine/common/util.h>
 
 #include <array>
 #include <cstdint>
@@ -47,8 +48,7 @@ public:
 	}
 
 	inline void clear() {
-		static constexpr Array blank = {};
-		m_historyMoves = blank;
+		common::util::clear(m_historyMoves);
 
 		m_max = 1;
 	}
