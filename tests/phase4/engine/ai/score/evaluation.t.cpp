@@ -13,7 +13,9 @@ TEST_CASE("Evaluation evaluate cached") {
 	auto session = std::make_unique<board::Session>();
 	ai::score::EvaluationStatistics statistics;
 
-	ai::score::Evaluation::evaluate(*session, true, statistics);
+	const int32_t score = ai::score::Evaluation::evaluate(*session, true, statistics);
+	CHECK(-100 <= score);
+	CHECK(score <= 100);
 }
 
 TEST_CASE("Evaluation evaluate not cached") {
@@ -22,7 +24,9 @@ TEST_CASE("Evaluation evaluate not cached") {
 	auto session = std::make_unique<board::Session>();
 	ai::score::EvaluationStatistics statistics;
 
-	ai::score::Evaluation::evaluate(*session, false, statistics);
+	const int32_t score = ai::score::Evaluation::evaluate(*session, false, statistics);
+	CHECK(-100 <= score);
+	CHECK(score <= 100);
 }
 
 TEST_CASE("Evaluation fast evaluate") {
@@ -31,5 +35,7 @@ TEST_CASE("Evaluation fast evaluate") {
 	auto session = std::make_unique<board::Session>();
 	ai::score::EvaluationStatistics statistics;
 
-	ai::score::Evaluation::fastEvaluate(*session, statistics);
+	const int32_t score = ai::score::Evaluation::fastEvaluate(*session, statistics);
+	CHECK(-100 <= score);
+	CHECK(score <= 100);
 }
