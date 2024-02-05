@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	static void sortNextBestMove(moves::Moves& moves, moves::MoveValues &moveValues, size_t currentIndex) {
+	static void sortNextBestMove(moves::Moves &moves, moves::MoveValues &moveValues, size_t currentIndex) {
 		assert(moves.size() == moveValues.size());
 
 		if (moves.size() <= 1) {
