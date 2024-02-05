@@ -32,7 +32,7 @@ public:
 			if (enableCache) {
 				return PawnStructureEvaluator::evaluate(session, statistics, openingPhase, endingPhase);
 			} else {
-				return PawnStructureEvaluator::evaluateWithoutCache(session, statistics, openingPhase, endingPhase);
+				return PawnStructureEvaluator::evaluateWithoutCache(session, openingPhase, endingPhase);
 			}
 		});
 		result += PositionEvaluator::evaluate(session.position(), openingPhase, endingPhase);

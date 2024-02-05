@@ -35,14 +35,14 @@ private:
 		const common::Bitset fieldsAroundKing = moves::patterns::ForwardBoxPatternGenerator::getPattern(color, kingField);
 
 		const common::Bitset attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
-		const int8_t attackersCount = attackedFieldsAroundKing.count();
+		const int8_t attackersCount = attackedFieldsAroundKing.fastCount();
 		const int32_t attackersCountOpeningScore = attackersCount * board::EvaluationConstants::KING_IN_DANGER;
 
 		int32_t pawnShieldOpeningScore = 0;
 		int32_t openFilesNextToKingScore = 0;
 		if (position.m_castlingDone[color.get_raw_value()]) {
 			const common::Bitset pawnsNearKing = fieldsAroundKing & position.colorPieceMask(color, common::PieceType::PAWN);
-			const int32_t pawnShield = pawnsNearKing.count();
+			const int32_t pawnShield = pawnsNearKing.fastCount();
 
 			pawnShieldOpeningScore = pawnShield * board::EvaluationConstants::PAWN_SHIELD;
 

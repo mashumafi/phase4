@@ -59,9 +59,7 @@ public:
 		return result;
 	}
 
-	static inline int32_t evaluateWithoutCache(const board::Session &session, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
-		(void)statistics;
-
+	static inline int32_t evaluateWithoutCache(const board::Session &session, int32_t openingPhase, int32_t endingPhase) {
 		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.position(), common::PieceColor::WHITE);
 		const auto [openingBlackScore, endingBlackScore] = evaluate(session.position(), common::PieceColor::BLACK);
 
@@ -82,14 +80,14 @@ private:
 			const common::Bitset friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
 			const common::Bitset friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
-			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
+			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.fastCount());
 			if (pawnsCount > 1) {
-				doubledPawns += (pawnsCount.get_raw_value() - 1); // TODO: cast?
+				doubledPawns += (pawnsCount.get_raw_value() - 1);
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {
 				if (friendlyPawnsOnOuterMask == 0) {
-					isolatedPawns += pawnsCount.count(); // TODO: understand this
+					isolatedPawns += pawnsCount.fastCount(); // TODO: understand this
 				}
 			}
 		}
@@ -102,7 +100,7 @@ private:
 
 			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.colorPieceMask(color, common::PieceType::PAWN);
 			if (chain != 0) {
-				chainedPawns += chain.count(); // TODO: cast?
+				chainedPawns += chain.fastCount();
 			}
 
 			if (position.isFieldPassing(color, field)) {

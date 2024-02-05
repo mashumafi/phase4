@@ -40,6 +40,7 @@ add_executable(phase4_test
     phase4/engine/board/zobrist_hashing.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
+    phase4/engine/ai/score/evaluators/bishop_evaluator.t.cpp
     phase4/engine/ai/search/iterative_deepening.t.cpp
     phase4/engine/ai/search/nega_max.t.cpp
     phase4/engine/ai/search/quiescence_search.t.cpp

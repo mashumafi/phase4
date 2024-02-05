@@ -33,7 +33,7 @@ public:
 
 		const common::Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
 		const common::Bitset attackingKnights = jumpAttacks & position.colorPieceMask(color, common::PieceType::KNIGHT);
-		const uint8_t attackingKnightsCount = attackingKnights.count();
+		const uint8_t attackingKnightsCount = attackingKnights.fastCount();
 		if (attackingKnightsCount != 0) {
 			result |= (uint8_t)((attackingKnightsCount == 1 ? 1 : 3) << SeePiece::KNIGHT1.m_value);
 		}
@@ -47,7 +47,7 @@ public:
 		const common::Bitset occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
 		const common::Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
 		const common::Bitset attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
-		uint8_t attackingRooksCount = attackingRooks.count();
+		uint8_t attackingRooksCount = attackingRooks.fastCount();
 		if (attackingRooksCount != 0) {
 			result |= (uint8_t)((attackingRooksCount == 1 ? 1 : 3) << SeePiece::ROOK1.m_value);
 		}

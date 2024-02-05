@@ -33,9 +33,9 @@ public:
 				const common::PieceType attackingPiece = position.m_pieceTable[moves[moveIndex].from()];
 				const common::PieceType capturedPiece = position.m_pieceTable[moves[moveIndex].to()];
 
-				uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
-				uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
+				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
+				const int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
 				moveValues[moveIndex] = (int32_t)(MoveOrderingConstants::CAPTURE + seeEvaluation);
 			} else if (moves[moveIndex].flags().isCastling()) {
