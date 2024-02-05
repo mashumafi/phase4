@@ -67,6 +67,8 @@ private:
 	bool m_stop = false;
 
 	void workerThread() {
+		auto session = std::make_unique<board::Session>();
+
 		while (true) {
 			std::function<void(board::Session &)> task;
 			{
@@ -82,7 +84,6 @@ private:
 				m_tasks.pop();
 			}
 
-			auto session = std::make_unique<board::Session>();
 			task(*session);
 			m_condition.notify_all();
 		}
