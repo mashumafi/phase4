@@ -46,9 +46,9 @@ private:
 				const PieceType possibleBlackPiece = position.m_pieceTable[fieldIndex];
 
 				const PieceColor color = std::invoke([&]() -> PieceColor {
-					if ((position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] & fieldIndex.asBitboard()) != 0) {
+					if ((position.occupancy(PieceColor::WHITE) & fieldIndex.asBitboard()) != 0) {
 						return PieceColor::WHITE;
-					} else if ((position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] & fieldIndex.asBitboard()) != 0) {
+					} else if ((position.occupancy(PieceColor::BLACK) & fieldIndex.asBitboard()) != 0) {
 						return PieceColor::BLACK;
 					}
 					return PieceColor::INVALID;

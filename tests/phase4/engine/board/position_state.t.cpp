@@ -20,22 +20,22 @@ TEST_CASE("PositionState DEFAULT") {
 	CHECK(position.m_hash != board::ZobristHashing(0));
 	CHECK(position.m_pawnHash != board::ZobristHashing(0));
 
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::PAWN.get_raw_value()] == common::PositionConstants::RANK_2);
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] == (common::Square::B1.asBitboard() | common::Square::G1.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] == (common::Square::C1.asBitboard() | common::Square::F1.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::ROOK.get_raw_value()] == (common::Square::A1.asBitboard() | common::Square::H1.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] == common::Square::D1.asBitboard());
-	CHECK(position.m_colorPieceMasks[common::PieceColor::WHITE.get_raw_value()][common::PieceType::KING.get_raw_value()] == common::Square::E1.asBitboard());
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::PAWN) == common::PositionConstants::RANK_2);
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KNIGHT) == (common::Square::B1.asBitboard() | common::Square::G1.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::BISHOP) == (common::Square::C1.asBitboard() | common::Square::F1.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::ROOK) == (common::Square::A1.asBitboard() | common::Square::H1.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::QUEEN) == common::Square::D1.asBitboard());
+	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KING) == common::Square::E1.asBitboard());
 
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::PAWN.get_raw_value()] == common::PositionConstants::RANK_7);
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KNIGHT.get_raw_value()] == (common::Square::B8.asBitboard() | common::Square::G8.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::BISHOP.get_raw_value()] == (common::Square::C8.asBitboard() | common::Square::F8.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::ROOK.get_raw_value()] == (common::Square::A8.asBitboard() | common::Square::H8.asBitboard()));
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::QUEEN.get_raw_value()] == common::Square::D8.asBitboard());
-	CHECK(position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KING.get_raw_value()] == common::Square::E8.asBitboard());
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::PAWN) == common::PositionConstants::RANK_7);
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::KNIGHT) == (common::Square::B8.asBitboard() | common::Square::G8.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::BISHOP) == (common::Square::C8.asBitboard() | common::Square::F8.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::ROOK) == (common::Square::A8.asBitboard() | common::Square::H8.asBitboard()));
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::QUEEN) == common::Square::D8.asBitboard());
+	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::KING) == common::Square::E8.asBitboard());
 
-	CHECK(position.m_occupancyByColor[0] == common::Bitset(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2));
-	CHECK(position.m_occupancyByColor[1] == common::Bitset(common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
+	CHECK(position.occupancy(common::PieceColor::WHITE) == common::Bitset(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2));
+	CHECK(position.occupancy(common::PieceColor::BLACK) == common::Bitset(common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
 
 	CHECK(position.m_occupancySummary == common::Bitset(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2 | common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
 	CHECK(position.m_enPassant == common::Bitset(0));
@@ -48,8 +48,8 @@ TEST_CASE("PositionState DEFAULT") {
 	CHECK(position.m_castlingDone[0] == false);
 	CHECK(position.m_castlingDone[1] == false);
 
-	CHECK(position.m_material[0] != 0);
-	CHECK(position.m_material[1] != 0);
+	CHECK(position.material(common::PieceColor::WHITE) != 0);
+	CHECK(position.material(common::PieceColor::BLACK) != 0);
 
 	/*int32_t m_positionEval[2][2] = {};
 

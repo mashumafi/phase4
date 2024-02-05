@@ -63,7 +63,7 @@ public:
 		return static_cast<float>(qBetaCutoffsAtFirstMove) * 100 / (qBetaCutoffsAtFirstMove + qBetaCutoffsNotAtFirstMove);
 	}
 
-	int32_t iidHits = 0;
+	int32_t internalIterativeDeepeningHits = 0;
 	int32_t loudMovesGenerated = 0;
 	int32_t quietMovesGenerated = 0;
 	int32_t extensions = 0;
@@ -74,7 +74,7 @@ public:
 	int32_t qFutilityPrunes = 0;
 	int32_t razorings = 0;
 	int32_t razoringsRejected = 0;
-	int32_t lmrReductions = 0;
+	int32_t lateMoveReductionsReductions = 0;
 
 	moves::Moves principalVariation;
 

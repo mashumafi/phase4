@@ -45,15 +45,17 @@ private:
 
 class IterativeDeepening {
 public:
-	static moves::Move findBestMove(
-			SearchContext &context, const std::function<void(const SearchStatistics &)> &searchUpdateCallback = [](const ai::search::SearchStatistics &) {}) {
+	using SearchUpdateCallback = std::function<void(const SearchStatistics &)>;
+	static constexpr auto DEFAULT_SEARCH_UPDATE_CALLBACK = [](const ai::search::SearchStatistics &) {};
+
+	static moves::Move findBestMove(SearchContext &context, const SearchUpdateCallback &searchUpdateCallback = DEFAULT_SEARCH_UPDATE_CALLBACK) {
 		context.session->m_historyHeuristic.ageValues();
 		context.session->m_killerHeuristic.ageKillers();
 
 		int32_t expectedExecutionTime = 0;
 		const int32_t alpha = board::SearchConstants::MIN_VALUE;
 		const int32_t beta = board::SearchConstants::MAX_VALUE;
-		uint32_t lastSearchTime = 0ul;
+		uint32_t lastSearchTime = 0;
 		moves::Move bestMove = moves::Move::Empty;
 		Stopwatch stopwatch;
 		stopwatch.start();
@@ -72,8 +74,7 @@ public:
 
 			context.statistics.principalVariation.clear();
 			getPrincipalVariation(*context.session, context.statistics.principalVariation);
-			if (!context.statistics.principalVariation.is_empty()) // TODO: Why is it empty
-				bestMove = context.statistics.principalVariation[0];
+			bestMove = context.statistics.principalVariation[0];
 
 			searchUpdateCallback(context.statistics);
 
@@ -114,20 +115,20 @@ private:
 	static void getPrincipalVariation(board::Session &session, moves::Moves &moves) {
 		using namespace board::transposition;
 
-		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.m_position.m_hash.asBitboard());
-		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.m_position.m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
-			if (!board::Operators::isMoveLegal(session.m_position, entry.bestMove())) {
+		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().m_hash.asBitboard());
+		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.position().m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
+			if (!board::Operators::isMoveLegal(session.position(), entry.bestMove())) {
 				return;
 			}
 
 			moves.push_back(entry.bestMove());
 			session.makeMove(entry.bestMove());
 
-			const common::PieceColor enemyColor = session.m_position.m_colorToMove.invert();
-			const common::Bitset king = session.m_position.m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::KING.get_raw_value()];
+			const common::PieceColor enemyColor = session.position().m_colorToMove.invert();
+			const common::Bitset king = session.position().colorPieceMask(enemyColor, common::PieceType::KING);
 			const common::Square kingField(king.bitScan());
 
-			if (session.m_position.isFieldAttacked(enemyColor, kingField)) {
+			if (session.position().isFieldAttacked(enemyColor, kingField)) {
 				session.undoMove(entry.bestMove());
 				return;
 			}

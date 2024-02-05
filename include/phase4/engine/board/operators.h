@@ -52,7 +52,7 @@ public:
 
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
-		if (unlikely(((move.from().asBitboard()) & position.m_occupancyByColor[position.m_colorToMove.get_raw_value()]) == 0)) {
+		if (unlikely(((move.from().asBitboard()) & position.occupancy(position.m_colorToMove)) == 0)) {
 			return false;
 		}
 

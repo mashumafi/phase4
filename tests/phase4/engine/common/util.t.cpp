@@ -2,6 +2,8 @@
 
 #include <doctest/doctest.h>
 
+#include <array>
+
 TEST_CASE("MultiArrayIndex index") {
 	SUBCASE("2 dimensions") {
 		constexpr size_t index = MultiArrayIndex<3, 4>::computeIndex(2, 2);
@@ -19,4 +21,22 @@ TEST_CASE("MultiArrayIndex index") {
 		CHECK(MultiArrayIndex<3, 4, 5>::computeIndex(1, 0, 1) == (1 * 4 * 5) + (0 * 5) + (1));
 		CHECK(MultiArrayIndex<3, 4, 5>::computeIndex(0, 1, 1) == (0 * 4 * 5) + (1 * 5) + (1));
 	}
+}
+
+TEST_CASE("util::clear") {
+	using namespace phase4::engine::common;
+
+	std::array<std::array<uint64_t, 3>, 3> num = {
+		std::array<uint64_t, 3>{ 1, 2, 3 },
+		std::array<uint64_t, 3>{ 4, 5, 6 },
+		std::array<uint64_t, 3>{ 7, 8, 9 },
+	};
+
+	util::clear(num[1]);
+
+	CHECK(num == std::array<std::array<uint64_t, 3>, 3>{ std::array<uint64_t, 3>{ 1, 2, 3 }, std::array<uint64_t, 3>{ 0, 0, 0 }, std::array<uint64_t, 3>{ 7, 8, 9 } });
+
+	util::clear(num);
+
+	CHECK(num == std::array<std::array<uint64_t, 3>, 3>{ std::array<uint64_t, 3>{ 0, 0, 0 }, std::array<uint64_t, 3>{ 0, 0, 0 }, std::array<uint64_t, 3>{ 0, 0, 0 } });
 }

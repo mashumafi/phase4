@@ -29,20 +29,20 @@ public:
 			context.statistics.selectiveDepth = ply;
 		}
 
-		if (context.session->m_position.m_colorPieceMasks[context.session->m_position.m_colorToMove.get_raw_value()][PieceType::KING.get_raw_value()] == 0) {
+		if (context.session->position().colorPieceMask(context.session->position().m_colorToMove, PieceType::KING) == 0) {
 			++context.statistics.qLeafs;
 			return board::SearchConstants::NO_KING_VALUE;
 		}
 
-		if (context.session->m_position.isKingChecked(context.session->m_position.m_colorToMove.invert())) {
+		if (context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
 			++context.statistics.qLeafs;
 			return -board::SearchConstants::NO_KING_VALUE;
 		}
 
 		int32_t standPat = 0;
 
-		const EvaluationHashTableEntry &evaluationEntry = context.session->m_hashTables.m_evaluationHashTable.get(context.session->m_position.m_hash.asBitboard());
-		if (evaluationEntry.isKeyValid(context.session->m_position.m_hash.asBitboard())) {
+		const EvaluationHashTableEntry &evaluationEntry = context.session->m_hashTables.m_evaluationHashTable.get(context.session->position().m_hash.asBitboard());
+		if (evaluationEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
 			standPat = evaluationEntry.score();
 
 #if DEBUG
@@ -50,7 +50,7 @@ public:
 #endif
 		} else {
 			standPat = score::Evaluation::evaluate(*context.session, true, context.statistics.evaluationStatistics);
-			context.session->m_hashTables.m_evaluationHashTable.add(context.session->m_position.m_hash.asBitboard(), static_cast<int16_t>(standPat));
+			context.session->m_hashTables.m_evaluationHashTable.add(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(standPat));
 
 #if DEBUG
 			context.Statistics.EvaluationStatistics.EHTNonHits++;
@@ -74,8 +74,8 @@ public:
 		moves::Moves moves;
 		moves::MoveValues moveValues;
 
-		board::Operators::getAvailableCaptureMoves(context.session->m_position, moves);
-		board::ordering::MoveOrdering::assignQValues(context.session->m_position, moves, moveValues);
+		board::Operators::getAvailableCaptureMoves(context.session->position(), moves);
+		board::ordering::MoveOrdering::assignQValues(context.session->position(), moves, moveValues);
 
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			board::ordering::MoveOrdering::sortNextBestMove(moves, moveValues, moveIndex);
@@ -95,7 +95,7 @@ public:
 			}
 
 			context.session->makeMove(moves[moveIndex]);
-			int32_t score = -findBestMove(context, depth - 1, ply + 1, -beta, -alpha);
+			const int32_t score = -findBestMove(context, depth - 1, ply + 1, -beta, -alpha);
 			context.session->undoMove(moves[moveIndex]);
 
 			if (score > alpha) {

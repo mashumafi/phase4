@@ -30,8 +30,28 @@ public:
 	ZobristHashing m_hash;
 	ZobristHashing m_pawnHash;
 
+private:
 	std::array<std::array<common::Bitset, 6>, 2> m_colorPieceMasks;
+
+public:
+	inline constexpr common::Bitset &colorPieceMask(common::PieceColor color, common::PieceType piece) {
+		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+	}
+	inline constexpr common::Bitset colorPieceMask(common::PieceColor color, common::PieceType piece) const {
+		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+	}
+
+private:
 	std::array<common::Bitset, 2> m_occupancyByColor = {};
+
+public:
+	inline constexpr common::Bitset &occupancy(common::PieceColor color) {
+		return m_occupancyByColor[color.get_raw_value()];
+	}
+	inline constexpr common::Bitset occupancy(common::PieceColor color) const {
+		return m_occupancyByColor[color.get_raw_value()];
+	}
+
 	common::Bitset m_occupancySummary;
 	common::Bitset m_enPassant;
 	common::Castling m_castling = common::Castling::NONE;
@@ -41,7 +61,17 @@ public:
 	uint16_t m_nullMoves = 0;
 
 	std::array<bool, 2> m_castlingDone = {};
+
+private:
 	std::array<int32_t, 2> m_material = {};
+
+public:
+	inline constexpr int32_t &material(common::PieceColor color) {
+		return m_material[color.get_raw_value()];
+	}
+	inline constexpr int32_t material(common::PieceColor color) const {
+		return m_material[color.get_raw_value()];
+	}
 	std::array<std::array<int32_t, 2>, 2> m_positionEval = {};
 
 	std::array<common::PieceType, 64> m_pieceTable = {};
@@ -68,14 +98,14 @@ public:
 		using namespace common;
 		using namespace piece_square_tables;
 
-		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & from.asBitboard()) != 0);
-		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
+		assert((colorPieceMask(color, piece) & from.asBitboard()) != 0);
+		assert((colorPieceMask(color, piece) & to.asBitboard()) == 0);
 		assert((m_colorPieceMasks[color.invert().get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
 
 		const common::Bitset move = from.asBitboard() | to.asBitboard();
 
-		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= move;
-		m_occupancyByColor[color.get_raw_value()] ^= move;
+		colorPieceMask(color, piece) ^= move;
+		occupancy(color) ^= move;
 		m_occupancySummary ^= move;
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
@@ -91,15 +121,15 @@ public:
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & fieldIndex.asBitboard()) == 0);
+		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) == 0);
 
 		const common::Bitset field = fieldIndex.asBitboard();
 
-		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
-		m_occupancyByColor[color.get_raw_value()] ^= field;
+		colorPieceMask(color, piece) ^= field;
+		occupancy(color) ^= field;
 		m_occupancySummary ^= field;
 
-		m_material[color.get_raw_value()] += board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		material(color) += board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -110,15 +140,15 @@ public:
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
 
-		assert((m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] & fieldIndex.asBitboard()) != 0);
+		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) != 0);
 
 		const common::Bitset field = fieldIndex.asBitboard();
 
-		m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()] ^= field;
-		m_occupancyByColor[color.get_raw_value()] ^= field;
+		colorPieceMask(color, piece) ^= field;
+		occupancy(color) ^= field;
 		m_occupancySummary ^= field;
 
-		m_material[color.get_raw_value()] -= EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		material(color) -= EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 
 		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
 		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
@@ -127,7 +157,7 @@ public:
 	}
 
 	bool isKingChecked(common::PieceColor color) const {
-		const common::Bitset king = m_colorPieceMasks[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
+		const common::Bitset king = colorPieceMask(color, common::PieceType::KING);
 		if (unlikely(king == 0)) {
 			return false;
 		}
@@ -145,11 +175,11 @@ public:
 		}
 
 		uint64_t fieldBB = WallOperations::SquareBB(fieldIndex);
-		if ((m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][pieceType.get_raw_value()] & fieldBB) > 0) {
+		if ((colorPieceMask(PieceColor::WHITE, pieceType) & fieldBB) > 0) {
 			return std::make_tuple(PieceColor::WHITE, pieceType);
 		}
 
-		if ((m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][pieceType.get_raw_value()] & fieldBB) > 0) {
+		if ((colorPieceMask(PieceColor::BLACK, pieceType) & fieldBB) > 0) {
 			return std::make_tuple(PieceColor::BLACK, pieceType);
 		}
 
@@ -541,32 +571,32 @@ public:
 
 		const PieceColor enemyColor = color.invert();
 
-		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & m_occupancyByColor[enemyColor.get_raw_value()];
-		const Bitset attackingRooks = fileRankAttacks & (m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::ROOK.get_raw_value()] | m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);
+		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
+		const Bitset attackingRooks = fileRankAttacks & (colorPieceMask(enemyColor, PieceType::ROOK) | colorPieceMask(enemyColor, PieceType::QUEEN));
 		if (attackingRooks != 0) {
 			return true;
 		}
 
-		const Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(m_occupancySummary, fieldIndex) & m_occupancyByColor[enemyColor.get_raw_value()];
-		const Bitset attackingBishops = diagonalAttacks & (m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::BISHOP.get_raw_value()] | m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::QUEEN.get_raw_value()]);
+		const Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
+		const Bitset attackingBishops = diagonalAttacks & (colorPieceMask(enemyColor, PieceType::BISHOP) | colorPieceMask(enemyColor, PieceType::QUEEN));
 		if (attackingBishops != 0) {
 			return true;
 		}
 
 		const Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
-		const Bitset attackingKnights = jumpAttacks & m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		const Bitset attackingKnights = jumpAttacks & colorPieceMask(enemyColor, PieceType::KNIGHT);
 		if (attackingKnights != 0) {
 			return true;
 		}
 
 		const Bitset boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
-		const Bitset attackingKings = boxAttacks & m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::KING.get_raw_value()];
+		const Bitset attackingKings = boxAttacks & colorPieceMask(enemyColor, PieceType::KING);
 		if (attackingKings != 0) {
 			return true;
 		}
 
 		const Bitset field = fieldIndex.asBitboard();
-		const Bitset potentialPawns = boxAttacks & m_colorPieceMasks[enemyColor.get_raw_value()][PieceType::PAWN.get_raw_value()];
+		const Bitset potentialPawns = boxAttacks & colorPieceMask(enemyColor, PieceType::PAWN);
 		const Bitset attackingPawns = (color.get_raw_value() == PieceColor::WHITE.get_raw_value()) ? field & ((potentialPawns >> 7) | (potentialPawns >> 9)) : field & ((potentialPawns << 7) | (potentialPawns << 9));
 
 		return (attackingPawns != 0);
@@ -575,7 +605,7 @@ public:
 	constexpr int32_t getPhaseRatio() const {
 		using namespace common;
 
-		const int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
+		const int32_t materialOfWeakerSide = Math::min_int32(material(PieceColor::WHITE), material(PieceColor::BLACK));
 
 		constexpr int32_t openingDelta = board::EvaluationConstants::MATERIAL_AT_OPENING - board::EvaluationConstants::OPENING_ENDGAME_EDGE;
 		const int32_t boardDelta = materialOfWeakerSide - board::EvaluationConstants::OPENING_ENDGAME_EDGE;
@@ -586,7 +616,7 @@ public:
 	int32_t getGamePhase() const {
 		using namespace common;
 
-		int32_t materialOfWeakerSide = Math::min_int32(m_material[PieceColor::WHITE.get_raw_value()], m_material[PieceColor::BLACK.get_raw_value()]);
+		const int32_t materialOfWeakerSide = Math::min_int32(material(PieceColor::WHITE), material(PieceColor::BLACK));
 		return materialOfWeakerSide > EvaluationConstants::OPENING_ENDGAME_EDGE ? GamePhase::OPENING : GamePhase::ENDING;
 	}
 
@@ -594,7 +624,7 @@ public:
 		const common::PieceColor enemyColor = color.invert();
 		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
 
-		return (passingArea & m_colorPieceMasks[enemyColor.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0;
+		return (passingArea & colorPieceMask(enemyColor, common::PieceType::PAWN)) == 0;
 	}
 
 	bool isFiftyMoveRuleDraw() const {
@@ -609,15 +639,15 @@ public:
 		using namespace common;
 
 		int32_t drawEdge = EvaluationConstants::PIECE_VALUES[PieceType::KING.get_raw_value()] + 4 * EvaluationConstants::PIECE_VALUES[PieceType::PAWN.get_raw_value()];
-		if (m_material[PieceColor::WHITE.get_raw_value()] < drawEdge && m_material[PieceColor::BLACK.get_raw_value()] < drawEdge) {
-			const Bitset whiteKnightOrBishopPresent = (m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::KNIGHT.get_raw_value()] | m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::BISHOP.get_raw_value()]) != 0;
-			const Bitset blackKnightOrBishopPresent = (m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::KNIGHT.get_raw_value()] | m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::BISHOP.get_raw_value()]) != 0;
+		if (material(PieceColor::WHITE) < drawEdge && material(PieceColor::BLACK) < drawEdge) {
+			const Bitset whiteKnightOrBishopPresent = (colorPieceMask(PieceColor::WHITE, PieceType::KNIGHT) | colorPieceMask(PieceColor::WHITE, PieceType::BISHOP)) != 0;
+			const Bitset blackKnightOrBishopPresent = (colorPieceMask(PieceColor::BLACK, PieceType::KNIGHT) | colorPieceMask(PieceColor::BLACK, PieceType::BISHOP)) != 0;
 
 			if (whiteKnightOrBishopPresent != 0 && blackKnightOrBishopPresent != 0) {
 				return false;
 			}
 
-			if (m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()] == 0 && m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()] == 0) {
+			if (colorPieceMask(PieceColor::WHITE, PieceType::PAWN) == 0 && colorPieceMask(PieceColor::BLACK, PieceType::PAWN) == 0) {
 				return true;
 			}
 		}

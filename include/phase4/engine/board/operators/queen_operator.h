@@ -24,14 +24,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
+		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
 			Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -48,7 +48,7 @@ public:
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
-		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
+		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
 			const Bitset piece = queens.getLsb(); // TODO: skip lsb
@@ -73,14 +73,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
+		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
 			const Bitset piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
@@ -98,7 +98,7 @@ public:
 		int32_t centerMobility = 0;
 		int32_t outsideMobility = 0;
 
-		Bitset queens = position.m_colorPieceMasks[color.get_raw_value()][PieceType::QUEEN.get_raw_value()];
+		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
 			const Bitset piece = queens.getLsb(); // TODO: skip lsb
@@ -127,7 +127,7 @@ public:
 			return true;
 		}
 
-		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0) {
+		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.occupancy(enemyColor) & toField) != 0) {
 			return true;
 		}
 

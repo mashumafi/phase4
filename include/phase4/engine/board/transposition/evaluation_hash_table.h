@@ -3,6 +3,8 @@
 
 #include <phase4/engine/board/transposition/evaluation_hash_table_entry.h>
 
+#include <phase4/engine/common/util.h>
+
 #include <array>
 
 namespace phase4::engine::board::transposition {
@@ -21,7 +23,7 @@ public:
 	}
 
 	void clear() {
-		m_table.fill(EvaluationHashTableEntry());
+		common::util::clear(m_table);
 	}
 
 private:

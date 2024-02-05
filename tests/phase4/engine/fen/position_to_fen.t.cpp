@@ -26,25 +26,25 @@ TEST_CASE("PositionToFen enpassant") {
 
 	// make moves
 	session->makeMove(moves::Move("f2f4"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1");
 	session->makeMove(moves::Move("c7c6"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1ppppp/2p5/8/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1ppppp/2p5/8/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2");
 	session->makeMove(moves::Move("f4f5"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1ppppp/2p5/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 2");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1ppppp/2p5/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 2");
 	session->makeMove(moves::Move(common::Square::E7, common::Square::E5, moves::MoveFlags::DOUBLE_PUSH));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1p1ppp/2p5/4pP2/8/8/PPPPP1PP/RNBQKBNR w KQkq e6 0 3");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1p1ppp/2p5/4pP2/8/8/PPPPP1PP/RNBQKBNR w KQkq e6 0 3");
 	session->makeMove(moves::Move(common::Square::F5, common::Square::E6, moves::MoveFlags::EN_PASSANT));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1p1ppp/2p1P3/8/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 3");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1p1ppp/2p1P3/8/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 3");
 
 	// undo moves
 	session->undoMove(moves::Move(common::Square::F5, common::Square::E6, moves::MoveFlags::EN_PASSANT));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1p1ppp/2p5/4pP2/8/8/PPPPP1PP/RNBQKBNR w KQkq e6 0 3");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1p1ppp/2p5/4pP2/8/8/PPPPP1PP/RNBQKBNR w KQkq e6 0 3");
 	session->undoMove(moves::Move(common::Square::E7, common::Square::E5, moves::MoveFlags::DOUBLE_PUSH));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1ppppp/2p5/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 2");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1ppppp/2p5/5P2/8/8/PPPPP1PP/RNBQKBNR b KQkq - 0 2");
 	session->undoMove(moves::Move("f4f5"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pp1ppppp/2p5/8/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pp1ppppp/2p5/8/5P2/8/PPPPP1PP/RNBQKBNR w KQkq - 0 2");
 	session->undoMove(moves::Move("c7c6"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1");
 	session->undoMove(moves::Move("f2f4"));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }

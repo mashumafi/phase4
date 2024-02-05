@@ -29,7 +29,7 @@ public:
 
 private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset fieldsAttackedByEnemy) {
-		const common::Bitset king = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::KING.get_raw_value()];
+		const common::Bitset king = position.colorPieceMask(color, common::PieceType::KING);
 		const common::Square kingField(king.bitScan());
 		const common::FieldIndex kingPosition = kingField.asFieldIndex();
 		const common::Bitset fieldsAroundKing = moves::patterns::ForwardBoxPatternGenerator::getPattern(color, kingField);
@@ -41,7 +41,7 @@ private:
 		int32_t pawnShieldOpeningScore = 0;
 		int32_t openFilesNextToKingScore = 0;
 		if (position.m_castlingDone[color.get_raw_value()]) {
-			const common::Bitset pawnsNearKing = fieldsAroundKing & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+			const common::Bitset pawnsNearKing = fieldsAroundKing & position.colorPieceMask(color, common::PieceType::PAWN);
 			const int32_t pawnShield = pawnsNearKing.count();
 
 			pawnShieldOpeningScore = pawnShield * board::EvaluationConstants::PAWN_SHIELD;
@@ -49,7 +49,7 @@ private:
 			const int16_t openFileCheckFrom = common::Math::max_int16(0, kingPosition.x - 1);
 			const int16_t openFileCheckTo = common::Math::min_int16(7, kingPosition.x + 1);
 			for (uint8_t file = openFileCheckFrom; file <= openFileCheckTo; ++file) {
-				if ((moves::patterns::FilePatternGenerator::getPatternForFile(7 - file) & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()]) == 0) {
+				if ((moves::patterns::FilePatternGenerator::getPatternForFile(7 - file) & position.colorPieceMask(color, common::PieceType::PAWN)) == 0) {
 					openFilesNextToKingScore += board::EvaluationConstants::OPEN_FILE_NEXT_TO_KING;
 				}
 			}

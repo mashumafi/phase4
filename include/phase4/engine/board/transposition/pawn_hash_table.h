@@ -4,6 +4,7 @@
 #include <phase4/engine/board/transposition/pawn_hash_table_entry.h>
 
 #include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/util.h>
 
 #include <array>
 
@@ -23,7 +24,7 @@ public:
 	}
 
 	void clear() {
-		m_table.fill(PawnHashTableEntry());
+		common::util::clear(m_table);
 	}
 
 private:

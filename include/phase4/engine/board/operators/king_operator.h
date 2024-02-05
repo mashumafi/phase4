@@ -26,14 +26,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		const Bitset piece = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KING.get_raw_value()];
+		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
 
 		while (availableMoves != 0) {
 			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
@@ -66,7 +66,7 @@ public:
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
-		const Bitset piece = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KING.get_raw_value()];
+		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
@@ -89,14 +89,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		const Bitset piece = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KING.get_raw_value()];
+		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
 
 		while (availableMoves != 0) {
 			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
@@ -118,7 +118,7 @@ public:
 			return true;
 		}
 
-		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0) {
+		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.occupancy(enemyColor) & toField) != 0) {
 			return true;
 		}
 

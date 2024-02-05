@@ -24,14 +24,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		Bitset knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
 		while (knights != 0) {
 			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & position.occupancy(enemyColor);
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -48,7 +48,7 @@ public:
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
-		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		Bitset knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
 		while (knights != 0) {
 			const Bitset piece = knights.getLsb(); // TODO: skip lsb
@@ -73,14 +73,14 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		Bitset knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
 		while (knights != 0) {
 			const Bitset piece = knights.getLsb(); // TODO: skip lsb
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & position.m_occupancyByColor[enemyColor.get_raw_value()];
+			Bitset availableMoves = moves::MovesGenerator::getKnightMoves(from) & position.occupancy(enemyColor);
 
 			while (availableMoves != 0) {
 				const Bitset field = availableMoves.getLsb();
@@ -98,7 +98,7 @@ public:
 		int32_t centerMobility = 0;
 		int32_t outsideMobility = 0;
 
-		Bitset knights = position.m_colorPieceMasks[color.get_raw_value()][PieceType::KNIGHT.get_raw_value()];
+		Bitset knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
 		while (knights != 0) {
 			const Bitset piece = knights.getLsb(); // TODO: skip lsb
@@ -127,7 +127,7 @@ public:
 			return true;
 		}
 
-		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0) {
+		if (move.flags().isCapture() && (availableMoves & toField) != 0 && (position.occupancy(enemyColor) & toField) != 0) {
 			return true;
 		}
 

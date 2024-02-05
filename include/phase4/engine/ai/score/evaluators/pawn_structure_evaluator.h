@@ -15,6 +15,7 @@
 
 #include <phase4/engine/common/game_phase.h>
 #include <phase4/engine/common/piece_color.h>
+#include <phase4/engine/common/piece_type.h>
 
 #include <cstdint>
 #include <tuple>
@@ -26,8 +27,8 @@ public:
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const board::transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.m_position.m_pawnHash.asBitboard());
-		if (entry.isKeyValid(session.m_position.m_pawnHash.asBitboard())) {
+		const board::transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
+		if (entry.isKeyValid(session.position().m_pawnHash.asBitboard())) {
 #ifndef NDEBUG
 			statistics.m_pawnHashTableHits++;
 #endif
@@ -43,14 +44,14 @@ public:
 		}
 #endif
 
-		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
-		const auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.position(), common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(session.position(), common::PieceColor::BLACK);
 
 		const int32_t openingScore = openingWhiteScore - openingBlackScore;
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;
 		const int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 
-		session.m_hashTables.m_pawnHashTable.add(session.m_position.m_pawnHash.asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
+		session.m_hashTables.m_pawnHashTable.add(session.position().m_pawnHash.asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
 
 #ifndef NDEBUG
 		statistics.m_pawnHashTableAddedEntries++;
@@ -61,8 +62,8 @@ public:
 	static inline int32_t evaluateWithoutCache(const board::Session &session, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.m_position, common::PieceColor::WHITE);
-		const auto [openingBlackScore, endingBlackScore] = evaluate(session.m_position, common::PieceColor::BLACK);
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.position(), common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(session.position(), common::PieceColor::BLACK);
 
 		const int32_t openingScore = openingWhiteScore - openingBlackScore;
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;
@@ -78,8 +79,8 @@ private:
 		int32_t passingPawns = 0;
 
 		for (uint8_t file = 0; file < 8; ++file) {
-			const common::Bitset friendlyPawnsOnInnerMask = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()] & moves::patterns::FilePatternGenerator::getPatternForFile(file);
-			const common::Bitset friendlyPawnsOnOuterMask = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()] & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
+			const common::Bitset friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
+			const common::Bitset friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
 			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
 			if (pawnsCount > 1) {
@@ -93,13 +94,13 @@ private:
 			}
 		}
 
-		common::Bitset pieces = position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+		common::Bitset pieces = position.colorPieceMask(color, common::PieceType::PAWN);
 		while (pieces != 0) {
 			const common::Bitset lsb = pieces.getLsb(); // TODO: skip lsb
 			const common::Square field(lsb.bitScan());
 			pieces = pieces.popLsb();
 
-			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.m_colorPieceMasks[color.get_raw_value()][common::PieceType::PAWN.get_raw_value()];
+			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.colorPieceMask(color, common::PieceType::PAWN);
 			if (chain != 0) {
 				chainedPawns += chain.count(); // TODO: cast?
 			}

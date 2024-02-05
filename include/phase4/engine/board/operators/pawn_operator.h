@@ -70,7 +70,7 @@ public:
 				int16_t difference = move.to() - move.from();
 				int16_t colorDifference = -(position.m_colorToMove.get_raw_value() * 2 - 1) * difference;
 
-				if ((position.m_occupancyByColor[enemyColor.get_raw_value()] & toField) != 0 && (colorDifference == 7 || colorDifference == 9)) {
+				if ((position.occupancy(enemyColor) & toField) != 0 && (colorDifference == 7 || colorDifference == 9)) {
 					return true;
 				}
 			}
@@ -90,7 +90,7 @@ private:
 		if (color == PieceColor::WHITE) {
 			shift = 8;
 			promotionRank = PositionConstants::RANK_8;
-			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.colorPieceMask(PieceColor::WHITE, PieceType::PAWN);
 
 			if (promotionsMode) {
 				pawns &= PositionConstants::NEAR_PROMOTION_AREA_WHITE;
@@ -102,7 +102,7 @@ private:
 		} else {
 			shift = -8;
 			promotionRank = PositionConstants::RANK_1;
-			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.colorPieceMask(PieceColor::BLACK, PieceType::PAWN);
 
 			if (promotionsMode) {
 				pawns &= PositionConstants::NEAR_PROMOTION_AREA_BLACK;
@@ -145,13 +145,13 @@ private:
 		if (color == PieceColor::WHITE) {
 			shift = 16;
 			startRank = PositionConstants::RANK_2;
-			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.colorPieceMask(PieceColor::WHITE, PieceType::PAWN);
 			pawns = ((pawns & startRank) << 8) & ~position.m_occupancySummary;
 			pawns = (pawns << 8) & ~position.m_occupancySummary;
 		} else {
 			shift = -16;
 			startRank = PositionConstants::RANK_7;
-			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			pawns = position.colorPieceMask(PieceColor::BLACK, PieceType::PAWN);
 			pawns = ((pawns & startRank) >> 8) & ~position.m_occupancySummary;
 			pawns = (pawns >> 8) & ~position.m_occupancySummary;
 		}
@@ -178,14 +178,14 @@ private:
 		if (color == PieceColor::WHITE) {
 			shift = dir;
 			promotionRank = PositionConstants::RANK_8;
-			enemyOccupancy = position.m_occupancyByColor[PieceColor::BLACK.get_raw_value()] | position.m_enPassant;
-			pawns = position.m_colorPieceMasks[PieceColor::WHITE.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			enemyOccupancy = position.occupancy(PieceColor::BLACK) | position.m_enPassant;
+			pawns = position.colorPieceMask(PieceColor::WHITE, PieceType::PAWN);
 			pawns = ((pawns & ~prohibitedFile) << dir) & enemyOccupancy;
 		} else {
 			shift = -dir;
 			promotionRank = PositionConstants::RANK_1;
-			enemyOccupancy = position.m_occupancyByColor[PieceColor::WHITE.get_raw_value()] | position.m_enPassant;
-			pawns = position.m_colorPieceMasks[PieceColor::BLACK.get_raw_value()][PieceType::PAWN.get_raw_value()];
+			enemyOccupancy = position.occupancy(PieceColor::WHITE) | position.m_enPassant;
+			pawns = position.colorPieceMask(PieceColor::BLACK, PieceType::PAWN);
 			pawns = ((pawns & ~prohibitedFile) >> dir) & enemyOccupancy;
 		}
 

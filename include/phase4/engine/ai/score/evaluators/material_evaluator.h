@@ -10,7 +10,9 @@ namespace phase4::engine::ai::score::evaluators {
 class MaterialEvaluator {
 public:
 	static inline int32_t evaluate(const board::Position &position) {
-		return position.m_material[common::PieceColor::WHITE.get_raw_value()] - position.m_material[common::PieceColor::BLACK.get_raw_value()];
+		const int32_t whiteEvaluation = position.material(common::PieceColor::WHITE);
+		const int32_t blackEvaluation = position.material(common::PieceColor::BLACK);
+		return whiteEvaluation - blackEvaluation;
 	}
 };
 

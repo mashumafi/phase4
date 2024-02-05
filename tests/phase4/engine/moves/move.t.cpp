@@ -46,14 +46,27 @@ TEST_CASE("Move string constructor") {
 		CHECK(ss.str() == "b2d6");
 	}
 
-	SUBCASE("Promotion") {
+	SUBCASE("Promotion Queen") {
 		Move move("b2d6q");
 		CHECK(move.from() == Square::B2);
 		CHECK(move.to() == Square::D6);
 		CHECK(move.flags() == MoveFlags::QUEEN_PROMOTION);
+		CHECK(move.flags().isPromotion());
 
 		std::ostringstream ss;
 		ss << move;
 		CHECK(ss.str() == "b2d6q");
+	}
+
+	SUBCASE("Promotion Knight") {
+		Move move("c2c1n");
+		CHECK(move.from() == Square::C2);
+		CHECK(move.to() == Square::C1);
+		CHECK(move.flags() == MoveFlags::KNIGHT_PROMOTION);
+		CHECK(move.flags().isPromotion());
+
+		std::ostringstream ss;
+		ss << move;
+		CHECK(ss.str() == "c2c1n");
 	}
 }

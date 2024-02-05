@@ -26,11 +26,11 @@ TEST_CASE("Session scholar's mate") {
 	session->makeMove(moves::Move(common::Square::D1, common::Square::H5, moves::MoveFlags::QUIET));
 	session->makeMove(moves::Move(common::Square::B8, common::Square::C6, moves::MoveFlags::QUIET));
 	session->makeMove(moves::Move(common::Square::H5, common::Square::F7, moves::MoveFlags::CAPTURE));
-	CHECK(fen::PositionToFen::encode(session->m_position) == "r1bqkbnr/ppp2Qpp/2np4/4p3/2B5/4P3/PPPP1PPP/RNB1K1NR b KQkq - 0 4");
+	CHECK(fen::PositionToFen::encode(session->position()) == "r1bqkbnr/ppp2Qpp/2np4/4p3/2B5/4P3/PPPP1PPP/RNB1K1NR b KQkq - 0 4");
 	session->makeMove(moves::Move(common::Square::E8, common::Square::F7, moves::MoveFlags::CAPTURE));
 	session->makeMove(moves::Move(common::Square::C4, common::Square::F7, moves::MoveFlags::CAPTURE));
 
-	CHECK(session->m_position.m_colorPieceMasks[common::PieceColor::BLACK.get_raw_value()][common::PieceType::KING.get_raw_value()] == 0);
+	CHECK(session->position().colorPieceMask(common::PieceColor::BLACK, common::PieceType::KING) == 0);
 
 	session->undoMove(moves::Move(common::Square::C4, common::Square::F7, moves::MoveFlags::CAPTURE));
 	session->undoMove(moves::Move(common::Square::E8, common::Square::F7, moves::MoveFlags::CAPTURE));
@@ -42,5 +42,5 @@ TEST_CASE("Session scholar's mate") {
 	session->undoMove(moves::Move(common::Square::E7, common::Square::E5, moves::MoveFlags::DOUBLE_PUSH));
 	session->undoMove(moves::Move(common::Square::E2, common::Square::E3, moves::MoveFlags::QUIET));
 
-	CHECK(fen::PositionToFen::encode(session->m_position) == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	CHECK(fen::PositionToFen::encode(session->position()) == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
