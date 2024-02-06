@@ -13,8 +13,10 @@ namespace phase4::engine::ai::score::evaluators {
 class PositionEvaluator {
 public:
 	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
-		return evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase) -
-				evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase);
+		const int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase);
+		const int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase);
+		;
+		return whiteEvaluation - blackEvaluation;
 	}
 
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
