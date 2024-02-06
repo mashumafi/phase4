@@ -8,6 +8,7 @@
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
+#include <phase4/engine/common/square.h>
 
 #include <cstdint>
 
@@ -49,12 +50,13 @@ private:
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);
 	}
 
-	static constexpr common::Bitset WHITE_KING_FIANCHETTO_PATTERN = 7;
-	static constexpr common::Bitset WHITE_PAWNS_FIANCHETTO_PATTERN = 132352;
-	static constexpr common::Bitset WHITE_BISHOP_FIANCHETTO_PATTERN = 512;
-	static constexpr common::Bitset BLACK_KING_FIANCHETTO_PATTEREN = 504403158265495552;
-	static constexpr common::Bitset BLACK_PAWNS_FIANCHETTO_PATTERN = 1409573906808832;
-	static constexpr common::Bitset BLACK_BISHOP_FIANCHETTO_PATTERN = 562949953421312;
+	static constexpr common::Bitset WHITE_KING_FIANCHETTO_PATTERN = common::Square::F1.asBitboard() | common::Square::G1.asBitboard() | common::Square::H1.asBitboard();
+	static constexpr common::Bitset WHITE_PAWNS_FIANCHETTO_PATTERN = common::Square::F2.asBitboard() | common::Square::G3.asBitboard() | common::Square::H2.asBitboard();
+	static constexpr common::Bitset WHITE_BISHOP_FIANCHETTO_PATTERN = common::Square::G2.asBitboard();
+
+	static constexpr common::Bitset BLACK_KING_FIANCHETTO_PATTEREN = common::Square::F8.asBitboard() | common::Square::G8.asBitboard() | common::Square::H8.asBitboard();
+	static constexpr common::Bitset BLACK_PAWNS_FIANCHETTO_PATTERN = common::Square::F7.asBitboard() | common::Square::G6.asBitboard() | common::Square::H7.asBitboard();
+	static constexpr common::Bitset BLACK_BISHOP_FIANCHETTO_PATTERN = common::Square::G7.asBitboard();
 };
 
 } //namespace phase4::engine::ai::score::evaluators

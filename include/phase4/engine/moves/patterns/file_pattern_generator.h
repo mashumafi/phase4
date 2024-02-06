@@ -42,11 +42,13 @@ constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
 inline constexpr FilePatternGenerator::Array FilePatternGenerator::PATTERNS = generatePatterns();
 
 constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square square) {
-	return PATTERNS[square % 8] & ~(1ull << square);
+	return PATTERNS[square % 8] & ~(square.asBitboard().get_raw_value());
 }
 
-constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t rank) {
-	return PATTERNS[rank % 8];
+constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t file) {
+	assert(file < 8);
+	assert(file < 64); // TODO: remove this or mod below
+	return PATTERNS[file % 8];
 }
 
 } //namespace phase4::engine::moves::patterns

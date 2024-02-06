@@ -59,9 +59,9 @@ public:
 		return result;
 	}
 
-	static inline int32_t evaluateWithoutCache(const board::Session &session, int32_t openingPhase, int32_t endingPhase) {
-		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.position(), common::PieceColor::WHITE);
-		const auto [openingBlackScore, endingBlackScore] = evaluate(session.position(), common::PieceColor::BLACK);
+	static inline int32_t evaluateWithoutCache(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(position, common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(position, common::PieceColor::BLACK);
 
 		const int32_t openingScore = openingWhiteScore - openingBlackScore;
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;

@@ -27,14 +27,14 @@ struct EvaluationConstants {
 
 	static const int32_t KING_IN_DANGER;
 	static const int32_t PAWN_SHIELD;
+	static const int32_t OPEN_FILE_NEXT_TO_KING;
 
 	static const int32_t DOUBLED_ROOKS;
 	static const int32_t ROOK_ON_OPEN_FILE;
-	static const int32_t PAIR_OF_BISHOPS;
 
+	static const int32_t PAIR_OF_BISHOPS;
 	static const int32_t FIANCHETTO;
 	static const int32_t FIANCHETTO_WITHOUT_BISHOP;
-	static const int32_t OPEN_FILE_NEXT_TO_KING;
 
 	static const int32_t OPENING_ENDGAME_EDGE;
 
@@ -71,14 +71,14 @@ inline constexpr int32_t EvaluationConstants::OUTSIDE_MOBILITY_MODIFIER = 6;
 
 inline constexpr int32_t EvaluationConstants::KING_IN_DANGER = -20;
 inline constexpr int32_t EvaluationConstants::PAWN_SHIELD = 20;
+inline constexpr int32_t EvaluationConstants::OPEN_FILE_NEXT_TO_KING = -30;
 
 inline constexpr int32_t EvaluationConstants::DOUBLED_ROOKS = 40;
 inline constexpr int32_t EvaluationConstants::ROOK_ON_OPEN_FILE = 50;
-inline constexpr int32_t EvaluationConstants::PAIR_OF_BISHOPS = 50;
 
+inline constexpr int32_t EvaluationConstants::PAIR_OF_BISHOPS = 50;
 inline constexpr int32_t EvaluationConstants::FIANCHETTO = 25;
 inline constexpr int32_t EvaluationConstants::FIANCHETTO_WITHOUT_BISHOP = -25;
-inline constexpr int32_t EvaluationConstants::OPEN_FILE_NEXT_TO_KING = -30;
 
 inline constexpr int32_t EvaluationConstants::OPENING_ENDGAME_EDGE = 20500;
 
