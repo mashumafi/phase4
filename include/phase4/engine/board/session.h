@@ -4,6 +4,7 @@
 #include <phase4/engine/board/ordering/history_heuristic.h>
 #include <phase4/engine/board/ordering/killer_heuristic.h>
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 #include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/transposition/hash_tables.h>
 #include <phase4/engine/board/zobrist_hashing.h>
@@ -49,18 +50,18 @@ public:
 
 	bool isMoveLegal(moves::Move move) const {
 		Position positionCopy = Position(m_position);
-		positionCopy.makeMove(move);
+		PositionMoves::makeMove(positionCopy, move);
 		return !positionCopy.isKingChecked(m_position.m_colorToMove);
 	}
 
-	Position::MakeMoveResult makeMove(moves::Move move) {
+	PositionMoves::MakeMoveResult makeMove(moves::Move move) {
 		m_castlings.push_back(m_position.m_castling);
 		m_hashes.push_back(m_position.m_hash);
 		m_pawnHashes.push_back(m_position.m_pawnHash);
 		m_enPassants.push_back(m_position.m_enPassant);
 		m_irreversibleMovesCounts.push_back(m_position.m_irreversibleMovesCount);
 
-		const Position::MakeMoveResult &details = m_position.makeMove(move);
+		const PositionMoves::MakeMoveResult &details = PositionMoves::makeMove(m_position, move);
 		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
@@ -78,7 +79,7 @@ public:
 
 		const FieldIndex wallMove = m_wallSlides.pop_back();
 		if (wallMove != FieldIndex::ZERO) {
-			m_position.slideWall(wallMove);
+			PositionMoves::slideWall(m_position, wallMove);
 		}
 
 		const PieceType pieceType = m_position.m_pieceTable[move.to()];
@@ -200,7 +201,7 @@ private:
 	Position m_position;
 
 public:
-	const Position &position() const {
+	inline const Position &position() const {
 		return m_position;
 	}
 	transposition::HashTables<> m_hashTables;

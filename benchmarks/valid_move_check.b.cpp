@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 #include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/session.h>
 #include <phase4/engine/common/piece_color.h>
@@ -51,7 +52,7 @@ static void CopyMakeMove(benchmark::State &state) {
 
 	for (auto _ : state) {
 		board::Position positionCopy = position;
-		positionCopy.makeMove(move);
+		board::PositionMoves::makeMove(positionCopy.makeMove(move));
 		benchmark::DoNotOptimize(positionCopy.isKingChecked(common::PieceColor::BLACK));
 	}
 }
