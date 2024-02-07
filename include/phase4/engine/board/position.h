@@ -108,11 +108,11 @@ public:
 		occupancy(color) ^= move;
 		m_occupancySummary ^= move;
 
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][from];
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][to];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::value(piece, color, GamePhase::OPENING, from);
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::value(piece, color, GamePhase::OPENING, to);
 
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][from];
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][to];
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= PieceSquareTablesData::value(piece, color, GamePhase::ENDING, from);
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += PieceSquareTablesData::value(piece, color, GamePhase::ENDING, to);
 
 		m_pieceTable[from] = PieceType::INVALID;
 		m_pieceTable[to] = piece;
@@ -129,10 +129,10 @@ public:
 		occupancy(color) ^= field;
 		m_occupancySummary ^= field;
 
-		material(color) += board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		material(color) += board::EvaluationConstants::pieceValue(piece);
 
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
 
 		m_pieceTable[fieldIndex] = piece;
 	}
@@ -148,10 +148,10 @@ public:
 		occupancy(color) ^= field;
 		m_occupancySummary ^= field;
 
-		material(color) -= EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		material(color) -= EvaluationConstants::pieceValue(piece);
 
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::OPENING][fieldIndex];
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::VALUES[piece.get_raw_value()][color.get_raw_value()][GamePhase::ENDING][fieldIndex];
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
 
 		m_pieceTable[fieldIndex] = PieceType::INVALID;
 	}
@@ -258,7 +258,7 @@ public:
 	bool isInsufficientMaterial() const {
 		using namespace common;
 
-		int32_t drawEdge = EvaluationConstants::PIECE_VALUES[PieceType::KING.get_raw_value()] + 4 * EvaluationConstants::PIECE_VALUES[PieceType::PAWN.get_raw_value()];
+		const int32_t drawEdge = EvaluationConstants::pieceValue(PieceType::KING) + 4 * EvaluationConstants::pieceValue(PieceType::PAWN);
 		if (material(PieceColor::WHITE) < drawEdge && material(PieceColor::BLACK) < drawEdge) {
 			const Bitset whiteKnightOrBishopPresent = (colorPieceMask(PieceColor::WHITE, PieceType::KNIGHT) | colorPieceMask(PieceColor::WHITE, PieceType::BISHOP)) != 0;
 			const Bitset blackKnightOrBishopPresent = (colorPieceMask(PieceColor::BLACK, PieceType::KNIGHT) | colorPieceMask(PieceColor::BLACK, PieceType::BISHOP)) != 0;

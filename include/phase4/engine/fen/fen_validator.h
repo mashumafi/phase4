@@ -29,7 +29,7 @@ public:
 		FAILURE,
 	};
 
-	static Result validate(std::string_view fen, moves::Move badMove, const moves::Moves &expectedMoves, ai::search::SearchContext &context) {
+	static Result validate(std::string_view fen, moves::Move blunder, const moves::Moves &expectedMoves, ai::search::SearchContext &context) {
 		{
 			const std::optional<board::Position> position = fen::FenToPosition::parse(fen);
 			if (!position) {
@@ -43,7 +43,7 @@ public:
 			context.session->setPosition(*position);
 		}
 
-		const std::optional<moves::Move> realMove = board::PositionMoves::findRealMove(context.session->position(), badMove);
+		const std::optional<moves::Move> realMove = board::PositionMoves::findRealMove(context.session->position(), blunder);
 		if (!realMove) {
 			return BAD_MOVE_FAILURE;
 		}

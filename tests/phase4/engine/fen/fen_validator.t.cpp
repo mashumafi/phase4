@@ -17,7 +17,7 @@ namespace {
 
 struct FenTestCase {
 	std::string fen = "";
-	std::string badMove = "";
+	std::string blunder = "";
 	std::vector<std::string> principalVariation = std::vector<std::string>();
 	int32_t maxDepth = 32;
 	phase4::engine::fen::FenValidator::Result result = phase4::engine::fen::FenValidator::MOVES_MATCH;
@@ -55,14 +55,10 @@ TEST_CASE("FenValidator") {
 		auto session = std::make_unique<board::Session>();
 		ai::search::SearchContext context(session.get());
 		context.maxDepth = testCase.maxDepth;
-		const fen::FenValidator::Result result = fen::FenValidator::validate(testCase.fen, moves::Move(testCase.badMove), moves, context);
+		const fen::FenValidator::Result result = fen::FenValidator::validate(testCase.fen, moves::Move(testCase.blunder), moves, context);
 		CHECK(result == testCase.result);
 		if (result != testCase.result) {
-			std::cerr << testCase.fen;
-			for (size_t i = 0; i < context.statistics.principalVariation.size(); ++i) {
-				std::cerr << " " << context.statistics.principalVariation[i];
-			}
-			std::cerr << std::endl;
+			std::cerr << testCase.fen << " " << context.statistics.principalVariation << std::endl;
 		}
 	}
 }

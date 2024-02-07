@@ -89,11 +89,7 @@ int main(int argc, const char **args) {
 		if (materialSearch) {
 			const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 			if (score != 0 && puzzle->expectedMoves.size() > 10) {
-				std::cout << "Material (" << score << "): " << puzzle->fen << " " << puzzle->badMove;
-				for (size_t i = 0; i < puzzle->expectedMoves.size(); ++i) {
-					std::cout << " " << puzzle->expectedMoves[i];
-				}
-				std::cout << std::endl;
+				std::cout << "Material (" << score << "): " << puzzle->fen << " " << puzzle->blunder << " " << puzzle->expectedMoves << std::endl;
 			}
 		}
 		if (mobilitySearch) {
@@ -105,6 +101,11 @@ int main(int argc, const char **args) {
 			}
 		}
 		if (positionSearch) {
+			const int32_t openingScore = ai::score::evaluators::PositionEvaluator::evaluate(*position, phase, 1024 - phase);
+			const int32_t endingScore = ai::score::evaluators::PositionEvaluator::evaluate(*position, 1024 - phase, phase);
+			if (openingScore != 0 && endingScore != 0 && puzzle->expectedMoves.size() > 10) {
+				std::cout << "Position (" << openingScore << "," << endingScore << "): " << puzzle->fen << " " << puzzle->blunder << " " << puzzle->expectedMoves << std::endl;
+			}
 		}
 		if (rookSearch) {
 			const int32_t score = ai::score::evaluators::RookEvaluator::evaluate(*position, phase, 1024 - phase);

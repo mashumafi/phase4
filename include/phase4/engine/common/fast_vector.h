@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <type_traits>
 
 namespace phase4::engine::common {
@@ -127,6 +128,17 @@ std::size_t FastVector<T, N>::size() const {
 template <typename T, std::size_t N>
 bool FastVector<T, N>::is_empty() const {
 	return m_size == 0;
+}
+
+template <typename T, std::size_t N>
+inline std::ostream &operator<<(std::ostream &os, const FastVector<T, N> &vector) {
+	for (size_t i = 0; i < vector.size(); ++i) {
+		if (i > 0) {
+			os << " ";
+		}
+		os << vector[i];
+	}
+	return os;
 }
 
 } //namespace phase4::engine::common

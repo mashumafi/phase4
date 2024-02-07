@@ -18,9 +18,8 @@ TEST_CASE("MaterialEvaluator white ahead 700") {
 	auto position = fen::FenToPosition::parse("r5k1/r1q3p1/4p3/2p5/1pP1PP2/1P6/1KN3QR/2N3R1 w - - 1 34");
 	REQUIRE(position);
 
+	const int32_t beginScore = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 	{
-		const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
-
 		const int32_t blackScore =
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 0 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 2 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
@@ -28,8 +27,8 @@ TEST_CASE("MaterialEvaluator white ahead 700") {
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 2 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 2 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
 
-		CHECK(score == whiteScore - blackScore);
-		CHECK(score == 700);
+		CHECK(beginScore == whiteScore - blackScore);
+		CHECK(beginScore == 700);
 	}
 
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("f4f5")));
@@ -45,9 +44,8 @@ TEST_CASE("MaterialEvaluator white ahead 700") {
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("d1e2")));
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("c1c2")));
 
+	const int32_t endScore = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 	{
-		const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
-
 		const int32_t blackScore =
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 0 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 1 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
@@ -55,9 +53,10 @@ TEST_CASE("MaterialEvaluator white ahead 700") {
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 0 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 2 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
 
-		CHECK(score == whiteScore - blackScore);
-		CHECK(score == 570);
+		CHECK(endScore == whiteScore - blackScore);
+		CHECK(endScore == 570);
 	}
+	CHECK(beginScore > endScore); // black got better
 }
 
 TEST_CASE("MaterialEvaluator black ahead -620") {
@@ -68,9 +67,8 @@ TEST_CASE("MaterialEvaluator black ahead -620") {
 	auto position = fen::FenToPosition::parse("2rq1nk1/1p6/pn2p3/4PrbQ/2pP2R1/2N5/PP3P2/5KR1 b - - 2 30");
 	REQUIRE(position);
 
+	const int32_t beginScore = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 	{
-		const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
-
 		const int32_t blackScore =
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 2 + EC::pieceValue(PieceType::BISHOP) * 1 +
 				EC::pieceValue(PieceType::ROOK) * 2 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
@@ -78,8 +76,8 @@ TEST_CASE("MaterialEvaluator black ahead -620") {
 				EC::pieceValue(PieceType::PAWN) * 5 + EC::pieceValue(PieceType::KNIGHT) * 1 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 2 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
 
-		CHECK(score == whiteScore - blackScore);
-		CHECK(score == -620);
+		CHECK(beginScore == whiteScore - blackScore);
+		CHECK(beginScore == -620);
 	}
 
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("f8h7")));
@@ -95,9 +93,8 @@ TEST_CASE("MaterialEvaluator black ahead -620") {
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("d8g8")));
 	board::PositionMoves::makeMove(*position, *board::PositionMoves::findRealMove(*position, moves::Move("f6g8")));
 
+	const int32_t endScore = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 	{
-		const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
-
 		const int32_t blackScore =
 				EC::pieceValue(PieceType::PAWN) * 4 + EC::pieceValue(PieceType::KNIGHT) * 2 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 1 + EC::pieceValue(PieceType::QUEEN) * 0 + EC::pieceValue(PieceType::KING) * 1;
@@ -105,7 +102,9 @@ TEST_CASE("MaterialEvaluator black ahead -620") {
 				EC::pieceValue(PieceType::PAWN) * 5 + EC::pieceValue(PieceType::KNIGHT) * 1 + EC::pieceValue(PieceType::BISHOP) * 0 +
 				EC::pieceValue(PieceType::ROOK) * 0 + EC::pieceValue(PieceType::QUEEN) * 1 + EC::pieceValue(PieceType::KING) * 1;
 
-		CHECK(score == whiteScore - blackScore);
-		CHECK(score == 370);
+		CHECK(endScore == whiteScore - blackScore);
+		CHECK(endScore == 370);
 	}
+
+	CHECK(beginScore < endScore); // white got better
 }

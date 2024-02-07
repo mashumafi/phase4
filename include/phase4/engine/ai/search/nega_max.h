@@ -514,7 +514,7 @@ private:
 		if (move.flags().isCapture()) {
 			const common::PieceType capturedPiece = context.session->position().m_pieceTable[move.to()];
 			if (capturedPiece != common::PieceType::INVALID) {
-				return board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()];
+				return board::EvaluationConstants::pieceValue(capturedPiece);
 			} else {
 				return 100;
 			}

@@ -11,7 +11,6 @@
 namespace phase4::engine::board {
 
 struct EvaluationConstants {
-	static const std::array<int32_t, 6> PIECE_VALUES;
 	static inline constexpr int32_t pieceValue(common::PieceType piece);
 
 	static const int32_t CHECKMATE;
@@ -44,22 +43,27 @@ struct EvaluationConstants {
 	static const uint64_t EXTENDED_CENTER_RING;
 	static const uint64_t OUTSIDE;
 
-	static constexpr uint32_t calculateMaterialAtOpening() {
-		return EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
-	}
+	static constexpr uint32_t calculateMaterialAtOpening();
 
 	static const int32_t MATERIAL_AT_OPENING;
+
+private:
+	static const std::array<int32_t, 6> PIECE_VALUES;
 };
 
 inline constexpr std::array<int32_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
 
 inline constexpr int32_t EvaluationConstants::pieceValue(common::PieceType piece) {
 	return EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+}
+
+inline constexpr uint32_t EvaluationConstants::calculateMaterialAtOpening() {
+	return EvaluationConstants::pieceValue(common::PieceType::KING) +
+			EvaluationConstants::pieceValue(common::PieceType::QUEEN) +
+			EvaluationConstants::pieceValue(common::PieceType::ROOK) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::BISHOP) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::KNIGHT) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::PAWN) * 8;
 }
 
 inline constexpr int32_t EvaluationConstants::CHECKMATE = 32000;
