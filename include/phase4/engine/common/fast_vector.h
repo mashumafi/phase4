@@ -17,6 +17,7 @@ template <typename T, std::size_t N = 512>
 class FastVector {
 public:
 	FastVector();
+	FastVector(std::initializer_list<T> items);
 
 	void push_back(const T &value);
 	void push_back(T &&value);
@@ -52,6 +53,14 @@ private:
 template <typename T, std::size_t N>
 FastVector<T, N>::FastVector() :
 		m_size(0) {
+}
+
+template <typename T, std::size_t N>
+FastVector<T, N>::FastVector(std::initializer_list<T> items) :
+		m_size(0) {
+	for (const T &item : items) {
+		emplace_back(item);
+	}
 }
 
 template <typename T, std::size_t N>

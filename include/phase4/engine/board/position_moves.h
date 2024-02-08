@@ -420,17 +420,21 @@ public:
 		return findRealMove(moves, move);
 	};
 
+	/// @brief makes a series of moves from a position, move squares are validated but flags can be quiet or promotion
+	/// @param position starting position to make moves
+	/// @param moves the moves to make, only the squares and promotion type need to be correct
+	/// @return the resulting position after making the moves
 	static std::optional<board::Position> makeMoves(const board::Position &position, const moves::Moves &moves) {
 		board::Position mutablePosition = position;
 		for (size_t i = 0; i < moves.size(); ++i) {
-			const std::optional<moves::Move> pvMove = findRealMove(mutablePosition, moves[i]);
-			if (!pvMove) {
+			const std::optional<moves::Move> move = findRealMove(mutablePosition, moves[i]);
+			if (!move) {
 				return std::nullopt;
 			}
-			board::PositionMoves::makeMove(mutablePosition, *pvMove);
+			board::PositionMoves::makeMove(mutablePosition, *move);
 		}
 
-		return position;
+		return mutablePosition;
 	}
 };
 

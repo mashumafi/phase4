@@ -120,6 +120,7 @@ public:
 
 	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
+		using namespace piece_square_tables;
 
 		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) == 0);
 
@@ -131,14 +132,15 @@ public:
 
 		material(color) += board::EvaluationConstants::pieceValue(piece);
 
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] += PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] += PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
 
 		m_pieceTable[fieldIndex] = piece;
 	}
 
 	inline void removePiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
 		using namespace phase4::engine::common;
+		using namespace piece_square_tables;
 
 		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) != 0);
 
@@ -150,8 +152,8 @@ public:
 
 		material(color) -= EvaluationConstants::pieceValue(piece);
 
-		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
-		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= piece_square_tables::PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::OPENING] -= PieceSquareTablesData::value(piece, color, GamePhase::OPENING, fieldIndex);
+		m_positionEval[color.get_raw_value()][GamePhase::ENDING] -= PieceSquareTablesData::value(piece, color, GamePhase::ENDING, fieldIndex);
 
 		m_pieceTable[fieldIndex] = PieceType::INVALID;
 	}

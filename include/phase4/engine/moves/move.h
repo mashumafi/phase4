@@ -85,6 +85,14 @@ inline constexpr bool operator!=(const Move a, const Move b) {
 	return a.m_data != b.m_data;
 }
 
+namespace literals {
+
+inline Move operator""_m(const char *notation, size_t count) {
+	return Move(std::string_view(notation, count));
+}
+
+} //namespace literals
+
 } //namespace phase4::engine::moves
 
 #endif
