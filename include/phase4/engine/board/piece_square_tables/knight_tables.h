@@ -26,38 +26,37 @@ public:
 	static const int32_t E4 = -15; // Corners
 
 	static constexpr std::array<std::array<std::array<int32_t, 64>, 2>, 2> build() {
-		std::array<std::array<int32_t, 64>, 2> pattern = {
-			// Opening
-			{
-					{ O5, O4, O4, O4, O4, O4, O4, O5,
-							O4, O2, O2, O2, O2, O2, O2, O4,
-							O4, O2, O1, O1, O1, O1, O2, O4,
-							O4, O1, O1, O0, O0, O1, O1, O4,
-							O4, O2, O0, O0, O0, O0, O2, O4,
-							O4, O1, O0, O0, O0, O0, O1, O4,
-							O4, O1, O2, O2, O2, O2, O1, O4,
-							O5, O4, O3, O4, O4, O3, O4, O5 },
-					// Ending
-					{
-							E4, E3, E3, E3, E3, E3, E3, E4,
-							E3, E2, E2, E2, E2, E2, E2, E3,
-							E3, E2, E1, E1, E1, E1, E2, E3,
-							E3, E2, E1, E0, E0, E1, E2, E3,
-							E3, E2, E1, E0, E0, E1, E2, E3,
-							E3, E2, E1, E1, E1, E1, E2, E3,
-							E3, E2, E2, E2, E2, E2, E2, E3,
-							E4, E3, E3, E3, E3, E3, E3, E4 } }
+		const std::array<int32_t, 64> opening = {
+			O5, O4, O4, O4, O4, O4, O4, O5,
+			O4, O2, O2, O2, O2, O2, O2, O4,
+			O4, O2, O1, O1, O1, O1, O2, O4,
+			O4, O1, O1, O0, O0, O1, O1, O4,
+			O4, O2, O0, O0, O0, O0, O2, O4,
+			O4, O1, O0, O0, O0, O0, O1, O4,
+			O4, O1, O2, O2, O2, O2, O1, O4,
+			O5, O4, O3, O4, O4, O3, O4, O5
+		};
+
+		const std::array<int32_t, 64> ending = {
+			E4, E3, E3, E3, E3, E3, E3, E4,
+			E3, E2, E2, E2, E2, E2, E2, E3,
+			E3, E2, E1, E1, E1, E1, E2, E3,
+			E3, E2, E1, E0, E0, E1, E2, E3,
+			E3, E2, E1, E0, E0, E1, E2, E3,
+			E3, E2, E1, E1, E1, E1, E2, E3,
+			E3, E2, E2, E2, E2, E2, E2, E3,
+			E4, E3, E3, E3, E3, E3, E3, E4
 		};
 
 		return std::array<std::array<std::array<int32_t, 64>, 2>, 2>{
 			// White
 			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipVertically(pattern[common::GamePhase::OPENING]),
-					TableOperations::flipVertically(pattern[common::GamePhase::ENDING]) },
+					TableOperations::flipVertically(opening),
+					TableOperations::flipVertically(ending) },
 			// Black
 			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipHorizontally(pattern[common::GamePhase::OPENING]),
-					TableOperations::flipHorizontally(pattern[common::GamePhase::ENDING]) }
+					TableOperations::flipHorizontally(opening),
+					TableOperations::flipHorizontally(ending) }
 		};
 	}
 };

@@ -33,6 +33,7 @@ add_executable(phase4_test
 
     phase4/engine/board/operators.t.cpp
     phase4/engine/board/ordering/move_ordering.t.cpp
+    phase4/engine/board/piece_square_tables/table_operations.t.cpp
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp
