@@ -42,6 +42,7 @@ add_executable(phase4_test
 
     phase4/engine/ai/score/evaluation.t.cpp
     phase4/engine/ai/score/evaluators/bishop_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/king_safety_evaluator.t.cpp
     phase4/engine/ai/score/evaluators/material_evaluator.t.cpp
     phase4/engine/ai/score/evaluators/mobility_evaluator.t.cpp
     phase4/engine/ai/score/evaluators/pawn_structure_evaluator.t.cpp

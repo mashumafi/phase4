@@ -55,10 +55,12 @@ int main(int argc, const char **args) {
 	if (bishopSearch) {
 	}
 	if (kingSafetySearch) {
+		std::cout << "Search will include KingSafetyEvaluator" << std::endl;
 	}
 	if (materialSearch) {
 	}
 	if (mobilitySearch) {
+		std::cout << "Search will include MobilityEvaluator" << std::endl;
 	}
 	if (pawnStructureSearch) {
 		std::cout << "Search will include PawnStructureEvaluator" << std::endl;
@@ -82,17 +84,27 @@ int main(int argc, const char **args) {
 			return 1;
 		}
 
+		common::Bitset fieldsAttackedByWhite;
+		common::Bitset fieldsAttackedByBlack;
+		if (mobilitySearch) {
+			const int32_t score = ai::score::evaluators::MobilityEvaluator::evaluate(*position, phase, common::PositionConstants::PHASE_RESOLUTION - phase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+			if (score != 0) {
+				std::cout << "Mobility (" << score << "): " << puzzle->fen << std::endl;
+			}
+		}
 		if (bishopSearch) {
 		}
 		if (kingSafetySearch) {
+			const int32_t score = ai::score::evaluators::KingSafetyEvaluator::evaluate(*position, phase, common::PositionConstants::PHASE_RESOLUTION - phase, fieldsAttackedByWhite, fieldsAttackedByBlack);
+			if (score != 0) {
+				std::cout << "KingSafety (" << score << "): " << puzzle->fen << std::endl;
+			}
 		}
 		if (materialSearch) {
 			const int32_t score = ai::score::evaluators::MaterialEvaluator::evaluate(*position);
 			if (score != 0 && puzzle->expectedMoves.size() > 10) {
 				std::cout << "Material (" << score << "): " << puzzle->fen << " " << puzzle->blunder << " " << puzzle->expectedMoves << std::endl;
 			}
-		}
-		if (mobilitySearch) {
 		}
 		if (pawnStructureSearch) {
 			const int32_t score = ai::score::evaluators::PawnStructureEvaluator::evaluateWithoutCache(*position, phase, common::PositionConstants::PHASE_RESOLUTION - phase);
