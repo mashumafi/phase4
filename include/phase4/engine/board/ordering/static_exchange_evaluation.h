@@ -66,7 +66,7 @@ private:
 	}
 
 	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
-		const common::Bitset leastValuableDefenderField = data.getLsb();
+		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
 		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
