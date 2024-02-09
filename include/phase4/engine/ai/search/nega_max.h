@@ -76,8 +76,8 @@ public:
 			return QuiescenceSearch::findBestMove(context, depth, ply, alpha, beta);
 		}
 
-		int32_t originalAlpha = alpha;
-		bool pvNode = beta - alpha > 1;
+		const int32_t originalAlpha = alpha;
+		const bool pvNode = beta - alpha > 1;
 
 		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
 		moves::Move hashMove = moves::Move::Empty;
@@ -93,12 +93,12 @@ public:
 					hashMove = entry.bestMove();
 					bestMove = entry.bestMove();
 #ifndef NDEBUG
-					context.statistics.transpositionTableValidMoves++;
+					++context.statistics.transpositionTableValidMoves;
 #endif
 				}
 #ifndef NDEBUG
 				else {
-					context.statistics.transpositionTableInvalidMoves++;
+					++context.statistics.transpositionTableInvalidMoves;
 				}
 #endif
 			}
@@ -169,10 +169,10 @@ public:
 			}
 		}
 
-		if (StaticNullMoveCanBeApplied(depth, context.statistics.depth, friendlyKingInCheck, pvNode, beta)) {
-			int32_t fastEvaluation = score::Evaluation::fastEvaluate(*context.session, context.statistics.evaluationStatistics);
-			int32_t margin = board::SearchConstants::STATIC_NULL_MOVE_MARGIN + (depth - 1) * board::SearchConstants::STATIC_NULL_MOVE_MARGIN_MULTIPLIER;
-			int32_t score = fastEvaluation - margin;
+		if (staticNullMoveCanBeApplied(depth, context.statistics.depth, friendlyKingInCheck, pvNode, beta)) {
+			const int32_t fastEvaluation = score::Evaluation::fastEvaluate(*context.session, context.statistics.evaluationStatistics);
+			const int32_t margin = board::SearchConstants::STATIC_NULL_MOVE_MARGIN + (depth - 1) * board::SearchConstants::STATIC_NULL_MOVE_MARGIN_MULTIPLIER;
+			const int32_t score = fastEvaluation - margin;
 
 			if (score >= beta) {
 #ifndef NDEBUG
@@ -185,7 +185,7 @@ public:
 
 		if (nullMoveCanBeApplied(*context.session, depth, allowNullMove, pvNode, friendlyKingInCheck)) {
 			context.session->makeNullMove();
-			int32_t score = -findBestMove(context, depth - 1 - nullMoveGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
+			const int32_t score = -findBestMove(context, depth - 1 - nullMoveGetReduction(depth), ply + 1, -beta, -beta + 1, false, false, extensionsCount);
 			context.session->undoNullMove();
 
 			if (score >= beta) {
@@ -205,7 +205,7 @@ public:
 				hashMove = internalIterativeDeepeningEntry.bestMove();
 
 #ifndef NDEBUG
-				context.statistics.internalIterativeDeepeningHits++;
+				++context.statistics.internalIterativeDeepeningHits;
 #endif
 			}
 		}
@@ -228,8 +228,8 @@ public:
 
 		Bitset evasionMask = Bitset::MAX;
 		if (friendlyKingInCheck && !context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
-			const Bitset kingField = context.session->position().colorPieceMask(context.session->position().m_colorToMove, common::PieceType::KING); // TODO: skip lsb
-			const Square kingFieldIndex(kingField.bitScan());
+			const Bitset kingField = context.session->position().colorPieceMask(context.session->position().m_colorToMove, common::PieceType::KING);
+			const Square kingFieldIndex(kingField);
 
 			evasionMask = moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
 					moves::MovesGenerator::getQueenMoves(context.session->position().m_occupancySummary, kingFieldIndex);
@@ -265,7 +265,7 @@ public:
 		bool allMovesPruned = true;
 
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
-			bool postLoopOperations = std::invoke([&]() -> bool {
+			const bool postLoopOperations = std::invoke([&]() -> bool {
 				if (lateMovePruningCanBeApplied(depth, friendlyKingInCheck, quietMovesGenerated, moveIndex, moves.size(), pvNode)) {
 					return false;
 				}
@@ -379,10 +379,10 @@ public:
 				break;
 
 			if (!loudMovesGenerated) {
-				moves.clear(); // TODO: confirm this is needed
+				moves.clear();
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
-				moveIndex = -1;
+				moveIndex = -1; // restart iteration
 				loudMovesGenerated = true;
 
 #ifndef NDEBUG
@@ -450,18 +450,17 @@ public:
 					return TranspositionTableEntryFlags::EXACT_SCORE;
 				});
 
-				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
-
-				const TranspositionTableEntry newEntry(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
-				context.session->m_hashTables.m_transpositionTable.add(context.session->position().m_hash.asBitboard(), newEntry);
-
 #ifndef NDEBUG
 				if (entry.flags() != TranspositionTableEntryFlags::INVALID) {
 					++context.statistics.transpositionTableReplacements;
+				} else {
+					++context.statistics.transpositionTableAddedEntries;
 				}
-
-				++context.statistics.transpositionTableAddedEntries;
 #endif
+
+				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+				const TranspositionTableEntry newEntry(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
+				context.session->m_hashTables.m_transpositionTable.add(context.session->position().m_hash.asBitboard(), newEntry);
 			}
 		}
 
@@ -473,7 +472,7 @@ private:
 		return !pvNode && depth >= board::SearchConstants::RAZORING_MIN_DEPTH && depth <= board::SearchConstants::RAZORING_MAX_DEPTH && !friendlyKingInCheck && !board::SearchConstants::isScoreNearCheckmate(alpha);
 	}
 
-	static bool StaticNullMoveCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t beta) {
+	static bool staticNullMoveCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t beta) {
 		int32_t maxDepth = board::SearchConstants::STATIC_NULL_MOVE_MAX_DEPTH + rootDepth / board::SearchConstants::STATIC_NULL_MOVE_MAX_DEPTH_DIVIDER;
 		return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !board::SearchConstants::isScoreNearCheckmate(beta);
 	}
@@ -487,12 +486,12 @@ private:
 		return board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION + (depth - board::SearchConstants::NULL_MOVE_MIN_DEPTH) / board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION_DIVIDER;
 	}
 
-	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, const board::transposition::TranspositionTableEntryFlags &ttEntryType, moves::Move bestMove) {
-		return ttEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
+	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, board::transposition::TranspositionTableEntryFlags transpositionTableEntryType, moves::Move bestMove) {
+		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
 	}
 
 	static bool futilityPruningCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
-		int32_t maxDepth = board::SearchConstants::FUTILITY_PRUNING_MAX_DEPTH + rootDepth / board::SearchConstants::FUTILITY_PRUNING_MAX_DEPTH_DIVISOR;
+		const int32_t maxDepth = board::SearchConstants::FUTILITY_PRUNING_MAX_DEPTH + rootDepth / board::SearchConstants::FUTILITY_PRUNING_MAX_DEPTH_DIVISOR;
 		return !pvNode && depth <= maxDepth && !friendlyKingInCheck && !board::SearchConstants::isScoreNearCheckmate(alpha);
 	}
 
@@ -512,8 +511,12 @@ private:
 
 	static int32_t futilityPruningGetGain(const SearchContext &context, moves::Move move) {
 		if (move.flags().isCapture()) {
-			common::PieceType capturedPiece = context.session->position().m_pieceTable[move.to()];
-			return capturedPiece != common::PieceType::INVALID ? board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] : 100;
+			const common::PieceType capturedPiece = context.session->position().m_pieceTable[move.to()];
+			if (capturedPiece != common::PieceType::INVALID) {
+				return board::EvaluationConstants::pieceValue(capturedPiece);
+			} else {
+				return 100;
+			}
 		}
 
 		return 0;
@@ -550,8 +553,8 @@ private:
 	}
 
 	static int32_t lateMoveReductionsGetReduction(bool pvNode, int32_t moveIndex) {
-		int32_t r = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
-		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, r);
+		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
+		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, reductions);
 	}
 
 	static int32_t getExtensions(int32_t depth, int32_t extensionsCount, bool enemyKingInCheck) {

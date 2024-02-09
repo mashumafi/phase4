@@ -40,7 +40,7 @@ private:
 			const common::Bitset friendlyPawnsOnFile = file & position.colorPieceMask(color, common::PieceType::PAWN);
 			const common::Bitset enemyPawnsOnFile = file & position.colorPieceMask(enemyColor, common::PieceType::PAWN);
 
-			if (rooksOnFile.count() > 1) {
+			if (rooksOnFile.fastCount() > 1) {
 				// We don't assume that there will be more than two rooks - even if, then this color is probably anyway winning
 				doubledRooks = 1;
 			}

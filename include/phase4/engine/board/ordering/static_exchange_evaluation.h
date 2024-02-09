@@ -21,7 +21,7 @@ public:
 	using Array = std::array<AttackersDefendersArray, 6>;
 
 	static int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
-		return static_cast<int16_t>(board::EvaluationConstants::PIECE_VALUES[capturedPiece.get_raw_value()] + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
+		return static_cast<int16_t>(board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
 	}
 
 private:
@@ -66,7 +66,7 @@ private:
 	}
 
 	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
-		const common::Bitset leastValuableDefenderField = data.getLsb();
+		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
 		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
@@ -88,7 +88,7 @@ private:
 			common::PieceType leastValuableDefenderPiece = getLeastValuablePiece(defenders);
 			defenders = defenders.popLsb();
 
-			result -= EvaluationConstants::PIECE_VALUES[currentPieceOnField.get_raw_value()];
+			result -= EvaluationConstants::pieceValue(currentPieceOnField);
 			currentPieceOnField = leastValuableDefenderPiece;
 
 			gainList.push_back(result);
@@ -97,7 +97,7 @@ private:
 				const common::PieceType leastValuableAttackerPiece = getLeastValuablePiece(attackers);
 				attackers = attackers.popLsb();
 
-				result += EvaluationConstants::PIECE_VALUES[currentPieceOnField.get_raw_value()];
+				result += EvaluationConstants::pieceValue(currentPieceOnField);
 				currentPieceOnField = leastValuableAttackerPiece;
 
 				gainList.push_back(result);
@@ -111,7 +111,7 @@ private:
 					leastValuableDefenderPiece = getLeastValuablePiece(defenders);
 					defenders = defenders.popLsb();
 
-					result -= EvaluationConstants::PIECE_VALUES[currentPieceOnField.get_raw_value()];
+					result -= EvaluationConstants::pieceValue(currentPieceOnField);
 					currentPieceOnField = leastValuableDefenderPiece;
 
 					gainList.push_back(result);

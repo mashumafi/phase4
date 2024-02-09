@@ -8,6 +8,7 @@
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
+#include <phase4/engine/common/square.h>
 
 #include <cstdint>
 
@@ -23,17 +24,17 @@ public:
 private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
 		int32_t pairOfBishops = 0;
-		if (position.colorPieceMask(color, common::PieceType::BISHOP).count() > 1) {
+		if (position.colorPieceMask(color, common::PieceType::BISHOP).fastCount() > 1) {
 			pairOfBishops = 1;
 		}
 
 		int32_t fianchettos = 0;
 		int32_t fianchettosWithoutBishop = 0;
-		const common::Bitset kingPattern = color == common::PieceColor::WHITE ? WhiteKingFianchettoPattern : BlackKingFianchettoPatteren;
-		const common::Bitset pawnsPattern = color == common::PieceColor::WHITE ? WhitePawnsFianchettoPattern : BlackPawnsFianchettoPattern;
-		const common::Bitset bishopPattern = color == common::PieceColor::WHITE ? WhiteBishopFianchettoPattern : BlackBishopFianchettoPattern;
+		const common::Bitset kingPattern = color == common::PieceColor::WHITE ? WHITE_KING_FIANCHETTO_PATTERN : BLACK_KING_FIANCHETTO_PATTEREN;
+		const common::Bitset pawnsPattern = color == common::PieceColor::WHITE ? WHITE_PAWNS_FIANCHETTO_PATTERN : BLACK_PAWNS_FIANCHETTO_PATTERN;
 
 		if (position.m_castlingDone[color.get_raw_value()] && (position.colorPieceMask(color, common::PieceType::KING) & kingPattern) != 0 && (position.colorPieceMask(color, common::PieceType::PAWN) & pawnsPattern) == pawnsPattern) {
+			const common::Bitset bishopPattern = color == common::PieceColor::WHITE ? WHITE_BISHOP_FIANCHETTO_PATTERN : BLACK_BISHOP_FIANCHETTO_PATTERN;
 			if ((position.colorPieceMask(color, common::PieceType::BISHOP) & bishopPattern) == bishopPattern) {
 				fianchettos++;
 			} else {
@@ -49,12 +50,13 @@ private:
 		return TaperedEvaluation::adjustToPhase(openingScore, 0, openingPhase, endingPhase);
 	}
 
-	static constexpr common::Bitset WhiteKingFianchettoPattern = 7;
-	static constexpr common::Bitset WhitePawnsFianchettoPattern = 132352;
-	static constexpr common::Bitset WhiteBishopFianchettoPattern = 512;
-	static constexpr common::Bitset BlackKingFianchettoPatteren = 504403158265495552;
-	static constexpr common::Bitset BlackPawnsFianchettoPattern = 1409573906808832;
-	static constexpr common::Bitset BlackBishopFianchettoPattern = 562949953421312;
+	static constexpr common::Bitset WHITE_KING_FIANCHETTO_PATTERN = common::Square::F1.asBitboard() | common::Square::G1.asBitboard() | common::Square::H1.asBitboard();
+	static constexpr common::Bitset WHITE_PAWNS_FIANCHETTO_PATTERN = common::Square::F2.asBitboard() | common::Square::G3.asBitboard() | common::Square::H2.asBitboard();
+	static constexpr common::Bitset WHITE_BISHOP_FIANCHETTO_PATTERN = common::Square::G2.asBitboard();
+
+	static constexpr common::Bitset BLACK_KING_FIANCHETTO_PATTEREN = common::Square::F8.asBitboard() | common::Square::G8.asBitboard() | common::Square::H8.asBitboard();
+	static constexpr common::Bitset BLACK_PAWNS_FIANCHETTO_PATTERN = common::Square::F7.asBitboard() | common::Square::G6.asBitboard() | common::Square::H7.asBitboard();
+	static constexpr common::Bitset BLACK_BISHOP_FIANCHETTO_PATTERN = common::Square::G7.asBitboard();
 };
 
 } //namespace phase4::engine::ai::score::evaluators

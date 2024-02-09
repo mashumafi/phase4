@@ -109,7 +109,7 @@ struct PuzzleStatistics {
 	// Failures
 	std::atomic<size_t> invalidCsv = 0;
 	std::atomic<size_t> invalidFen = 0;
-	std::atomic<size_t> badMoveMiss = 0;
+	std::atomic<size_t> blunderMiss = 0;
 	std::atomic<size_t> badPrincipalVariation = 0;
 };
 
@@ -156,27 +156,20 @@ int main() {
 
 			auto printFen = [&context, &puzzle]() {
 				std::stringstream details;
-				details << puzzle->rating << " " << puzzle->fen << " [" << puzzle->badMove << "]";
-				for (size_t i = 0; i < puzzle->expectedMoves.size(); ++i) {
-					details << " " << puzzle->expectedMoves[i];
-				}
-
+				details << puzzle->rating << " " << puzzle->fen << " [" << puzzle->blunder << "]";
+				details << " " << puzzle->expectedMoves;
 				details << " (";
-				for (size_t i = 0; i < context.statistics.principalVariation.size(); ++i) {
-					if (i > 0)
-						details << " ";
-					details << context.statistics.principalVariation[i];
-				}
+				details << context.statistics.principalVariation;
 				details << ")";
 				std::cout << details.str() << std::endl;
 			};
 
-			switch (fen::FenValidator::validate(puzzle->fen, puzzle->badMove, puzzle->expectedMoves, context)) {
+			switch (fen::FenValidator::validate(puzzle->fen, puzzle->blunder, puzzle->expectedMoves, context)) {
 				case fen::FenValidator::INVALID_FEN:
 					++statistics.invalidFen;
 					break;
 				case fen::FenValidator::BAD_MOVE_FAILURE:
-					++statistics.badMoveMiss;
+					++statistics.blunderMiss;
 					break;
 				case fen::FenValidator::BAD_PRINCIPAL_VARIATION:
 					++statistics.badPrincipalVariation;
@@ -226,7 +219,7 @@ int main() {
 	std::cout << "Checkmate    : " << statistics.checkmate << std::endl;
 	std::cout << "Best Move    : " << statistics.bestMoveFound << std::endl;
 	std::cout << "Max Moves    : " << statistics.maxMoves << std::endl;
-	std::cout << "Errors       : " << statistics.badMoveMiss + statistics.invalidCsv + statistics.invalidFen + statistics.badPrincipalVariation << std::endl;
+	std::cout << "Errors       : " << statistics.blunderMiss + statistics.invalidCsv + statistics.invalidFen + statistics.badPrincipalVariation << std::endl;
 	std::cout << "Result Range : " << statistics.lowestFailure << "-" << statistics.highestSuccess << std::endl;
 	std::cout << "Rating Range : " << statistics.minRating << "-" << statistics.maxRating << std::endl;
 

@@ -13,7 +13,8 @@ namespace phase4::engine::board::transposition {
 template <size_t MB>
 class PawnHashTable {
 public:
-	using Table = std::array<PawnHashTableEntry, MB * 1024ull * 1024ull / sizeof(PawnHashTableEntry)>;
+	static constexpr size_t SIZE = MB * 1024ull * 1024ull / sizeof(PawnHashTableEntry);
+	using Table = std::array<PawnHashTableEntry, SIZE>;
 
 	void add(common::Bitset hash, int16_t openingScore, int16_t endingScore) {
 		m_table[hash.get_raw_value() % m_table.size()] = PawnHashTableEntry(hash, openingScore, endingScore);

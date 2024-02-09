@@ -11,7 +11,7 @@
 namespace phase4::engine::board {
 
 struct EvaluationConstants {
-	static const std::array<int32_t, 6> PIECE_VALUES;
+	static inline constexpr int32_t pieceValue(common::PieceType piece);
 
 	static const int32_t CHECKMATE;
 	static const int32_t THREEFOLD_REPETITION;
@@ -27,14 +27,14 @@ struct EvaluationConstants {
 
 	static const int32_t KING_IN_DANGER;
 	static const int32_t PAWN_SHIELD;
+	static const int32_t OPEN_FILE_NEXT_TO_KING;
 
 	static const int32_t DOUBLED_ROOKS;
 	static const int32_t ROOK_ON_OPEN_FILE;
-	static const int32_t PAIR_OF_BISHOPS;
 
+	static const int32_t PAIR_OF_BISHOPS;
 	static const int32_t FIANCHETTO;
 	static const int32_t FIANCHETTO_WITHOUT_BISHOP;
-	static const int32_t OPEN_FILE_NEXT_TO_KING;
 
 	static const int32_t OPENING_ENDGAME_EDGE;
 
@@ -43,19 +43,28 @@ struct EvaluationConstants {
 	static const uint64_t EXTENDED_CENTER_RING;
 	static const uint64_t OUTSIDE;
 
-	static constexpr uint32_t calculateMaterialAtOpening() {
-		return EvaluationConstants::PIECE_VALUES[common::PieceType::KING.get_raw_value()] +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::QUEEN.get_raw_value()] +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::ROOK.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::BISHOP.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::KNIGHT.get_raw_value()] * 2 +
-				EvaluationConstants::PIECE_VALUES[common::PieceType::PAWN.get_raw_value()] * 8;
-	}
+	static constexpr uint32_t calculateMaterialAtOpening();
 
 	static const int32_t MATERIAL_AT_OPENING;
+
+private:
+	static const std::array<int32_t, 6> PIECE_VALUES;
 };
 
 inline constexpr std::array<int32_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
+
+inline constexpr int32_t EvaluationConstants::pieceValue(common::PieceType piece) {
+	return EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+}
+
+inline constexpr uint32_t EvaluationConstants::calculateMaterialAtOpening() {
+	return EvaluationConstants::pieceValue(common::PieceType::KING) +
+			EvaluationConstants::pieceValue(common::PieceType::QUEEN) +
+			EvaluationConstants::pieceValue(common::PieceType::ROOK) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::BISHOP) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::KNIGHT) * 2 +
+			EvaluationConstants::pieceValue(common::PieceType::PAWN) * 8;
+}
 
 inline constexpr int32_t EvaluationConstants::CHECKMATE = 32000;
 inline constexpr int32_t EvaluationConstants::THREEFOLD_REPETITION = 0;
@@ -71,14 +80,14 @@ inline constexpr int32_t EvaluationConstants::OUTSIDE_MOBILITY_MODIFIER = 6;
 
 inline constexpr int32_t EvaluationConstants::KING_IN_DANGER = -20;
 inline constexpr int32_t EvaluationConstants::PAWN_SHIELD = 20;
+inline constexpr int32_t EvaluationConstants::OPEN_FILE_NEXT_TO_KING = -30;
 
 inline constexpr int32_t EvaluationConstants::DOUBLED_ROOKS = 40;
 inline constexpr int32_t EvaluationConstants::ROOK_ON_OPEN_FILE = 50;
-inline constexpr int32_t EvaluationConstants::PAIR_OF_BISHOPS = 50;
 
+inline constexpr int32_t EvaluationConstants::PAIR_OF_BISHOPS = 50;
 inline constexpr int32_t EvaluationConstants::FIANCHETTO = 25;
 inline constexpr int32_t EvaluationConstants::FIANCHETTO_WITHOUT_BISHOP = -25;
-inline constexpr int32_t EvaluationConstants::OPEN_FILE_NEXT_TO_KING = -30;
 
 inline constexpr int32_t EvaluationConstants::OPENING_ENDGAME_EDGE = 20500;
 

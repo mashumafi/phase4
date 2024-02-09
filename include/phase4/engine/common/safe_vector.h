@@ -4,6 +4,7 @@
 #include <phase4/engine/common/util.h>
 
 #include <array>
+#include <iostream>
 
 namespace phase4::engine::common {
 
@@ -13,6 +14,9 @@ namespace phase4::engine::common {
 template <typename T, std::size_t N = 512>
 class SafeVector {
 public:
+	inline constexpr SafeVector();
+	inline constexpr SafeVector(std::initializer_list<T> items);
+
 	inline constexpr void push_back(const T &value) noexcept;
 	inline constexpr void push_back(T &&value) noexcept;
 
@@ -33,8 +37,19 @@ public:
 
 private:
 	std::array<T, N> m_items = {};
-	size_t m_size = 0;
+	size_t m_size;
 };
+
+template <typename T, std::size_t N>
+inline constexpr SafeVector<T, N>::SafeVector() :
+		m_size(0) {
+}
+
+template <typename T, std::size_t N>
+inline constexpr SafeVector<T, N>::SafeVector(std::initializer_list<T> items) :
+		m_items(items),
+		m_size(items.size()) {
+}
 
 template <typename T, std::size_t N>
 inline constexpr void SafeVector<T, N>::push_back(const T &value) noexcept {
@@ -78,6 +93,17 @@ inline constexpr std::size_t SafeVector<T, N>::size() const noexcept {
 template <typename T, std::size_t N>
 inline constexpr bool SafeVector<T, N>::is_empty() const noexcept {
 	return m_size == 0;
+}
+
+template <typename T, std::size_t N>
+inline std::ostream &operator<<(std::ostream &os, const SafeVector<T, N> &vector) {
+	for (size_t i = 0; i < vector.size(); ++i) {
+		if (i > 0) {
+			os << " ";
+		}
+		os << vector[i];
+	}
+	return os;
 }
 
 } //namespace phase4::engine::common

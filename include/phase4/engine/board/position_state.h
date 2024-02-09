@@ -49,7 +49,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	int32_t material = 0;
 
 	for (common::PieceType piece = common::PieceType::PAWN; piece != common::PieceType::INVALID; ++piece) {
-		material += common::Bitset(position.colorPieceMask(color, piece)).count() * board::EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
+		material += common::Bitset(position.colorPieceMask(color, piece)).count() * board::EvaluationConstants::pieceValue(piece);
 	}
 
 	return material;
@@ -61,11 +61,11 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 	for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 		common::Bitset pieces(position.colorPieceMask(color, pieceIndex));
 		while (pieces != 0) {
-			common::Bitset lsb = pieces.getLsb();
+			common::Bitset lsb = pieces.getLsb(); // TODO: Skip lsb
 			pieces = pieces.popLsb();
-			common::Bitset fieldIndex = lsb.bitScan();
+			common::Square fieldIndex(lsb.bitScan());
 
-			result += piece_square_tables::PieceSquareTablesData::VALUES[pieceIndex.get_raw_value()][color.get_raw_value()][phase][fieldIndex.get_raw_value()];
+			result += piece_square_tables::PieceSquareTablesData::value(pieceIndex, color, phase, fieldIndex);
 		}
 	}
 

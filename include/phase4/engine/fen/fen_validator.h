@@ -9,6 +9,7 @@
 
 #include <phase4/engine/board/operators.h>
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 #include <phase4/engine/board/session.h>
 
 #include <phase4/engine/moves/magic/magic_bitboards.h>
@@ -28,7 +29,7 @@ public:
 		FAILURE,
 	};
 
-	static Result validate(std::string_view fen, moves::Move badMove, const moves::Moves &expectedMoves, ai::search::SearchContext &context) {
+	static Result validate(std::string_view fen, moves::Move blunder, const moves::Moves &expectedMoves, ai::search::SearchContext &context) {
 		{
 			const std::optional<board::Position> position = fen::FenToPosition::parse(fen);
 			if (!position) {
@@ -42,13 +43,13 @@ public:
 			context.session->setPosition(*position);
 		}
 
-		std::optional<moves::Move> realMove = findRealMove(context.session->position(), badMove);
+		const std::optional<moves::Move> realMove = board::PositionMoves::findRealMove(context.session->position(), blunder);
 		if (!realMove) {
 			return BAD_MOVE_FAILURE;
 		}
 		context.session->makeMove(*realMove);
 
-		if (!validatePrincipalVariation(context.session->position(), expectedMoves)) {
+		if (!board::PositionMoves::makeMoves(context.session->position(), expectedMoves)) {
 			return BAD_PRINCIPAL_VARIATION;
 		}
 
@@ -67,7 +68,7 @@ public:
 			return true;
 		};
 
-		moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [&context, &movesMatch](const ai::search::SearchStatistics &) {
+		const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [&context, &movesMatch](const ai::search::SearchStatistics &) {
 			if (movesMatch()) {
 				context.abortSearch = true;
 			}
@@ -82,35 +83,6 @@ public:
 		} else {
 			return FAILURE;
 		}
-	}
-
-private:
-	static std::optional<moves::Move> findRealMove(const board::Position &position, moves::Move move) {
-		moves::Moves moves;
-		board::Operators::getAllMoves(position, moves);
-		const bool isQuiet = move.flags() == moves::MoveFlags::QUIET;
-		for (size_t i = 0; i < moves.size(); ++i) {
-			const bool correctFlags = isQuiet || (moves[i].flags().isPromotion() && moves[i].flags().getPromotionPiece() == move.flags().getPromotionPiece());
-			if (moves[i].from() == move.from() && moves[i].to() == move.to() && correctFlags) {
-				return moves[i];
-			}
-		}
-
-		return std::nullopt;
-	};
-
-	static bool validatePrincipalVariation(const board::Position &position, const moves::Moves &moves) {
-		board::Position mutablePosition = position;
-		for (size_t i = 0; i < moves.size(); ++i) {
-			const std::optional<moves::Move> pvMove = findRealMove(mutablePosition, moves[i]);
-			if (!pvMove) {
-				std::cerr << "Could not find move " << moves[i] << std::endl;
-				return false;
-			}
-			mutablePosition.makeMove(*pvMove);
-		}
-
-		return true;
 	}
 };
 

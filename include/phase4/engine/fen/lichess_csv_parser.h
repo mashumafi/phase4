@@ -14,7 +14,7 @@ namespace phase4::engine::fen {
 struct LichessPuzzle {
 	std::string puzzleId;
 	std::string fen;
-	moves::Move badMove;
+	moves::Move blunder;
 	moves::Moves expectedMoves;
 	uint16_t rating;
 	uint16_t ratingDeviation;
@@ -93,7 +93,7 @@ public:
 		std::string token;
 		token.reserve(6); // expect move notation of 2, 2 character squares and a possible promotion + null terminator
 		moveStream >> token;
-		puzzle.badMove = moves::Move(token);
+		puzzle.blunder = moves::Move(token);
 		while (moveStream >> token) {
 			puzzle.expectedMoves.emplace_back(token);
 		}

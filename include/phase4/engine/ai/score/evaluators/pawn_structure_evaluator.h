@@ -27,19 +27,21 @@ public:
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const board::transposition::PawnHashTableEntry entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
+		const board::transposition::PawnHashTableEntry &entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
 		if (entry.isKeyValid(session.position().m_pawnHash.asBitboard())) {
 #ifndef NDEBUG
-			statistics.m_pawnHashTableHits++;
+			++statistics.m_pawnHashTableHits;
 #endif
 			return TaperedEvaluation::adjustToPhase(entry.openingScore(), entry.endingScore(), openingPhase, endingPhase);
 		}
 #ifndef NDEBUG
 		else {
-			statistics.m_pawnHashTableNonHits++;
+			++statistics.m_pawnHashTableNonHits;
 
 			if (entry.key() != 0 || entry.openingScore() != 0 || entry.endingScore() != 0) {
-				statistics.m_pawnHashTableReplacements++;
+				++statistics.m_pawnHashTableReplacements;
+			} else {
+				++statistics.m_pawnHashTableAddedEntries;
 			}
 		}
 #endif
@@ -53,17 +55,12 @@ public:
 
 		session.m_hashTables.m_pawnHashTable.add(session.position().m_pawnHash.asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
 
-#ifndef NDEBUG
-		statistics.m_pawnHashTableAddedEntries++;
-#endif
 		return result;
 	}
 
-	static inline int32_t evaluateWithoutCache(const board::Session &session, EvaluationStatistics statistics, int32_t openingPhase, int32_t endingPhase) {
-		(void)statistics;
-
-		const auto [openingWhiteScore, endingWhiteScore] = evaluate(session.position(), common::PieceColor::WHITE);
-		const auto [openingBlackScore, endingBlackScore] = evaluate(session.position(), common::PieceColor::BLACK);
+	static inline int32_t evaluateWithoutCache(const board::Position &position, int32_t openingPhase, int32_t endingPhase) {
+		const auto [openingWhiteScore, endingWhiteScore] = evaluate(position, common::PieceColor::WHITE);
+		const auto [openingBlackScore, endingBlackScore] = evaluate(position, common::PieceColor::BLACK);
 
 		const int32_t openingScore = openingWhiteScore - openingBlackScore;
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;
@@ -82,14 +79,14 @@ private:
 			const common::Bitset friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
 			const common::Bitset friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
-			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.count());
+			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.fastCount());
 			if (pawnsCount > 1) {
-				doubledPawns += (pawnsCount.get_raw_value() - 1); // TODO: cast?
+				doubledPawns += (pawnsCount.get_raw_value() - 1);
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {
 				if (friendlyPawnsOnOuterMask == 0) {
-					isolatedPawns += pawnsCount.count(); // TODO: understand this
+					isolatedPawns += pawnsCount.fastCount(); // TODO: understand this
 				}
 			}
 		}
@@ -102,7 +99,7 @@ private:
 
 			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.colorPieceMask(color, common::PieceType::PAWN);
 			if (chain != 0) {
-				chainedPawns += chain.count(); // TODO: cast?
+				chainedPawns += chain.fastCount();
 			}
 
 			if (position.isFieldPassing(color, field)) {

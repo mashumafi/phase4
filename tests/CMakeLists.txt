@@ -33,6 +33,7 @@ add_executable(phase4_test
 
     phase4/engine/board/operators.t.cpp
     phase4/engine/board/ordering/move_ordering.t.cpp
+    phase4/engine/board/piece_square_tables/table_operations.t.cpp
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp
@@ -40,6 +41,13 @@ add_executable(phase4_test
     phase4/engine/board/zobrist_hashing.t.cpp
 
     phase4/engine/ai/score/evaluation.t.cpp
+    phase4/engine/ai/score/evaluators/bishop_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/king_safety_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/material_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/mobility_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/pawn_structure_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/position_evaluator.t.cpp
+    phase4/engine/ai/score/evaluators/rook_evaluator.t.cpp
     phase4/engine/ai/search/iterative_deepening.t.cpp
     phase4/engine/ai/search/nega_max.t.cpp
     phase4/engine/ai/search/quiescence_search.t.cpp

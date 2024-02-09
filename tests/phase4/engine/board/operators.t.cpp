@@ -1,6 +1,7 @@
 #include <phase4/engine/board/operators.h>
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 #include <phase4/engine/board/position_state.h>
 
 #include <phase4/engine/moves/move.h>
@@ -30,10 +31,10 @@ TEST_CASE("Operators standard getAllMoves") {
 		Move move(Square::G2, Square::G3, MoveFlags::QUIET);
 		CHECK(Operators::isMoveLegal(position, move));
 
-		Position::MakeMoveResult result = position.makeMove(move);
+		PositionMoves::MakeMoveResult result = PositionMoves::makeMove(position, move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::G2, Square::G3 });
+		CHECK(result.moved.at(0) == PositionMoves::MakeMoveResult::Movement{ Square::G2, Square::G3 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());
@@ -50,10 +51,10 @@ TEST_CASE("Operators standard getAllMoves") {
 		Move move(Square::B7, Square::B5, MoveFlags::DOUBLE_PUSH);
 		CHECK(Operators::isMoveLegal(position, move));
 
-		Position::MakeMoveResult result = position.makeMove(move);
+		PositionMoves::MakeMoveResult result = PositionMoves::makeMove(position, move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::B7, Square::B5 });
+		CHECK(result.moved.at(0) == PositionMoves::MakeMoveResult::Movement{ Square::B7, Square::B5 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());
@@ -70,10 +71,10 @@ TEST_CASE("Operators standard getAllMoves") {
 		Move move(Square::F1, Square::G2, MoveFlags::QUIET);
 		CHECK(Operators::isMoveLegal(position, move));
 
-		Position::MakeMoveResult result = position.makeMove(move);
+		PositionMoves::MakeMoveResult result = PositionMoves::makeMove(position, move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::F1, Square::G2 });
+		CHECK(result.moved.at(0) == PositionMoves::MakeMoveResult::Movement{ Square::F1, Square::G2 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());
@@ -90,10 +91,10 @@ TEST_CASE("Operators standard getAllMoves") {
 		Move move(Square::E7, Square::E6, MoveFlags::QUIET);
 		CHECK(Operators::isMoveLegal(position, move));
 
-		Position::MakeMoveResult result = position.makeMove(move);
+		PositionMoves::MakeMoveResult result = PositionMoves::makeMove(position, move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::E7, Square::E6 });
+		CHECK(result.moved.at(0) == PositionMoves::MakeMoveResult::Movement{ Square::E7, Square::E6 });
 		CHECK(!result.promotion);
 		CHECK(!result.killed);
 		CHECK(result.removed.is_empty());
@@ -110,15 +111,15 @@ TEST_CASE("Operators standard getAllMoves") {
 		Move move(Square::G2, Square::A8, MoveFlags::CAPTURE);
 		CHECK(Operators::isMoveLegal(position, move));
 
-		Position::MakeMoveResult result = position.makeMove(move);
+		PositionMoves::MakeMoveResult result = PositionMoves::makeMove(position, move);
 		CHECK(!result.added);
 		REQUIRE(result.moved.size() == 1);
-		CHECK(result.moved.at(0) == Position::MakeMoveResult::Movement{ Square::G2, Square::A8 });
+		CHECK(result.moved.at(0) == PositionMoves::MakeMoveResult::Movement{ Square::G2, Square::A8 });
 		CHECK(!result.promotion);
 		REQUIRE(result.killed);
-		CHECK(result.killed.value() == Position::MakeMoveResult::PieceAndSquare{ PieceType::ROOK, Square::A8 });
+		CHECK(result.killed.value() == PositionMoves::MakeMoveResult::PieceAndSquare{ PieceType::ROOK, Square::A8 });
 		REQUIRE(result.removed.size() == 1);
-		CHECK(result.removed.at(0) == Position::MakeMoveResult::PieceAndSquare{ PieceType::ROOK, Square::A8 });
+		CHECK(result.removed.at(0) == PositionMoves::MakeMoveResult::PieceAndSquare{ PieceType::ROOK, Square::A8 });
 		REQUIRE(result.slide);
 		CHECK(result.slide.value() == FieldIndex::ZERO);
 

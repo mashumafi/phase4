@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <type_traits>
 
 namespace phase4::engine::common {
@@ -16,6 +17,7 @@ template <typename T, std::size_t N = 512>
 class FastVector {
 public:
 	FastVector();
+	FastVector(std::initializer_list<T> items);
 
 	void push_back(const T &value);
 	void push_back(T &&value);
@@ -51,6 +53,14 @@ private:
 template <typename T, std::size_t N>
 FastVector<T, N>::FastVector() :
 		m_size(0) {
+}
+
+template <typename T, std::size_t N>
+FastVector<T, N>::FastVector(std::initializer_list<T> items) :
+		m_size(0) {
+	for (const T &item : items) {
+		emplace_back(item);
+	}
 }
 
 template <typename T, std::size_t N>
@@ -127,6 +137,17 @@ std::size_t FastVector<T, N>::size() const {
 template <typename T, std::size_t N>
 bool FastVector<T, N>::is_empty() const {
 	return m_size == 0;
+}
+
+template <typename T, std::size_t N>
+inline std::ostream &operator<<(std::ostream &os, const FastVector<T, N> &vector) {
+	for (size_t i = 0; i < vector.size(); ++i) {
+		if (i > 0) {
+			os << " ";
+		}
+		os << vector[i];
+	}
+	return os;
 }
 
 } //namespace phase4::engine::common

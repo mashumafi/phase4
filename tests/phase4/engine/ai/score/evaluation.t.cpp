@@ -1,6 +1,7 @@
 #include <phase4/engine/ai/score/evaluation.h>
 #include <phase4/engine/ai/score/evaluation_statistics.h>
 
+#include <phase4/engine/board/position_state.h>
 #include <phase4/engine/board/session.h>
 
 #include <doctest/doctest.h>
@@ -13,7 +14,7 @@ TEST_CASE("Evaluation evaluate cached") {
 	auto session = std::make_unique<board::Session>();
 	ai::score::EvaluationStatistics statistics;
 
-	const int32_t score = ai::score::Evaluation::evaluate(*session, true, statistics);
+	const int32_t score = ai::score::Evaluation::evaluate(*session, statistics);
 	CHECK(-100 <= score);
 	CHECK(score <= 100);
 }
@@ -21,10 +22,9 @@ TEST_CASE("Evaluation evaluate cached") {
 TEST_CASE("Evaluation evaluate not cached") {
 	using namespace phase4::engine;
 
-	auto session = std::make_unique<board::Session>();
-	ai::score::EvaluationStatistics statistics;
+	const board::Position position = board::PositionState::DEFAULT;
 
-	const int32_t score = ai::score::Evaluation::evaluate(*session, false, statistics);
+	const int32_t score = ai::score::Evaluation::evaluate(position);
 	CHECK(-100 <= score);
 	CHECK(score <= 100);
 }
