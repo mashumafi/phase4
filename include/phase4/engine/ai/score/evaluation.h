@@ -21,6 +21,10 @@ namespace phase4::engine::ai::score {
 
 class Evaluation {
 public:
+	/// @brief evaluate a position, uses cache from the provided session
+	/// @param session which contains a position and caches to use for evaluation
+	/// @param statistics statistics tracking
+	/// @return result of evaluation
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics) {
 		using namespace evaluators;
 
@@ -44,7 +48,7 @@ public:
 		return result;
 	}
 
-	/// @brief evaluate a position, results will match session evaluation without caching
+	/// @brief evaluate a position
 	/// @param position position to evaluate
 	/// @param statistics statistics tracking
 	/// @return result of evaluation

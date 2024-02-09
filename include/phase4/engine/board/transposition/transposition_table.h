@@ -14,7 +14,8 @@ namespace phase4::engine::board::transposition {
 template <size_t MB>
 class TranspositionTable {
 public:
-	using Table = std::array<TranspositionTableEntry, MB * 1024ul * 1024ul / sizeof(TranspositionTableEntry)>;
+	static constexpr size_t SIZE = MB * 1024ull * 1024ull / sizeof(TranspositionTableEntry);
+	using Table = std::array<TranspositionTableEntry, SIZE>;
 
 	inline void add(common::Bitset hash, const TranspositionTableEntry &entry) {
 		m_table[hash.get_raw_value() % m_table.size()] = entry;

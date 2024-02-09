@@ -12,7 +12,8 @@ namespace phase4::engine::board::transposition {
 template <size_t MB>
 class EvaluationHashTable {
 public:
-	using Table = std::array<EvaluationHashTableEntry, MB * 1024ull * 1024ull / sizeof(EvaluationHashTableEntry)>;
+	static constexpr size_t SIZE = MB * 1024ull * 1024ull / sizeof(EvaluationHashTableEntry);
+	using Table = std::array<EvaluationHashTableEntry, SIZE>;
 
 	void add(common::Bitset hash, int16_t score) {
 		m_table[hash.get_raw_value() % m_table.size()] = EvaluationHashTableEntry(hash, score);
