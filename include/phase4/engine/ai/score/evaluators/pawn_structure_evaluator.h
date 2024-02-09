@@ -27,7 +27,7 @@ public:
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const board::transposition::PawnHashTableEntry& entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
+		const board::transposition::PawnHashTableEntry &entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
 		if (entry.isKeyValid(session.position().m_pawnHash.asBitboard())) {
 #ifndef NDEBUG
 			++statistics.m_pawnHashTableHits;

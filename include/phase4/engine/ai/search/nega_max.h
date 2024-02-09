@@ -205,7 +205,7 @@ public:
 				hashMove = internalIterativeDeepeningEntry.bestMove();
 
 #ifndef NDEBUG
-				context.statistics.internalIterativeDeepeningHits++;
+				++context.statistics.internalIterativeDeepeningHits;
 #endif
 			}
 		}
