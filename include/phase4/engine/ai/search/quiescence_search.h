@@ -45,19 +45,20 @@ public:
 		if (evaluationEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
 			standPat = evaluationEntry.score();
 
-#if DEBUG
-			context.Statistics.EvaluationStatistics.EHTHits++;
+#ifndef NDEBUG
+			++context.statistics.evaluationStatistics.m_evaluationHashTableHits;
 #endif
 		} else {
 			standPat = score::Evaluation::evaluate(*context.session, context.statistics.evaluationStatistics);
 			context.session->m_hashTables.m_evaluationHashTable.add(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(standPat));
 
-#if DEBUG
-			context.Statistics.EvaluationStatistics.EHTNonHits++;
-			context.Statistics.EvaluationStatistics.EHTAddedEntries++;
+#ifndef NDEBUG
+			context.statistics.evaluationStatistics.m_evaluationHashTableNonHits++;
 
-			if (evaluationEntry.Key != 0 || evaluationEntry.Score != 0) {
-				context.Statistics.EvaluationStatistics.EHTReplacements++;
+			if (evaluationEntry.key() != 0 || evaluationEntry.score() != 0) {
+				++context.statistics.evaluationStatistics.m_evaluationHashTableReplacements;
+			} else {
+				context.statistics.evaluationStatistics.m_evaluationHashTableAddedEntries++;
 			}
 #endif
 		}
@@ -81,15 +82,15 @@ public:
 			board::ordering::MoveOrdering::sortNextBestMove(moves, moveValues, moveIndex);
 
 			if (moveValues[moveIndex] < 0) {
-#if DEBUG
-				context.Statistics.QSEEPrunes++;
+#ifndef NDEBUG
+				++context.statistics.qSeePrunes;
 #endif
 				break;
 			}
 
 			if (standPat + moveValues[moveIndex] + board::SearchConstants::QFUTILITY_PRUNING_MARGIN < alpha) {
-#if DEBUG
-				context.Statistics.QFutilityPrunes++;
+#ifndef NDEBUG
+				++context.statistics.qFutilityPrunes;
 #endif
 				break;
 			}
@@ -102,11 +103,11 @@ public:
 				alpha = score;
 
 				if (alpha >= beta) {
-#if DEBUG
+#ifndef NDEBUG
 					if (moveIndex == 0) {
-						context.Statistics.QBetaCutoffsAtFirstMove++;
+						++context.statistics.qBetaCutoffsAtFirstMove;
 					} else {
-						context.Statistics.QBetaCutoffsNotAtFirstMove++;
+						++context.statistics.qBetaCutoffsNotAtFirstMove;
 					}
 #endif
 

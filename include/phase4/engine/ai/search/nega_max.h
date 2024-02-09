@@ -76,8 +76,8 @@ public:
 			return QuiescenceSearch::findBestMove(context, depth, ply, alpha, beta);
 		}
 
-		int32_t originalAlpha = alpha;
-		bool pvNode = beta - alpha > 1;
+		const int32_t originalAlpha = alpha;
+		const bool pvNode = beta - alpha > 1;
 
 		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
 		moves::Move hashMove = moves::Move::Empty;
@@ -93,12 +93,12 @@ public:
 					hashMove = entry.bestMove();
 					bestMove = entry.bestMove();
 #ifndef NDEBUG
-					context.statistics.transpositionTableValidMoves++;
+					++context.statistics.transpositionTableValidMoves;
 #endif
 				}
 #ifndef NDEBUG
 				else {
-					context.statistics.transpositionTableInvalidMoves++;
+					++context.statistics.transpositionTableInvalidMoves;
 				}
 #endif
 			}
@@ -450,18 +450,17 @@ public:
 					return TranspositionTableEntryFlags::EXACT_SCORE;
 				});
 
-				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
-
-				const TranspositionTableEntry newEntry(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
-				context.session->m_hashTables.m_transpositionTable.add(context.session->position().m_hash.asBitboard(), newEntry);
-
 #ifndef NDEBUG
 				if (entry.flags() != TranspositionTableEntryFlags::INVALID) {
 					++context.statistics.transpositionTableReplacements;
+				} else {
+					++context.statistics.transpositionTableAddedEntries;
 				}
-
-				++context.statistics.transpositionTableAddedEntries;
 #endif
+
+				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
+				const TranspositionTableEntry newEntry(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
+				context.session->m_hashTables.m_transpositionTable.add(context.session->position().m_hash.asBitboard(), newEntry);
 			}
 		}
 
@@ -487,7 +486,7 @@ private:
 		return board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION + (depth - board::SearchConstants::NULL_MOVE_MIN_DEPTH) / board::SearchConstants::NULL_MOVE_DEPTH_REDUCTION_DIVIDER;
 	}
 
-	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, const board::transposition::TranspositionTableEntryFlags &transpositionTableEntryType, moves::Move bestMove) {
+	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, board::transposition::TranspositionTableEntryFlags transpositionTableEntryType, moves::Move bestMove) {
 		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
 	}
 
