@@ -25,8 +25,7 @@ public:
 	static constexpr int32_t E3 = -20; // Edge
 
 	static constexpr std::array<std::array<std::array<int32_t, 64>, 2>, 2> build() {
-		const std::array<int32_t, 64> opening = {
-
+		constexpr std::array opening = {
 			O0, O0, O0, O0, O0, O0, O0, O0,
 			O0, O0, O0, O0, O0, O0, O0, O0,
 			O0, O0, O0, O0, O0, O0, O0, O0,
@@ -37,7 +36,7 @@ public:
 			O3, O3, O5, O4, O4, O3, O5, O3
 		};
 
-		const std::array<int32_t, 64> ending = {
+		constexpr std::array ending = {
 			E3, E3, E3, E3, E3, E3, E3, E3,
 			E3, E2, E2, E2, E2, E2, E2, E3,
 			E3, E2, E1, E1, E1, E1, E2, E3,
@@ -48,16 +47,17 @@ public:
 			E3, E3, E3, E3, E3, E3, E3, E3
 		};
 
-		return std::array<std::array<std::array<int32_t, 64>, 2>, 2>{
-			// White
-			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipVertically(opening),
-					TableOperations::flipVertically(ending) },
-			// Black
-			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipHorizontally(opening),
-					TableOperations::flipHorizontally(ending) }
+		constexpr std::array white = {
+			TableOperations::flipVertically(opening),
+			TableOperations::flipVertically(ending)
 		};
+
+		constexpr std::array black = {
+			TableOperations::flipHorizontally(opening),
+			TableOperations::flipHorizontally(ending)
+		};
+
+		return { white, black };
 	}
 };
 

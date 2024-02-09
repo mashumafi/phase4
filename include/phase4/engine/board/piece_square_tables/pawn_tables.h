@@ -12,22 +12,22 @@ namespace phase4::engine::board::piece_square_tables {
 
 class PawnTables {
 public:
-	static const int32_t O0 = 5; // 7th rank
-	static const int32_t O1 = 15; // 6th rank
-	static const int32_t O2 = 5; // 5th rank
-	static const int32_t O3 = -15; // 4th rank with penalty
-	static const int32_t O4 = 15; // 4th rank with reward
-	static const int32_t O5 = -5; // 3th, 2th rank with penalty
-	static const int32_t O6 = 0; // 3th, 2th rank with reward
+	static constexpr int32_t O0 = 5; // 7th rank
+	static constexpr int32_t O1 = 15; // 6th rank
+	static constexpr int32_t O2 = 5; // 5th rank
+	static constexpr int32_t O3 = -15; // 4th rank with penalty
+	static constexpr int32_t O4 = 15; // 4th rank with reward
+	static constexpr int32_t O5 = -5; // 3th, 2th rank with penalty
+	static constexpr int32_t O6 = 0; // 3th, 2th rank with reward
 
-	static const int32_t E0 = 100; // 7th rank
-	static const int32_t E1 = 90; // 6th rank
-	static const int32_t E2 = 50; // 5th rank
-	static const int32_t E3 = 20; // 4th rank
-	static const int32_t E4 = 0; // 3th, 2th rank
+	static constexpr int32_t E0 = 100; // 7th rank
+	static constexpr int32_t E1 = 90; // 6th rank
+	static constexpr int32_t E2 = 50; // 5th rank
+	static constexpr int32_t E3 = 20; // 4th rank
+	static constexpr int32_t E4 = 0; // 3th, 2th rank
 
 	static constexpr std::array<std::array<std::array<int32_t, 64>, 2>, 2> build() {
-		const std::array<int32_t, 64> opening = {
+		constexpr std::array<int32_t, 64> opening = {
 			0, 0, 0, 0, 0, 0, 0, 0,
 			O0, O0, O0, O0, O0, O0, O0, O0,
 			O1, O1, O1, O1, O1, O1, O1, O1,
@@ -38,7 +38,7 @@ public:
 			0, 0, 0, 0, 0, 0, 0, 0
 		};
 
-		const std::array<int32_t, 64> ending = {
+		constexpr std::array<int32_t, 64> ending = {
 			0, 0, 0, 0, 0, 0, 0, 0,
 			E0, E0, E0, E0, E0, E0, E0, E0,
 			E1, E1, E1, E1, E1, E1, E1, E1,
@@ -49,16 +49,17 @@ public:
 			0, 0, 0, 0, 0, 0, 0, 0
 		};
 
-		return std::array<std::array<std::array<int32_t, 64>, 2>, 2>{
-			// White
-			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipVertically(opening),
-					TableOperations::flipVertically(ending) },
-			// Black
-			std::array<std::array<int32_t, 64>, 2>{
-					TableOperations::flipHorizontally(opening),
-					TableOperations::flipHorizontally(ending) }
+		constexpr std::array white = {
+			TableOperations::flipVertically(opening),
+			TableOperations::flipVertically(ending)
 		};
+
+		constexpr std::array black = {
+			TableOperations::flipHorizontally(opening),
+			TableOperations::flipHorizontally(ending)
+		};
+
+		return { white, black };
 	}
 };
 

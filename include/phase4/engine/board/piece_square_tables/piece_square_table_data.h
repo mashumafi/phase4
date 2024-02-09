@@ -19,13 +19,15 @@ namespace phase4::engine::board::piece_square_tables {
 
 class PieceSquareTablesData {
 public:
+	using Array = std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6>;
+
 	static inline constexpr int32_t value(common::PieceType piece, common::PieceColor color, common::GamePhase phase, common::Square square);
 
 private:
-	static const std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6> VALUES;
+	static const Array VALUES;
 };
 
-inline constexpr std::array<std::array<std::array<std::array<int32_t, 64>, 2>, 2>, 6> PieceSquareTablesData::VALUES = {
+inline constexpr PieceSquareTablesData::Array PieceSquareTablesData::VALUES = {
 	PawnTables::build(),
 	KnightTables::build(),
 	BishopTables::build(),
