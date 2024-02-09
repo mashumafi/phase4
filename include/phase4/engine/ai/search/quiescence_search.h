@@ -58,7 +58,7 @@ public:
 			if (evaluationEntry.key() != 0 || evaluationEntry.score() != 0) {
 				++context.statistics.evaluationStatistics.m_evaluationHashTableReplacements;
 			} else {
-				context.statistics.evaluationStatistics.m_evaluationHashTableAddedEntries++;
+				++context.statistics.evaluationStatistics.m_evaluationHashTableAddedEntries;
 			}
 #endif
 		}
