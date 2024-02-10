@@ -28,7 +28,13 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const Move &move);
 
 private:
+#if NDEBUG
 	uint16_t m_data;
+#else
+	common::Square m_from;
+	common::Square m_to;
+	MoveFlags m_flags;
+#endif
 
 	friend constexpr bool operator==(const Move a, const Move b);
 	friend constexpr bool operator!=(const Move a, const Move b);
@@ -39,27 +45,50 @@ using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
 using MoveValues = common::FastVector<int16_t, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
+#if NDEBUG
 	return common::Square(m_data & 0x3F);
+#else
+	return m_from;
+#endif
 }
 
 constexpr common::Square Move::to() const {
+#if NDEBUG
 	return common::Square((m_data >> 6) & 0x3F);
+#else
+	return m_to;
+#endif
 }
 
 constexpr MoveFlags Move::flags() const {
+#if NDEBUG
 	return MoveFlags(m_data >> 12);
+#else
+	return m_flags;
+#endif
 }
 
 constexpr Move::Move() :
-		m_data(0) {}
+#if NDEBUG
+		m_data(0)
+#else
+		m_from(common::Square::BEGIN), m_to(common::Square::BEGIN), m_flags(MoveFlags::QUIET)
+#endif
+{
+}
 
 inline constexpr Move Move::Empty;
 
 constexpr Move::Move(common::Square from, common::Square to, MoveFlags flags) :
+#if NDEBUG
 		m_data(
 				static_cast<uint16_t>(from.get_raw_value()) |
 				static_cast<uint16_t>(to.get_raw_value() << 6) |
-				static_cast<uint16_t>(flags.get_raw_value() << 12)) {
+				static_cast<uint16_t>(flags.get_raw_value() << 12))
+#else
+		m_from(from), m_to(to), m_flags(flags)
+#endif
+{
 }
 
 constexpr Move::Move(std::string_view textNotation) :
@@ -78,11 +107,19 @@ inline std::ostream &operator<<(std::ostream &os, const Move &move) {
 }
 
 inline constexpr bool operator==(const Move a, const Move b) {
+#if NDEBUG
 	return a.m_data == b.m_data;
+#else
+	return a.m_from == b.m_from && a.m_to == b.m_to && a.m_flags.get_raw_value() == b.m_flags.get_raw_value();
+#endif
 }
 
 inline constexpr bool operator!=(const Move a, const Move b) {
+#if NDEBUG
 	return a.m_data != b.m_data;
+#else
+	return a.m_from != b.m_from || a.m_to != b.m_to || a.m_flags.get_raw_value() != b.m_flags.get_raw_value();
+#endif
 }
 
 namespace literals {

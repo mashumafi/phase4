@@ -12,8 +12,8 @@ namespace phase4::engine::board {
 
 class SearchConstants {
 public:
-	static constexpr int16_t MIN_VALUE = std::numeric_limits<int16_t>::min();
-	static constexpr int16_t MAX_VALUE = std::numeric_limits<int16_t>::max();
+	static constexpr int32_t MIN_VALUE = std::numeric_limits<int16_t>::min();
+	static constexpr int32_t MAX_VALUE = std::numeric_limits<int16_t>::max();
 	static constexpr int32_t NO_KING_VALUE = MIN_VALUE - 10;
 	static constexpr int8_t MAX_DEPTH = 32;
 	static constexpr int32_t MAX_MOVES_COUNT = 218;
@@ -54,8 +54,8 @@ public:
 	static constexpr int32_t LATE_MOVE_PRUNING_BASE_PERCENT_MOVES_TO_PRUNE = 50;
 	static constexpr int32_t LATE_MOVE_PRUNING_PERCENT_INCREASE_PER_DEPTH = 25;
 
-	static constexpr bool isScoreNearCheckmate(int16_t score) {
-		int16_t scoreAbs = common::Math::abs_int16(score);
+	static constexpr bool isScoreNearCheckmate(int32_t score) {
+		const int32_t scoreAbs = common::Math::abs_int32(score);
 		return scoreAbs >= EvaluationConstants::CHECKMATE - MAX_DEPTH &&
 				scoreAbs <= EvaluationConstants::CHECKMATE + MAX_DEPTH;
 	}
