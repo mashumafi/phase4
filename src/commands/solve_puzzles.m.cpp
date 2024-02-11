@@ -111,6 +111,8 @@ struct PuzzleStatistics {
 	std::atomic<size_t> invalidFen = 0;
 	std::atomic<size_t> blunderMiss = 0;
 	std::atomic<size_t> badPrincipalVariation = 0;
+	std::atomic<size_t> longCheckmate = 0;
+	std::atomic<size_t> notEnoughMoves = 0;
 };
 
 template <typename T>
@@ -190,6 +192,14 @@ int main() {
 					atomic_min(statistics.lowestFailure, puzzle->rating);
 					++statistics.bestMoveFound;
 					break;
+				case fen::FenValidator::LONG_CHECKMATE:
+					atomic_min(statistics.lowestFailure, puzzle->rating);
+					++statistics.longCheckmate;
+					break;
+				case fen::FenValidator::NOT_ENOUGH_MOVES:
+					atomic_min(statistics.lowestFailure, puzzle->rating);
+					++statistics.notEnoughMoves;
+					break;
 				case fen::FenValidator::FAILURE:
 					atomic_min(statistics.lowestFailure, puzzle->rating);
 					if (puzzle->rating < 1000) {
@@ -214,14 +224,15 @@ int main() {
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
-	std::cout << "Total        : " << statistics.count << std::endl;
-	std::cout << "Success      : " << statistics.success << std::endl;
-	std::cout << "Checkmate    : " << statistics.checkmate << std::endl;
-	std::cout << "Best Move    : " << statistics.bestMoveFound << std::endl;
-	std::cout << "Max Moves    : " << statistics.maxMoves << std::endl;
-	std::cout << "Errors       : " << statistics.blunderMiss + statistics.invalidCsv + statistics.invalidFen + statistics.badPrincipalVariation << std::endl;
-	std::cout << "Result Range : " << statistics.lowestFailure << "-" << statistics.highestSuccess << std::endl;
-	std::cout << "Rating Range : " << statistics.minRating << "-" << statistics.maxRating << std::endl;
+	std::cout << "Total          : " << statistics.count << std::endl;
+	std::cout << "Success        : " << statistics.success << std::endl;
+	std::cout << "Checkmate      : " << statistics.checkmate << std::endl;
+	std::cout << "Best Move      : " << statistics.bestMoveFound << std::endl;
+	std::cout << "Max Moves      : " << statistics.maxMoves << std::endl;
+	std::cout << "Errors         : " << statistics.blunderMiss + statistics.invalidCsv + statistics.invalidFen + statistics.badPrincipalVariation + statistics.notEnoughMoves + statistics.longCheckmate << std::endl;
+	std::cout << "Low Move count : " << statistics.notEnoughMoves << std::endl;
+	std::cout << "Result Range   : " << statistics.lowestFailure << "-" << statistics.highestSuccess << std::endl;
+	std::cout << "Rating Range   : " << statistics.minRating << "-" << statistics.maxRating << std::endl;
 
 	return 0;
 }
