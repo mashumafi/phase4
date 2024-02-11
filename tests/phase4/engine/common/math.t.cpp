@@ -2,7 +2,7 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("Math 16 abs") {
+TEST_CASE("Math i16 abs") {
 	using namespace phase4::engine::common;
 
 	CHECK(Math::abs_int16(0) == 0);
@@ -10,7 +10,7 @@ TEST_CASE("Math 16 abs") {
 	CHECK(Math::abs_int16(6) == 6);
 }
 
-TEST_CASE("Math 16 min") {
+TEST_CASE("Math i16 min") {
 	using namespace phase4::engine::common;
 
 	CHECK(Math::min_int16(0, 0) == 0);
@@ -24,7 +24,7 @@ TEST_CASE("Math 16 min") {
 	CHECK(Math::min_int16(-7, 0) == -7);
 }
 
-TEST_CASE("Math 16 max") {
+TEST_CASE("Math i16 max") {
 	using namespace phase4::engine::common;
 
 	CHECK(Math::max_int16(0, 0) == 0);
@@ -38,7 +38,15 @@ TEST_CASE("Math 16 max") {
 	CHECK(Math::max_int16(-7, 0) == 0);
 }
 
-TEST_CASE("Math 32 min") {
+TEST_CASE("Math i32 abs") {
+	using namespace phase4::engine::common;
+
+	CHECK(Math::abs_int32(0) == 0);
+	CHECK(Math::abs_int32(-3) == 3);
+	CHECK(Math::abs_int32(6) == 6);
+}
+
+TEST_CASE("Math i32 min") {
 	using namespace phase4::engine::common;
 
 	CHECK(Math::min_int32(0, 0) == 0);
@@ -52,7 +60,7 @@ TEST_CASE("Math 32 min") {
 	CHECK(Math::min_int32(-7, 0) == -7);
 }
 
-TEST_CASE("Math 32 max") {
+TEST_CASE("Math i32 max") {
 	using namespace phase4::engine::common;
 
 	CHECK(Math::max_int32(0, 0) == 0);

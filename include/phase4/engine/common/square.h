@@ -3,6 +3,7 @@
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/field_index.h>
+#include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/util.h>
 
 #include <iostream>
@@ -119,6 +120,7 @@ public:
 
 	inline constexpr bool isValid() const noexcept;
 
+	inline constexpr Square forward(PieceColor color, int8_t scalar) const noexcept;
 	inline constexpr Square north(int8_t scalar) const noexcept;
 	inline constexpr Square east(int8_t scalar) const noexcept;
 	inline constexpr Square south(int8_t scalar) const noexcept;
@@ -247,6 +249,10 @@ inline constexpr Square::Square(std::string_view square) :
 
 inline constexpr bool Square::isValid() const noexcept {
 	return m_value < Square::INVALID.m_value;
+}
+
+inline constexpr Square Square::forward(PieceColor color, int8_t scalar) const noexcept {
+	return color == PieceColor::WHITE ? north(scalar) : south(scalar);
 }
 
 inline constexpr Square Square::north(int8_t scalar) const noexcept {

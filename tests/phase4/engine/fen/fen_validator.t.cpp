@@ -45,6 +45,10 @@ TEST_CASE("FenValidator") {
 				"8/1p1k4/p1pp4/7R/PP2n1p1/4P1K1/2P5/8 w - - 0 38",
 				"g3g4", { "e4f6", "g4f5", "f6h5" },
 				4, fen::FenValidator::FOUND_BEST },
+		FenTestCase{
+				"2r3k1/2r4p/4p1p1/1p1q1pP1/p1bP1P1Q/P6R/5B2/2R3K1 b - - 5 34",
+				"c4e2", { "h4h7", "c7h7", "c1c8", "g8g7", "c8c7" },
+				6, fen::FenValidator::FOUND_BEST }
 	};
 
 	for (const FenTestCase &testCase : testCases) {

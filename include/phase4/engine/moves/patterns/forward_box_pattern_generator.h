@@ -22,13 +22,12 @@ public:
 
 private:
 	static constexpr common::Bitset getPatternForField(common::PieceColor color, common::Square fieldIndex) {
-		int16_t offset = color == common::PieceColor::WHITE ? 8 : -8;
 		common::Bitset mask = BoxPatternGenerator::getPattern(fieldIndex);
-		common::Square fieldIndexWithOffset(fieldIndex + offset);
+		const common::Square forwardField(fieldIndex.forward(color, 1));
 
-		if (fieldIndexWithOffset.isValid()) {
-			mask |= BoxPatternGenerator::getPattern(fieldIndexWithOffset);
-			mask &= ~(fieldIndex.asBitboard());
+		if (forwardField.isValid()) {
+			mask |= BoxPatternGenerator::getPattern(forwardField);
+			mask &= ~fieldIndex.asBitboard();
 		}
 
 		return mask;

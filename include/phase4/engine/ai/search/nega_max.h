@@ -533,7 +533,7 @@ private:
 			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
 			const common::PieceType piece = context.session->position().m_pieceTable[moves[moveIndex].to()];
 
-			// TODO: Figure out why piece is sometimes `-1`
+			// TODO: Figure out why piece is sometimes INVALID
 			if (piece != common::PieceType::INVALID && context.session->m_historyHeuristic.getRawMoveValue(enemyColor, piece, moves[moveIndex].to()) >= context.session->m_historyHeuristic.getMaxValue() / board::SearchConstants::LATE_MOVE_REDUCTIONS_MAX_HISTORY_VALUE_DIVIDER) {
 				return false;
 			}
