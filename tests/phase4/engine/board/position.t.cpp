@@ -51,6 +51,7 @@ TEST_CASE("Position ending phase") {
 
 class ZobristValidator {
 	std::unordered_set<uint64_t> hashes;
+
 public:
 	void validate(const phase4::engine::board::Position &positionBegin, int32_t ply = 2) {
 		using namespace phase4::engine;
@@ -79,6 +80,10 @@ public:
 			validate(position, ply - 1);
 		}
 	}
+
+	size_t checkCount() const {
+		return hashes.size();
+	}
 };
 
 TEST_CASE("Position Zobrist hash") {
@@ -94,4 +99,14 @@ TEST_CASE("Position Zobrist hash") {
 	const auto shortCastlingPosition = fen::FenToPosition::parse("rnbqk2r/ppp2pbp/4P1p1/8/6n1/5N2/PP1PPPBP/RNBQK2R b KQkq - 0 7");
 	REQUIRE(shortCastlingPosition);
 	validator.validate(*shortCastlingPosition);
+
+	const auto promotionCapturesPosition = fen::FenToPosition::parse("2kr1b1r/pbp1P1p1/1pn2n2/1P1N4/2P5/8/PB3PpP/R1K2BNR b - - 0 16");
+	REQUIRE(promotionCapturesPosition);
+	validator.validate(*promotionCapturesPosition);
+
+	const auto promotionPosition = fen::FenToPosition::parse("2k4r/pbp1P1b1/1pn2n2/1P1r3P/2P3pR/3B4/PB3Pp1/R1K3N1 b - - 2 20");
+	REQUIRE(promotionPosition);
+	validator.validate(*promotionPosition);
+
+	CHECK(validator.checkCount() == 197);
 }
