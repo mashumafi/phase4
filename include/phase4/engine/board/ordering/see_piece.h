@@ -47,7 +47,7 @@ public:
 		const common::Bitset occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
 		const common::Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
 		const common::Bitset attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
-		uint8_t attackingRooksCount = attackingRooks.fastCount();
+		const uint8_t attackingRooksCount = attackingRooks.fastCount();
 		if (attackingRooksCount != 0) {
 			result |= (uint8_t)((attackingRooksCount == 1 ? 1 : 3) << SeePiece::ROOK1.m_value);
 		}

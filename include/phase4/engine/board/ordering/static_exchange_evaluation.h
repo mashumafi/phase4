@@ -20,8 +20,8 @@ public:
 	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
 	using Array = std::array<AttackersDefendersArray, 6>;
 
-	static int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
-		return static_cast<int16_t>(board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
+	static inline int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attackers, uint8_t defenders) {
+		return board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attackers][defenders];
 	}
 
 private:
@@ -73,7 +73,7 @@ private:
 	}
 
 	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
-		common::SafeVector<int16_t, 128> gainList = {};
+		common::SafeVector<int16_t, 15> gainList = {};
 
 		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
 		common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex.asBitboard();
