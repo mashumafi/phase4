@@ -73,7 +73,7 @@ private:
 	}
 
 	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
-		common::SafeVector<int16_t, 15> gainList = {};
+		common::SafeVector<int16_t, 128> gainList = {};
 
 		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
 		common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex.asBitboard();
