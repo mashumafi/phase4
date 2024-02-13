@@ -170,9 +170,6 @@ int main(int argc, const char **args) {
 				const common::PieceColor enemyColor = blunderPosition.m_colorToMove.invert();
 
 				const common::PieceType attackingPiece = blunderPosition.m_pieceTable[moves[moveIndex].from()];
-				if (attackingPiece == common::PieceType::KING) {
-					continue;
-				}
 				const common::PieceType capturedPiece = blunderPosition.m_pieceTable[moves[moveIndex].to()];
 
 				const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, blunderPosition.m_colorToMove, moves[moveIndex].to());

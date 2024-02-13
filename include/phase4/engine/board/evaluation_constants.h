@@ -97,6 +97,7 @@ inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER_RING = Evaluation
 inline constexpr uint64_t EvaluationConstants::OUTSIDE = 0xffffc3c3c3c3ffff;
 
 inline constexpr int32_t EvaluationConstants::MATERIAL_AT_OPENING = calculateMaterialAtOpening();
+static_assert(EvaluationConstants::MATERIAL_AT_OPENING == 24570); // Check for overflow
 
 } //namespace phase4::engine::board
 #endif
