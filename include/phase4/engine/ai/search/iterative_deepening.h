@@ -55,7 +55,7 @@ public:
 		int32_t expectedExecutionTime = 0;
 		const int32_t alpha = board::SearchConstants::MIN_VALUE;
 		const int32_t beta = board::SearchConstants::MAX_VALUE;
-		uint32_t lastSearchTime = 0;
+		uint64_t lastSearchTime = 0;
 		moves::Move bestMove = moves::Move::Empty;
 		Stopwatch stopwatch;
 		stopwatch.start();

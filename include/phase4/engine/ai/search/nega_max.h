@@ -382,7 +382,7 @@ public:
 				moves.clear();
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
-				moveIndex = -1; // restart iteration
+				moveIndex = std::numeric_limits<size_t>::max(); // restart iteration
 				loudMovesGenerated = true;
 
 #ifndef NDEBUG
@@ -522,12 +522,12 @@ private:
 		return 0;
 	}
 
-	static bool lateMovePruningCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, int32_t moveIndex, int32_t movesCount, bool pvNode) {
+	static bool lateMovePruningCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, size_t moveIndex, size_t movesCount, bool pvNode) {
 		return depth <= board::SearchConstants::LATE_MOVE_PRUNING_MAX_DEPTH && !pvNode && !friendlyKingInCheck && quietMovesGenerated &&
 				moveIndex >= (board::SearchConstants::LATE_MOVE_PRUNING_BASE_PERCENT_MOVES_TO_PRUNE + (depth - 1) * board::SearchConstants::LATE_MOVE_PRUNING_PERCENT_INCREASE_PER_DEPTH) * movesCount / 100;
 	}
 
-	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
+	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, size_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
 		if (depth >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MIN_DEPTH && moveIndex >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION &&
 				(moves[moveIndex].flags().isQuiet() || (moves[moveIndex].flags().isCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck) {
 			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
@@ -552,7 +552,7 @@ private:
 		return false;
 	}
 
-	static int32_t lateMoveReductionsGetReduction(bool pvNode, int32_t moveIndex) {
+	static int32_t lateMoveReductionsGetReduction(bool pvNode, size_t moveIndex) {
 		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
 		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, reductions);
 	}
