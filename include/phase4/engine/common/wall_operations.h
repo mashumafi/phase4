@@ -21,7 +21,7 @@ public:
 	static constexpr int16_t Rank2 = 1;
 	static constexpr int16_t FileB = 1;
 
-	static constexpr int16_t Round(int16_t n, int16_t d) {
+	static constexpr int16_t Step(int16_t n, int16_t d) {
 		return n / d * d;
 	}
 
@@ -41,7 +41,7 @@ public:
 		return fieldIndex / 8;
 	}
 
-	static constexpr std::array<std::array<uint64_t, 8>, 8> populateSlideFromBB();
+	static constexpr std::array<std::array<common::Bitset, 8>, 8> populateSlideFromBB();
 
 	static constexpr std::array<std::array<common::Bitset, 64>, 64> populateSlideToBB();
 
@@ -50,7 +50,7 @@ public:
 	static constexpr std::array<std::array<common::Square, 64>, 64> populateSlideSquare();
 
 	// utility, given an x,y gives you a valid wall mask for that coordinate
-	static const std::array<std::array<uint64_t, 8>, 8> SLIDE_FROM;
+	static const std::array<std::array<common::Bitset, 8>, 8> SLIDE_FROM;
 
 	// given a wall index and square, gives you a resulting wall mask
 	// used to update the bitset used for the wall mask
@@ -65,28 +65,27 @@ public:
 	static const std::array<std::array<common::Square, 64>, 64> SLIDE_SQUARE;
 };
 
-constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::populateSlideFromBB() {
-	std::array<std::array<uint64_t, 8>, 8> result{};
+constexpr std::array<std::array<common::Bitset, 8>, 8> WallOperations::populateSlideFromBB() {
+	std::array<std::array<common::Bitset, 8>, 8> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
-		uint64_t wallSquares = SquareBB(bottomRight) | SquareBB(bottomRight + North) | SquareBB(bottomRight + West) | SquareBB(bottomRight + NorthWest);
+		const FieldIndex bottomRight{ Step(GetFile(from), 2), Step(GetRank(from), 2) };
+		const uint64_t wallSquares = SquareBB(bottomRight) | SquareBB(bottomRight + North) | SquareBB(bottomRight + West) | SquareBB(bottomRight + NorthWest);
 		result[from % 8][from / 8] = wallSquares;
 	}
 	return result;
 }
 
-inline constexpr std::array<std::array<uint64_t, 8>, 8> WallOperations::SLIDE_FROM = WallOperations::populateSlideFromBB();
+inline constexpr std::array<std::array<common::Bitset, 8>, 8> WallOperations::SLIDE_FROM = WallOperations::populateSlideFromBB();
 
 constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
 	std::array<std::array<common::Bitset, 64>, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
-		int64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
+		const common::Bitset wallSquares = SLIDE_FROM[from % 8][from / 8];
 
 		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
-			int64_t shiftedWall = wallSquares;
-			int64_t toBB = SquareBB(to);
+			common::Bitset shiftedWall = wallSquares;
+			const common::Bitset toBB = to.asBitboard();
 
 			if (GetFile(from) > FileB && ((wallSquares >> (-East * 2).x) & toBB) > 0) {
 				d = East * 2;
@@ -111,12 +110,11 @@ constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populat
 constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSlideDir() {
 	std::array<std::array<FieldIndex, 64>, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
-		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
+		const common::Bitset wallSquares = SLIDE_FROM[from % 8][from / 8];
 
 		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
-			uint64_t toBB = SquareBB(to);
+			const common::Bitset toBB = SquareBB(to);
 
 			if (GetFile(from) > FileB && ((wallSquares >> (-East * 2).x) & toBB) > 0) {
 				d = East * 2;
@@ -137,12 +135,11 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populateSlideSquare() {
 	std::array<std::array<common::Square, 64>, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		FieldIndex bottomRight{ Round(GetFile(from), 2), Round(GetRank(from), 2) };
-		uint64_t wallSquares = SLIDE_FROM[from % 8][from / 8];
+		const common::Bitset wallSquares = SLIDE_FROM[from % 8][from / 8];
 
 		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
 			FieldIndex d{ 0, 0 };
-			uint64_t toBB = SquareBB(to);
+			const common::Bitset toBB = to.asBitboard();
 
 			if (GetFile(from) > FileB && ((wallSquares >> (-East * 2).x) & toBB) > 0) {
 				d = East * 2;
