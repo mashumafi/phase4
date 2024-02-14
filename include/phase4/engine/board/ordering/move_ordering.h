@@ -35,9 +35,9 @@ public:
 
 				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
 				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				const int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				const int16_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
-				moveValues[moveIndex] = (int32_t)(MoveOrderingConstants::CAPTURE + seeEvaluation);
+				moveValues[moveIndex] = MoveOrderingConstants::CAPTURE + seeEvaluation;
 			} else if (moves[moveIndex].flags().isCastling()) {
 				moveValues[moveIndex] = MoveOrderingConstants::CASTLING;
 			} else {
