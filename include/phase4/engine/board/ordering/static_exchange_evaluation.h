@@ -72,12 +72,8 @@ private:
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
-	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
-		common::SafeVector<int16_t, 128> gainList = {};
-
-		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
-		common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex.asBitboard();
-		common::Bitset defenders(defenderIndex);
+	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {
+		common::SafeVector<int16_t, 7> gainList = {};
 
 		common::PieceType currentPieceOnField = attackingPiece;
 		int16_t result = 0;
@@ -134,7 +130,9 @@ private:
 
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
 			for (uint64_t defenderIndex = 0; defenderIndex < 256; ++defenderIndex) {
-				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackerIndex, defenderIndex);
+				const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
+				const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
+				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackers, defenderIndex);
 			}
 		}
 

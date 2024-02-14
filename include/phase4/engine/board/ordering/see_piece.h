@@ -74,6 +74,10 @@ public:
 		return result;
 	}
 
+	inline constexpr common::Bitset asBitboard() const {
+		return common::Bitset(1ull << m_value);
+	}
+
 private:
 	constexpr SeePiece(uint64_t value);
 	constexpr SeePiece &operator=(uint64_t value);

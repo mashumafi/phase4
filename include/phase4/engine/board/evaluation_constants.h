@@ -43,7 +43,7 @@ struct EvaluationConstants {
 	static const uint64_t EXTENDED_CENTER_RING;
 	static const uint64_t OUTSIDE;
 
-	static constexpr uint32_t calculateMaterialAtOpening();
+	static constexpr int32_t calculateMaterialAtOpening();
 
 	static const int32_t MATERIAL_AT_OPENING;
 
@@ -57,7 +57,7 @@ inline constexpr int32_t EvaluationConstants::pieceValue(common::PieceType piece
 	return EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 }
 
-inline constexpr uint32_t EvaluationConstants::calculateMaterialAtOpening() {
+inline constexpr int32_t EvaluationConstants::calculateMaterialAtOpening() {
 	return EvaluationConstants::pieceValue(common::PieceType::KING) +
 			EvaluationConstants::pieceValue(common::PieceType::QUEEN) +
 			EvaluationConstants::pieceValue(common::PieceType::ROOK) * 2 +
