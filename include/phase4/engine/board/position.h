@@ -57,7 +57,7 @@ public:
 	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 1;
-	uint16_t m_irreversibleMovesCount = 0;
+	size_t m_irreversibleMovesCount = 0;
 	uint16_t m_nullMoves = 0;
 
 	std::array<bool, 2> m_castlingDone = {};
