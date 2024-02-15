@@ -105,7 +105,7 @@ private:
 		common::FieldIndex field(0, 7);
 
 		for (size_t i = 0; i < pieces.size(); ++i) {
-			char c = pieces[i];
+			const char c = pieces[i];
 			if (std::isalpha(c)) {
 				const std::optional<common::PieceType> &piece = convertToPiece(c);
 				if (!piece)
@@ -116,10 +116,11 @@ private:
 			} else if (std::isdigit(c)) {
 				field += common::FieldIndex(c - '0', 0);
 			} else if (c == '*') {
+				const common::Square square(field);
 				if (position.m_walls != 0) {
-					assert((common::Square(field).asBitboard() & position.m_walls) != 0);
+					assert((square.asBitboard() & position.m_walls) != 0);
 				} else {
-					position.m_walls = common::WallOperations::SLIDE_FROM[field.x][field.y];
+					position.m_walls = common::WallOperations::SLIDE_FROM[square];
 				}
 				field += common::FieldIndex(1, 0);
 			} else if (c == '/') {

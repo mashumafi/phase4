@@ -277,7 +277,7 @@ public:
 					Square from(original.fastBitScan());
 					Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
 					result.moved.push_back(MakeMoveResult::Movement{ from, to });
-					if (auto pieceResult = position.GetPiece(from)) {
+					if (auto pieceResult = position.getPiece(from)) {
 						auto [resultColor, resultType] = *pieceResult;
 						position.movePiece(resultColor, resultType, from, to);
 						result.moved.push_back({ from, to });
@@ -386,7 +386,7 @@ public:
 			const Square from(original.fastBitScan());
 			const Square to(from + wallMove.offset());
 			result.moves.push_back({ from, to });
-			if (auto pieceResult = position.GetPiece(from)) {
+			if (auto pieceResult = position.getPiece(from)) {
 				const auto [resultColor, resultType] = *pieceResult;
 				position.movePiece(resultColor, resultType, from, to);
 			}

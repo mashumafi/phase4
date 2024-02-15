@@ -168,20 +168,20 @@ public:
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
-	std::optional<std::tuple<common::PieceColor, common::PieceType>> GetPiece(uint16_t fieldIndex) {
+	std::optional<std::tuple<common::PieceColor, common::PieceType>> getPiece(common::Square fieldIndex) {
 		using namespace common;
 
-		PieceType pieceType = m_pieceTable[fieldIndex];
+		const PieceType pieceType = m_pieceTable[fieldIndex];
 		if (pieceType == PieceType::INVALID) {
 			return {};
 		}
 
-		uint64_t fieldBB = WallOperations::SquareBB(fieldIndex);
-		if ((colorPieceMask(PieceColor::WHITE, pieceType) & fieldBB) > 0) {
+		const common::Bitset fieldBB = fieldIndex.asBitboard();
+		if ((colorPieceMask(PieceColor::WHITE, pieceType) & fieldBB) != 0) {
 			return std::make_tuple(PieceColor::WHITE, pieceType);
 		}
 
-		if ((colorPieceMask(PieceColor::BLACK, pieceType) & fieldBB) > 0) {
+		if ((colorPieceMask(PieceColor::BLACK, pieceType) & fieldBB) != 0) {
 			return std::make_tuple(PieceColor::BLACK, pieceType);
 		}
 
