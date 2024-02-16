@@ -98,8 +98,8 @@ private:
 
 				gainList.push_back(result);
 
-				if (gainList.at(-1) > gainList.at(-3)) {
-					result = gainList.at(-3);
+				if (gainList.at(-1ull) > gainList.at(-3ull)) {
+					result = gainList.at(-3ull);
 					break;
 				}
 
@@ -112,8 +112,8 @@ private:
 
 					gainList.push_back(result);
 
-					if (gainList.at(-1) < gainList.at(-3)) {
-						result = gainList.at(-3);
+					if (gainList.at(-1ull) < gainList.at(-3ull)) {
+						result = gainList.at(-3ull);
 						break;
 					}
 				} else {
