@@ -55,8 +55,10 @@ TEST_CASE("Square output invalid") {
 TEST_CASE("Square from FieldIndex") {
 	using namespace phase4::engine::common;
 
+	CHECK(Square(FieldIndex{ 0, 0 }) == Square::A1);
 	CHECK(Square(FieldIndex{ 2, 2 }) == Square::C3);
 	CHECK(Square(FieldIndex{ 6, 4 }) == Square::G5);
+	CHECK(Square(FieldIndex{ 7, 7 }) == Square::H8);
 }
 
 TEST_CASE("Square to FieldIndex") {

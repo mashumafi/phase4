@@ -16,11 +16,11 @@ public:
 	static constexpr int16_t Rank2 = 1;
 	static constexpr int16_t FileB = 1;
 
-	static constexpr FieldIndex North = { 0, 1 };
-	static constexpr FieldIndex East = { -1, 0 };
-	static constexpr FieldIndex South = -North;
-	static constexpr FieldIndex West = -East;
-	static constexpr FieldIndex NorthWest = North + West;
+	static constexpr FieldIndex NORTH = { 0, 1 };
+	static constexpr FieldIndex EAST = { 1, 0 };
+	static constexpr FieldIndex SOUTH = -NORTH;
+	static constexpr FieldIndex WEST = -EAST;
+	static constexpr FieldIndex NorthEast = NORTH + EAST;
 
 	static constexpr Bitset TOP = PositionConstants::RANK_7 | PositionConstants::RANK_8;
 	static constexpr Bitset BOTTOM = PositionConstants::RANK_1 | PositionConstants::RANK_2;
@@ -75,7 +75,7 @@ constexpr std::array<common::Bitset, 64> WallOperations::populateSlideFromBB() {
 	std::array<common::Bitset, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		const FieldIndex bottomRight{ Step(GetFile(from), 2), Step(GetRank(from), 2) };
-		result[from] = SquareBB(bottomRight) | SquareBB(bottomRight + North) | SquareBB(bottomRight + West) | SquareBB(bottomRight + NorthWest);
+		result[from] = SquareBB(bottomRight) | SquareBB(bottomRight + NORTH) | SquareBB(bottomRight + EAST) | SquareBB(bottomRight + NorthEast);
 	}
 	return result;
 }
@@ -84,22 +84,22 @@ inline constexpr std::array<common::Bitset, 64> WallOperations::SLIDE_FROM = Wal
 
 constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
 	std::array<std::array<common::Bitset, 64>, 64> result{};
-	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
-			common::Bitset shiftedWall = SLIDE_FROM[from];
-			const common::Bitset toBB = SLIDE_FROM[to];
+	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
+		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
+			common::Bitset shiftedWall = SLIDE_FROM[wallIndex];
+			const common::Bitset toBB = SLIDE_FROM[landIndex];
 
-			if ((RIGHT & from.asBitboard()) == 0 && (from.east(2).asBitboard() & toBB) != 0) {
+			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & toBB) != 0) {
 				shiftedWall >>= 2;
-			} else if ((LEFT & from.asBitboard()) == 0 && (from.west(2).asBitboard() & toBB) != 0) {
+			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & toBB) != 0) {
 				shiftedWall <<= 2;
-			} else if ((TOP & from.asBitboard()) == 0 && (from.north(2).asBitboard() & toBB) != 0) {
+			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & toBB) != 0) {
 				shiftedWall <<= 16;
-			} else if ((BOTTOM & from.asBitboard()) == 0 && (from.south(2).asBitboard() & toBB) != 0) {
+			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & toBB) != 0) {
 				shiftedWall >>= 16;
 			}
 
-			result[from][to] = shiftedWall;
+			result[wallIndex][landIndex] = shiftedWall;
 		}
 	}
 	return result;
@@ -107,22 +107,22 @@ constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populat
 
 constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSlideDir() {
 	std::array<std::array<FieldIndex, 64>, 64> result{};
-	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
+	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
+		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
 			FieldIndex d{ 0, 0 };
-			const common::Bitset toBB = SLIDE_FROM[to];
+			const common::Bitset landBB = SLIDE_FROM[landIndex];
 
-			if ((RIGHT & from.asBitboard()) == 0 && (from.east(2).asBitboard() & toBB) != 0) {
-				d = East * 2;
-			} else if ((LEFT & from.asBitboard()) == 0 && (from.west(2).asBitboard() & toBB) != 0) {
-				d = West * 2;
-			} else if ((TOP & from.asBitboard()) == 0 && (from.north(2).asBitboard() & toBB) != 0) {
-				d = North * 2;
-			} else if ((BOTTOM & from.asBitboard()) == 0 && (from.south(2).asBitboard() & toBB) != 0) {
-				d = South * 2;
+			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & landBB) != 0) {
+				d = WEST * 2;
+			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & landBB) != 0) {
+				d = EAST * 2;
+			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & landBB) != 0) {
+				d = SOUTH * 2;
+			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & landBB) != 0) {
+				d = NORTH * 2;
 			}
 
-			result[from][to] = d;
+			result[wallIndex][landIndex] = d;
 		}
 	}
 	return result;
@@ -130,22 +130,22 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 
 constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populateSlideSquare() {
 	std::array<std::array<common::Square, 64>, 64> result{};
-	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		for (common::Square to = common::Square::BEGIN; to != common::Square::INVALID; ++to) {
-			common::Square destinationSquare = to;
-			const common::Bitset toBB = SLIDE_FROM[to];
+	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
+		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
+			common::Square destinationSquare = landIndex;
+			const common::Bitset wallBB = SLIDE_FROM[wallIndex];
 
-			if ((RIGHT & from.asBitboard()) == 0 && (from.east(2).asBitboard() & toBB) != 0) {
+			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & wallBB) != 0) {
 				destinationSquare = destinationSquare.west(2);
-			} else if ((LEFT & from.asBitboard()) == 0 && (from.west(2).asBitboard() & toBB) != 0) {
+			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & wallBB) != 0) {
 				destinationSquare = destinationSquare.east(2);
-			} else if ((TOP & from.asBitboard()) == 0 && (from.north(2).asBitboard() & toBB) != 0) {
+			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & wallBB) != 0) {
 				destinationSquare = destinationSquare.south(2);
-			} else if ((BOTTOM & from.asBitboard()) == 0 && (from.south(2).asBitboard() & toBB) != 0) {
+			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & wallBB) != 0) {
 				destinationSquare = destinationSquare.north(2);
 			}
 
-			result[from][to] = destinationSquare;
+			result[wallIndex][landIndex] = destinationSquare;
 		}
 	}
 	return result;
