@@ -16,6 +16,7 @@
 
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/common/util.h>
 
 #include <cstdint>
 
@@ -382,7 +383,7 @@ public:
 				moves.clear(); // Move values gets resized and set below
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
-				moveIndex = std::numeric_limits<size_t>::max(); // restart iteration
+				moveIndex = common::util::back_index(0); // restart iteration
 				loudMovesGenerated = true;
 
 #ifndef NDEBUG

@@ -4,6 +4,7 @@
 #include <array>
 #include <cassert>
 #include <cstring>
+#include <limits>
 #include <memory>
 
 #if defined(__GNUC__)
@@ -85,6 +86,10 @@ namespace phase4::engine::common::util {
 template <typename T, size_t N>
 void clear(std::array<T, N> &array) {
 	std::memset(static_cast<void *>(array.data()), 0, array.size() * sizeof(T));
+}
+
+inline constexpr size_t back_index(std::size_t offset) {
+	return std::numeric_limits<size_t>::max() - offset + 1;
 }
 
 } //namespace phase4::engine::common::util

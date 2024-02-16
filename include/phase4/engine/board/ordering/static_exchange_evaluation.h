@@ -98,8 +98,8 @@ private:
 
 				gainList.push_back(result);
 
-				if (gainList.at(-1ull) > gainList.at(-3ull)) {
-					result = gainList.at(-3ull);
+				if (gainList.at(common::util::back_index(1)) > gainList.at(common::util::back_index(3))) {
+					result = gainList.at(common::util::back_index(3));
 					break;
 				}
 
@@ -112,8 +112,8 @@ private:
 
 					gainList.push_back(result);
 
-					if (gainList.at(-1ull) < gainList.at(-3ull)) {
-						result = gainList.at(-3ull);
+					if (gainList.at(common::util::back_index(1)) < gainList.at(common::util::back_index(3))) {
+						result = gainList.at(common::util::back_index(3));
 						break;
 					}
 				} else {
