@@ -209,8 +209,8 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #ifdef _WIN64
 
 	unsigned long idx;
-	bool isZero = _BitScanForward64(&idx, m_bits);
-	assert(!isZero);
+	_BitScanForward64(&idx, m_bits);
+	//assert(!isZero);
 	return idx;
 
 #else // WIN32
