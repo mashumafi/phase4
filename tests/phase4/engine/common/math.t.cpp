@@ -1,5 +1,7 @@
 #include <phase4/engine/common/math.h>
 
+#include <phase4/engine/common/util.h>
+
 #include <doctest/doctest.h>
 
 TEST_CASE("Math i16 abs") {
@@ -76,28 +78,30 @@ TEST_CASE("Math i32 max") {
 
 TEST_CASE("Math size min") {
 	using namespace phase4::engine::common;
+	using namespace util;
 
 	CHECK(Math::min_size(0, 0) == 0);
-	CHECK(Math::min_size(1, -3ull) == 1);
-	CHECK(Math::min_size(-2ull, 4) == 4);
-	CHECK(Math::min_size(-3ull, -9ull) == -9ull);
+	CHECK(Math::min_size(1, back_index(3)) == 1);
+	CHECK(Math::min_size(back_index(2), 4) == 4);
+	CHECK(Math::min_size(back_index(3), back_index(9)) == back_index(9));
 	CHECK(Math::min_size(3, 4) == 3);
 	CHECK(Math::min_size(0, 4) == 0);
 	CHECK(Math::min_size(5, 0) == 0);
-	CHECK(Math::min_size(0, -8ull) == 0);
-	CHECK(Math::min_size(-7ull, 0) == 0);
+	CHECK(Math::min_size(0, back_index(8)) == 0);
+	CHECK(Math::min_size(back_index(7), 0) == 0);
 }
 
 TEST_CASE("Math size max") {
 	using namespace phase4::engine::common;
+	using namespace util;
 
 	CHECK(Math::max_size(0, 0) == 0);
-	CHECK(Math::max_size(1, -3ull) == -3ull);
-	CHECK(Math::max_size(-2, 4) == -2ull);
-	CHECK(Math::max_size(-3ull, -9ull) == -3ull);
+	CHECK(Math::max_size(1, back_index(3)) == back_index(3));
+	CHECK(Math::max_size(back_index(2), 4) == back_index(2));
+	CHECK(Math::max_size(back_index(3), back_index(9)) == back_index(3));
 	CHECK(Math::max_size(3, 4) == 4);
 	CHECK(Math::max_size(0, 4) == 4);
 	CHECK(Math::max_size(5, 0) == 5);
-	CHECK(Math::max_size(0, -8ull) == -8ull);
-	CHECK(Math::max_size(-7ull, 0) == -7ull);
+	CHECK(Math::max_size(0, back_index(8)) == back_index(8));
+	CHECK(Math::max_size(back_index(7), 0) == back_index(7));
 }
