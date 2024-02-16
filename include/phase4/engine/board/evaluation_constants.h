@@ -11,7 +11,7 @@
 namespace phase4::engine::board {
 
 struct EvaluationConstants {
-	static inline constexpr int32_t pieceValue(common::PieceType piece);
+	static inline constexpr int16_t pieceValue(common::PieceType piece);
 
 	static const int32_t CHECKMATE;
 	static const int32_t THREEFOLD_REPETITION;
@@ -48,12 +48,12 @@ struct EvaluationConstants {
 	static const int32_t MATERIAL_AT_OPENING;
 
 private:
-	static const std::array<int32_t, 6> PIECE_VALUES;
+	static const std::array<int16_t, 6> PIECE_VALUES;
 };
 
-inline constexpr std::array<int32_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
+inline constexpr std::array<int16_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
 
-inline constexpr int32_t EvaluationConstants::pieceValue(common::PieceType piece) {
+inline constexpr int16_t EvaluationConstants::pieceValue(common::PieceType piece) {
 	return EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 }
 

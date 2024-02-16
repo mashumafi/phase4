@@ -42,7 +42,7 @@ private:
 
 constexpr size_t MAX_MOVES_COUNT = 218;
 using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
-using MoveValues = common::FastVector<int16_t, MAX_MOVES_COUNT>;
+using MoveValues = common::FastVector<int32_t, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
 #if NDEBUG

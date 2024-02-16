@@ -27,24 +27,8 @@ public:
 	static constexpr Bitset LEFT = PositionConstants::FILE_A | PositionConstants::FILE_B;
 	static constexpr Bitset RIGHT = PositionConstants::FILE_G | PositionConstants::FILE_H;
 
-	static constexpr int16_t Step(int16_t n, int16_t d) {
+	static constexpr int16_t floorStep(int16_t n, int16_t d) {
 		return n / d * d;
-	}
-
-	static constexpr int64_t SquareBB(uint16_t fieldIndex) {
-		return 1ull << fieldIndex;
-	}
-
-	static constexpr int64_t SquareBB(FieldIndex position) {
-		return SquareBB(position.x + position.y * 8);
-	}
-
-	static constexpr int16_t GetFile(int16_t fieldIndex) {
-		return fieldIndex % 8;
-	}
-
-	static constexpr int16_t GetRank(int16_t fieldIndex) {
-		return fieldIndex / 8;
 	}
 
 	static constexpr std::array<common::Bitset, 64> populateSlideFromBB();
@@ -74,8 +58,11 @@ public:
 constexpr std::array<common::Bitset, 64> WallOperations::populateSlideFromBB() {
 	std::array<common::Bitset, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
-		const FieldIndex bottomRight{ Step(GetFile(from), 2), Step(GetRank(from), 2) };
-		result[from] = SquareBB(bottomRight) | SquareBB(bottomRight + NORTH) | SquareBB(bottomRight + EAST) | SquareBB(bottomRight + NorthEast);
+		FieldIndex bottomLeftIndex = from.asFieldIndex();
+		bottomLeftIndex.x = floorStep(bottomLeftIndex.x, 2);
+		bottomLeftIndex.y = floorStep(bottomLeftIndex.y, 2);
+		common::Square bottomLeftSquare(bottomLeftIndex);
+		result[from] = bottomLeftSquare.asBitboard() | bottomLeftSquare.north(1).asBitboard() | bottomLeftSquare.east(1).asBitboard() | bottomLeftSquare.north(1).east(1).asBitboard();
 	}
 	return result;
 }

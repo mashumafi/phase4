@@ -379,7 +379,7 @@ public:
 				break;
 
 			if (!loudMovesGenerated) {
-				moves.clear();
+				moves.clear(); // Move values gets resized and set below
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
 				moveIndex = std::numeric_limits<size_t>::max(); // restart iteration
@@ -401,7 +401,7 @@ public:
 			}
 
 			if (!quietMovesGenerated && moveIndex == moves.size() - 1) {
-				size_t loudMovesCount = moves.size();
+				const size_t loudMovesCount = moves.size();
 
 				board::Operators::getQuietMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignQuietValues(*context.session, moves, moveValues, loudMovesCount, ply);
