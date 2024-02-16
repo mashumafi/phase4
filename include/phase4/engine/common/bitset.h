@@ -1,9 +1,10 @@
 #ifndef PHASE4_ENGINE_COMMON_BITSET_H
 #define PHASE4_ENGINE_COMMON_BITSET_H
 
+#include <phase4/engine/common/util.h>
+
 #include <array>
 #include <bitset>
-#include <cassert>
 #include <cstdint>
 #include <iostream>
 
@@ -197,33 +198,30 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
 #if defined(USE_SLOW_BITSET_LSB)
-	assert(m_bits);
+	ASSERT(m_bits);
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	assert(m_bits);
+	ASSERT(m_bits);
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
-// Microsoft Visual C++
-#ifdef _WIN64
-
+	// Microsoft Visual C++
 	unsigned long idx;
+#ifdef _WIN64
 	const bool result = _BitScanForward64(&idx, m_bits);
-	assert(result != 0);
-	return idx;
+	ASSERT(result);
+	return static_cast<uint8_t>(idx);
 
 #else // WIN32
-	unsigned long idx;
-
 	if (m_bits & 0xffffffff) {
 		const bool result = _BitScanForward(&idx, static_cast<uint32_t>(m_bits));
-		assert(result != 0);
-		return idx;
+		ASSERT(result);
+		return static_cast<uint8_t>(idx);
 	} else {
 		const bool result = _BitScanForward(&idx, static_cast<uint32_t>(m_bits >> 32));
-		assert(result != 0);
-		return idx + 32;
+		ASSERT(result);
+		return static_cast<uint8_t>(idx) + 32;
 	}
 #endif
 #else
