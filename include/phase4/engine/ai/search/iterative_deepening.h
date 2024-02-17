@@ -73,7 +73,7 @@ public:
 			}
 
 			context.statistics.principalVariation.clear();
-			getPrincipalVariation(*context.session, context.statistics.principalVariation);
+			getPrincipalVariation(*context.session, context.statistics.principalVariation, depth);
 			bestMove = context.statistics.principalVariation[0];
 
 			searchUpdateCallback(context.statistics);
@@ -112,11 +112,15 @@ public:
 	}
 
 private:
-	static void getPrincipalVariation(board::Session &session, moves::Moves &moves) {
+	static void getPrincipalVariation(board::Session &session, moves::Moves &moves, size_t depth) {
 		using namespace board::transposition;
 
+		if (moves.size() >= depth) {
+			return;
+		}
+
 		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().m_hash.asBitboard());
-		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.position().m_hash.asBitboard()) && moves.size() < board::SearchConstants::MAX_DEPTH) {
+		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.position().m_hash.asBitboard())) {
 			if (!board::Operators::isMoveLegal(session.position(), entry.bestMove())) {
 				return;
 			}
@@ -133,9 +137,19 @@ private:
 				return;
 			}
 
-			getPrincipalVariation(session, moves);
+			getPrincipalVariation(session, moves, depth);
 			session.undoMove(entry.bestMove());
 		}
+#ifndef NDEBUG
+		else if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE)
+		{
+			return;
+		}
+		else if (!entry.isKeyValid(session.position().m_hash.asBitboard()))
+		{
+			return;
+		}
+#endif
 	}
 };
 
