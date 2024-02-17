@@ -141,12 +141,9 @@ private:
 			session.undoMove(entry.bestMove());
 		}
 #ifndef NDEBUG
-		else if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE)
-		{
+		else if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE) {
 			return;
-		}
-		else if (!entry.isKeyValid(session.position().m_hash.asBitboard()))
-		{
+		} else if (!entry.isKeyValid(session.position().m_hash.asBitboard())) {
 			return;
 		}
 #endif
