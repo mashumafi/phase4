@@ -3,7 +3,10 @@
 #include <phase4/engine/fen/fen_to_position.h>
 
 #include <phase4/engine/board/evaluation_constants.h>
+#include <phase4/engine/board/ordering/move_ordering.h>
+#include <phase4/engine/board/ordering/move_ordering_constants.h>
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 
 #include <phase4/engine/moves/move.h>
 
@@ -26,16 +29,15 @@ constexpr int32_t K = phase4::engine::board::EvaluationConstants::pieceValue(pha
 int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine::moves::Move move) {
 	using namespace phase4::engine;
 
-	// Copied from MoveOrdering::assignLoudValues
+	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(position, move);
+	assert(realMove);
 
-	const common::PieceColor enemyColor = position.m_colorToMove.invert();
-
-	const common::PieceType attackingPiece = position.m_pieceTable[move.from()];
-	const common::PieceType capturedPiece = position.m_pieceTable[move.to()];
-
-	const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, move.to());
-	const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(position, enemyColor, move.to());
-	return board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+	moves::Moves moves;
+	moves.push_back(*realMove);
+	moves::MoveValues values;
+	board::ordering::MoveOrdering::assignLoudValues(position, moves, values, moves::Move::EMPTY);
+	assert(values.size() == 1);
+	return values[0] - board::ordering::MoveOrderingConstants::CAPTURE;
 }
 } //namespace
 

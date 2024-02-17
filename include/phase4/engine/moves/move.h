@@ -11,7 +11,7 @@ namespace phase4::engine::moves {
 
 class Move {
 public:
-	static const Move Empty;
+	static const Move EMPTY;
 
 	constexpr common::Square from() const;
 
@@ -77,7 +77,7 @@ constexpr Move::Move() :
 {
 }
 
-inline constexpr Move Move::Empty;
+inline constexpr Move Move::EMPTY;
 
 constexpr Move::Move(common::Square from, common::Square to, MoveFlags flags) :
 #if NDEBUG

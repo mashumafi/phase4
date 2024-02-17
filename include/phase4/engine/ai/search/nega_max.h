@@ -81,8 +81,8 @@ public:
 		const bool pvNode = beta - alpha > 1;
 
 		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
-		moves::Move hashMove = moves::Move::Empty;
-		moves::Move bestMove = moves::Move::Empty;
+		moves::Move hashMove = moves::Move::EMPTY;
+		moves::Move bestMove = moves::Move::EMPTY;
 
 		if (entry.flags() != TranspositionTableEntryFlags::INVALID && entry.isKeyValid(context.session->position().m_hash.asBitboard())) {
 #ifndef NDEBUG
@@ -236,9 +236,9 @@ public:
 					moves::MovesGenerator::getQueenMoves(context.session->position().m_occupancySummary, kingFieldIndex);
 		}
 
-		if (hashMove == moves::Move::Empty) {
+		if (hashMove == moves::Move::EMPTY) {
 			board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
-			board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, moves::Move::Empty);
+			board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, moves::Move::EMPTY);
 			loudMovesGenerated = true;
 
 #ifndef NDEBUG
@@ -488,7 +488,7 @@ private:
 	}
 
 	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, board::transposition::TranspositionTableEntryFlags transpositionTableEntryType, moves::Move bestMove) {
-		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
+		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::EMPTY;
 	}
 
 	static bool futilityPruningCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
