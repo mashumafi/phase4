@@ -143,7 +143,7 @@ inline constexpr Bitset::Bitset() noexcept :
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
-	return (m_bits & -m_bits);
+	return m_bits & (~m_bits + 1);
 }
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
