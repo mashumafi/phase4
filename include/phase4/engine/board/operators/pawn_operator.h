@@ -67,8 +67,8 @@ public:
 					return true;
 				}
 			} else {
-				int16_t difference = move.to() - move.from();
-				int16_t colorDifference = -(position.m_colorToMove.get_raw_value() * 2 - 1) * difference;
+				int8_t difference = move.to().get_raw_value() - move.from().get_raw_value();
+				int8_t colorDifference = -(position.m_colorToMove.get_raw_value() * 2 - 1) * difference;
 
 				if ((position.occupancy(enemyColor) & toField) != 0 && (colorDifference == 7 || colorDifference == 9)) {
 					return true;
@@ -168,7 +168,7 @@ private:
 		}
 	}
 
-	static void getDiagonalAttacks(const Position &position, int32_t dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDiagonalAttacks(const Position &position, int8_t dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
 		using namespace common;
 
 		int8_t shift;
