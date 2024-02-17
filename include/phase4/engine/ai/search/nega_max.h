@@ -383,7 +383,7 @@ public:
 				moves.clear(); // Move values gets resized and set below
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
-				moveIndex = common::util::back_index(0); // restart iteration
+				moveIndex = common::util::back_index(1); // restart iteration
 				loudMovesGenerated = true;
 
 #ifndef NDEBUG
