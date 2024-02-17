@@ -36,10 +36,10 @@ private:
 		std::string rankBuilder;
 		rankBuilder.reserve(9);
 
-		for (int32_t rank = 7; rank >= 0; rank--) {
+		for (int16_t rank = 7; rank >= 0; rank--) {
 			uint8_t emptyFields = 0;
 
-			for (int32_t file = 0; file < 8; file++) {
+			for (int16_t file = 0; file < 8; file++) {
 				const Square fieldIndex(FieldIndex(file, rank));
 
 				const PieceType possibleWhitePiece = position.m_pieceTable[fieldIndex];
@@ -175,7 +175,7 @@ private:
 		};
 
 		return color == PieceColor::BLACK
-				? std::tolower(pieceAsChar(piece))
+				? static_cast<char>(std::tolower(static_cast<unsigned char>(pieceAsChar(piece))))
 				: pieceAsChar(piece);
 	}
 };

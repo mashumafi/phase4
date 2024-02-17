@@ -1,9 +1,10 @@
 #ifndef PHASE4_ENGINE_COMMON_BITSET_H
 #define PHASE4_ENGINE_COMMON_BITSET_H
 
+#include <phase4/engine/common/util.h>
+
 #include <array>
 #include <bitset>
-#include <cassert>
 #include <cstdint>
 #include <iostream>
 
@@ -142,7 +143,7 @@ inline constexpr Bitset::Bitset() noexcept :
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
-	return (m_bits & -m_bits);
+	return m_bits & (~m_bits + 1);
 }
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
@@ -160,7 +161,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 	// GCC or Clang
 	return __builtin_popcountll(m_bits);
 #elif defined(_MSC_VER)
-	return __popcnt64(m_bits);
+	return static_cast<uint8_t>(__popcnt64(m_bits));
 #else
 	static_assert(false, "Define USE_SLOW_BITSET_COUNT to use internal implementation.")
 #endif
@@ -169,7 +170,7 @@ inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'111111
 [[nodiscard]] inline constexpr uint8_t Bitset::count() const noexcept {
 #if defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	return static_cast<std::size_t>(__builtin_popcountll(m_bits));
+	return static_cast<uint8_t>(__builtin_popcountll(m_bits));
 #elif defined(_MSC_VER) && 0 // Skip intrinsic for Microsoft Visual C++ due to not being constexpr
 #else
 	// Fallback implementation for other compilers or platforms
@@ -196,33 +197,27 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #endif
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
-#if defined(USE_SLOW_BITSET_LSB)
 	assert(m_bits);
+#if defined(USE_SLOW_BITSET_LSB)
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	assert(m_bits);
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
-// Microsoft Visual C++
-#ifdef _WIN64
-
+	// Microsoft Visual C++
 	unsigned long idx;
+#ifdef _WIN64
 	_BitScanForward64(&idx, m_bits);
-	return idx;
+	return static_cast<uint8_t>(idx);
 
 #else // WIN32
-	unsigned long idx;
-
 	if (m_bits & 0xffffffff) {
-		bool isZero = _BitScanForward(&idx, static_cast<int32_t>(m_bits));
-		assert(!isZero);
-		return idx;
+		_BitScanForward(&idx, static_cast<uint32_t>(m_bits));
+		return static_cast<uint8_t>(idx);
 	} else {
-		bool isZero = _BitScanForward(&idx, static_cast<int32_t>(m_bits >> 32));
-		assert(!isZero);
-		return idx + 32;
+		_BitScanForward(&idx, static_cast<uint32_t>(m_bits >> 32));
+		return static_cast<uint8_t>(idx) + 32;
 	}
 #endif
 #else

@@ -11,7 +11,7 @@ namespace phase4::engine::moves {
 
 class Move {
 public:
-	static const Move Empty;
+	static const Move EMPTY;
 
 	constexpr common::Square from() const;
 
@@ -42,7 +42,7 @@ private:
 
 constexpr size_t MAX_MOVES_COUNT = 218;
 using Moves = common::FastVector<Move, MAX_MOVES_COUNT>;
-using MoveValues = common::FastVector<int16_t, MAX_MOVES_COUNT>;
+using MoveValues = common::FastVector<int32_t, MAX_MOVES_COUNT>;
 
 constexpr common::Square Move::from() const {
 #if NDEBUG
@@ -77,7 +77,7 @@ constexpr Move::Move() :
 {
 }
 
-inline constexpr Move Move::Empty;
+inline constexpr Move Move::EMPTY;
 
 constexpr Move::Move(common::Square from, common::Square to, MoveFlags flags) :
 #if NDEBUG

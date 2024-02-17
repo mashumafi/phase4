@@ -31,7 +31,7 @@ public:
 	template <size_t SHIFT>
 	struct MagicContainers {
 		bool isValid = false;
-		std::array<MagicContainer<1ULL << SHIFT>, 64> containers = {};
+		std::array<MagicContainer<1ull << SHIFT>, 64> containers = {};
 	};
 	using RookMagicContainers = MagicContainers<MagicShifts::MAX_ROOK_SHIFT>;
 	using BishopMagicContainers = MagicContainers<MagicShifts::MAX_BISHOP_SHIFT>;

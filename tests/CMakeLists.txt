@@ -32,7 +32,15 @@ add_executable(phase4_test
     phase4/engine/moves/patterns/rank_pattern_generator.t.cpp
 
     phase4/engine/board/operators.t.cpp
+    phase4/engine/board/operators/bishop_operator.t.cpp
+    phase4/engine/board/operators/king_operator.t.cpp
+    phase4/engine/board/operators/knight_operator.t.cpp
+    phase4/engine/board/operators/pawn_operator.t.cpp
+    phase4/engine/board/operators/queen_operator.t.cpp
+    phase4/engine/board/operators/rook_operator.t.cpp
     phase4/engine/board/ordering/move_ordering.t.cpp
+    phase4/engine/board/ordering/see_piece.t.cpp
+    phase4/engine/board/ordering/static_exchange_evaluation.t.cpp
     phase4/engine/board/piece_square_tables/table_operations.t.cpp
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/position.t.cpp

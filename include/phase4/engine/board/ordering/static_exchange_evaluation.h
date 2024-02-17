@@ -20,8 +20,8 @@ public:
 	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
 	using Array = std::array<AttackersDefendersArray, 6>;
 
-	static int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attacker, uint8_t defender) {
-		return static_cast<int16_t>(board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attacker][defender]);
+	static inline int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attackers, uint8_t defenders) {
+		return board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attackers][defenders];
 	}
 
 private:
@@ -72,12 +72,8 @@ private:
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
-	static constexpr int16_t computeResult(common::PieceType attackingPiece, uint64_t attackerIndex, uint64_t defenderIndex) {
-		common::SafeVector<int16_t, 128> gainList = {};
-
-		const common::Square attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).get_raw_value());
-		common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex.asBitboard();
-		common::Bitset defenders(defenderIndex);
+	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {
+		common::SafeVector<int16_t, 7> gainList = {};
 
 		common::PieceType currentPieceOnField = attackingPiece;
 		int16_t result = 0;
@@ -102,8 +98,8 @@ private:
 
 				gainList.push_back(result);
 
-				if (gainList.at(-1) > gainList.at(-3)) {
-					result = gainList.at(-3);
+				if (gainList.at(common::util::back_index(1)) > gainList.at(common::util::back_index(3))) {
+					result = gainList.at(common::util::back_index(3));
 					break;
 				}
 
@@ -116,8 +112,8 @@ private:
 
 					gainList.push_back(result);
 
-					if (gainList.at(-1) < gainList.at(-3)) {
-						result = gainList.at(-3);
+					if (gainList.at(common::util::back_index(1)) < gainList.at(common::util::back_index(3))) {
+						result = gainList.at(common::util::back_index(3));
 						break;
 					}
 				} else {
@@ -134,7 +130,9 @@ private:
 
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
 			for (uint64_t defenderIndex = 0; defenderIndex < 256; ++defenderIndex) {
-				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackerIndex, defenderIndex);
+				const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
+				const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
+				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackers, defenderIndex);
 			}
 		}
 

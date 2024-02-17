@@ -16,6 +16,7 @@
 
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
+#include <phase4/engine/common/util.h>
 
 #include <cstdint>
 
@@ -80,8 +81,8 @@ public:
 		const bool pvNode = beta - alpha > 1;
 
 		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
-		moves::Move hashMove = moves::Move::Empty;
-		moves::Move bestMove = moves::Move::Empty;
+		moves::Move hashMove = moves::Move::EMPTY;
+		moves::Move bestMove = moves::Move::EMPTY;
 
 		if (entry.flags() != TranspositionTableEntryFlags::INVALID && entry.isKeyValid(context.session->position().m_hash.asBitboard())) {
 #ifndef NDEBUG
@@ -235,9 +236,9 @@ public:
 					moves::MovesGenerator::getQueenMoves(context.session->position().m_occupancySummary, kingFieldIndex);
 		}
 
-		if (hashMove == moves::Move::Empty) {
+		if (hashMove == moves::Move::EMPTY) {
 			board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
-			board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, moves::Move::Empty);
+			board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, moves::Move::EMPTY);
 			loudMovesGenerated = true;
 
 #ifndef NDEBUG
@@ -379,10 +380,10 @@ public:
 				break;
 
 			if (!loudMovesGenerated) {
-				moves.clear();
+				moves.clear(); // Move values gets resized and set below
 				board::Operators::getLoudMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignLoudValues(context.session->position(), moves, moveValues, hashMove);
-				moveIndex = -1; // restart iteration
+				moveIndex = common::util::back_index(1); // restart iteration
 				loudMovesGenerated = true;
 
 #ifndef NDEBUG
@@ -401,7 +402,7 @@ public:
 			}
 
 			if (!quietMovesGenerated && moveIndex == moves.size() - 1) {
-				size_t loudMovesCount = moves.size();
+				const size_t loudMovesCount = moves.size();
 
 				board::Operators::getQuietMoves(context.session->position(), moves, evasionMask);
 				board::ordering::MoveOrdering::assignQuietValues(*context.session, moves, moveValues, loudMovesCount, ply);
@@ -487,7 +488,7 @@ private:
 	}
 
 	static bool internalIterativeDeepeningCanBeApplied(int32_t depth, board::transposition::TranspositionTableEntryFlags transpositionTableEntryType, moves::Move bestMove) {
-		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::Empty;
+		return transpositionTableEntryType == board::transposition::TranspositionTableEntryFlags::INVALID && depth >= board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH && bestMove == moves::Move::EMPTY;
 	}
 
 	static bool futilityPruningCanBeApplied(int32_t depth, int32_t rootDepth, bool friendlyKingInCheck, bool pvNode, int32_t alpha) {
@@ -522,12 +523,12 @@ private:
 		return 0;
 	}
 
-	static bool lateMovePruningCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, int32_t moveIndex, int32_t movesCount, bool pvNode) {
+	static bool lateMovePruningCanBeApplied(int32_t depth, bool friendlyKingInCheck, bool quietMovesGenerated, size_t moveIndex, size_t movesCount, bool pvNode) {
 		return depth <= board::SearchConstants::LATE_MOVE_PRUNING_MAX_DEPTH && !pvNode && !friendlyKingInCheck && quietMovesGenerated &&
 				moveIndex >= (board::SearchConstants::LATE_MOVE_PRUNING_BASE_PERCENT_MOVES_TO_PRUNE + (depth - 1) * board::SearchConstants::LATE_MOVE_PRUNING_PERCENT_INCREASE_PER_DEPTH) * movesCount / 100;
 	}
 
-	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, int32_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
+	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, size_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
 		if (depth >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MIN_DEPTH && moveIndex >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION &&
 				(moves[moveIndex].flags().isQuiet() || (moves[moveIndex].flags().isCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck) {
 			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
@@ -552,8 +553,8 @@ private:
 		return false;
 	}
 
-	static int32_t lateMoveReductionsGetReduction(bool pvNode, int32_t moveIndex) {
-		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
+	static int32_t lateMoveReductionsGetReduction(bool pvNode, size_t moveIndex) {
+		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (static_cast<int32_t>(moveIndex) - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
 		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, reductions);
 	}
 

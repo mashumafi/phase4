@@ -35,9 +35,9 @@ public:
 
 				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
 				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				const int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				const int16_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
-				moveValues[moveIndex] = (int32_t)(MoveOrderingConstants::CAPTURE + seeEvaluation);
+				moveValues[moveIndex] = MoveOrderingConstants::CAPTURE + seeEvaluation;
 			} else if (moves[moveIndex].flags().isCastling()) {
 				moveValues[moveIndex] = MoveOrderingConstants::CASTLING;
 			} else {
@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, int32_t startIndex, int32_t ply) {
+	static void assignQuietValues(const Session &session, const moves::Moves &moves, moves::MoveValues &moveValues, size_t startIndex, int32_t ply) {
 		moveValues.resize(moves.size());
 		const Position &position = session.position();
 		for (size_t moveIndex = startIndex; moveIndex < moves.size(); ++moveIndex) {
@@ -70,7 +70,7 @@ public:
 
 				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
 				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				const int32_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				const int16_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 
 				moveValues[moveIndex] = seeEvaluation;
 			}
@@ -84,7 +84,7 @@ public:
 			return;
 		}
 
-		int16_t max = moveValues[currentIndex];
+		int32_t max = moveValues[currentIndex];
 		size_t maxIndex = currentIndex;
 
 		for (size_t i = currentIndex + 1; i < moves.size(); ++i) {

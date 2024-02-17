@@ -48,7 +48,7 @@ private:
 
 			const int16_t openFileCheckFrom = common::Math::max_int16(0, kingPosition.x - 1);
 			const int16_t openFileCheckTo = common::Math::min_int16(7, kingPosition.x + 1);
-			for (uint8_t file = openFileCheckFrom; file <= openFileCheckTo; ++file) {
+			for (uint16_t file = openFileCheckFrom; file <= openFileCheckTo; ++file) {
 				if ((moves::patterns::FilePatternGenerator::getPatternForFile(7 - file) & position.colorPieceMask(color, common::PieceType::PAWN)) == 0) {
 					openFilesNextToKingScore += board::EvaluationConstants::OPEN_FILE_NEXT_TO_KING;
 				}

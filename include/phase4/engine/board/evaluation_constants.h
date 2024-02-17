@@ -11,7 +11,7 @@
 namespace phase4::engine::board {
 
 struct EvaluationConstants {
-	static inline constexpr int32_t pieceValue(common::PieceType piece);
+	static inline constexpr int16_t pieceValue(common::PieceType piece);
 
 	static const int32_t CHECKMATE;
 	static const int32_t THREEFOLD_REPETITION;
@@ -43,21 +43,21 @@ struct EvaluationConstants {
 	static const uint64_t EXTENDED_CENTER_RING;
 	static const uint64_t OUTSIDE;
 
-	static constexpr uint32_t calculateMaterialAtOpening();
+	static constexpr int32_t calculateMaterialAtOpening();
 
 	static const int32_t MATERIAL_AT_OPENING;
 
 private:
-	static const std::array<int32_t, 6> PIECE_VALUES;
+	static const std::array<int16_t, 6> PIECE_VALUES;
 };
 
-inline constexpr std::array<int32_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
+inline constexpr std::array<int16_t, 6> EvaluationConstants::PIECE_VALUES = { 100, 350, 370, 570, 1190, 20000 };
 
-inline constexpr int32_t EvaluationConstants::pieceValue(common::PieceType piece) {
+inline constexpr int16_t EvaluationConstants::pieceValue(common::PieceType piece) {
 	return EvaluationConstants::PIECE_VALUES[piece.get_raw_value()];
 }
 
-inline constexpr uint32_t EvaluationConstants::calculateMaterialAtOpening() {
+inline constexpr int32_t EvaluationConstants::calculateMaterialAtOpening() {
 	return EvaluationConstants::pieceValue(common::PieceType::KING) +
 			EvaluationConstants::pieceValue(common::PieceType::QUEEN) +
 			EvaluationConstants::pieceValue(common::PieceType::ROOK) * 2 +
@@ -97,6 +97,7 @@ inline constexpr uint64_t EvaluationConstants::EXTENDED_CENTER_RING = Evaluation
 inline constexpr uint64_t EvaluationConstants::OUTSIDE = 0xffffc3c3c3c3ffff;
 
 inline constexpr int32_t EvaluationConstants::MATERIAL_AT_OPENING = calculateMaterialAtOpening();
+static_assert(EvaluationConstants::MATERIAL_AT_OPENING == 24570); // Check for overflow
 
 } //namespace phase4::engine::board
 #endif

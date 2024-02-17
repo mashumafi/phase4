@@ -1,5 +1,6 @@
 #include <phase4/engine/fen/fen_to_position.h>
 #include <phase4/engine/fen/lichess_csv_parser.h>
+#include <phase4/engine/fen/position_to_fen.h>
 
 #include <phase4/engine/ai/score/evaluation.h>
 #include <phase4/engine/ai/score/evaluators/bishop_evaluator.h>
@@ -10,7 +11,12 @@
 #include <phase4/engine/ai/score/evaluators/position_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/rook_evaluator.h>
 
+#include <phase4/engine/board/ordering/see_piece.h>
+#include <phase4/engine/board/ordering/static_exchange_evaluation.h>
+
+#include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/position_constants.h>
+#include <phase4/engine/common/square.h>
 
 int main(int argc, const char **args) {
 	using namespace phase4::engine;
@@ -26,6 +32,8 @@ int main(int argc, const char **args) {
 	bool pawnStructureSearch = false; // -s
 	bool positionSearch = false; // -p
 	bool rookSearch = false; // -r
+	bool seePieceSearch = false; // -sp
+	bool seeSearch = false; // -see
 	int32_t phase = common::PositionConstants::PHASE_RESOLUTION;
 
 	for (int i = 1; i < argc; ++i) {
@@ -50,6 +58,12 @@ int main(int argc, const char **args) {
 		if (args[i] == "-r"sv) {
 			rookSearch = true;
 		}
+		if (args[i] == "-sp"sv) {
+			seePieceSearch = true;
+		}
+		if (args[i] == "-see"sv) {
+			seeSearch = true;
+		}
 	}
 
 	if (bishopSearch) {
@@ -71,6 +85,12 @@ int main(int argc, const char **args) {
 	if (rookSearch) {
 		std::cout << "Search will include RookEvaluator" << std::endl;
 	}
+	if (seePieceSearch) {
+		std::cout << "Search will include SeePiece" << std::endl;
+	}
+	if (seeSearch) {
+		std::cout << "Search will include StaticExchangeEvaluation" << std::endl;
+	}
 
 	fen::LichessCsvParser csvReader("/workspaces/phase4/puzzles/lichess_db_puzzle.csv");
 
@@ -83,6 +103,14 @@ int main(int argc, const char **args) {
 		if (!position) {
 			return 1;
 		}
+
+		auto blunderMove = board::PositionMoves::findRealMove(*position, puzzle->blunder);
+		if (!blunderMove) {
+			return 1;
+		}
+		board::Position blunderPosition = *position;
+		board::PositionMoves::makeMove(blunderPosition, *blunderMove);
+		const std::string blunderFen = fen::PositionToFen::encode(blunderPosition);
 
 		common::Bitset fieldsAttackedByWhite;
 		common::Bitset fieldsAttackedByBlack;
@@ -123,6 +151,33 @@ int main(int argc, const char **args) {
 			const int32_t score = ai::score::evaluators::RookEvaluator::evaluate(*position, phase, 1024 - phase);
 			if (score != 0) {
 				std::cout << "Rook (" << score << "): " << puzzle->fen << std::endl;
+			}
+		}
+		if (seePieceSearch) {
+			for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
+				for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
+					const uint8_t attacks = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, color, fieldIndex);
+					if (common::Bitset(attacks).fastCount() > 4 && (position->colorPieceMask(color.invert(), position->m_pieceTable[fieldIndex]) & fieldIndex.asBitboard()) != 0) {
+						std::cout << "See (" << std::bitset<8>(attacks) << ") square:" << fieldIndex << " color:" << color << " " << puzzle->fen << std::endl;
+					}
+				}
+			}
+		}
+		if (seeSearch) {
+			moves::Moves moves;
+			board::Operators::getAvailableCaptureMoves(blunderPosition, moves);
+			for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
+				const common::PieceColor enemyColor = blunderPosition.m_colorToMove.invert();
+
+				const common::PieceType attackingPiece = blunderPosition.m_pieceTable[moves[moveIndex].from()];
+				const common::PieceType capturedPiece = blunderPosition.m_pieceTable[moves[moveIndex].to()];
+
+				const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, blunderPosition.m_colorToMove, moves[moveIndex].to());
+				const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, enemyColor, moves[moveIndex].to());
+				const int32_t seeEvaluation = board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+				if (seeEvaluation != 0 && common::Bitset(attackers).fastCount() > 2 && common::Bitset(defenders).fastCount() > 2) {
+					std::cout << "StaticExchangeEvaluation " << seeEvaluation << " " << moves[moveIndex] << " " << blunderFen << std::endl;
+				}
 			}
 		}
 	}

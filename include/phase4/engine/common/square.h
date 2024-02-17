@@ -92,7 +92,7 @@ public:
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
-	[[nodiscard]] inline constexpr uint8_t get_raw_value() const;
+	[[nodiscard]] inline constexpr int8_t get_raw_value() const;
 
 	/// @brief converts the square index to a point
 	/// @return the point
@@ -134,10 +134,10 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const Square &square);
 
 private:
-	uint8_t m_value;
+	int8_t m_value;
 };
 
-[[nodiscard]] inline constexpr uint8_t Square::get_raw_value() const {
+[[nodiscard]] inline constexpr int8_t Square::get_raw_value() const {
 	return m_value;
 }
 
@@ -160,11 +160,11 @@ inline constexpr Square::Square() :
 }
 
 inline constexpr Square::Square(uint64_t value) :
-		m_value{ static_cast<uint8_t>(value) } {
+		m_value{ static_cast<int8_t>(value) } {
 }
 
 inline constexpr Square &Square::operator=(uint64_t value) {
-	m_value = static_cast<uint8_t>(value);
+	m_value = static_cast<int8_t>(value);
 	return *this;
 }
 
@@ -248,7 +248,7 @@ inline constexpr Square::Square(std::string_view square) :
 }
 
 inline constexpr bool Square::isValid() const noexcept {
-	return m_value < Square::INVALID.m_value;
+	return 0 <= m_value && m_value < Square::INVALID.m_value;
 }
 
 inline constexpr Square Square::forward(PieceColor color, int8_t scalar) const noexcept {
