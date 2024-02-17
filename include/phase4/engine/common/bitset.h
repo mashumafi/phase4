@@ -197,30 +197,26 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #endif
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
+	assert(m_bits);
 #if defined(USE_SLOW_BITSET_LSB)
-	ASSERT(m_bits);
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];
 #elif defined(__GNUC__) || defined(__clang__)
 	// GCC or Clang
-	ASSERT(m_bits);
 	return __builtin_ctzll(m_bits);
 #elif _MSC_VER
 	// Microsoft Visual C++
 	unsigned long idx;
 #ifdef _WIN64
-	const bool result = _BitScanForward64(&idx, m_bits);
-	ASSERT(result);
+	_BitScanForward64(&idx, m_bits);
 	return static_cast<uint8_t>(idx);
 
 #else // WIN32
 	if (m_bits & 0xffffffff) {
-		const bool result = _BitScanForward(&idx, static_cast<uint32_t>(m_bits));
-		ASSERT(result);
+		_BitScanForward(&idx, static_cast<uint32_t>(m_bits));
 		return static_cast<uint8_t>(idx);
 	} else {
-		const bool result = _BitScanForward(&idx, static_cast<uint32_t>(m_bits >> 32));
-		ASSERT(result);
+		_BitScanForward(&idx, static_cast<uint32_t>(m_bits >> 32));
 		return static_cast<uint8_t>(idx) + 32;
 	}
 #endif

@@ -15,18 +15,6 @@
 #define unlikely(x) x
 #endif
 
-#ifndef NDEBUG
-#define ASSERT(x) \
-	do {          \
-		(void)x;  \
-	} while (false)
-#else
-#define ASSERT(x)  \
-	do {           \
-		assert(x); \
-	} while (false)
-#endif
-
 template <size_t... Dims>
 class MultiArrayIndex {
 public:
