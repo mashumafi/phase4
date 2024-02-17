@@ -79,14 +79,14 @@ private:
 			const common::Bitset friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
 			const common::Bitset friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
-			common::Bitset pawnsCount(friendlyPawnsOnInnerMask.fastCount());
+			const uint8_t pawnsCount = friendlyPawnsOnInnerMask.fastCount();
 			if (pawnsCount > 1) {
-				doubledPawns += (pawnsCount.get_raw_value() - 1);
+				doubledPawns += pawnsCount - 1;
 			}
 
 			if (friendlyPawnsOnInnerMask != 0) {
 				if (friendlyPawnsOnOuterMask == 0) {
-					isolatedPawns += pawnsCount.fastCount(); // TODO: understand this
+					isolatedPawns += common::Bitset(pawnsCount).fastCount(); // TODO: understand this
 				}
 			}
 		}

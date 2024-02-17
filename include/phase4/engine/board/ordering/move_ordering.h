@@ -84,7 +84,7 @@ public:
 			return;
 		}
 
-		int16_t max = moveValues[currentIndex];
+		int32_t max = moveValues[currentIndex];
 		size_t maxIndex = currentIndex;
 
 		for (size_t i = currentIndex + 1; i < moves.size(); ++i) {

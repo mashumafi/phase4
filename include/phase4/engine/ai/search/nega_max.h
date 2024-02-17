@@ -554,7 +554,7 @@ private:
 	}
 
 	static int32_t lateMoveReductionsGetReduction(bool pvNode, size_t moveIndex) {
-		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (moveIndex - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
+		const int32_t reductions = board::SearchConstants::LATE_MOVE_REDUCTIONS_BASE_REDUCTION + (static_cast<int32_t>(moveIndex) - board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION) / board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVE_INDEX_DIVIDER;
 		return common::Math::min_int32(pvNode ? board::SearchConstants::LATE_MOVE_REDUCTIONS_PV_NODE_MAX_REDUCTION : board::SearchConstants::LATE_MOVE_REDUCTIONS_NON_PV_NODE_MAX_REDUCTION, reductions);
 	}
 
