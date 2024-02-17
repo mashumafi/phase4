@@ -17,7 +17,7 @@ public:
 
 	static constexpr common::Bitset getPatternForField(common::Square square);
 
-	static constexpr common::Bitset getPatternForFile(uint8_t rank);
+	static constexpr common::Bitset getPatternForFile(uint16_t rank);
 
 private:
 	static constexpr Array generatePatterns();
@@ -45,7 +45,7 @@ constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square
 	return PATTERNS[square % 8] & ~(square.asBitboard().get_raw_value());
 }
 
-constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint8_t file) {
+constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint16_t file) {
 	assert(file < 8);
 	assert(file < 64); // TODO: remove this or mod below
 	return PATTERNS[file % 8];
