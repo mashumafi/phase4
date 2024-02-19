@@ -99,25 +99,23 @@ private:
 				gainList.push_back(result);
 
 				if (gainList.peek() > gainList.peek(2)) {
-					result = gainList.peek(2);
-					break;
+					return gainList.peek(2);
 				}
 
-				if (defenders != 0) {
-					leastValuableDefenderPiece = getLeastValuablePiece(defenders);
-					defenders = defenders.popLsb();
+				if (defenders == 0) {
+					return result;
+				}
 
-					result -= EvaluationConstants::pieceValue(currentPieceOnField);
-					currentPieceOnField = leastValuableDefenderPiece;
+				leastValuableDefenderPiece = getLeastValuablePiece(defenders);
+				defenders = defenders.popLsb();
 
-					gainList.push_back(result);
+				result -= EvaluationConstants::pieceValue(currentPieceOnField);
+				currentPieceOnField = leastValuableDefenderPiece;
 
-					if (gainList.peek() < gainList.peek(2)) {
-						result = gainList.peek(2);
-						break;
-					}
-				} else {
-					break;
+				gainList.push_back(result);
+
+				if (gainList.peek() < gainList.peek(2)) {
+					return gainList.peek(2);
 				}
 			}
 		}
