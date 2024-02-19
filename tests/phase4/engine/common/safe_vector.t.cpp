@@ -1,7 +1,5 @@
 #include <phase4/engine/common/safe_vector.h>
 
-#include <phase4/engine/common/util.h>
-
 #include <doctest/doctest.h>
 
 #include <functional>
@@ -36,8 +34,8 @@ TEST_CASE("SafeVector push_back, pop_back, peek") {
 	CHECK(numbers.at(1) == 4);
 	CHECK(numbers.at(3) == 2);
 
-	CHECK(numbers.at(util::back_index(1)) == 2);
-	CHECK(numbers.at(util::back_index(3)) == 4);
+	CHECK(numbers.peek() == 2);
+	CHECK(numbers.peek(2) == 4);
 
 	CHECK(numbers.pop_back() == 2);
 	CHECK(numbers.peek() == 3);

@@ -98,8 +98,8 @@ private:
 
 				gainList.push_back(result);
 
-				if (gainList.at(common::util::back_index(1)) > gainList.at(common::util::back_index(3))) {
-					result = gainList.at(common::util::back_index(3));
+				if (gainList.peek() > gainList.peek(2)) {
+					result = gainList.peek(2);
 					break;
 				}
 
@@ -112,8 +112,8 @@ private:
 
 					gainList.push_back(result);
 
-					if (gainList.at(common::util::back_index(1)) < gainList.at(common::util::back_index(3))) {
-						result = gainList.at(common::util::back_index(3));
+					if (gainList.peek() < gainList.peek(2)) {
+						result = gainList.peek(2);
 						break;
 					}
 				} else {

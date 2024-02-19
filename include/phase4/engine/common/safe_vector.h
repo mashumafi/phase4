@@ -1,8 +1,6 @@
 #ifndef PHASE4_ENGINE_COMMON_SAFE_VECTOR_H
 #define PHASE4_ENGINE_COMMON_SAFE_VECTOR_H
 
-#include <phase4/engine/common/util.h>
-
 #include <array>
 #include <iostream>
 
@@ -31,6 +29,7 @@ public:
 
 	inline constexpr const T &at(std::size_t index) const noexcept;
 	inline constexpr const T &peek() const noexcept;
+	inline constexpr const T &peek(std::size_t index) const noexcept;
 
 	inline constexpr std::size_t size() const noexcept;
 	inline constexpr bool is_empty() const noexcept;
@@ -73,16 +72,17 @@ inline constexpr void SafeVector<T, N>::clear() noexcept {
 
 template <typename T, std::size_t N>
 inline constexpr const T &SafeVector<T, N>::at(std::size_t index) const noexcept {
-	if (index < m_size) {
-		return m_items[index];
-	} else {
-		return m_items[index + m_size];
-	}
+	return m_items[index];
 }
 
 template <typename T, std::size_t N>
 inline constexpr const T &SafeVector<T, N>::peek() const noexcept {
 	return m_items[m_size - 1];
+}
+
+template <typename T, std::size_t N>
+inline constexpr const T &SafeVector<T, N>::peek(std::size_t index) const noexcept {
+	return m_items[m_size - 1 - index];
 }
 
 template <typename T, std::size_t N>
