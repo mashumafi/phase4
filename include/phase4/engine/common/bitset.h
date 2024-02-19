@@ -143,10 +143,12 @@ inline constexpr Bitset::Bitset() noexcept :
 inline constexpr Bitset Bitset::MAX(0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111);
 
 [[nodiscard]] inline constexpr Bitset Bitset::getLsb() const noexcept {
+	assert(m_bits != 0);
 	return m_bits & (~m_bits + 1);
 }
 
 [[nodiscard]] inline constexpr Bitset Bitset::popLsb() const noexcept {
+	assert(m_bits != 0);
 	return m_bits & (m_bits - 1);
 }
 
@@ -197,7 +199,7 @@ inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCo
 #endif
 
 [[nodiscard]] inline uint8_t Bitset::fastBitScan() const noexcept {
-	assert(m_bits);
+	assert(m_bits != 0);
 #if defined(USE_SLOW_BITSET_LSB)
 	const int64_t ibits = static_cast<int64_t>(m_bits);
 	return g_bitScanValues[(static_cast<uint64_t>((ibits & -ibits) * 0x03f79d71b4cb0a89)) >> 58];

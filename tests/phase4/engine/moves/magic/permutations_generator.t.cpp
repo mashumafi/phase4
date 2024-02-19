@@ -8,6 +8,8 @@ TEST_CASE("PermutationsGenerator getPermutation") {
 	using namespace phase4::engine::moves::magic;
 	using namespace phase4::engine::common;
 
+	CHECK(PermutationsGenerator::getPermutation(0b0, 1) == 0b0);
+
 	CHECK(PermutationsGenerator::getPermutation(0b1101, 0) == 0b0000);
 	CHECK(PermutationsGenerator::getPermutation(0b1101, 1) == 0b0001);
 	CHECK(PermutationsGenerator::getPermutation(0b1101, 2) == 0b0100);
