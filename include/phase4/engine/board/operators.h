@@ -18,7 +18,7 @@ namespace phase4::engine::board {
 
 class Operators {
 public:
-	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static inline void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		operators::PawnOperator::getLoudMoves(position, moves, evasionMask);
 		operators::KnightOperator::getLoudMoves(position, moves, evasionMask);
 		operators::BishopOperator::getLoudMoves(position, moves, evasionMask);
@@ -27,7 +27,7 @@ public:
 		operators::KingOperator::getLoudMoves(position, moves);
 	}
 
-	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static inline void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
 		operators::PawnOperator::getQuietMoves(position, moves, evasionMask);
 		operators::KnightOperator::getQuietMoves(position, moves, evasionMask);
 		operators::BishopOperator::getQuietMoves(position, moves, evasionMask);
@@ -36,12 +36,12 @@ public:
 		operators::KingOperator::getQuietMoves(position, moves);
 	}
 
-	static void getAllMoves(const Position &position, moves::Moves &moves) {
+	static inline void getAllMoves(const Position &position, moves::Moves &moves) {
 		getLoudMoves(position, moves, common::Bitset::MAX);
 		getQuietMoves(position, moves, common::Bitset::MAX);
 	}
 
-	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
+	static inline void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		operators::PawnOperator::getAvailableCaptureMoves(position, moves);
 		operators::KnightOperator::getAvailableCaptureMoves(position, moves);
 		operators::BishopOperator::getAvailableCaptureMoves(position, moves);
@@ -50,7 +50,19 @@ public:
 		operators::KingOperator::getAvailableCaptureMoves(position, moves);
 	}
 
-	static bool isMoveLegal(const Position &position, moves::Move move) {
+	static inline std::tuple<int32_t, int32_t> getMobility(const board::Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
+		const auto [knightCenter, knightOutside] = board::operators::KnightOperator::getMobility(position, color, fieldsAttackedByColor);
+		const auto [bishopCenter, bishopOutside] = board::operators::BishopOperator::getMobility(position, color, fieldsAttackedByColor);
+		const auto [rookCenter, rookOutside] = board::operators::RookOperator::getMobility(position, color, fieldsAttackedByColor);
+		const auto [queenCenter, queenOutside] = board::operators::QueenOperator::getMobility(position, color, fieldsAttackedByColor);
+
+		const int32_t centerMobility = knightCenter + bishopCenter + rookCenter + queenCenter;
+		const int32_t outsideMobility = knightOutside + bishopOutside + rookOutside + queenOutside;
+
+		return std::make_tuple(centerMobility, outsideMobility);
+	}
+
+	static inline bool isMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
 		if (unlikely(((move.from().asBitboard()) & position.occupancy(position.m_colorToMove)) == 0)) {
 			return false;

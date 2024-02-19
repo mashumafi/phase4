@@ -6,10 +6,7 @@
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/board/evaluation_constants.h>
-#include <phase4/engine/board/operators/bishop_operator.h>
-#include <phase4/engine/board/operators/knight_operator.h>
-#include <phase4/engine/board/operators/queen_operator.h>
-#include <phase4/engine/board/operators/rook_operator.h>
+#include <phase4/engine/board/operators.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/piece_color.h>
@@ -28,15 +25,9 @@ public:
 
 private:
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByColor) {
-		const auto [knightCenter, knightOutside] = board::operators::KnightOperator::getMobility(position, color, fieldsAttackedByColor);
-		const auto [bishopCenter, bishopOutside] = board::operators::BishopOperator::getMobility(position, color, fieldsAttackedByColor);
-		const auto [rookCenter, rookOutside] = board::operators::RookOperator::getMobility(position, color, fieldsAttackedByColor);
-		const auto [queenCenter, queenOutside] = board::operators::QueenOperator::getMobility(position, color, fieldsAttackedByColor);
+		const auto [centerMobility, outsideMobility] = board::Operators::getMobility(position, color, fieldsAttackedByColor);
 
-		const int32_t centerMobility = knightCenter + bishopCenter + rookCenter + queenCenter;
 		const int32_t centerMobilityScore = centerMobility * board::EvaluationConstants::CENTER_MOBILITY_MODIFIER;
-
-		const int32_t outsideMobility = knightOutside + bishopOutside + rookOutside + queenOutside;
 		const int32_t outsideMobilityScore = outsideMobility * board::EvaluationConstants::OUTSIDE_MOBILITY_MODIFIER;
 
 		const int32_t openingScore = centerMobilityScore + outsideMobilityScore;

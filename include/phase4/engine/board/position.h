@@ -276,6 +276,14 @@ public:
 
 		return false;
 	}
+
+	inline common::Bitset getEvasionMask() const {
+		const common::Bitset kingField = colorPieceMask(m_colorToMove, common::PieceType::KING);
+		const common::Square kingFieldIndex(kingField);
+
+		return moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
+				moves::MovesGenerator::getQueenMoves(m_occupancySummary, kingFieldIndex);
+	}
 };
 
 } //namespace phase4::engine::board

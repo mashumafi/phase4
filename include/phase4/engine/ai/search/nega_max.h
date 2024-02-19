@@ -229,11 +229,7 @@ public:
 
 		Bitset evasionMask = Bitset::MAX;
 		if (friendlyKingInCheck && !context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
-			const Bitset kingField = context.session->position().colorPieceMask(context.session->position().m_colorToMove, common::PieceType::KING);
-			const Square kingFieldIndex(kingField);
-
-			evasionMask = moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
-					moves::MovesGenerator::getQueenMoves(context.session->position().m_occupancySummary, kingFieldIndex);
+			evasionMask = context.session->position().getEvasionMask();
 		}
 
 		if (hashMove == moves::Move::EMPTY) {

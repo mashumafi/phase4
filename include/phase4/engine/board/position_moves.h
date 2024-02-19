@@ -5,6 +5,7 @@
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/moves_generator.h>
 
 #include <phase4/engine/common/bitset.h>
 #include <phase4/engine/common/castling.h>

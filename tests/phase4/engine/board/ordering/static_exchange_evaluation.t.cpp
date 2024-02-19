@@ -42,7 +42,6 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 }
 } //namespace
 
-#ifndef _MSC_VER
 TEST_CASE("StaticExchangeEvaluation -19330 g7g6 8/pp3pk1/2p3Pr/4q3/8/6RP/PPQ2PRK/4r3 b - - 0 26") {
 	using namespace phase4::engine;
 
@@ -162,4 +161,3 @@ TEST_CASE("StaticExchangeEvaluation 970 f7c7 2kr3r/Q1q2Rp1/Np5p/p2np3/P7/4P2P/6P
 	const int32_t whiteSee = Q + N;
 	CHECK(seeEvaluation == whiteSee - blackSee);
 }
-#endif
