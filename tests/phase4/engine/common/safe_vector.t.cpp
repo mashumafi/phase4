@@ -3,6 +3,7 @@
 #include <doctest/doctest.h>
 
 #include <functional>
+#include <cstdint>
 
 TEST_CASE("SafeVector constructor") {
 	using namespace phase4::engine::common;
