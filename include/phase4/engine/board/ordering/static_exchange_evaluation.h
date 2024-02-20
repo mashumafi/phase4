@@ -126,10 +126,10 @@ private:
 	static constexpr AttackersDefendersArray populate(common::PieceType attackingPiece) {
 		AttackersDefendersArray table = {};
 
+		const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
+			const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
 			for (uint64_t defenderIndex = 0; defenderIndex < 256; ++defenderIndex) {
-				const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
-				const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
 				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackers, defenderIndex);
 			}
 		}

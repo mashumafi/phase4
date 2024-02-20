@@ -67,7 +67,7 @@ TEST_CASE("StaticExchangeEvaluation computeResult") {
 	CHECK(attackers == 0b01011000);
 	CHECK(defenders == 0b01001001);
 
-	attackers &= 0b10111111;
+	attackers &= 0b10111111; // Remove queen as an attacker
 
 	common::SafeVector<int16_t, 7> gainList = {};
 
@@ -119,10 +119,10 @@ TEST_CASE("StaticExchangeEvaluation computeResult") {
 		result = gainList.peek(2);
 	}
 
-	CHECK(attackers == 0b00010000);
-	CHECK(defenders == 0b01000000);
+	CHECK(attackers == 0b00010000); // White Rook
+	CHECK(defenders == 0b01000000); // Black Queen
 
-	result = board::EvaluationConstants::pieceValue(capturedPiece) + result;
+	result += board::EvaluationConstants::pieceValue(capturedPiece);
 
 	const int32_t blackSee = Q;
 	const int32_t whiteSee = P;
