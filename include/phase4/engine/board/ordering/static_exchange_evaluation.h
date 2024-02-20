@@ -31,6 +31,25 @@ public:
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
+	static constexpr SeePiece getSeeIndexByPiece(common::PieceType piece) {
+		switch (piece.get_raw_value()) {
+			case common::PieceType::PAWN.get_raw_value():
+				return SeePiece::PAWN;
+			case common::PieceType::KNIGHT.get_raw_value():
+				return SeePiece::KNIGHT1;
+			case common::PieceType::BISHOP.get_raw_value():
+				return SeePiece::BISHOP;
+			case common::PieceType::ROOK.get_raw_value():
+				return SeePiece::ROOK1;
+			case common::PieceType::QUEEN.get_raw_value():
+				return SeePiece::QUEEN;
+			case common::PieceType::KING.get_raw_value():
+				return SeePiece::KING;
+		}
+
+		return SeePiece::INVALID;
+	}
+
 private:
 	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
 		switch (index) {
@@ -51,25 +70,6 @@ private:
 		}
 
 		return common::PieceType::INVALID;
-	}
-
-	static constexpr SeePiece getSeeIndexByPiece(common::PieceType piece) {
-		switch (piece.get_raw_value()) {
-			case common::PieceType::PAWN.get_raw_value():
-				return SeePiece::PAWN;
-			case common::PieceType::KNIGHT.get_raw_value():
-				return SeePiece::KNIGHT1;
-			case common::PieceType::BISHOP.get_raw_value():
-				return SeePiece::BISHOP;
-			case common::PieceType::ROOK.get_raw_value():
-				return SeePiece::ROOK1;
-			case common::PieceType::QUEEN.get_raw_value():
-				return SeePiece::QUEEN;
-			case common::PieceType::KING.get_raw_value():
-				return SeePiece::KING;
-		}
-
-		return SeePiece::INVALID;
 	}
 
 	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {

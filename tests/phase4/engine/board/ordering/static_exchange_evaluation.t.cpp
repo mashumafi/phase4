@@ -44,6 +44,25 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 }
 } //namespace
 
+TEST_CASE("StaticExchangeEvaluation Array") {
+	using namespace phase4::engine;
+
+	board::ordering::StaticExchangeEvaluation::Array access;
+	const common::PieceType attackingPiece = common::PieceType::QUEEN;
+
+	{
+		uint64_t attackerIndex = 0b00011000;
+		uint64_t defenderIndex = 0b01001001;
+		access[attackingPiece.get_raw_value()][attackerIndex][defenderIndex] = 123;
+	}
+
+	{
+		uint8_t attackers = 0b00011000;
+		uint8_t defenders = 0b01001001;
+		CHECK(access[attackingPiece.get_raw_value()][attackers][defenders] == 123);
+	}
+}
+
 TEST_CASE("StaticExchangeEvaluation computeResult") {
 	using namespace phase4::engine;
 
@@ -51,7 +70,7 @@ TEST_CASE("StaticExchangeEvaluation computeResult") {
 	REQUIRE(position);
 
 	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(*position, moves::Move("d2d5"));
-	CHECK(realMove);
+	REQUIRE(realMove);
 	CHECK(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
 
 	const common::PieceColor enemyColor = position->m_colorToMove.invert();
@@ -137,7 +156,7 @@ TEST_CASE("StaticExchangeEvaluation evaluate") {
 	CHECK(position->m_colorToMove == common::PieceColor::BLACK);
 
 	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(*position, moves::Move("g7g6"));
-	CHECK(realMove);
+	REQUIRE(realMove);
 	CHECK(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
 
 	const common::PieceColor enemyColor = position->m_colorToMove.invert();
