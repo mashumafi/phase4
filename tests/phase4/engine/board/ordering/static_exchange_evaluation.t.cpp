@@ -42,6 +42,85 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 }
 } //namespace
 
+TEST_CASE("StaticExchangeEvaluation computeResult") {
+	using namespace phase4::engine;
+
+	const auto position = fen::FenToPosition::parse("5rk1/1p2bppp/pq6/3rPb2/1n3P2/3N1R2/PP1BB1PP/RQ5K b - - 3 20");
+	REQUIRE(position);
+
+	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(*position, moves::Move("f5d3"));
+	REQUIRE(realMove);
+	REQUIRE(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
+
+	//
+	const common::PieceColor enemyColor = position->m_colorToMove.invert();
+
+	const common::PieceType attackingPiece = position->m_pieceTable[realMove->from()];
+	const common::PieceType capturedPiece = position->m_pieceTable[realMove->to()];
+
+	common::Bitset attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, position->m_colorToMove, realMove->to());
+	common::Bitset defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, enemyColor, realMove->to());
+
+	REQUIRE(attackers == 0b00011010);
+	REQUIRE(defenders == 0b01011000);
+	//
+
+	//
+	common::SafeVector<int16_t, 7> gainList = {};
+
+	common::PieceType currentPieceOnField = attackingPiece;
+	int16_t result = 0;
+
+	gainList.push_back(result);
+
+	if (defenders != 0) {
+		common::PieceType leastValuableDefenderPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(defenders);
+		defenders = defenders.popLsb();
+
+		result -= board::EvaluationConstants::pieceValue(currentPieceOnField);
+		currentPieceOnField = leastValuableDefenderPiece;
+
+		gainList.push_back(result);
+
+		while (attackers != 0) {
+			const common::PieceType leastValuableAttackerPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(attackers);
+			attackers = attackers.popLsb();
+
+			result += board::EvaluationConstants::pieceValue(currentPieceOnField);
+			currentPieceOnField = leastValuableAttackerPiece;
+
+			gainList.push_back(result);
+
+			if (gainList.peek() > gainList.peek(2)) {
+				result = gainList.peek(2);
+				break;
+			}
+
+			if (defenders == 0) {
+				break;
+			}
+
+			leastValuableDefenderPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(defenders);
+			defenders = defenders.popLsb();
+
+			result -= board::EvaluationConstants::pieceValue(currentPieceOnField);
+			currentPieceOnField = leastValuableDefenderPiece;
+
+			gainList.push_back(result);
+
+			if (gainList.peek() < gainList.peek(2)) {
+				result = gainList.peek(2);
+				break;
+			}
+		}
+	}
+	//
+
+	result = board::EvaluationConstants::pieceValue(capturedPiece) + result;
+
+	CHECK(N == result);
+}
+
 TEST_CASE("StaticExchangeEvaluation -19330 g7g6 8/pp3pk1/2p3Pr/4q3/8/6RP/PPQ2PRK/4r3 b - - 0 26") {
 	using namespace phase4::engine;
 
