@@ -24,6 +24,13 @@ public:
 		return board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attackers][defenders];
 	}
 
+	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
+		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
+		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
+
+		return getPieceBySeeIndex(leastValuableDefenderPiece);
+	}
+
 private:
 	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
 		switch (index) {
@@ -63,13 +70,6 @@ private:
 		}
 
 		return SeePiece::INVALID;
-	}
-
-	public: static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
-		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
-		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
-
-		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
 	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {
