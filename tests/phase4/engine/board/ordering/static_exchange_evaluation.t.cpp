@@ -44,23 +44,23 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 }
 } //namespace
 
-TEST_CASE("StaticExchangeEvaluation Array") {
+TEST_CASE("StaticExchangeEvaluation probing") {
 	using namespace phase4::engine;
+	using SEE = board::ordering::StaticExchangeEvaluation;
 
-	board::ordering::StaticExchangeEvaluation::Array access;
-	const common::PieceType attackingPiece = common::PieceType::QUEEN;
+	CHECK(SEE::evaluate(common::PieceType::PAWN, common::PieceType::PAWN, 0b01010101, 0b01010101) == 0);
+	CHECK(SEE::evaluate(common::PieceType::KNIGHT, common::PieceType::PAWN, 0b01010101, 0b01010101) == -150);
+	CHECK(SEE::evaluate(common::PieceType::BISHOP, common::PieceType::PAWN, 0b01010101, 0b01010101) == -170);
+	CHECK(SEE::evaluate(common::PieceType::ROOK, common::PieceType::PAWN, 0b01010101, 0b01010101) == -370);
+	CHECK(SEE::evaluate(common::PieceType::QUEEN, common::PieceType::PAWN, 0b01010101, 0b01010101) == -990);
+	CHECK(SEE::evaluate(common::PieceType::KING, common::PieceType::PAWN, 0b01010101, 0b01010101) == -19800);
 
-	{
-		uint64_t attackerIndex = 0b00011000;
-		uint64_t defenderIndex = 0b01001001;
-		access[attackingPiece.get_raw_value()][attackerIndex][defenderIndex] = 123;
-	}
-
-	{
-		uint8_t attackers = 0b00011000;
-		uint8_t defenders = 0b01001001;
-		CHECK(access[attackingPiece.get_raw_value()][attackers][defenders] == 123);
-	}
+	CHECK(SEE::evaluate(common::PieceType::PAWN, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 270);
+	CHECK(SEE::evaluate(common::PieceType::KNIGHT, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 120);
+	CHECK(SEE::evaluate(common::PieceType::BISHOP, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 100);
+	CHECK(SEE::evaluate(common::PieceType::ROOK, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -100);
+	CHECK(SEE::evaluate(common::PieceType::QUEEN, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -720);
+	CHECK(SEE::evaluate(common::PieceType::KING, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -19530);
 }
 
 TEST_CASE("StaticExchangeEvaluation computeResult") {
