@@ -44,6 +44,86 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 }
 } //namespace
 
+
+TEST_CASE("StaticExchangeEvaluation computeResult") {
+	using namespace phase4::engine;
+
+	const auto position = fen::FenToPosition::parse("r2q1rk1/1b3pb1/1p2p1pB/p2p4/n7/5N1P/BPPQ1PP1/2KR3R w - - 0 19");
+	REQUIRE(position);
+
+	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(*position, moves::Move("d2d5"));
+	REQUIRE(realMove);
+	REQUIRE(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
+
+	const common::PieceColor enemyColor = position->m_colorToMove.invert();
+
+	const common::PieceType attackingPiece = position->m_pieceTable[realMove->from()];
+	const common::PieceType capturedPiece = position->m_pieceTable[realMove->to()];
+
+	common::Bitset attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, position->m_colorToMove, realMove->to());
+	common::Bitset defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, enemyColor, realMove->to());
+
+	CHECK(attackers == 0b01011000);
+	CHECK(defenders == 0b01001001);
+
+	const int32_t expectedResult = board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers.get_raw_value(), defenders.get_raw_value());
+	common::SafeVector<int16_t, 7> gainList = {};
+
+	common::PieceType currentPieceOnField = attackingPiece;
+	int16_t result = 0;
+
+	gainList.push_back(result);
+
+	if (defenders != 0) {
+		common::PieceType leastValuableDefenderPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(defenders);
+		defenders = defenders.popLsb();
+
+		result -= board::EvaluationConstants::pieceValue(currentPieceOnField);
+		currentPieceOnField = leastValuableDefenderPiece;
+
+		gainList.push_back(result);
+
+		while (attackers != 0) {
+			const common::PieceType leastValuableAttackerPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(attackers);
+			attackers = attackers.popLsb();
+
+			result += board::EvaluationConstants::pieceValue(currentPieceOnField);
+			currentPieceOnField = leastValuableAttackerPiece;
+
+			gainList.push_back(result);
+
+			if (gainList.peek() > gainList.peek(2)) {
+				result = gainList.peek(2);
+				break;
+			}
+
+			if (defenders == 0) {
+				break;
+			}
+
+			leastValuableDefenderPiece = board::ordering::StaticExchangeEvaluation::getLeastValuablePiece(defenders);
+			defenders = defenders.popLsb();
+
+			result -= board::EvaluationConstants::pieceValue(currentPieceOnField);
+			currentPieceOnField = leastValuableDefenderPiece;
+
+			gainList.push_back(result);
+
+			if (gainList.peek() < gainList.peek(2)) {
+				result = gainList.peek(2);
+				break;
+			}
+		}
+	}
+
+	result = board::EvaluationConstants::pieceValue(capturedPiece) + result;
+
+	const int32_t blackSee = Q;
+	const int32_t whiteSee = P;
+	CHECK(result == whiteSee - blackSee);
+	CHECK(result == expectedResult);
+}
+
 TEST_CASE("StaticExchangeEvaluation evaluate") {
 
 	using namespace phase4::engine;
