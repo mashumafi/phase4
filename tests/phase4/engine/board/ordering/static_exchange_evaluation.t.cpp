@@ -148,6 +148,37 @@ TEST_CASE("StaticExchangeEvaluation computeResult") {
 	CHECK(result == whiteSee - blackSee);
 }
 
+TEST_CASE("StaticExchangeEvaluation populate") {
+	using namespace phase4::engine;
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array pawnTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::PAWN);
+		CHECK(pawnTable[0b01010101][0b01010101] == -100);
+		CHECK(pawnTable[0b01010100][0b01010101] == -100);
+		CHECK(pawnTable[0b01010101][0b01010100] == 0);
+		CHECK(pawnTable[0b00010101][0b01010101] == -100);
+		CHECK(pawnTable[0b01010101][0b00010101] == -100);
+	}
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array knightTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::KNIGHT);
+		CHECK(knightTable[0b01010101][0b01010101] == -250);
+		CHECK(knightTable[0b01010100][0b01010101] == -350);
+		CHECK(knightTable[0b01010101][0b01010100] == 0);
+		CHECK(knightTable[0b00010101][0b01010101] == -250);
+		CHECK(knightTable[0b01010101][0b00010101] == -250);
+	}
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array bishopTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::BISHOP);
+		CHECK(bishopTable[0b01010101][0b01010101] == -270);
+		CHECK(bishopTable[0b01010100][0b01010101] == -370);
+		CHECK(bishopTable[0b01010101][0b01010100] == -20);
+		CHECK(bishopTable[0b00010101][0b01010101] == -270);
+		CHECK(bishopTable[0b01010101][0b00010101] == -270);
+	}
+}
+
 TEST_CASE("StaticExchangeEvaluation evaluate") {
 	using namespace phase4::engine;
 

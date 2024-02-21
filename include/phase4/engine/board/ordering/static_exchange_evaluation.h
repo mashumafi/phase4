@@ -67,7 +67,6 @@ public:
 		return SeePiece::INVALID;
 	}
 
-private:
 	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
 		switch (index) {
 			case SeePiece::PAWN.get_raw_value():
@@ -154,6 +153,7 @@ private:
 		return table;
 	}
 
+private:
 	static const Array PAWN_TABLE;
 	static const Array KNIGHT_TABLE;
 	static const Array BISHOP_TABLE;
