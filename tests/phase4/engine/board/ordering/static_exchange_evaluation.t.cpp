@@ -154,8 +154,10 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	{
 		const board::ordering::StaticExchangeEvaluation::Array pawnTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::PAWN);
 		CHECK(pawnTable[0b01010101][0b01010101] == -100);
+
 		CHECK(pawnTable[0b01010100][0b01010101] == -100);
 		CHECK(pawnTable[0b01010101][0b01010100] == 0);
+
 		CHECK(pawnTable[0b00010101][0b01010101] == -100);
 		CHECK(pawnTable[0b01010101][0b00010101] == -100);
 	}
@@ -163,8 +165,10 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	{
 		const board::ordering::StaticExchangeEvaluation::Array knightTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::KNIGHT);
 		CHECK(knightTable[0b01010101][0b01010101] == -250);
+
 		CHECK(knightTable[0b01010100][0b01010101] == -350);
 		CHECK(knightTable[0b01010101][0b01010100] == 0);
+
 		CHECK(knightTable[0b00010101][0b01010101] == -250);
 		CHECK(knightTable[0b01010101][0b00010101] == -250);
 	}
@@ -172,10 +176,45 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	{
 		const board::ordering::StaticExchangeEvaluation::Array bishopTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::BISHOP);
 		CHECK(bishopTable[0b01010101][0b01010101] == -270);
+
 		CHECK(bishopTable[0b01010100][0b01010101] == -370);
 		CHECK(bishopTable[0b01010101][0b01010100] == -20);
+
 		CHECK(bishopTable[0b00010101][0b01010101] == -270);
 		CHECK(bishopTable[0b01010101][0b00010101] == -270);
+	}
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array rookTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::ROOK);
+		CHECK(rookTable[0b01010101][0b01010101] == -470);
+
+		CHECK(rookTable[0b01010100][0b01010101] == -570);
+		CHECK(rookTable[0b01010101][0b01010100] == -220);
+
+		CHECK(rookTable[0b00010101][0b01010101] == -470);
+		CHECK(rookTable[0b01010101][0b00010101] == -470);
+	}
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array queenTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::QUEEN);
+		CHECK(queenTable[0b01010101][0b01010101] == -1090);
+
+		CHECK(queenTable[0b01010100][0b01010101] == -1190);
+		CHECK(queenTable[0b01010101][0b01010100] == -840);
+
+		CHECK(queenTable[0b00010101][0b01010101] == -1090);
+		CHECK(queenTable[0b01010101][0b00010101] == -1090);
+	}
+
+	{
+		const board::ordering::StaticExchangeEvaluation::Array kingTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::KING);
+		CHECK(kingTable[0b01010101][0b01010101] == -19900);
+
+		CHECK(kingTable[0b01010100][0b01010101] == -20000);
+		CHECK(kingTable[0b01010101][0b01010100] == -19650);
+
+		CHECK(kingTable[0b00010101][0b01010101] == -19900);
+		CHECK(kingTable[0b01010101][0b00010101] == -19900);
 	}
 }
 
