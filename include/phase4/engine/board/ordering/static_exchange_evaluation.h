@@ -24,22 +24,22 @@ public:
 
 		switch (attackingPiece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
-				std::cerr << "PAWN " << capturedPieceValue << " " + PAWN_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "PAWN " << capturedPieceValue << " " << PAWN_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + PAWN_TABLE[attackers][defenders];
 			case common::PieceType::KNIGHT.get_raw_value():
-				std::cerr << "KNIGHT " << capturedPieceValue << " " + KNIGHT_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "KNIGHT " << capturedPieceValue << " " << KNIGHT_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + KNIGHT_TABLE[attackers][defenders];
 			case common::PieceType::BISHOP.get_raw_value():
-				std::cerr << "BISHOP " << capturedPieceValue << " " + BISHOP_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "BISHOP " << capturedPieceValue << " " << BISHOP_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + BISHOP_TABLE[attackers][defenders];
 			case common::PieceType::ROOK.get_raw_value():
-				std::cerr << "ROOK " << capturedPieceValue << " " + ROOK_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "ROOK " << capturedPieceValue << " " << ROOK_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + ROOK_TABLE[attackers][defenders];
 			case common::PieceType::QUEEN.get_raw_value():
-				std::cerr << "QUEEN " << capturedPieceValue << " " + QUEEN_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "QUEEN " << capturedPieceValue << " " << QUEEN_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + QUEEN_TABLE[attackers][defenders];
 			case common::PieceType::KING.get_raw_value():
-				std::cerr << "KING " << capturedPieceValue << " " + KING_TABLE[attackers][defenders] << std::endl;
+				std::cerr << "KING " << capturedPieceValue << " " << KING_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + KING_TABLE[attackers][defenders];
 			default:
 				assert(false);
