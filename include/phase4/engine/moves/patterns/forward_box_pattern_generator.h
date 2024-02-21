@@ -3,7 +3,7 @@
 
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/square.h>
 
@@ -14,15 +14,15 @@ namespace phase4::engine::moves::patterns {
 
 class ForwardBoxPatternGenerator {
 public:
-	using Array = std::array<std::array<common::Bitset, 64>, 2>;
+	using Array = std::array<std::array<common::Bitboard, 64>, 2>;
 
-	static constexpr common::Bitset getPattern(common::PieceColor color, common::Square fieldIndex) {
+	static constexpr common::Bitboard getPattern(common::PieceColor color, common::Square fieldIndex) {
 		return PATTERNS[color.get_raw_value()][fieldIndex];
 	}
 
 private:
-	static constexpr common::Bitset getPatternForField(common::PieceColor color, common::Square fieldIndex) {
-		common::Bitset mask = BoxPatternGenerator::getPattern(fieldIndex);
+	static constexpr common::Bitboard getPatternForField(common::PieceColor color, common::Square fieldIndex) {
+		common::Bitboard mask = BoxPatternGenerator::getPattern(fieldIndex);
 		const common::Square forwardField(fieldIndex.forward(color, 1));
 
 		if (forwardField.isValid()) {

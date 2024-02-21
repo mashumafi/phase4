@@ -3,7 +3,7 @@
 
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/square.h>
 
@@ -14,15 +14,15 @@ namespace phase4::engine::moves::patterns {
 
 class PassingPatternGenerator {
 public:
-	using Patterns = std::array<std::array<common::Bitset, 64>, 2>;
+	using Patterns = std::array<std::array<common::Bitboard, 64>, 2>;
 
-	static constexpr common::Bitset getPattern(common::PieceColor color, common::Square fieldIndex);
+	static constexpr common::Bitboard getPattern(common::PieceColor color, common::Square fieldIndex);
 
 private:
-	static constexpr common::Bitset getPatternForField(common::PieceColor color, common::Square fieldIndex) {
+	static constexpr common::Bitboard getPatternForField(common::PieceColor color, common::Square fieldIndex) {
 		const common::Square::Direction direction = color == common::PieceColor::WHITE ? &common::Square::north : &common::Square::south;
 		common::Square currentField = (fieldIndex.*direction)(2);
-		common::Bitset result = 0ul;
+		common::Bitboard result = 0ul;
 
 		while (currentField.isValid()) {
 			result |= BoxPatternGenerator::getPattern(currentField);
@@ -47,7 +47,7 @@ private:
 
 inline constexpr PassingPatternGenerator::Patterns PassingPatternGenerator::PATTERNS = generate();
 
-constexpr common::Bitset PassingPatternGenerator::getPattern(common::PieceColor color, common::Square fieldIndex) {
+constexpr common::Bitboard PassingPatternGenerator::getPattern(common::PieceColor color, common::Square fieldIndex) {
 	return PATTERNS[color.get_raw_value()][fieldIndex];
 }
 

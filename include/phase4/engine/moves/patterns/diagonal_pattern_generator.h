@@ -1,7 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_DIAGONAL_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_DIAGONAL_PATTERN_GENERATOR_H
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/square.h>
 
@@ -12,9 +12,9 @@ namespace phase4::engine::moves::patterns {
 
 class DiagonalPatternGenerator {
 public:
-	using Array = std::array<common::Bitset, 64>;
+	using Array = std::array<common::Bitboard, 64>;
 
-	static constexpr common::Bitset getPattern(common::Square square);
+	static constexpr common::Bitboard getPattern(common::Square square);
 
 private:
 	static constexpr uint64_t getPatternForField(common::Square square, common::FieldIndex shift);
@@ -61,7 +61,7 @@ constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::generatePatt
 
 inline constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::PATTERNS = DiagonalPatternGenerator::generatePatterns();
 
-constexpr common::Bitset DiagonalPatternGenerator::getPattern(common::Square square) {
+constexpr common::Bitboard DiagonalPatternGenerator::getPattern(common::Square square) {
 	return PATTERNS[square];
 }
 

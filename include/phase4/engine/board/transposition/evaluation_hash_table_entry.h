@@ -3,7 +3,7 @@
 
 #include <phase4/engine/board/transposition/evaluation_hash_table_entry.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <cstdint>
 
@@ -15,7 +15,7 @@ public:
 			m_key(0), m_score(0) {
 	}
 
-	EvaluationHashTableEntry(common::Bitset hash, int16_t score) {
+	EvaluationHashTableEntry(common::Bitboard hash, int16_t score) {
 		m_key = static_cast<uint16_t>(hash.get_raw_value() >> 48);
 		m_score = score;
 	}
@@ -28,7 +28,7 @@ public:
 		return m_score;
 	}
 
-	bool isKeyValid(common::Bitset hash) const {
+	bool isKeyValid(common::Bitboard hash) const {
 		return m_key == hash.get_raw_value() >> 48;
 	}
 

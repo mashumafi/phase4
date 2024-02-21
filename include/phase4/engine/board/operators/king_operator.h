@@ -7,7 +7,7 @@
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
@@ -26,17 +26,17 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
+		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
+		Bitboard availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+			const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -66,17 +66,17 @@ public:
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
-		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
+		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
+		Bitboard availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+			const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -89,17 +89,17 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		const Bitset piece = position.colorPieceMask(color, PieceType::KING);
+		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
 			return; // NOTE: There should always be a king
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitset availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
+		Bitboard availableMoves = moves::MovesGenerator::getKingMoves(from) & position.occupancy(enemyColor);
 
 		while (availableMoves != 0) {
-			const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+			const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 			const Square fieldIndex(field.fastBitScan());
 			availableMoves = availableMoves.popLsb();
 
@@ -111,8 +111,8 @@ public:
 		using namespace common;
 
 		const PieceColor enemyColor = position.m_colorToMove.invert();
-		const Bitset availableMoves = moves::MovesGenerator::getKingMoves(move.from());
-		const Bitset toField = move.to().asBitboard();
+		const Bitboard availableMoves = moves::MovesGenerator::getKingMoves(move.from());
+		const Bitboard toField = move.to().asBitboard();
 
 		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
 			return true;
@@ -145,7 +145,7 @@ private:
 	static bool isWhiteKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		constexpr Bitset PASSING_FIELDS = Square::G1.asBitboard() | Square::F1.asBitboard();
+		constexpr Bitboard PASSING_FIELDS = Square::G1.asBitboard() | Square::F1.asBitboard();
 
 		if (unlikely((position.m_castling & common::Castling::WHITE_SHORT) != common::Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E1);
@@ -158,7 +158,7 @@ private:
 	static bool isWhiteQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		constexpr Bitset PASSING_FIELDS = Square::D1.asBitboard() | Square::C1.asBitboard();
+		constexpr Bitboard PASSING_FIELDS = Square::D1.asBitboard() | Square::C1.asBitboard();
 
 		if (unlikely((position.m_castling & Castling::WHITE_LONG) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E1);
@@ -171,7 +171,7 @@ private:
 	static bool isBlackKingCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		constexpr Bitset PASSING_FIELDS = Square::G8.asBitboard() | Square::F8.asBitboard();
+		constexpr Bitboard PASSING_FIELDS = Square::G8.asBitboard() | Square::F8.asBitboard();
 
 		if (unlikely((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E8);
@@ -184,7 +184,7 @@ private:
 	static bool isBlackQueenCastlingAvailable(const Position &position, common::PieceColor color) {
 		using namespace common;
 
-		constexpr Bitset PASSING_FIELDS = Square::D8.asBitboard() | Square::C8.asBitboard();
+		constexpr Bitboard PASSING_FIELDS = Square::D8.asBitboard() | Square::C8.asBitboard();
 
 		if (unlikely((position.m_castling & Castling::BLACK_LONG) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E8);

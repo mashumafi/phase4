@@ -6,7 +6,7 @@
 
 #include <phase4/engine/moves/move.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
@@ -92,7 +92,7 @@ public:
 			position.m_hash = position.m_hash.movePiece(position.m_colorToMove, pieceType, move.from(), move.to());
 			position.m_pawnHash = position.m_pawnHash.movePiece(position.m_colorToMove, pieceType, move.from(), move.to());
 
-			const Bitset enPassantField = (position.m_colorToMove == PieceColor::WHITE) ? move.to().south(1).asBitboard() : move.to().north(1).asBitboard();
+			const Bitboard enPassantField = (position.m_colorToMove == PieceColor::WHITE) ? move.to().south(1).asBitboard() : move.to().north(1).asBitboard();
 			const uint8_t enPassantFieldIndex = enPassantField.fastBitScan();
 
 			position.m_enPassant = enPassantField;
@@ -272,7 +272,7 @@ public:
 			if (wallMove != FieldIndex::ZERO) {
 				position.m_occupancySummary = position.m_occupancySummary & ~position.m_walls;
 
-				Bitset original = WallOperations::SLIDE_TO[wallIndex][move.to()];
+				Bitboard original = WallOperations::SLIDE_TO[wallIndex][move.to()];
 				while (original > 0) {
 					Square from(original.fastBitScan());
 					Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
@@ -375,13 +375,13 @@ public:
 
 		position.m_occupancySummary &= ~position.m_walls;
 
-		Bitset walls = position.m_walls;
+		Bitboard walls = position.m_walls;
 		if (wallMove.offset() >= 0)
 			walls >>= wallMove.offset();
 		else
 			walls <<= -wallMove.offset();
 
-		Bitset original = walls;
+		Bitboard original = walls;
 		while (original != 0) {
 			const Square from(original.fastBitScan());
 			const Square to(from + wallMove.offset());

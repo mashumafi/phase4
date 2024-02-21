@@ -10,23 +10,23 @@ namespace phase4::engine::moves {
 
 class MovesGenerator {
 public:
-	static common::Bitset getKnightMoves(common::Square square) {
+	static common::Bitboard getKnightMoves(common::Square square) {
 		return patterns::JumpPatternGenerator::getPattern(square);
 	}
 
-	static common::Bitset getBishopMoves(common::Bitset board, common::Square square) {
+	static common::Bitboard getBishopMoves(common::Bitboard board, common::Square square) {
 		return magic::MagicBitboards::getBishopMoves(board, square);
 	}
 
-	static common::Bitset getRookMoves(common::Bitset board, common::Square square) {
+	static common::Bitboard getRookMoves(common::Bitboard board, common::Square square) {
 		return magic::MagicBitboards::getRookMoves(board, square);
 	}
 
-	static common::Bitset getQueenMoves(common::Bitset board, common::Square square) {
+	static common::Bitboard getQueenMoves(common::Bitboard board, common::Square square) {
 		return getBishopMoves(board, square) | getRookMoves(board, square);
 	}
 
-	static common::Bitset getKingMoves(common::Square square) {
+	static common::Bitboard getKingMoves(common::Square square) {
 		return patterns::BoxPatternGenerator::getPattern(square);
 	}
 };

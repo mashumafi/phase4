@@ -4,7 +4,7 @@
 #include <phase4/engine/moves/patterns/box_pattern_generator.h>
 #include <phase4/engine/moves/patterns/diagonal_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -14,12 +14,12 @@ namespace phase4::engine::moves::patterns {
 
 class ChainPatternGenerator {
 public:
-	using Array = std::array<common::Bitset, 64>;
+	using Array = std::array<common::Bitboard, 64>;
 
-	static constexpr common::Bitset getPattern(common::Square fieldIndex);
+	static constexpr common::Bitboard getPattern(common::Square fieldIndex);
 
 private:
-	static constexpr common::Bitset getPatternForField(common::Square fieldIndex) {
+	static constexpr common::Bitboard getPatternForField(common::Square fieldIndex) {
 		return DiagonalPatternGenerator::getPattern(fieldIndex) & BoxPatternGenerator::getPattern(fieldIndex);
 	}
 
@@ -36,7 +36,7 @@ private:
 
 inline constexpr ChainPatternGenerator::Array ChainPatternGenerator::PATTERNS = populate();
 
-constexpr common::Bitset ChainPatternGenerator::getPattern(common::Square fieldIndex) {
+constexpr common::Bitboard ChainPatternGenerator::getPattern(common::Square fieldIndex) {
 	return PATTERNS[fieldIndex];
 }
 

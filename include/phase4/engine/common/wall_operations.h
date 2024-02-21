@@ -22,29 +22,29 @@ public:
 	static constexpr FieldIndex WEST = -EAST;
 	static constexpr FieldIndex NorthEast = NORTH + EAST;
 
-	static constexpr Bitset TOP = PositionConstants::RANK_7 | PositionConstants::RANK_8;
-	static constexpr Bitset BOTTOM = PositionConstants::RANK_1 | PositionConstants::RANK_2;
-	static constexpr Bitset LEFT = PositionConstants::FILE_A | PositionConstants::FILE_B;
-	static constexpr Bitset RIGHT = PositionConstants::FILE_G | PositionConstants::FILE_H;
+	static constexpr Bitboard TOP = PositionConstants::RANK_7 | PositionConstants::RANK_8;
+	static constexpr Bitboard BOTTOM = PositionConstants::RANK_1 | PositionConstants::RANK_2;
+	static constexpr Bitboard LEFT = PositionConstants::FILE_A | PositionConstants::FILE_B;
+	static constexpr Bitboard RIGHT = PositionConstants::FILE_G | PositionConstants::FILE_H;
 
 	static constexpr int16_t floorStep(int16_t n, int16_t d) {
 		return n / d * d;
 	}
 
-	static constexpr std::array<common::Bitset, 64> populateSlideFromBB();
+	static constexpr std::array<common::Bitboard, 64> populateSlideFromBB();
 
-	static constexpr std::array<std::array<common::Bitset, 64>, 64> populateSlideToBB();
+	static constexpr std::array<std::array<common::Bitboard, 64>, 64> populateSlideToBB();
 
 	static constexpr std::array<std::array<FieldIndex, 64>, 64> populateSlideDir();
 
 	static constexpr std::array<std::array<common::Square, 64>, 64> populateSlideSquare();
 
 	// utility, given an x,y gives you a valid wall mask for that coordinate
-	static const std::array<common::Bitset, 64> SLIDE_FROM;
+	static const std::array<common::Bitboard, 64> SLIDE_FROM;
 
 	// given a wall index and square, gives you a resulting wall mask
 	// used to update the bitset used for the wall mask
-	static const std::array<std::array<common::Bitset, 64>, 64> SLIDE_TO;
+	static const std::array<std::array<common::Bitboard, 64>, 64> SLIDE_TO;
 
 	// given a wall inddex and the landing square, gives the sliding direction
 	// used to determine enpassand and undo history
@@ -55,8 +55,8 @@ public:
 	static const std::array<std::array<common::Square, 64>, 64> SLIDE_SQUARE;
 };
 
-constexpr std::array<common::Bitset, 64> WallOperations::populateSlideFromBB() {
-	std::array<common::Bitset, 64> result{};
+constexpr std::array<common::Bitboard, 64> WallOperations::populateSlideFromBB() {
+	std::array<common::Bitboard, 64> result{};
 	for (common::Square from = common::Square::BEGIN; from != common::Square::INVALID; ++from) {
 		FieldIndex bottomLeftIndex = from.asFieldIndex();
 		bottomLeftIndex.x = floorStep(bottomLeftIndex.x, 2);
@@ -67,14 +67,14 @@ constexpr std::array<common::Bitset, 64> WallOperations::populateSlideFromBB() {
 	return result;
 }
 
-inline constexpr std::array<common::Bitset, 64> WallOperations::SLIDE_FROM = WallOperations::populateSlideFromBB();
+inline constexpr std::array<common::Bitboard, 64> WallOperations::SLIDE_FROM = WallOperations::populateSlideFromBB();
 
-constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::populateSlideToBB() {
-	std::array<std::array<common::Bitset, 64>, 64> result{};
+constexpr std::array<std::array<common::Bitboard, 64>, 64> WallOperations::populateSlideToBB() {
+	std::array<std::array<common::Bitboard, 64>, 64> result{};
 	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
 		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
-			common::Bitset shiftedWall = SLIDE_FROM[wallIndex];
-			const common::Bitset toBB = SLIDE_FROM[landIndex];
+			common::Bitboard shiftedWall = SLIDE_FROM[wallIndex];
+			const common::Bitboard toBB = SLIDE_FROM[landIndex];
 
 			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & toBB) != 0) {
 				shiftedWall >>= 2;
@@ -97,7 +97,7 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
 		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
 			FieldIndex d{ 0, 0 };
-			const common::Bitset landBB = SLIDE_FROM[landIndex];
+			const common::Bitboard landBB = SLIDE_FROM[landIndex];
 
 			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & landBB) != 0) {
 				d = WEST * 2;
@@ -120,7 +120,7 @@ constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populat
 	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
 		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
 			common::Square destinationSquare = landIndex;
-			const common::Bitset wallBB = SLIDE_FROM[wallIndex];
+			const common::Bitboard wallBB = SLIDE_FROM[wallIndex];
 
 			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & wallBB) != 0) {
 				destinationSquare = destinationSquare.west(2);
@@ -138,7 +138,7 @@ constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populat
 	return result;
 }
 
-inline constexpr std::array<std::array<common::Bitset, 64>, 64> WallOperations::SLIDE_TO = WallOperations::populateSlideToBB();
+inline constexpr std::array<std::array<common::Bitboard, 64>, 64> WallOperations::SLIDE_TO = WallOperations::populateSlideToBB();
 inline constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::SLIDE_DIR = WallOperations::populateSlideDir();
 inline constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::SLIDE_SQUARE = WallOperations::populateSlideSquare();
 

@@ -16,8 +16,8 @@ TEST_CASE("KingSafetyEvaluator white ahead 130") {
 	auto position = fen::FenToPosition::parse("7r/3kRp2/p2P1R2/1p1b4/8/P2P3P/1Pr3PK/8 b - - 2 31");
 	REQUIRE(position);
 
-	common::Bitset fieldsAttackedByWhite;
-	common::Bitset fieldsAttackedByBlack;
+	common::Bitboard fieldsAttackedByWhite;
+	common::Bitboard fieldsAttackedByBlack;
 	ai::score::evaluators::MobilityEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);
 
 	const int32_t score = ai::score::evaluators::KingSafetyEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);
@@ -33,8 +33,8 @@ TEST_CASE("KingSafetyEvaluator black ahead -130") {
 	auto position = fen::FenToPosition::parse("r5k1/pp3pp1/4p3/1Nbp3p/7P/6q1/P1P5/1R1QRK2 w - - 2 25");
 	REQUIRE(position);
 
-	common::Bitset fieldsAttackedByWhite;
-	common::Bitset fieldsAttackedByBlack;
+	common::Bitboard fieldsAttackedByWhite;
+	common::Bitboard fieldsAttackedByBlack;
 	ai::score::evaluators::MobilityEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);
 
 	const int32_t score = ai::score::evaluators::KingSafetyEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);

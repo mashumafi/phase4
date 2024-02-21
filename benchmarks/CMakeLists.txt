@@ -12,7 +12,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(google-benchmark)
 
 add_executable(valid_move_check valid_move_check.b.cpp)
-target_link_libraries(valid_move_check PRIVATE benchmark::benchmark phase4_fast)
+target_link_libraries(valid_move_check PRIVATE benchmark::benchmark phase4)
 
 add_executable(default_position default_position.b.cpp)
-target_link_libraries(default_position PRIVATE benchmark::benchmark phase4_fast)
+target_link_libraries(default_position PRIVATE benchmark::benchmark phase4)

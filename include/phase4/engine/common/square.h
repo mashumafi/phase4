@@ -1,7 +1,7 @@
 #ifndef PHASE4_ENGINE_COMMON_SQUARE_H
 #define PHASE4_ENGINE_COMMON_SQUARE_H
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/util.h>
@@ -98,7 +98,7 @@ public:
 	/// @return the point
 	constexpr inline FieldIndex asFieldIndex() const noexcept;
 
-	inline constexpr Bitset asBitboard() const noexcept;
+	inline constexpr Bitboard asBitboard() const noexcept;
 
 	inline constexpr operator uint64_t() const;
 
@@ -108,7 +108,7 @@ public:
 	inline constexpr Square &operator=(uint64_t value);
 
 	inline explicit constexpr Square(const FieldIndex &fieldIndex);
-	inline explicit Square(const Bitset &bits);
+	inline explicit Square(const Bitboard &bits);
 
 	inline constexpr Square(Square const &that) = default;
 	inline constexpr Square &operator=(const Square &that) = default;
@@ -147,8 +147,8 @@ inline constexpr FieldIndex Square::asFieldIndex() const noexcept {
 	return FieldIndex{ x, y };
 }
 
-inline constexpr Bitset Square::asBitboard() const noexcept {
-	return Bitset(1ull << m_value);
+inline constexpr Bitboard Square::asBitboard() const noexcept {
+	return Bitboard(1ull << m_value);
 }
 
 inline constexpr Square::operator uint64_t() const {
@@ -172,7 +172,7 @@ inline constexpr Square::Square(const FieldIndex &fieldIndex) :
 		Square(7 - fieldIndex.x + fieldIndex.y * 8) {
 }
 
-inline Square::Square(const Bitset &bits) :
+inline Square::Square(const Bitboard &bits) :
 		Square(bits.fastBitScan()) {
 }
 

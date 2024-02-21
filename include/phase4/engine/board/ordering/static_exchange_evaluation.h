@@ -4,7 +4,7 @@
 #include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/ordering/see_piece.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/safe_vector.h>
 #include <phase4/engine/common/square.h>
@@ -17,33 +17,35 @@ namespace phase4::engine::board::ordering {
 
 class StaticExchangeEvaluation {
 public:
-	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
-	using Array = std::array<AttackersDefendersArray, 6>;
+	using Array = std::array<std::array<int16_t, 256>, 256>;
 
 	static inline int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attackers, uint8_t defenders) {
-		return board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attackers][defenders];
+		const int16_t capturedPieceValue = board::EvaluationConstants::pieceValue(capturedPiece);
+
+		switch (attackingPiece.get_raw_value()) {
+			case common::PieceType::PAWN.get_raw_value():
+				return capturedPieceValue + PAWN_TABLE[attackers][defenders];
+			case common::PieceType::KNIGHT.get_raw_value():
+				return capturedPieceValue + KNIGHT_TABLE[attackers][defenders];
+			case common::PieceType::BISHOP.get_raw_value():
+				return capturedPieceValue + BISHOP_TABLE[attackers][defenders];
+			case common::PieceType::ROOK.get_raw_value():
+				return capturedPieceValue + ROOK_TABLE[attackers][defenders];
+			case common::PieceType::QUEEN.get_raw_value():
+				return capturedPieceValue + QUEEN_TABLE[attackers][defenders];
+			case common::PieceType::KING.get_raw_value():
+				return capturedPieceValue + KING_TABLE[attackers][defenders];
+			default:
+				assert(false);
+				return capturedPieceValue;
+		}
 	}
 
-private:
-	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
-		switch (index) {
-			case SeePiece::PAWN.get_raw_value():
-				return common::PieceType::PAWN;
-			case SeePiece::KNIGHT1.get_raw_value():
-			case SeePiece::KNIGHT2.get_raw_value():
-				return common::PieceType::KNIGHT;
-			case SeePiece::BISHOP.get_raw_value():
-				return common::PieceType::BISHOP;
-			case SeePiece::ROOK1.get_raw_value():
-			case SeePiece::ROOK2.get_raw_value():
-				return common::PieceType::ROOK;
-			case SeePiece::QUEEN.get_raw_value():
-				return common::PieceType::QUEEN;
-			case SeePiece::KING.get_raw_value():
-				return common::PieceType::KING;
-		}
+	static constexpr common::PieceType getLeastValuablePiece(common::Bitboard data) {
+		const common::Bitboard leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
+		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
-		return common::PieceType::INVALID;
+		return getPieceBySeeIndex(leastValuableDefenderPiece);
 	}
 
 	static constexpr SeePiece getSeeIndexByPiece(common::PieceType piece) {
@@ -65,14 +67,28 @@ private:
 		return SeePiece::INVALID;
 	}
 
-	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
-		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
-		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
+	static constexpr common::PieceType getPieceBySeeIndex(int16_t index) {
+		switch (index) {
+			case SeePiece::PAWN.get_raw_value():
+				return common::PieceType::PAWN;
+			case SeePiece::KNIGHT1.get_raw_value():
+			case SeePiece::KNIGHT2.get_raw_value():
+				return common::PieceType::KNIGHT;
+			case SeePiece::BISHOP.get_raw_value():
+				return common::PieceType::BISHOP;
+			case SeePiece::ROOK1.get_raw_value():
+			case SeePiece::ROOK2.get_raw_value():
+				return common::PieceType::ROOK;
+			case SeePiece::QUEEN.get_raw_value():
+				return common::PieceType::QUEEN;
+			case SeePiece::KING.get_raw_value():
+				return common::PieceType::KING;
+		}
 
-		return getPieceBySeeIndex(leastValuableDefenderPiece);
+		return common::PieceType::INVALID;
 	}
 
-	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {
+	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitboard attackers, common::Bitboard defenders) {
 		common::SafeVector<int16_t, 7> gainList = {};
 
 		common::PieceType currentPieceOnField = attackingPiece;
@@ -98,26 +114,24 @@ private:
 
 				gainList.push_back(result);
 
-				if (gainList.at(common::util::back_index(1)) > gainList.at(common::util::back_index(3))) {
-					result = gainList.at(common::util::back_index(3));
-					break;
+				if (gainList.peek() > gainList.peek(2)) {
+					return gainList.peek(2);
 				}
 
-				if (defenders != 0) {
-					leastValuableDefenderPiece = getLeastValuablePiece(defenders);
-					defenders = defenders.popLsb();
+				if (defenders == 0) {
+					return result;
+				}
 
-					result -= EvaluationConstants::pieceValue(currentPieceOnField);
-					currentPieceOnField = leastValuableDefenderPiece;
+				leastValuableDefenderPiece = getLeastValuablePiece(defenders);
+				defenders = defenders.popLsb();
 
-					gainList.push_back(result);
+				result -= EvaluationConstants::pieceValue(currentPieceOnField);
+				currentPieceOnField = leastValuableDefenderPiece;
 
-					if (gainList.at(common::util::back_index(1)) < gainList.at(common::util::back_index(3))) {
-						result = gainList.at(common::util::back_index(3));
-						break;
-					}
-				} else {
-					break;
+				gainList.push_back(result);
+
+				if (gainList.peek() < gainList.peek(2)) {
+					return gainList.peek(2);
 				}
 			}
 		}
@@ -125,13 +139,13 @@ private:
 		return result;
 	}
 
-	static constexpr AttackersDefendersArray populate(common::PieceType attackingPiece) {
-		AttackersDefendersArray table = {};
+	static Array populate(common::PieceType attackingPiece) {
+		Array table = {};
 
+		const common::Bitboard attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
+			const common::Bitboard attackers = common::Bitboard(attackerIndex) & ~attackingPieceSeeIndex;
 			for (uint64_t defenderIndex = 0; defenderIndex < 256; ++defenderIndex) {
-				const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
-				const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
 				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackers, defenderIndex);
 			}
 		}
@@ -139,13 +153,22 @@ private:
 		return table;
 	}
 
-	static const Array TABLE;
+private:
+	static const Array PAWN_TABLE;
+	static const Array KNIGHT_TABLE;
+	static const Array BISHOP_TABLE;
+	static const Array ROOK_TABLE;
+	static const Array QUEEN_TABLE;
+	static const Array KING_TABLE;
 };
 
-} //namespace phase4::engine::board::ordering
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::PAWN_TABLE = populate(common::PieceType::PAWN);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::KNIGHT_TABLE = populate(common::PieceType::KNIGHT);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::BISHOP_TABLE = populate(common::PieceType::BISHOP);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::ROOK_TABLE = populate(common::PieceType::ROOK);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::QUEEN_TABLE = populate(common::PieceType::QUEEN);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::KING_TABLE = populate(common::PieceType::KING);
 
-#ifndef FAST_BUILD
-#include "static_exchange_evaluation.cpp"
-#endif
+} //namespace phase4::engine::board::ordering
 
 #endif

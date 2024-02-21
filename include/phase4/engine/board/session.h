@@ -210,7 +210,7 @@ public:
 
 private:
 	common::FastVector<common::PieceType> m_killedPieces;
-	common::FastVector<common::Bitset> m_enPassants;
+	common::FastVector<common::Bitboard> m_enPassants;
 	common::FastVector<common::Castling> m_castlings;
 	common::FastVector<common::PieceType> m_promotedPieces;
 	common::FastVector<ZobristHashing> m_hashes;

@@ -11,12 +11,21 @@
 #include <phase4/engine/ai/score/evaluators/position_evaluator.h>
 #include <phase4/engine/ai/score/evaluators/rook_evaluator.h>
 
+#include <phase4/engine/board/operators.h>
+#include <phase4/engine/board/operators/bishop_operator.h>
+#include <phase4/engine/board/operators/king_operator.h>
+#include <phase4/engine/board/operators/knight_operator.h>
+#include <phase4/engine/board/operators/pawn_operator.h>
+#include <phase4/engine/board/operators/queen_operator.h>
+#include <phase4/engine/board/operators/rook_operator.h>
 #include <phase4/engine/board/ordering/see_piece.h>
 #include <phase4/engine/board/ordering/static_exchange_evaluation.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
+
+#include <vector>
 
 int main(int argc, const char **args) {
 	using namespace phase4::engine;
@@ -34,7 +43,11 @@ int main(int argc, const char **args) {
 	bool rookSearch = false; // -r
 	bool seePieceSearch = false; // -sp
 	bool seeSearch = false; // -see
+	bool quietSearch = false; // -quiet
+	bool loudSearch = false; // -loud
+	bool captureSearch = false; // -capture
 	int32_t phase = common::PositionConstants::PHASE_RESOLUTION;
+	std::vector<common::PieceType> pieces;
 
 	for (int i = 1; i < argc; ++i) {
 		if (args[i] == "-b"sv) {
@@ -64,6 +77,33 @@ int main(int argc, const char **args) {
 		if (args[i] == "-see"sv) {
 			seeSearch = true;
 		}
+		if (args[i] == "-quiet"sv) {
+			quietSearch = true;
+		}
+		if (args[i] == "-loud"sv) {
+			loudSearch = true;
+		}
+		if (args[i] == "-capture"sv) {
+			captureSearch = true;
+		}
+		if (args[i] == "-P"sv) {
+			pieces.push_back(common::PieceType::PAWN);
+		}
+		if (args[i] == "-N"sv) {
+			pieces.push_back(common::PieceType::KNIGHT);
+		}
+		if (args[i] == "-B"sv) {
+			pieces.push_back(common::PieceType::BISHOP);
+		}
+		if (args[i] == "-R"sv) {
+			pieces.push_back(common::PieceType::ROOK);
+		}
+		if (args[i] == "-Q"sv) {
+			pieces.push_back(common::PieceType::QUEEN);
+		}
+		if (args[i] == "-K"sv) {
+			pieces.push_back(common::PieceType::KING);
+		}
 	}
 
 	if (bishopSearch) {
@@ -91,6 +131,15 @@ int main(int argc, const char **args) {
 	if (seeSearch) {
 		std::cout << "Search will include StaticExchangeEvaluation" << std::endl;
 	}
+	if (quietSearch) {
+		std::cout << "Search will include Operator::getQuietMoves" << std::endl;
+	}
+	if (loudSearch) {
+		std::cout << "Search will include Operator::getLoudMoves" << std::endl;
+	}
+	if (captureSearch) {
+		std::cout << "Search will include Operator::getAvailableCaptureMoves" << std::endl;
+	}
 
 	fen::LichessCsvParser csvReader("/workspaces/phase4/puzzles/lichess_db_puzzle.csv");
 
@@ -112,8 +161,8 @@ int main(int argc, const char **args) {
 		board::PositionMoves::makeMove(blunderPosition, *blunderMove);
 		const std::string blunderFen = fen::PositionToFen::encode(blunderPosition);
 
-		common::Bitset fieldsAttackedByWhite;
-		common::Bitset fieldsAttackedByBlack;
+		common::Bitboard fieldsAttackedByWhite;
+		common::Bitboard fieldsAttackedByBlack;
 		if (mobilitySearch) {
 			const int32_t score = ai::score::evaluators::MobilityEvaluator::evaluate(*position, phase, common::PositionConstants::PHASE_RESOLUTION - phase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			if (score != 0) {
@@ -157,7 +206,7 @@ int main(int argc, const char **args) {
 			for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 				for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
 					const uint8_t attacks = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, color, fieldIndex);
-					if (common::Bitset(attacks).fastCount() > 4 && (position->colorPieceMask(color.invert(), position->m_pieceTable[fieldIndex]) & fieldIndex.asBitboard()) != 0) {
+					if (common::Bitboard(attacks).fastCount() > 4 && (position->colorPieceMask(color.invert(), position->m_pieceTable[fieldIndex]) & fieldIndex.asBitboard()) != 0) {
 						std::cout << "See (" << std::bitset<8>(attacks) << ") square:" << fieldIndex << " color:" << color << " " << puzzle->fen << std::endl;
 					}
 				}
@@ -175,9 +224,99 @@ int main(int argc, const char **args) {
 				const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, blunderPosition.m_colorToMove, moves[moveIndex].to());
 				const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, enemyColor, moves[moveIndex].to());
 				const int32_t seeEvaluation = board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
-				if (seeEvaluation != 0 && common::Bitset(attackers).fastCount() > 2 && common::Bitset(defenders).fastCount() > 2) {
+				if (seeEvaluation != 0 && common::Bitboard(attackers).fastCount() > 2 && common::Bitboard(defenders).fastCount() > 2) {
 					std::cout << "StaticExchangeEvaluation " << seeEvaluation << " " << moves[moveIndex] << " " << blunderFen << std::endl;
 				}
+			}
+		}
+
+		if (quietSearch) {
+			const common::Bitboard fieldsAttackedByEnemy = position->getEvasionMask();
+			for (const common::PieceType piece : pieces) {
+				if (position->colorPieceMask(position->m_colorToMove, piece) == 0) {
+					continue;
+				}
+				moves::Moves moves;
+				switch (piece.get_raw_value()) {
+					case common::PieceType::PAWN.get_raw_value():
+						board::operators::PawnOperator::getQuietMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::KNIGHT.get_raw_value():
+						board::operators::KnightOperator::getQuietMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::BISHOP.get_raw_value():
+						board::operators::BishopOperator::getQuietMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::ROOK.get_raw_value():
+						board::operators::RookOperator::getQuietMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::QUEEN.get_raw_value():
+						board::operators::QueenOperator::getQuietMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::KING.get_raw_value():
+						board::operators::KingOperator::getQuietMoves(*position, moves);
+						break;
+				}
+				std::cout << "Quiet (" << moves.size() << "): " << piece << " " << puzzle->fen << std::endl;
+			}
+		}
+		if (loudSearch) {
+			const common::Bitboard fieldsAttackedByEnemy = position->getEvasionMask();
+			for (const common::PieceType piece : pieces) {
+				if (position->colorPieceMask(position->m_colorToMove, piece) == 0) {
+					continue;
+				}
+				moves::Moves moves;
+				switch (piece.get_raw_value()) {
+					case common::PieceType::PAWN.get_raw_value():
+						board::operators::PawnOperator::getLoudMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::KNIGHT.get_raw_value():
+						board::operators::KnightOperator::getLoudMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::BISHOP.get_raw_value():
+						board::operators::BishopOperator::getLoudMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::ROOK.get_raw_value():
+						board::operators::RookOperator::getLoudMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::QUEEN.get_raw_value():
+						board::operators::QueenOperator::getLoudMoves(*position, moves, fieldsAttackedByEnemy);
+						break;
+					case common::PieceType::KING.get_raw_value():
+						board::operators::KingOperator::getLoudMoves(*position, moves);
+						break;
+				}
+				std::cout << "Loud (" << moves.size() << "): " << piece << " " << puzzle->fen << std::endl;
+			}
+		}
+		if (captureSearch) {
+			for (const common::PieceType piece : pieces) {
+				if (position->colorPieceMask(position->m_colorToMove, piece) == 0) {
+					continue;
+				}
+				moves::Moves moves;
+				switch (piece.get_raw_value()) {
+					case common::PieceType::PAWN.get_raw_value():
+						board::operators::PawnOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+					case common::PieceType::KNIGHT.get_raw_value():
+						board::operators::KnightOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+					case common::PieceType::BISHOP.get_raw_value():
+						board::operators::BishopOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+					case common::PieceType::ROOK.get_raw_value():
+						board::operators::RookOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+					case common::PieceType::QUEEN.get_raw_value():
+						board::operators::QueenOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+					case common::PieceType::KING.get_raw_value():
+						board::operators::KingOperator::getAvailableCaptureMoves(*position, moves);
+						break;
+				}
+				std::cout << "Capure (" << moves.size() << "): " << piece << " " << puzzle->fen << std::endl;
 			}
 		}
 	}

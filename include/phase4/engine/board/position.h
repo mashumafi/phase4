@@ -9,7 +9,7 @@
 #include <phase4/engine/moves/moves_generator.h>
 #include <phase4/engine/moves/patterns/passing_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/fast_vector.h>
 #include <phase4/engine/common/game_phase.h>
@@ -31,29 +31,29 @@ public:
 	ZobristHashing m_pawnHash;
 
 private:
-	std::array<std::array<common::Bitset, 6>, 2> m_colorPieceMasks;
+	std::array<std::array<common::Bitboard, 6>, 2> m_colorPieceMasks;
 
 public:
-	inline constexpr common::Bitset &colorPieceMask(common::PieceColor color, common::PieceType piece) {
+	inline constexpr common::Bitboard &colorPieceMask(common::PieceColor color, common::PieceType piece) {
 		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
 	}
-	inline constexpr common::Bitset colorPieceMask(common::PieceColor color, common::PieceType piece) const {
+	inline constexpr common::Bitboard colorPieceMask(common::PieceColor color, common::PieceType piece) const {
 		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
 	}
 
 private:
-	std::array<common::Bitset, 2> m_occupancyByColor = {};
+	std::array<common::Bitboard, 2> m_occupancyByColor = {};
 
 public:
-	inline constexpr common::Bitset &occupancy(common::PieceColor color) {
+	inline constexpr common::Bitboard &occupancy(common::PieceColor color) {
 		return m_occupancyByColor[color.get_raw_value()];
 	}
-	inline constexpr common::Bitset occupancy(common::PieceColor color) const {
+	inline constexpr common::Bitboard occupancy(common::PieceColor color) const {
 		return m_occupancyByColor[color.get_raw_value()];
 	}
 
-	common::Bitset m_occupancySummary;
-	common::Bitset m_enPassant;
+	common::Bitboard m_occupancySummary;
+	common::Bitboard m_enPassant;
 	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 1;
@@ -76,7 +76,7 @@ public:
 
 	std::array<common::PieceType, 64> m_pieceTable = {};
 
-	common::Bitset m_walls = 0;
+	common::Bitboard m_walls = 0;
 
 	inline constexpr Position() noexcept = default;
 
@@ -102,7 +102,7 @@ public:
 		assert((colorPieceMask(color, piece) & to.asBitboard()) == 0);
 		assert((m_colorPieceMasks[color.invert().get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
 
-		const common::Bitset move = from.asBitboard() | to.asBitboard();
+		const common::Bitboard move = from.asBitboard() | to.asBitboard();
 
 		colorPieceMask(color, piece) ^= move;
 		occupancy(color) ^= move;
@@ -124,7 +124,7 @@ public:
 
 		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) == 0);
 
-		const common::Bitset field = fieldIndex.asBitboard();
+		const common::Bitboard field = fieldIndex.asBitboard();
 
 		colorPieceMask(color, piece) ^= field;
 		occupancy(color) ^= field;
@@ -144,7 +144,7 @@ public:
 
 		assert((colorPieceMask(color, piece) & fieldIndex.asBitboard()) != 0);
 
-		const common::Bitset field = fieldIndex.asBitboard();
+		const common::Bitboard field = fieldIndex.asBitboard();
 
 		colorPieceMask(color, piece) ^= field;
 		occupancy(color) ^= field;
@@ -159,7 +159,7 @@ public:
 	}
 
 	bool isKingChecked(common::PieceColor color) const {
-		const common::Bitset king = colorPieceMask(color, common::PieceType::KING);
+		const common::Bitboard king = colorPieceMask(color, common::PieceType::KING);
 		if (unlikely(king == 0)) {
 			return false;
 		}
@@ -176,7 +176,7 @@ public:
 			return {};
 		}
 
-		const common::Bitset fieldBB = fieldIndex.asBitboard();
+		const common::Bitboard fieldBB = fieldIndex.asBitboard();
 		if ((colorPieceMask(PieceColor::WHITE, pieceType) & fieldBB) != 0) {
 			return std::make_tuple(PieceColor::WHITE, pieceType);
 		}
@@ -193,33 +193,33 @@ public:
 
 		const PieceColor enemyColor = color.invert();
 
-		const Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
-		const Bitset attackingRooks = fileRankAttacks & (colorPieceMask(enemyColor, PieceType::ROOK) | colorPieceMask(enemyColor, PieceType::QUEEN));
+		const Bitboard fileRankAttacks = moves::MovesGenerator::getRookMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
+		const Bitboard attackingRooks = fileRankAttacks & (colorPieceMask(enemyColor, PieceType::ROOK) | colorPieceMask(enemyColor, PieceType::QUEEN));
 		if (attackingRooks != 0) {
 			return true;
 		}
 
-		const Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
-		const Bitset attackingBishops = diagonalAttacks & (colorPieceMask(enemyColor, PieceType::BISHOP) | colorPieceMask(enemyColor, PieceType::QUEEN));
+		const Bitboard diagonalAttacks = moves::MovesGenerator::getBishopMoves(m_occupancySummary, fieldIndex) & occupancy(enemyColor);
+		const Bitboard attackingBishops = diagonalAttacks & (colorPieceMask(enemyColor, PieceType::BISHOP) | colorPieceMask(enemyColor, PieceType::QUEEN));
 		if (attackingBishops != 0) {
 			return true;
 		}
 
-		const Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
-		const Bitset attackingKnights = jumpAttacks & colorPieceMask(enemyColor, PieceType::KNIGHT);
+		const Bitboard jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
+		const Bitboard attackingKnights = jumpAttacks & colorPieceMask(enemyColor, PieceType::KNIGHT);
 		if (attackingKnights != 0) {
 			return true;
 		}
 
-		const Bitset boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
-		const Bitset attackingKings = boxAttacks & colorPieceMask(enemyColor, PieceType::KING);
+		const Bitboard boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
+		const Bitboard attackingKings = boxAttacks & colorPieceMask(enemyColor, PieceType::KING);
 		if (attackingKings != 0) {
 			return true;
 		}
 
-		const Bitset field = fieldIndex.asBitboard();
-		const Bitset potentialPawns = boxAttacks & colorPieceMask(enemyColor, PieceType::PAWN);
-		const Bitset attackingPawns = (color.get_raw_value() == PieceColor::WHITE.get_raw_value()) ? field & ((potentialPawns >> 7) | (potentialPawns >> 9)) : field & ((potentialPawns << 7) | (potentialPawns << 9));
+		const Bitboard field = fieldIndex.asBitboard();
+		const Bitboard potentialPawns = boxAttacks & colorPieceMask(enemyColor, PieceType::PAWN);
+		const Bitboard attackingPawns = (color.get_raw_value() == PieceColor::WHITE.get_raw_value()) ? field & ((potentialPawns >> 7) | (potentialPawns >> 9)) : field & ((potentialPawns << 7) | (potentialPawns << 9));
 
 		return (attackingPawns != 0);
 	}
@@ -244,7 +244,7 @@ public:
 
 	bool isFieldPassing(common::PieceColor color, common::Square field) const {
 		const common::PieceColor enemyColor = color.invert();
-		const common::Bitset passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
+		const common::Bitboard passingArea = moves::patterns::PassingPatternGenerator::getPattern(color, field);
 
 		return (passingArea & colorPieceMask(enemyColor, common::PieceType::PAWN)) == 0;
 	}
@@ -262,8 +262,8 @@ public:
 
 		const int32_t drawEdge = EvaluationConstants::pieceValue(PieceType::KING) + 4 * EvaluationConstants::pieceValue(PieceType::PAWN);
 		if (material(PieceColor::WHITE) < drawEdge && material(PieceColor::BLACK) < drawEdge) {
-			const Bitset whiteKnightOrBishopPresent = (colorPieceMask(PieceColor::WHITE, PieceType::KNIGHT) | colorPieceMask(PieceColor::WHITE, PieceType::BISHOP)) != 0;
-			const Bitset blackKnightOrBishopPresent = (colorPieceMask(PieceColor::BLACK, PieceType::KNIGHT) | colorPieceMask(PieceColor::BLACK, PieceType::BISHOP)) != 0;
+			const Bitboard whiteKnightOrBishopPresent = (colorPieceMask(PieceColor::WHITE, PieceType::KNIGHT) | colorPieceMask(PieceColor::WHITE, PieceType::BISHOP)) != 0;
+			const Bitboard blackKnightOrBishopPresent = (colorPieceMask(PieceColor::BLACK, PieceType::KNIGHT) | colorPieceMask(PieceColor::BLACK, PieceType::BISHOP)) != 0;
 
 			if (whiteKnightOrBishopPresent != 0 && blackKnightOrBishopPresent != 0) {
 				return false;
@@ -275,6 +275,14 @@ public:
 		}
 
 		return false;
+	}
+
+	inline common::Bitboard getEvasionMask() const {
+		const common::Bitboard kingField = colorPieceMask(m_colorToMove, common::PieceType::KING);
+		const common::Square kingFieldIndex(kingField);
+
+		return moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
+				moves::MovesGenerator::getQueenMoves(m_occupancySummary, kingFieldIndex);
 	}
 };
 

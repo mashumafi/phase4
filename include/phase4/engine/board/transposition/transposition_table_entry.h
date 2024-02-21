@@ -5,7 +5,7 @@
 
 #include <phase4/engine/moves/move.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <cstdint>
 
@@ -21,7 +21,7 @@ public:
 			m_ageFlagsField(0) {
 	}
 
-	inline TranspositionTableEntry(common::Bitset hash, int16_t score, moves::Move bestMove, uint8_t depth, TranspositionTableEntryFlags flags, uint8_t age) {
+	inline TranspositionTableEntry(common::Bitboard hash, int16_t score, moves::Move bestMove, uint8_t depth, TranspositionTableEntryFlags flags, uint8_t age) {
 		m_key = static_cast<uint16_t>(hash.get_raw_value() >> 48);
 		m_score = score;
 		m_bestMove = bestMove;
@@ -59,7 +59,7 @@ public:
 		return static_cast<TranspositionTableEntryFlags>(m_ageFlagsField & 7);
 	}
 
-	inline bool isKeyValid(common::Bitset hash) const {
+	inline bool isKeyValid(common::Bitboard hash) const {
 		return m_key == static_cast<uint16_t>(hash.get_raw_value() >> 48);
 	}
 

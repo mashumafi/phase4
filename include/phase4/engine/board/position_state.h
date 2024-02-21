@@ -36,7 +36,7 @@ private:
 inline constexpr void PositionState::calculatePieceTable(Position &position) {
 	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
-			common::Bitset bitboard = position.colorPieceMask(common::PieceColor::WHITE, pieceIndex) | position.colorPieceMask(common::PieceColor::BLACK, pieceIndex);
+			common::Bitboard bitboard = position.colorPieceMask(common::PieceColor::WHITE, pieceIndex) | position.colorPieceMask(common::PieceColor::BLACK, pieceIndex);
 			if ((bitboard & fieldIndex.asBitboard()) != 0) {
 				position.m_pieceTable[fieldIndex] = pieceIndex;
 				break;
@@ -49,7 +49,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	int32_t material = 0;
 
 	for (common::PieceType piece = common::PieceType::PAWN; piece != common::PieceType::INVALID; ++piece) {
-		material += common::Bitset(position.colorPieceMask(color, piece)).count() * board::EvaluationConstants::pieceValue(piece);
+		material += common::Bitboard(position.colorPieceMask(color, piece)).count() * board::EvaluationConstants::pieceValue(piece);
 	}
 
 	return material;
@@ -59,9 +59,9 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 	int32_t result = 0;
 
 	for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
-		common::Bitset pieces(position.colorPieceMask(color, pieceIndex));
+		common::Bitboard pieces(position.colorPieceMask(color, pieceIndex));
 		while (pieces != 0) {
-			common::Bitset lsb = pieces.getLsb(); // TODO: Skip lsb
+			common::Bitboard lsb = pieces.getLsb(); // TODO: Skip lsb
 			pieces = pieces.popLsb();
 			common::Square fieldIndex(lsb.bitScan());
 
@@ -89,9 +89,9 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 
 	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
 		for (PieceType piece = PieceType::PAWN; piece != PieceType::INVALID; ++piece) {
-			Bitset piecesToParse = position.colorPieceMask(color, piece);
+			Bitboard piecesToParse = position.colorPieceMask(color, piece);
 			while (piecesToParse != 0) {
-				const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
+				const Bitboard lsb = piecesToParse.getLsb(); // TODO: skip lsb
 				piecesToParse = piecesToParse.popLsb();
 
 				Square fieldIndex(lsb.bitScan());
@@ -135,9 +135,9 @@ inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position 
 	ZobristHashing pawnHash(0);
 
 	for (PieceColor color = PieceColor::WHITE; color != PieceColor::INVALID; ++color) {
-		Bitset piecesToParse = position.colorPieceMask(color, PieceType::PAWN);
+		Bitboard piecesToParse = position.colorPieceMask(color, PieceType::PAWN);
 		while (piecesToParse != 0) {
-			const Bitset lsb = piecesToParse.getLsb(); // TODO: skip lsb
+			const Bitboard lsb = piecesToParse.getLsb(); // TODO: skip lsb
 			piecesToParse = piecesToParse.popLsb();
 
 			const Square fieldIndex(lsb.bitScan());

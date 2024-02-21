@@ -3,6 +3,7 @@
 #include <phase4/engine/fen/fen_to_position.h>
 
 #include <phase4/engine/board/position.h>
+#include <phase4/engine/board/position_moves.h>
 
 #include <doctest/doctest.h>
 

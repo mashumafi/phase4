@@ -1,7 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_FILE_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_FILE_PATTERN_GENERATOR_H
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
@@ -13,21 +13,21 @@ namespace phase4::engine::moves::patterns {
 
 class FilePatternGenerator {
 public:
-	using Array = std::array<common::Bitset, 8>;
+	using Array = std::array<common::Bitboard, 8>;
 
-	static constexpr common::Bitset getPatternForField(common::Square square);
+	static constexpr common::Bitboard getPatternForField(common::Square square);
 
-	static constexpr common::Bitset getPatternForFile(uint16_t rank);
+	static constexpr common::Bitboard getPatternForFile(uint16_t rank);
 
 private:
 	static constexpr Array generatePatterns();
 
-	static constexpr common::Bitset generatePatternForField(size_t file);
+	static constexpr common::Bitboard generatePatternForField(size_t file);
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitset FilePatternGenerator::generatePatternForField(size_t file) {
+constexpr common::Bitboard FilePatternGenerator::generatePatternForField(size_t file) {
 	return common::PositionConstants::FILE_H << file;
 }
 
@@ -41,11 +41,11 @@ constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
 
 inline constexpr FilePatternGenerator::Array FilePatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitset FilePatternGenerator::getPatternForField(common::Square square) {
+constexpr common::Bitboard FilePatternGenerator::getPatternForField(common::Square square) {
 	return PATTERNS[square % 8] & ~(square.asBitboard().get_raw_value());
 }
 
-constexpr common::Bitset FilePatternGenerator::getPatternForFile(uint16_t file) {
+constexpr common::Bitboard FilePatternGenerator::getPatternForFile(uint16_t file) {
 	assert(file < 8);
 	assert(file < 64); // TODO: remove this or mod below
 	return PATTERNS[file % 8];

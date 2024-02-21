@@ -8,7 +8,7 @@
 
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 
 #include <cstdint>
@@ -29,16 +29,16 @@ private:
 		int32_t rooksOnOpenFile = 0;
 		const common::PieceColor enemyColor = color.invert();
 
-		common::Bitset rooks = position.colorPieceMask(color, common::PieceType::ROOK);
+		common::Bitboard rooks = position.colorPieceMask(color, common::PieceType::ROOK);
 		while (rooks != 0) {
-			const common::Bitset lsb = rooks.getLsb();
+			const common::Bitboard lsb = rooks.getLsb();
 			const common::Square field(lsb.bitScan());
 			rooks = rooks.popLsb();
 
-			const common::Bitset file = moves::patterns::FilePatternGenerator::getPatternForField(field) | lsb;
-			const common::Bitset rooksOnFile = file & position.colorPieceMask(color, common::PieceType::ROOK);
-			const common::Bitset friendlyPawnsOnFile = file & position.colorPieceMask(color, common::PieceType::PAWN);
-			const common::Bitset enemyPawnsOnFile = file & position.colorPieceMask(enemyColor, common::PieceType::PAWN);
+			const common::Bitboard file = moves::patterns::FilePatternGenerator::getPatternForField(field) | lsb;
+			const common::Bitboard rooksOnFile = file & position.colorPieceMask(color, common::PieceType::ROOK);
+			const common::Bitboard friendlyPawnsOnFile = file & position.colorPieceMask(color, common::PieceType::PAWN);
+			const common::Bitboard enemyPawnsOnFile = file & position.colorPieceMask(enemyColor, common::PieceType::PAWN);
 
 			if (rooksOnFile.fastCount() > 1) {
 				// We don't assume that there will be more than two rooks - even if, then this color is probably anyway winning

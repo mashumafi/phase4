@@ -3,7 +3,7 @@
 
 #include <phase4/engine/board/position.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/math.h>

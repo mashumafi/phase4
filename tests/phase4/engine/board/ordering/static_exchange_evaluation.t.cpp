@@ -19,6 +19,13 @@
 
 namespace {
 
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array pawnTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::PAWN);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array knightTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::KNIGHT);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array bishopTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::BISHOP);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array rookTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::ROOK);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array queenTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::QUEEN);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array kingTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::KING);
+
 constexpr int32_t P = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::PAWN);
 constexpr int32_t N = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::KNIGHT);
 constexpr int32_t B = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::BISHOP);
@@ -30,19 +37,103 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 	using namespace phase4::engine;
 
 	const std::optional<moves::Move> &realMove = board::PositionMoves::findRealMove(position, move);
-	assert(realMove);
-	assert(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
+	REQUIRE(realMove);
+	REQUIRE(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
 
-	moves::Moves moves;
-	moves.push_back(*realMove);
-	moves::MoveValues values;
-	board::ordering::MoveOrdering::assignLoudValues(position, moves, values, moves::Move::EMPTY);
-	assert(values.size() == 1);
-	return values[0] - board::ordering::MoveOrderingConstants::CAPTURE;
+	const common::PieceColor enemyColor = position.m_colorToMove.invert();
+
+	const common::PieceType attackingPiece = position.m_pieceTable[realMove->from()];
+	const common::PieceType capturedPiece = position.m_pieceTable[realMove->to()];
+
+	const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, realMove->to());
+	const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(position, enemyColor, realMove->to());
+	return board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 }
 } //namespace
 
-#ifndef _MSC_VER
+TEST_CASE("StaticExchangeEvaluation evaluate") {
+	using namespace phase4::engine;
+	using SEE = board::ordering::StaticExchangeEvaluation;
+
+	CHECK(SEE::evaluate(common::PieceType::PAWN, common::PieceType::PAWN, 0b01010101, 0b01010101) == 0);
+	CHECK(SEE::evaluate(common::PieceType::KNIGHT, common::PieceType::PAWN, 0b01010101, 0b01010101) == -150);
+	CHECK(SEE::evaluate(common::PieceType::BISHOP, common::PieceType::PAWN, 0b01010101, 0b01010101) == -170);
+	CHECK(SEE::evaluate(common::PieceType::ROOK, common::PieceType::PAWN, 0b01010101, 0b01010101) == -370);
+	CHECK(SEE::evaluate(common::PieceType::QUEEN, common::PieceType::PAWN, 0b01010101, 0b01010101) == -990);
+	CHECK(SEE::evaluate(common::PieceType::KING, common::PieceType::PAWN, 0b01010101, 0b01010101) == -19800);
+
+	CHECK(SEE::evaluate(common::PieceType::PAWN, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 270);
+	CHECK(SEE::evaluate(common::PieceType::KNIGHT, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 120);
+	CHECK(SEE::evaluate(common::PieceType::BISHOP, common::PieceType::BISHOP, 0b01010101, 0b01010101) == 100);
+	CHECK(SEE::evaluate(common::PieceType::ROOK, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -100);
+	CHECK(SEE::evaluate(common::PieceType::QUEEN, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -720);
+	CHECK(SEE::evaluate(common::PieceType::KING, common::PieceType::BISHOP, 0b01010101, 0b01010101) == -19530);
+}
+
+TEST_CASE("StaticExchangeEvaluation populate") {
+	using namespace phase4::engine;
+
+	{
+		CHECK(pawnTable[0b01010101][0b01010101] == -100);
+
+		CHECK(pawnTable[0b01010100][0b01010101] == -100);
+		CHECK(pawnTable[0b01010101][0b01010100] == 0);
+
+		CHECK(pawnTable[0b00010101][0b01010101] == -100);
+		CHECK(pawnTable[0b01010101][0b00010101] == -100);
+	}
+
+	{
+		CHECK(knightTable[0b01010101][0b01010101] == -250);
+
+		CHECK(knightTable[0b01010100][0b01010101] == -350);
+		CHECK(knightTable[0b01010101][0b01010100] == 0);
+
+		CHECK(knightTable[0b00010101][0b01010101] == -250);
+		CHECK(knightTable[0b01010101][0b00010101] == -250);
+	}
+
+	{
+		CHECK(bishopTable[0b01010101][0b01010101] == -270);
+
+		CHECK(bishopTable[0b01010100][0b01010101] == -370);
+		CHECK(bishopTable[0b01010101][0b01010100] == -20);
+
+		CHECK(bishopTable[0b00010101][0b01010101] == -270);
+		CHECK(bishopTable[0b01010101][0b00010101] == -270);
+	}
+
+	{
+		CHECK(rookTable[0b01010101][0b01010101] == -470);
+
+		CHECK(rookTable[0b01010100][0b01010101] == -570);
+		CHECK(rookTable[0b01010101][0b01010100] == -220);
+
+		CHECK(rookTable[0b00010101][0b01010101] == -470);
+		CHECK(rookTable[0b01010101][0b00010101] == -470);
+	}
+
+	{
+		CHECK(queenTable[0b01010101][0b01010101] == -1090);
+
+		CHECK(queenTable[0b01010100][0b01010101] == -1190);
+		CHECK(queenTable[0b01010101][0b01010100] == -840);
+
+		CHECK(queenTable[0b00010101][0b01010101] == -1090);
+		CHECK(queenTable[0b01010101][0b00010101] == -1090);
+	}
+
+	{
+		CHECK(kingTable[0b01010101][0b01010101] == -19900);
+
+		CHECK(kingTable[0b01010100][0b01010101] == -20000);
+		CHECK(kingTable[0b01010101][0b01010100] == -19650);
+
+		CHECK(kingTable[0b00010101][0b01010101] == -19900);
+		CHECK(kingTable[0b01010101][0b00010101] == -19900);
+	}
+}
+
 TEST_CASE("StaticExchangeEvaluation -19330 g7g6 8/pp3pk1/2p3Pr/4q3/8/6RP/PPQ2PRK/4r3 b - - 0 26") {
 	using namespace phase4::engine;
 
@@ -162,4 +253,3 @@ TEST_CASE("StaticExchangeEvaluation 970 f7c7 2kr3r/Q1q2Rp1/Np5p/p2np3/P7/4P2P/6P
 	const int32_t whiteSee = Q + N;
 	CHECK(seeEvaluation == whiteSee - blackSee);
 }
-#endif
