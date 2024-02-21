@@ -19,6 +19,13 @@
 
 namespace {
 
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array pawnTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::PAWN);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array knightTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::KNIGHT);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array bishopTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::BISHOP);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array rookTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::ROOK);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array queenTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::QUEEN);
+const phase4::engine::board::ordering::StaticExchangeEvaluation::Array kingTable = phase4::engine::board::ordering::StaticExchangeEvaluation::populate(phase4::engine::common::PieceType::KING);
+
 constexpr int32_t P = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::PAWN);
 constexpr int32_t N = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::KNIGHT);
 constexpr int32_t B = phase4::engine::board::EvaluationConstants::pieceValue(phase4::engine::common::PieceType::BISHOP);
@@ -152,7 +159,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	using namespace phase4::engine;
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array pawnTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::PAWN);
 		CHECK(pawnTable[0b01010101][0b01010101] == -100);
 
 		CHECK(pawnTable[0b01010100][0b01010101] == -100);
@@ -163,7 +169,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	}
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array knightTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::KNIGHT);
 		CHECK(knightTable[0b01010101][0b01010101] == -250);
 
 		CHECK(knightTable[0b01010100][0b01010101] == -350);
@@ -174,7 +179,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	}
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array bishopTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::BISHOP);
 		CHECK(bishopTable[0b01010101][0b01010101] == -270);
 
 		CHECK(bishopTable[0b01010100][0b01010101] == -370);
@@ -185,7 +189,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	}
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array rookTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::ROOK);
 		CHECK(rookTable[0b01010101][0b01010101] == -470);
 
 		CHECK(rookTable[0b01010100][0b01010101] == -570);
@@ -196,7 +199,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	}
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array queenTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::QUEEN);
 		CHECK(queenTable[0b01010101][0b01010101] == -1090);
 
 		CHECK(queenTable[0b01010100][0b01010101] == -1190);
@@ -207,7 +209,6 @@ TEST_CASE("StaticExchangeEvaluation populate") {
 	}
 
 	{
-		const board::ordering::StaticExchangeEvaluation::Array kingTable = board::ordering::StaticExchangeEvaluation::populate(common::PieceType::KING);
 		CHECK(kingTable[0b01010101][0b01010101] == -19900);
 
 		CHECK(kingTable[0b01010100][0b01010101] == -20000);
