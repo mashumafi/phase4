@@ -24,22 +24,16 @@ public:
 
 		switch (attackingPiece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
-				std::cerr << "PAWN " << capturedPieceValue << " " << PAWN_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + PAWN_TABLE[attackers][defenders];
 			case common::PieceType::KNIGHT.get_raw_value():
-				std::cerr << "KNIGHT " << capturedPieceValue << " " << KNIGHT_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + KNIGHT_TABLE[attackers][defenders];
 			case common::PieceType::BISHOP.get_raw_value():
-				std::cerr << "BISHOP " << capturedPieceValue << " " << BISHOP_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + BISHOP_TABLE[attackers][defenders];
 			case common::PieceType::ROOK.get_raw_value():
-				std::cerr << "ROOK " << capturedPieceValue << " " << ROOK_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + ROOK_TABLE[attackers][defenders];
 			case common::PieceType::QUEEN.get_raw_value():
-				std::cerr << "QUEEN " << capturedPieceValue << " " << QUEEN_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + QUEEN_TABLE[attackers][defenders];
 			case common::PieceType::KING.get_raw_value():
-				std::cerr << "KING " << capturedPieceValue << " " << KING_TABLE[attackers][defenders] << std::endl;
 				return capturedPieceValue + KING_TABLE[attackers][defenders];
 			default:
 				assert(false);
@@ -168,10 +162,13 @@ private:
 	static const Array KING_TABLE;
 };
 
-} //namespace phase4::engine::board::ordering
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::PAWN_TABLE = populate(common::PieceType::PAWN);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::KNIGHT_TABLE = populate(common::PieceType::KNIGHT);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::BISHOP_TABLE = populate(common::PieceType::BISHOP);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::ROOK_TABLE = populate(common::PieceType::ROOK);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::QUEEN_TABLE = populate(common::PieceType::QUEEN);
+inline const StaticExchangeEvaluation::Array StaticExchangeEvaluation::KING_TABLE = populate(common::PieceType::KING);
 
-#ifndef FAST_BUILD
-#include "static_exchange_evaluation.cpp"
-#endif
+} //namespace phase4::engine::board::ordering
 
 #endif

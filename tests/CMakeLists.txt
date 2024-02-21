@@ -67,7 +67,7 @@ add_executable(phase4_test
 
     phase4/main.t.cpp
 )
-target_link_libraries(phase4_test PRIVATE phase4_fast doctest)
+target_link_libraries(phase4_test PRIVATE phase4 doctest)
 target_compile_options(phase4_test PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=335544320>
     $<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=335544320>
