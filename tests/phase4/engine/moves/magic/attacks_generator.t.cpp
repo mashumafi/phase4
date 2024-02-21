@@ -1,11 +1,11 @@
 #include <phase4/engine/moves/magic/attacks_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <doctest/doctest.h>
 
 namespace {
-phase4::engine::common::Bitset EMPTY_BOARD(0);
+phase4::engine::common::Bitboard EMPTY_BOARD(0);
 }
 
 TEST_CASE("AttacksGenerator getFileRankAttacks") {

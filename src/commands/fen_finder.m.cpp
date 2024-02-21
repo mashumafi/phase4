@@ -21,7 +21,7 @@
 #include <phase4/engine/board/ordering/see_piece.h>
 #include <phase4/engine/board/ordering/static_exchange_evaluation.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
@@ -161,8 +161,8 @@ int main(int argc, const char **args) {
 		board::PositionMoves::makeMove(blunderPosition, *blunderMove);
 		const std::string blunderFen = fen::PositionToFen::encode(blunderPosition);
 
-		common::Bitset fieldsAttackedByWhite;
-		common::Bitset fieldsAttackedByBlack;
+		common::Bitboard fieldsAttackedByWhite;
+		common::Bitboard fieldsAttackedByBlack;
 		if (mobilitySearch) {
 			const int32_t score = ai::score::evaluators::MobilityEvaluator::evaluate(*position, phase, common::PositionConstants::PHASE_RESOLUTION - phase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			if (score != 0) {
@@ -206,7 +206,7 @@ int main(int argc, const char **args) {
 			for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 				for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
 					const uint8_t attacks = board::ordering::SeePiece::getAttackingPiecesWithColor(*position, color, fieldIndex);
-					if (common::Bitset(attacks).fastCount() > 4 && (position->colorPieceMask(color.invert(), position->m_pieceTable[fieldIndex]) & fieldIndex.asBitboard()) != 0) {
+					if (common::Bitboard(attacks).fastCount() > 4 && (position->colorPieceMask(color.invert(), position->m_pieceTable[fieldIndex]) & fieldIndex.asBitboard()) != 0) {
 						std::cout << "See (" << std::bitset<8>(attacks) << ") square:" << fieldIndex << " color:" << color << " " << puzzle->fen << std::endl;
 					}
 				}
@@ -224,14 +224,14 @@ int main(int argc, const char **args) {
 				const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, blunderPosition.m_colorToMove, moves[moveIndex].to());
 				const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(blunderPosition, enemyColor, moves[moveIndex].to());
 				const int32_t seeEvaluation = board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
-				if (seeEvaluation != 0 && common::Bitset(attackers).fastCount() > 2 && common::Bitset(defenders).fastCount() > 2) {
+				if (seeEvaluation != 0 && common::Bitboard(attackers).fastCount() > 2 && common::Bitboard(defenders).fastCount() > 2) {
 					std::cout << "StaticExchangeEvaluation " << seeEvaluation << " " << moves[moveIndex] << " " << blunderFen << std::endl;
 				}
 			}
 		}
 
 		if (quietSearch) {
-			const common::Bitset fieldsAttackedByEnemy = position->getEvasionMask();
+			const common::Bitboard fieldsAttackedByEnemy = position->getEvasionMask();
 			for (const common::PieceType piece : pieces) {
 				if (position->colorPieceMask(position->m_colorToMove, piece) == 0) {
 					continue;
@@ -261,7 +261,7 @@ int main(int argc, const char **args) {
 			}
 		}
 		if (loudSearch) {
-			const common::Bitset fieldsAttackedByEnemy = position->getEvasionMask();
+			const common::Bitboard fieldsAttackedByEnemy = position->getEvasionMask();
 			for (const common::PieceType piece : pieces) {
 				if (position->colorPieceMask(position->m_colorToMove, piece) == 0) {
 					continue;

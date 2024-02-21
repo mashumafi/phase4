@@ -14,8 +14,8 @@ TEST_CASE("MobilityEvaluator white ahead 130") {
 	auto position = fen::FenToPosition::parse("rn1q1rk1/pp2pnbp/2p3p1/3p4/5B2/1BN3QP/PPP2PP1/3RR1K1 b - - 3 15");
 	REQUIRE(position);
 
-	common::Bitset fieldsAttackedByWhite;
-	common::Bitset fieldsAttackedByBlack;
+	common::Bitboard fieldsAttackedByWhite;
+	common::Bitboard fieldsAttackedByBlack;
 	const int32_t score = ai::score::evaluators::MobilityEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);
 
 	CHECK(fieldsAttackedByWhite == 0b01000000'00101000'00011011'01011010'10111111'00111111'10111111'11111110);
@@ -32,8 +32,8 @@ TEST_CASE("MobilityEvaluator black ahead -164") {
 	auto position = fen::FenToPosition::parse("2k2b1q/1bpn1Q2/1p6/p1n2P2/8/1P6/P1PN2r1/1K1R4 b - - 0 31");
 	REQUIRE(position);
 
-	common::Bitset fieldsAttackedByWhite;
-	common::Bitset fieldsAttackedByBlack;
+	common::Bitboard fieldsAttackedByWhite;
+	common::Bitboard fieldsAttackedByBlack;
 	const int32_t score = ai::score::evaluators::MobilityEvaluator::evaluate(*position, common::PositionConstants::PHASE_RESOLUTION, 0, fieldsAttackedByWhite, fieldsAttackedByBlack);
 
 	CHECK(fieldsAttackedByWhite == 0b00001110'00011011'00001110'00010101'00101000'01000100'00010000'01101111);

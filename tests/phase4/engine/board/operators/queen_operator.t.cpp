@@ -15,7 +15,7 @@ TEST_CASE("QueenOperator getLoudMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getLoudMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 0);
 	}
@@ -25,7 +25,7 @@ TEST_CASE("QueenOperator getLoudMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getLoudMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 1);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("d8f6")));
@@ -36,7 +36,7 @@ TEST_CASE("QueenOperator getLoudMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getLoudMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 2);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("e1f1")));
@@ -52,7 +52,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 0);
 	}
@@ -62,7 +62,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 1);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("h7h3")));
@@ -73,7 +73,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 2);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("d2c1")));
@@ -85,7 +85,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 3);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("e5a1")));
@@ -98,7 +98,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 4);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("d3b1")));
@@ -112,7 +112,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 5);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("g1f1")));
@@ -127,7 +127,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 6);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("f6f8")));
@@ -143,7 +143,7 @@ TEST_CASE("QueenOperator getQuietMoves") {
 		REQUIRE(position);
 
 		moves::Moves moves;
-		const common::Bitset &evasionMask = position->getEvasionMask();
+		const common::Bitboard &evasionMask = position->getEvasionMask();
 		board::operators::QueenOperator::getQuietMoves(*position, moves, evasionMask);
 		CHECK(moves.size() == 7);
 		CHECK(board::PositionMoves::findRealMove(moves, moves::Move("h5h1")));

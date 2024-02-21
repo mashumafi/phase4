@@ -3,7 +3,7 @@
 
 #include <phase4/engine/moves/magic/magic_shifts.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <array>
 #include <cstdint>
@@ -12,9 +12,9 @@ namespace phase4::engine::moves::magic {
 
 template <size_t N>
 struct MagicContainer {
-	common::Bitset mask;
-	common::Bitset magicNumber;
-	std::array<common::Bitset, N> attacks;
+	common::Bitboard mask;
+	common::Bitboard magicNumber;
+	std::array<common::Bitboard, N> attacks;
 	int32_t shift;
 };
 

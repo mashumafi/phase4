@@ -227,7 +227,7 @@ public:
 		bool loudMovesGenerated = false;
 		bool quietMovesGenerated = false;
 
-		Bitset evasionMask = Bitset::MAX;
+		Bitboard evasionMask = Bitboard::MAX;
 		if (friendlyKingInCheck && !context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
 			evasionMask = context.session->position().getEvasionMask();
 		}

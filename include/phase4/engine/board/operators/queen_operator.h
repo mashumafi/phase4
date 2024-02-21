@@ -7,7 +7,7 @@
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
@@ -19,23 +19,23 @@ namespace phase4::engine::board::operators {
 
 class QueenOperator {
 public:
-	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
+		Bitboard queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
-			Bitset piece = queens.getLsb(); // TODO: skip lsb
+			Bitboard piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
+			Bitboard availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+				const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -44,22 +44,22 @@ public:
 		}
 	}
 
-	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
-		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
+		Bitboard queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb(); // TODO: skip lsb
+			const Bitboard piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & ~position.m_occupancySummary;
+			Bitboard availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & ~position.m_occupancySummary;
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+				const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -73,17 +73,17 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 		const PieceColor enemyColor = color.invert();
-		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
+		Bitboard queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb(); // TODO: skip lsb
+			const Bitboard piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
+			Bitboard availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
 
 			while (availableMoves != 0) {
-				const Bitset field = availableMoves.getLsb(); // TODO: skip lsb
+				const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
 				const Square fieldIndex(field.fastBitScan());
 				availableMoves = availableMoves.popLsb();
 
@@ -92,20 +92,20 @@ public:
 		}
 	}
 
-	static std::tuple<int32_t, int32_t> getMobility(const Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
+	static std::tuple<int32_t, int32_t> getMobility(const Position &position, common::PieceColor color, common::Bitboard &fieldsAttackedByColor) {
 		using namespace common;
 
 		int32_t centerMobility = 0;
 		int32_t outsideMobility = 0;
 
-		Bitset queens = position.colorPieceMask(color, PieceType::QUEEN);
+		Bitboard queens = position.colorPieceMask(color, PieceType::QUEEN);
 
 		while (queens != 0) {
-			const Bitset piece = queens.getLsb(); // TODO: skip lsb
+			const Bitboard piece = queens.getLsb(); // TODO: skip lsb
 			queens = queens.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from);
+			Bitboard availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, from);
 
 			centerMobility += (availableMoves & board::EvaluationConstants::EXTENDED_CENTER).fastCount();
 			outsideMobility += (availableMoves & board::EvaluationConstants::OUTSIDE).fastCount();
@@ -120,8 +120,8 @@ public:
 		using namespace common;
 
 		PieceColor enemyColor = position.m_colorToMove.invert();
-		Bitset availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, move.from());
-		Bitset toField = move.to().asBitboard();
+		Bitboard availableMoves = moves::MovesGenerator::getQueenMoves(position.m_occupancySummary, move.from());
+		Bitboard toField = move.to().asBitboard();
 
 		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
 			return true;

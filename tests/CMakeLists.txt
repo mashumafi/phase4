@@ -3,7 +3,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${doctest_SOURCE_DIR}/scripts/cmake)
 message(${doctest_SOURCE_DIR}/scripts/cmake)
 
 add_executable(phase4_test
-    phase4/engine/common/bitset.t.cpp
+    phase4/engine/common/bitboard.t.cpp
     phase4/engine/common/castling.t.cpp
     phase4/engine/common/distance.t.cpp
     phase4/engine/common/fast_vector.t.cpp

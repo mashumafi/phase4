@@ -8,9 +8,9 @@ namespace {
 constexpr uint64_t m1 = 0b0011101000100110010001110011010101001100101100101011110000101011;
 constexpr uint64_t m2 = 0b1010011011011011011011111111101000010101101001011100010111011100;
 
-constexpr phase4::engine::common::Bitset EMPTY_BOARD(0);
-constexpr phase4::engine::common::Bitset SPARSE_BOARD(m1 &m2);
-constexpr phase4::engine::common::Bitset DENSE_BOARD(m1 ^ m2);
+constexpr phase4::engine::common::Bitboard EMPTY_BOARD(0);
+constexpr phase4::engine::common::Bitboard SPARSE_BOARD(m1 &m2);
+constexpr phase4::engine::common::Bitboard DENSE_BOARD(m1 ^ m2);
 } //namespace
 
 TEST_CASE("MovesGenerator getKnightMoves") {

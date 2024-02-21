@@ -15,11 +15,11 @@ public:
 	static constexpr size_t SIZE = MB * 1024ull * 1024ull / sizeof(EvaluationHashTableEntry);
 	using Table = std::array<EvaluationHashTableEntry, SIZE>;
 
-	void add(common::Bitset hash, int16_t score) {
+	void add(common::Bitboard hash, int16_t score) {
 		m_table[hash.get_raw_value() % m_table.size()] = EvaluationHashTableEntry(hash, score);
 	}
 
-	EvaluationHashTableEntry get(common::Bitset hash) const {
+	EvaluationHashTableEntry get(common::Bitboard hash) const {
 		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 

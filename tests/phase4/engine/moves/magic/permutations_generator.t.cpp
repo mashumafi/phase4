@@ -1,6 +1,6 @@
 #include <phase4/engine/moves/magic/permutations_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <doctest/doctest.h>
 

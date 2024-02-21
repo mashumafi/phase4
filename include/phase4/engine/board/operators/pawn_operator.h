@@ -7,7 +7,7 @@
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/moves_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/position_constants.h>
@@ -20,7 +20,7 @@ namespace phase4::engine::board::operators {
 
 class PawnOperator {
 public:
-	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
 		const PieceColor color = position.m_colorToMove;
@@ -30,7 +30,7 @@ public:
 		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, evasionMask);
 	}
 
-	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		getSinglePush(position, moves, false, evasionMask);
 		getDoublePush(position, moves, evasionMask);
 	}
@@ -40,15 +40,15 @@ public:
 
 		const PieceColor color = position.m_colorToMove;
 
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, Bitset::MAX);
-		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, Bitset::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 9 : 7, PositionConstants::FILE_A, moves, Bitboard::MAX);
+		getDiagonalAttacks(position, color == PieceColor::WHITE ? 7 : 9, PositionConstants::FILE_H, moves, Bitboard::MAX);
 	}
 
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
 		const PieceColor enemyColor = position.m_colorToMove.invert();
-		const Bitset toField = move.to().asBitboard();
+		const Bitboard toField = move.to().asBitboard();
 
 		if (!move.flags().isCapture()) {
 			if (move.flags().isSinglePush() || move.flags().isPromotion()) {
@@ -56,7 +56,7 @@ public:
 					return true;
 				}
 			} else if (move.flags().isDoublePush()) {
-				const Bitset middleField((move.from().middle(move.to()).asBitboard()));
+				const Bitboard middleField((move.from().middle(move.to()).asBitboard()));
 				if ((position.m_occupancySummary & middleField) == 0 && (position.m_occupancySummary & toField) == 0) {
 					return true;
 				}
@@ -80,11 +80,11 @@ public:
 	}
 
 private:
-	static void getSinglePush(const Position &position, moves::Moves &moves, bool promotionsMode, common::Bitset evasionMask) {
+	static void getSinglePush(const Position &position, moves::Moves &moves, bool promotionsMode, common::Bitboard evasionMask) {
 		using namespace common;
 
 		int8_t shift;
-		Bitset promotionRank, pawns;
+		Bitboard promotionRank, pawns;
 		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
@@ -115,14 +115,14 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
+			const Bitboard piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
 			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle promotion after sliding
-			Bitset slideSquare = position.m_walls > 0 ? (WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard()) : 0;
+			Bitboard slideSquare = position.m_walls > 0 ? (WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard()) : 0;
 
 			if (promotionsMode && ((piece & promotionRank) != 0 || (slideSquare & promotionRank) != 0)) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION);
@@ -135,11 +135,11 @@ private:
 		}
 	}
 
-	static void getDoublePush(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDoublePush(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
 		int8_t shift;
-		Bitset startRank, pawns;
+		Bitboard startRank, pawns;
 		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
@@ -158,7 +158,7 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
+			const Bitboard piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
@@ -168,11 +168,11 @@ private:
 		}
 	}
 
-	static void getDiagonalAttacks(const Position &position, int8_t dir, common::Bitset prohibitedFile, moves::Moves &moves, common::Bitset evasionMask) {
+	static void getDiagonalAttacks(const Position &position, int8_t dir, common::Bitboard prohibitedFile, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
 		int8_t shift;
-		Bitset promotionRank, enemyOccupancy, pawns;
+		Bitboard promotionRank, enemyOccupancy, pawns;
 		const PieceColor color = position.m_colorToMove;
 
 		if (color == PieceColor::WHITE) {
@@ -191,14 +191,14 @@ private:
 
 		pawns &= evasionMask;
 		while (pawns != 0) {
-			const Bitset piece = pawns.getLsb(); // TODO: skip lsb
+			const Bitboard piece = pawns.getLsb(); // TODO: skip lsb
 			pawns = pawns.popLsb();
 
 			const Square from(piece.fastBitScan() - shift);
 			const Square to(piece.fastBitScan());
 
 			// Note: Special case to handle en passant after sliding
-			Bitset slideRank = position.m_walls == 0 ? 0 : WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
+			Bitboard slideRank = position.m_walls == 0 ? 0 : WallOperations::SLIDE_SQUARE[position.m_walls.fastBitScan()][to].asBitboard();
 
 			if ((piece & promotionRank) != 0 || (slideRank & promotionRank) != 0) {
 				moves.emplace_back(from, to, moves::MoveFlags::QUEEN_PROMOTION_CAPTURE);

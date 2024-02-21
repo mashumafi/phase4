@@ -9,7 +9,7 @@
 #include <phase4/engine/moves/patterns/file_pattern_generator.h>
 #include <phase4/engine/moves/patterns/forward_box_pattern_generator.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/field_index.h>
 #include <phase4/engine/common/math.h>
 #include <phase4/engine/common/piece_color.h>
@@ -21,27 +21,27 @@ namespace phase4::engine::ai::score::evaluators {
 
 class KingSafetyEvaluator {
 public:
-	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitset fieldsAttackedByWhite, common::Bitset fieldsAttackedByBlack) {
+	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitboard fieldsAttackedByWhite, common::Bitboard fieldsAttackedByBlack) {
 		const int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase, fieldsAttackedByBlack);
 		const int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase, fieldsAttackedByWhite);
 		return whiteEvaluation - blackEvaluation;
 	}
 
 private:
-	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset fieldsAttackedByEnemy) {
-		const common::Bitset king = position.colorPieceMask(color, common::PieceType::KING);
+	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitboard fieldsAttackedByEnemy) {
+		const common::Bitboard king = position.colorPieceMask(color, common::PieceType::KING);
 		const common::Square kingField(king.bitScan());
 		const common::FieldIndex kingPosition = kingField.asFieldIndex();
-		const common::Bitset fieldsAroundKing = moves::patterns::ForwardBoxPatternGenerator::getPattern(color, kingField);
+		const common::Bitboard fieldsAroundKing = moves::patterns::ForwardBoxPatternGenerator::getPattern(color, kingField);
 
-		const common::Bitset attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
+		const common::Bitboard attackedFieldsAroundKing = fieldsAroundKing & fieldsAttackedByEnemy;
 		const int8_t attackersCount = attackedFieldsAroundKing.fastCount();
 		const int32_t attackersCountOpeningScore = attackersCount * board::EvaluationConstants::KING_IN_DANGER;
 
 		int32_t pawnShieldOpeningScore = 0;
 		int32_t openFilesNextToKingScore = 0;
 		if (position.m_castlingDone[color.get_raw_value()]) {
-			const common::Bitset pawnsNearKing = fieldsAroundKing & position.colorPieceMask(color, common::PieceType::PAWN);
+			const common::Bitboard pawnsNearKing = fieldsAroundKing & position.colorPieceMask(color, common::PieceType::PAWN);
 			const int32_t pawnShield = pawnsNearKing.fastCount();
 
 			pawnShieldOpeningScore = pawnShield * board::EvaluationConstants::PAWN_SHIELD;

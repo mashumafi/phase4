@@ -3,7 +3,7 @@
 
 #include <phase4/engine/common/position_constants.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -13,19 +13,19 @@ namespace phase4::engine::moves::patterns {
 
 class BoxPatternGenerator {
 public:
-	using Array = std::array<common::Bitset, 64>;
+	using Array = std::array<common::Bitboard, 64>;
 
-	static constexpr common::Bitset getPattern(common::Square square);
+	static constexpr common::Bitboard getPattern(common::Square square);
 
 private:
-	static constexpr common::Bitset getPatternForField(common::Square square);
+	static constexpr common::Bitboard getPatternForField(common::Square square);
 
 	static constexpr Array generatePatterns();
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitset BoxPatternGenerator::getPatternForField(common::Square square) {
+constexpr common::Bitboard BoxPatternGenerator::getPatternForField(common::Square square) {
 	const uint64_t field = 1ull << square;
 	return ((field & ~common::PositionConstants::FILE_A) << 1) |
 			((field & ~common::PositionConstants::FILE_H) << 7) |
@@ -47,7 +47,7 @@ constexpr BoxPatternGenerator::Array BoxPatternGenerator::generatePatterns() {
 
 inline constexpr BoxPatternGenerator::Array BoxPatternGenerator::PATTERNS = BoxPatternGenerator::generatePatterns();
 
-constexpr common::Bitset BoxPatternGenerator::getPattern(common::Square square) {
+constexpr common::Bitboard BoxPatternGenerator::getPattern(common::Square square) {
 	return PATTERNS[square];
 }
 

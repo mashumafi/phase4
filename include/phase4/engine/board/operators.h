@@ -11,14 +11,14 @@
 
 #include <phase4/engine/moves/move.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/util.h>
 
 namespace phase4::engine::board {
 
 class Operators {
 public:
-	static inline void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static inline void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		operators::PawnOperator::getLoudMoves(position, moves, evasionMask);
 		operators::KnightOperator::getLoudMoves(position, moves, evasionMask);
 		operators::BishopOperator::getLoudMoves(position, moves, evasionMask);
@@ -27,7 +27,7 @@ public:
 		operators::KingOperator::getLoudMoves(position, moves);
 	}
 
-	static inline void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitset evasionMask) {
+	static inline void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		operators::PawnOperator::getQuietMoves(position, moves, evasionMask);
 		operators::KnightOperator::getQuietMoves(position, moves, evasionMask);
 		operators::BishopOperator::getQuietMoves(position, moves, evasionMask);
@@ -37,8 +37,8 @@ public:
 	}
 
 	static inline void getAllMoves(const Position &position, moves::Moves &moves) {
-		getLoudMoves(position, moves, common::Bitset::MAX);
-		getQuietMoves(position, moves, common::Bitset::MAX);
+		getLoudMoves(position, moves, common::Bitboard::MAX);
+		getQuietMoves(position, moves, common::Bitboard::MAX);
 	}
 
 	static inline void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
@@ -50,7 +50,7 @@ public:
 		operators::KingOperator::getAvailableCaptureMoves(position, moves);
 	}
 
-	static inline std::tuple<int32_t, int32_t> getMobility(const board::Position &position, common::PieceColor color, common::Bitset &fieldsAttackedByColor) {
+	static inline std::tuple<int32_t, int32_t> getMobility(const board::Position &position, common::PieceColor color, common::Bitboard &fieldsAttackedByColor) {
 		const auto [knightCenter, knightOutside] = board::operators::KnightOperator::getMobility(position, color, fieldsAttackedByColor);
 		const auto [bishopCenter, bishopOutside] = board::operators::BishopOperator::getMobility(position, color, fieldsAttackedByColor);
 		const auto [rookCenter, rookOutside] = board::operators::RookOperator::getMobility(position, color, fieldsAttackedByColor);

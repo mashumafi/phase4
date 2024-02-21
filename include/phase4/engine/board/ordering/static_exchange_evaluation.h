@@ -4,7 +4,7 @@
 #include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/ordering/see_piece.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/safe_vector.h>
 #include <phase4/engine/common/square.h>
@@ -41,8 +41,8 @@ public:
 		}
 	}
 
-	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
-		const common::Bitset leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
+	static constexpr common::PieceType getLeastValuablePiece(common::Bitboard data) {
+		const common::Bitboard leastValuableDefenderField = data.getLsb(); // TODO: skip lsb
 		const uint8_t leastValuableDefenderPiece = leastValuableDefenderField.bitScan();
 
 		return getPieceBySeeIndex(leastValuableDefenderPiece);
@@ -88,7 +88,7 @@ public:
 		return common::PieceType::INVALID;
 	}
 
-	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitset attackers, common::Bitset defenders) {
+	static constexpr int16_t computeResult(common::PieceType attackingPiece, common::Bitboard attackers, common::Bitboard defenders) {
 		common::SafeVector<int16_t, 7> gainList = {};
 
 		common::PieceType currentPieceOnField = attackingPiece;
@@ -142,9 +142,9 @@ public:
 	static constexpr Array populate(common::PieceType attackingPiece) {
 		Array table = {};
 
-		const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
+		const common::Bitboard attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
-			const common::Bitset attackers = common::Bitset(attackerIndex) & ~attackingPieceSeeIndex;
+			const common::Bitboard attackers = common::Bitboard(attackerIndex) & ~attackingPieceSeeIndex;
 			for (uint64_t defenderIndex = 0; defenderIndex < 256; ++defenderIndex) {
 				table[attackerIndex][defenderIndex] = computeResult(attackingPiece, attackers, defenderIndex);
 			}

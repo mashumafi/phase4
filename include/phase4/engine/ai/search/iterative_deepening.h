@@ -129,7 +129,7 @@ private:
 			session.makeMove(entry.bestMove());
 
 			const common::PieceColor enemyColor = session.position().m_colorToMove.invert();
-			const common::Bitset king = session.position().colorPieceMask(enemyColor, common::PieceType::KING);
+			const common::Bitboard king = session.position().colorPieceMask(enemyColor, common::PieceType::KING);
 			const common::Square kingField(king.bitScan());
 
 			if (session.position().isFieldAttacked(enemyColor, kingField)) {

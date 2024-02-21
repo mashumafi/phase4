@@ -1,7 +1,7 @@
 #ifndef PHASE4_ENGINE_MOVES_PATTERNS_JUMP_PATTERN_GENERATOR_H
 #define PHASE4_ENGINE_MOVES_PATTERNS_JUMP_PATTERN_GENERATOR_H
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/position_constants.h>
 #include <phase4/engine/common/square.h>
 
@@ -12,19 +12,19 @@ namespace phase4::engine::moves::patterns {
 
 class JumpPatternGenerator {
 public:
-	using Array = std::array<common::Bitset, 64>;
+	using Array = std::array<common::Bitboard, 64>;
 
-	static constexpr common::Bitset getPattern(common::Square square);
+	static constexpr common::Bitboard getPattern(common::Square square);
 
 private:
-	static constexpr common::Bitset generatePatternForField(common::Square square);
+	static constexpr common::Bitboard generatePatternForField(common::Square square);
 
 	static constexpr Array generatePatterns();
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitset JumpPatternGenerator::generatePatternForField(common::Square square) {
+constexpr common::Bitboard JumpPatternGenerator::generatePatternForField(common::Square square) {
 	uint64_t field = 1ull << square;
 	return ((field & ~common::PositionConstants::FILE_A) << 17) |
 			((field & ~common::PositionConstants::FILE_H) << 15) |
@@ -46,7 +46,7 @@ constexpr JumpPatternGenerator::Array JumpPatternGenerator::generatePatterns() {
 
 inline constexpr JumpPatternGenerator::Array JumpPatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitset JumpPatternGenerator::getPattern(common::Square square) {
+constexpr common::Bitboard JumpPatternGenerator::getPattern(common::Square square) {
 	return PATTERNS[square];
 }
 

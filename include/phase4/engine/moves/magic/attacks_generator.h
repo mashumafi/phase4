@@ -10,14 +10,14 @@ namespace phase4::engine::moves::magic {
 
 class AttacksGenerator {
 public:
-	static common::Bitset getFileRankAttacks(common::Bitset board, common::Square square) {
+	static common::Bitboard getFileRankAttacks(common::Bitboard board, common::Square square) {
 		return getAttacksForDirection(board, square, common::FieldIndex(0, 1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(0, -1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(1, 0)) |
 				getAttacksForDirection(board, square, common::FieldIndex(-1, 0));
 	}
 
-	static common::Bitset getDiagonalAttacks(common::Bitset board, common::Square square) {
+	static common::Bitboard getDiagonalAttacks(common::Bitboard board, common::Square square) {
 		return getAttacksForDirection(board, square, common::FieldIndex(1, 1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(1, -1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(-1, 1)) |
@@ -25,9 +25,9 @@ public:
 	}
 
 private:
-	static common::Bitset getAttacksForDirection(common::Bitset board, common::Square square, const common::FieldIndex &shift) {
+	static common::Bitboard getAttacksForDirection(common::Bitboard board, common::Square square, const common::FieldIndex &shift) {
 		common::FieldIndex current = square.asFieldIndex() + shift;
-		common::Bitset attacks = 0;
+		common::Bitboard attacks = 0;
 
 		while (current.isValid()) {
 			attacks = attacks | common::Square(current).asBitboard();

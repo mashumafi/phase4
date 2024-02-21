@@ -13,7 +13,7 @@
 
 #include <phase4/engine/board/position.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/position_constants.h>
 
@@ -36,8 +36,8 @@ public:
 		result += PositionEvaluator::evaluate(session.position(), openingPhase, endingPhase);
 
 		if (endingPhase != common::PositionConstants::PHASE_RESOLUTION) {
-			common::Bitset fieldsAttackedByWhite = 0;
-			common::Bitset fieldsAttackedByBlack = 0;
+			common::Bitboard fieldsAttackedByWhite = 0;
+			common::Bitboard fieldsAttackedByBlack = 0;
 
 			result += MobilityEvaluator::evaluate(session.position(), openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += KingSafetyEvaluator::evaluate(session.position(), openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
@@ -63,8 +63,8 @@ public:
 		result += PositionEvaluator::evaluate(position, openingPhase, endingPhase);
 
 		if (endingPhase != common::PositionConstants::PHASE_RESOLUTION) {
-			common::Bitset fieldsAttackedByWhite = 0;
-			common::Bitset fieldsAttackedByBlack = 0;
+			common::Bitboard fieldsAttackedByWhite = 0;
+			common::Bitboard fieldsAttackedByBlack = 0;
 
 			result += MobilityEvaluator::evaluate(position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);
 			result += KingSafetyEvaluator::evaluate(position, openingPhase, endingPhase, fieldsAttackedByWhite, fieldsAttackedByBlack);

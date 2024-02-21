@@ -8,7 +8,7 @@
 #include <phase4/engine/board/evaluation_constants.h>
 #include <phase4/engine/board/operators.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/piece_color.h>
 
 #include <cstdint>
@@ -17,14 +17,14 @@ namespace phase4::engine::ai::score::evaluators {
 
 class MobilityEvaluator {
 public:
-	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByWhite, common::Bitset &fieldsAttackedByBlack) {
+	static inline int32_t evaluate(const board::Position &position, int32_t openingPhase, int32_t endingPhase, common::Bitboard &fieldsAttackedByWhite, common::Bitboard &fieldsAttackedByBlack) {
 		const int32_t whiteEvaluation = evaluate(position, common::PieceColor::WHITE, openingPhase, endingPhase, fieldsAttackedByWhite);
 		const int32_t blackEvaluation = evaluate(position, common::PieceColor::BLACK, openingPhase, endingPhase, fieldsAttackedByBlack);
 		return whiteEvaluation - blackEvaluation;
 	}
 
 private:
-	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitset &fieldsAttackedByColor) {
+	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase, common::Bitboard &fieldsAttackedByColor) {
 		const auto [centerMobility, outsideMobility] = board::Operators::getMobility(position, color, fieldsAttackedByColor);
 
 		const int32_t centerMobilityScore = centerMobility * board::EvaluationConstants::CENTER_MOBILITY_MODIFIER;

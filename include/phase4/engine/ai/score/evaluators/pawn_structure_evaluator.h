@@ -76,8 +76,8 @@ private:
 		int32_t passingPawns = 0;
 
 		for (uint8_t file = 0; file < 8; ++file) {
-			const common::Bitset friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
-			const common::Bitset friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
+			const common::Bitboard friendlyPawnsOnInnerMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::FilePatternGenerator::getPatternForFile(file);
+			const common::Bitboard friendlyPawnsOnOuterMask = position.colorPieceMask(color, common::PieceType::PAWN) & moves::patterns::OuterFilesPatternGenerator::getPatternForFile(file);
 
 			const uint8_t pawnsCount = friendlyPawnsOnInnerMask.fastCount();
 			if (pawnsCount > 1) {
@@ -86,18 +86,18 @@ private:
 
 			if (friendlyPawnsOnInnerMask != 0) {
 				if (friendlyPawnsOnOuterMask == 0) {
-					isolatedPawns += common::Bitset(pawnsCount).fastCount(); // TODO: understand this
+					isolatedPawns += common::Bitboard(pawnsCount).fastCount(); // TODO: understand this
 				}
 			}
 		}
 
-		common::Bitset pieces = position.colorPieceMask(color, common::PieceType::PAWN);
+		common::Bitboard pieces = position.colorPieceMask(color, common::PieceType::PAWN);
 		while (pieces != 0) {
-			const common::Bitset lsb = pieces.getLsb(); // TODO: skip lsb
+			const common::Bitboard lsb = pieces.getLsb(); // TODO: skip lsb
 			const common::Square field(lsb.bitScan());
 			pieces = pieces.popLsb();
 
-			const common::Bitset chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.colorPieceMask(color, common::PieceType::PAWN);
+			const common::Bitboard chain = moves::patterns::ChainPatternGenerator::getPattern(field) & position.colorPieceMask(color, common::PieceType::PAWN);
 			if (chain != 0) {
 				chainedPawns += chain.fastCount();
 			}

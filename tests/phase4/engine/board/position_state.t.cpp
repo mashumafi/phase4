@@ -3,7 +3,7 @@
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/zobrist_hashing.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/piece_type.h>
@@ -34,11 +34,11 @@ TEST_CASE("PositionState DEFAULT") {
 	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::QUEEN) == common::Square::D8.asBitboard());
 	CHECK(position.colorPieceMask(common::PieceColor::BLACK, common::PieceType::KING) == common::Square::E8.asBitboard());
 
-	CHECK(position.occupancy(common::PieceColor::WHITE) == common::Bitset(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2));
-	CHECK(position.occupancy(common::PieceColor::BLACK) == common::Bitset(common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
+	CHECK(position.occupancy(common::PieceColor::WHITE) == common::Bitboard(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2));
+	CHECK(position.occupancy(common::PieceColor::BLACK) == common::Bitboard(common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
 
-	CHECK(position.m_occupancySummary == common::Bitset(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2 | common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
-	CHECK(position.m_enPassant == common::Bitset(0));
+	CHECK(position.m_occupancySummary == common::Bitboard(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2 | common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
+	CHECK(position.m_enPassant == common::Bitboard(0));
 	CHECK(position.m_castling == common::Castling::EVERYTHING);
 	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
 	CHECK(position.m_movesCount == 1);

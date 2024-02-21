@@ -31,41 +31,41 @@ public:
 	static uint8_t getAttackingPiecesWithColor(const board::Position &position, common::PieceColor color, common::Square fieldIndex) {
 		uint8_t result = 0;
 
-		const common::Bitset jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
-		const common::Bitset attackingKnights = jumpAttacks & position.colorPieceMask(color, common::PieceType::KNIGHT);
+		const common::Bitboard jumpAttacks = moves::MovesGenerator::getKnightMoves(fieldIndex);
+		const common::Bitboard attackingKnights = jumpAttacks & position.colorPieceMask(color, common::PieceType::KNIGHT);
 		const uint8_t attackingKnightsCount = attackingKnights.fastCount();
 		if (attackingKnightsCount != 0) {
 			result |= attackingKnightsCount == 1 ? SeePiece::KNIGHT1.asByte() : SeePiece::KNIGHT1.asByte() | SeePiece::KNIGHT2.asByte();
 		}
 
-		const common::Bitset diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, fieldIndex) & position.occupancy(color);
-		const common::Bitset attackingBishops = diagonalAttacks & position.colorPieceMask(color, common::PieceType::BISHOP);
+		const common::Bitboard diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, fieldIndex) & position.occupancy(color);
+		const common::Bitboard attackingBishops = diagonalAttacks & position.colorPieceMask(color, common::PieceType::BISHOP);
 		if (attackingBishops != 0) {
 			result |= SeePiece::BISHOP.asByte();
 		}
 
-		const common::Bitset occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
-		const common::Bitset fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
-		const common::Bitset attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
+		const common::Bitboard occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
+		const common::Bitboard fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
+		const common::Bitboard attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
 		const uint8_t attackingRooksCount = attackingRooks.fastCount();
 		if (attackingRooksCount != 0) {
 			result |= attackingRooksCount == 1 ? SeePiece::ROOK1.asByte() : SeePiece::ROOK1.asByte() | SeePiece::ROOK2.asByte();
 		}
 
-		const common::Bitset attackingQueens = (fileRankAttacks | diagonalAttacks) & position.colorPieceMask(color, common::PieceType::QUEEN);
+		const common::Bitboard attackingQueens = (fileRankAttacks | diagonalAttacks) & position.colorPieceMask(color, common::PieceType::QUEEN);
 		if (attackingQueens != 0) {
 			result |= SeePiece::QUEEN.asByte();
 		}
 
-		const common::Bitset boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
-		const common::Bitset attackingKings = boxAttacks & position.colorPieceMask(color, common::PieceType::KING);
+		const common::Bitboard boxAttacks = moves::MovesGenerator::getKingMoves(fieldIndex);
+		const common::Bitboard attackingKings = boxAttacks & position.colorPieceMask(color, common::PieceType::KING);
 		if (attackingKings != 0) {
 			result |= SeePiece::KING.asByte();
 		}
 
-		const common::Bitset field = fieldIndex.asBitboard();
-		const common::Bitset potentialPawns = boxAttacks & position.colorPieceMask(color, common::PieceType::PAWN);
-		const common::Bitset attackingPawns = color == common::PieceColor::WHITE ? field & ((potentialPawns << 7) | (potentialPawns << 9)) : field & ((potentialPawns >> 7) | (potentialPawns >> 9));
+		const common::Bitboard field = fieldIndex.asBitboard();
+		const common::Bitboard potentialPawns = boxAttacks & position.colorPieceMask(color, common::PieceType::PAWN);
+		const common::Bitboard attackingPawns = color == common::PieceColor::WHITE ? field & ((potentialPawns << 7) | (potentialPawns << 9)) : field & ((potentialPawns >> 7) | (potentialPawns >> 9));
 
 		if (attackingPawns != 0) {
 			result |= SeePiece::PAWN.asByte();
@@ -74,8 +74,8 @@ public:
 		return result;
 	}
 
-	inline constexpr common::Bitset asBitboard() const {
-		return common::Bitset(1ull << m_value);
+	inline constexpr common::Bitboard asBitboard() const {
+		return common::Bitboard(1ull << m_value);
 	}
 
 	inline constexpr uint8_t asByte() const {

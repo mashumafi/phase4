@@ -1,7 +1,7 @@
 #include <phase4/engine/board/transposition/transposition_table.h>
 #include <phase4/engine/board/transposition/transposition_table_entry.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 
 #include <doctest/doctest.h>
 
@@ -13,14 +13,14 @@ TEST_CASE("TranspositionTable references") {
 
 	auto table = std::make_shared<TranspositionTable<1>>();
 
-	TranspositionTableEntry &entry = table->get(common::Bitset(123));
+	TranspositionTableEntry &entry = table->get(common::Bitboard(123));
 	entry.score() = 42;
 
 	CHECK(entry.score() == 42);
-	CHECK(table->get(common::Bitset(123)).score() == 42);
+	CHECK(table->get(common::Bitboard(123)).score() == 42);
 
 	table->clear();
 
 	CHECK(entry.score() == 0);
-	CHECK(table->get(common::Bitset(123)).score() == 0);
+	CHECK(table->get(common::Bitboard(123)).score() == 0);
 }

@@ -3,7 +3,7 @@
 
 #include <phase4/engine/common/position_constants.h>
 
-#include <phase4/engine/common/bitset.h>
+#include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/square.h>
 
 #include <array>
@@ -13,13 +13,13 @@ namespace phase4::engine::moves::patterns {
 
 class OuterFilesPatternGenerator {
 public:
-	using Patterns = std::array<common::Bitset, 8>;
+	using Patterns = std::array<common::Bitboard, 8>;
 
-	static constexpr common::Bitset getPatternForFile(size_t file);
+	static constexpr common::Bitboard getPatternForFile(size_t file);
 
 private:
-	static constexpr common::Bitset generatePatternForField(size_t fieldIndex) {
-		common::Bitset result = 0ul;
+	static constexpr common::Bitboard generatePatternForField(size_t fieldIndex) {
+		common::Bitboard result = 0ul;
 		if (fieldIndex + 1 < 8) {
 			result |= common::PositionConstants::FILE_H << (fieldIndex + 1);
 		}
@@ -44,7 +44,7 @@ private:
 
 inline constexpr OuterFilesPatternGenerator::Patterns OuterFilesPatternGenerator::PATTERNS = generate();
 
-constexpr common::Bitset OuterFilesPatternGenerator::getPatternForFile(size_t file) {
+constexpr common::Bitboard OuterFilesPatternGenerator::getPatternForFile(size_t file) {
 	return PATTERNS[file];
 }
 
