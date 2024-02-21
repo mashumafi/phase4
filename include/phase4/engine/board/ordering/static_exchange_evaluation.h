@@ -17,11 +17,28 @@ namespace phase4::engine::board::ordering {
 
 class StaticExchangeEvaluation {
 public:
-	using AttackersDefendersArray = std::array<std::array<int16_t, 256>, 256>;
-	using Array = std::array<AttackersDefendersArray, 6>;
+	using Array = std::array<std::array<int16_t, 256>, 256>;
 
 	static inline int16_t evaluate(common::PieceType attackingPiece, common::PieceType capturedPiece, uint8_t attackers, uint8_t defenders) {
-		return board::EvaluationConstants::pieceValue(capturedPiece) + TABLE[attackingPiece.get_raw_value()][attackers][defenders];
+		const int16_t capturedPieceValue = board::EvaluationConstants::pieceValue(capturedPiece);
+
+		switch (attackingPiece.get_raw_value()) {
+			case common::PieceType::PAWN.get_raw_value():
+				return capturedPieceValue + PAWN_TABLE[attackers][defenders];
+			case common::PieceType::KNIGHT.get_raw_value():
+				return capturedPieceValue + KNIGHT_TABLE[attackers][defenders];
+			case common::PieceType::BISHOP.get_raw_value():
+				return capturedPieceValue + BISHOP_TABLE[attackers][defenders];
+			case common::PieceType::ROOK.get_raw_value():
+				return capturedPieceValue + ROOK_TABLE[attackers][defenders];
+			case common::PieceType::QUEEN.get_raw_value():
+				return capturedPieceValue + QUEEN_TABLE[attackers][defenders];
+			case common::PieceType::KING.get_raw_value():
+				return capturedPieceValue + KING_TABLE[attackers][defenders];
+			default:
+				assert(false);
+				return capturedPieceValue;
+		}
 	}
 
 	static constexpr common::PieceType getLeastValuablePiece(common::Bitset data) {
@@ -123,8 +140,8 @@ private:
 		return result;
 	}
 
-	static constexpr AttackersDefendersArray populate(common::PieceType attackingPiece) {
-		AttackersDefendersArray table = {};
+	static constexpr Array populate(common::PieceType attackingPiece) {
+		Array table = {};
 
 		const common::Bitset attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
 		for (uint64_t attackerIndex = 0; attackerIndex < 256; ++attackerIndex) {
@@ -137,7 +154,12 @@ private:
 		return table;
 	}
 
-	static const Array TABLE;
+	static const Array PAWN_TABLE;
+	static const Array KNIGHT_TABLE;
+	static const Array BISHOP_TABLE;
+	static const Array ROOK_TABLE;
+	static const Array QUEEN_TABLE;
+	static const Array KING_TABLE;
 };
 
 } //namespace phase4::engine::board::ordering
