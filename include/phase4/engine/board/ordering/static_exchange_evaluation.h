@@ -139,7 +139,7 @@ public:
 		return result;
 	}
 
-	static constexpr Array populate(common::PieceType attackingPiece) {
+	static Array populate(common::PieceType attackingPiece) {
 		Array table = {};
 
 		const common::Bitboard attackingPieceSeeIndex(getSeeIndexByPiece(attackingPiece).asBitboard());
