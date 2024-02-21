@@ -177,7 +177,7 @@ inline constexpr Bitboard Bitboard::MAX(0b11111111'11111111'11111111'11111111'11
 #else
 	// Fallback implementation for other compilers or platforms
 	uint8_t count = 0;
-	Bitset bitset = m_bitset;
+	Bitboard bitset = m_bitset;
 	while (bitset > 0) {
 		bitset = bitset.popLsb();
 		count++;
@@ -187,15 +187,15 @@ inline constexpr Bitboard Bitboard::MAX(0b11111111'11111111'11111111'11111111'11
 }
 
 #ifdef USE_SLOW_BITSET_COUNT
-constexpr std::array<uint8_t, 1 << 16> Bitset::populateBitCounts() {
+constexpr std::array<uint8_t, 1 << 16> Bitboard::populateBitCounts() {
 	std::array<uint8_t, 1 << 16> bitCounts{};
 	for (size_t i = 0; i < bitCounts.size(); ++i) {
-		bitCounts[i] = Bitset(i).count();
+		bitCounts[i] = Bitboard(i).count();
 	}
 	return bitCounts;
 }
 
-inline constexpr std::array<uint8_t, 1 << 16> Bitset::g_popCount = populateBitCounts();
+inline constexpr std::array<uint8_t, 1 << 16> Bitboard::g_popCount = populateBitCounts();
 #endif
 
 [[nodiscard]] inline uint8_t Bitboard::fastBitScan() const noexcept {
