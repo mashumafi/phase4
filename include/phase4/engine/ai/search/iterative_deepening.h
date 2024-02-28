@@ -48,7 +48,7 @@ public:
 	using SearchUpdateCallback = std::function<void(const SearchStatistics &)>;
 	static constexpr auto DEFAULT_SEARCH_UPDATE_CALLBACK = [](const ai::search::SearchStatistics &) {};
 
-	static moves::Move findBestMove(SearchContext &context, const SearchUpdateCallback &searchUpdateCallback = DEFAULT_SEARCH_UPDATE_CALLBACK) {
+	static inline moves::Move findBestMove(SearchContext &context, const SearchUpdateCallback &searchUpdateCallback = DEFAULT_SEARCH_UPDATE_CALLBACK) {
 		context.session->m_historyHeuristic.ageValues();
 		context.session->m_killerHeuristic.ageKillers();
 
@@ -74,7 +74,9 @@ public:
 
 			context.statistics.principalVariation.clear();
 			getPrincipalVariation(*context.session, context.statistics.principalVariation, depth);
-			bestMove = context.statistics.principalVariation[0];
+			if (!context.statistics.principalVariation.is_empty()) {
+				bestMove = context.statistics.principalVariation[0];
+			}
 
 			searchUpdateCallback(context.statistics);
 
@@ -120,7 +122,11 @@ private:
 		}
 
 		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().m_hash.asBitboard());
-		if (entry.flags() == TranspositionTableEntryFlags::EXACT_SCORE && entry.isKeyValid(session.position().m_hash.asBitboard())) {
+		if (entry.isKeyValid(session.position().m_hash.asBitboard())) {
+			if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE) {
+				return;
+			}
+
 			if (!board::Operators::isMoveLegal(session.position(), entry.bestMove())) {
 				return;
 			}
@@ -140,13 +146,6 @@ private:
 			getPrincipalVariation(session, moves, depth);
 			session.undoMove(entry.bestMove());
 		}
-#ifndef NDEBUG
-		else if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE) {
-			return;
-		} else if (!entry.isKeyValid(session.position().m_hash.asBitboard())) {
-			return;
-		}
-#endif
 	}
 };
 

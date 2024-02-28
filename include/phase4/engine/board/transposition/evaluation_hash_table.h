@@ -19,7 +19,7 @@ public:
 		m_table[hash.get_raw_value() % m_table.size()] = EvaluationHashTableEntry(hash, score);
 	}
 
-	EvaluationHashTableEntry get(common::Bitboard hash) const {
+	const EvaluationHashTableEntry &get(common::Bitboard hash) const {
 		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 

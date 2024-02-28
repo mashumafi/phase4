@@ -18,6 +18,18 @@ namespace phase4::engine::board::ordering {
 
 class MoveOrdering {
 public:
+	static inline int16_t seeEvaluate(const Position &position, moves::Move move) {
+		const common::PieceColor enemyColor = position.m_colorToMove.invert();
+
+		const common::PieceType attackingPiece = position.m_pieceTable[move.from()];
+		const common::PieceType capturedPiece = position.m_pieceTable[move.to()];
+
+		const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, move.to());
+		// TOOD: Update defenders to include walls/sliding
+		const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, move.to());
+		return StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+	}
+
 	static void assignLoudValues(const Position &position, const moves::Moves &moves, moves::MoveValues &moveValues, moves::Move hashOrPvMove) {
 		moveValues.resize(moves.size());
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
@@ -28,16 +40,7 @@ public:
 			} else if (moves[moveIndex].flags().isPromotion()) {
 				moveValues[moveIndex] = static_cast<int16_t>((MoveOrderingConstants::PROMOTION + moves[moveIndex].flags().get_raw_value())); // TODO: cast?
 			} else if (moves[moveIndex].flags().isCapture()) {
-				const common::PieceColor enemyColor = position.m_colorToMove.invert();
-
-				const common::PieceType attackingPiece = position.m_pieceTable[moves[moveIndex].from()];
-				const common::PieceType capturedPiece = position.m_pieceTable[moves[moveIndex].to()];
-
-				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
-				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				const int16_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
-
-				moveValues[moveIndex] = MoveOrderingConstants::CAPTURE + seeEvaluation;
+				moveValues[moveIndex] = MoveOrderingConstants::CAPTURE + seeEvaluate(position, moves[moveIndex]);
 			} else if (moves[moveIndex].flags().isCastling()) {
 				moveValues[moveIndex] = MoveOrderingConstants::CASTLING;
 			} else {
@@ -60,19 +63,11 @@ public:
 
 	static void assignQValues(const Position &position, const moves::Moves &moves, moves::MoveValues &moveValues) {
 		moveValues.resize(moves.size());
-		const common::PieceColor enemyColor = position.m_colorToMove.invert();
 		for (size_t moveIndex = 0; moveIndex < moves.size(); ++moveIndex) {
 			if (moves[moveIndex].flags().isEnPassant()) {
 				moveValues[moveIndex] = MoveOrderingConstants::EN_PASSANT;
 			} else {
-				const common::PieceType attackingPiece = position.m_pieceTable[moves[moveIndex].from()];
-				const common::PieceType capturedPiece = position.m_pieceTable[moves[moveIndex].to()];
-
-				const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, moves[moveIndex].to());
-				const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, moves[moveIndex].to());
-				const int16_t seeEvaluation = StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
-
-				moveValues[moveIndex] = seeEvaluation;
+				moveValues[moveIndex] = seeEvaluate(position, moves[moveIndex]);
 			}
 		}
 	}

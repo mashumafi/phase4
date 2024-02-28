@@ -21,7 +21,7 @@ public:
 
 	void addKillerMove(moves::Move move, common::PieceColor color, int32_t ply) {
 		// TODO: use size()
-		for (int8_t slot = MoveOrderingConstants::KILLER_SLOTS - 2; slot >= 0; slot--) {
+		for (int8_t slot = MoveOrderingConstants::KILLER_SLOTS - 2; slot >= 0; --slot) {
 			m_killerMoves[color.get_raw_value()][ply][slot + 1] = m_killerMoves[color.get_raw_value()][ply][slot];
 		}
 
@@ -30,7 +30,7 @@ public:
 
 	bool killerMoveExists(moves::Move move, common::PieceColor color, int32_t ply) const {
 		// TODO: use size()
-		for (int8_t slot = 0; slot < ordering::MoveOrderingConstants::KILLER_SLOTS; slot++) {
+		for (int8_t slot = 0; slot < ordering::MoveOrderingConstants::KILLER_SLOTS; ++slot) {
 			if (m_killerMoves[color.get_raw_value()][ply][slot] == move) {
 				return true;
 			}
@@ -40,16 +40,16 @@ public:
 	}
 
 	void ageKillers() {
-		// TODO: use size()
+		constexpr int8_t MAX_DEPTH = SearchConstants::MAX_DEPTH - 2;
 		for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
-			for (int8_t ply = 0; ply < SearchConstants::MAX_DEPTH - 2; ply++) {
+			for (int8_t ply = 0; ply < MAX_DEPTH; ++ply) {
 				m_killerMoves[color.get_raw_value()][ply] = m_killerMoves[color.get_raw_value()][ply + 2];
 			}
 		}
 
 		// TODO: use size()
 		for (common::PieceColor color = common::PieceColor::WHITE; color != common::PieceColor::INVALID; ++color) {
-			for (int8_t ply = SearchConstants::MAX_DEPTH - 2; ply < SearchConstants::MAX_DEPTH; ply++) {
+			for (int8_t ply = MAX_DEPTH; ply < SearchConstants::MAX_DEPTH; ++ply) {
 				common::util::clear(m_killerMoves[color.get_raw_value()][ply]);
 			}
 		}

@@ -281,8 +281,14 @@ public:
 		const common::Bitboard kingField = colorPieceMask(m_colorToMove, common::PieceType::KING);
 		const common::Square kingFieldIndex(kingField);
 
-		return moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
+		const common::Bitboard evasionMask = moves::MovesGenerator::getKnightMoves(kingFieldIndex) |
 				moves::MovesGenerator::getQueenMoves(m_occupancySummary, kingFieldIndex);
+
+		if (likely(m_walls != 0)) {
+			// TODO: Add wall mask to evasion mask
+		}
+
+		return evasionMask;
 	}
 };
 

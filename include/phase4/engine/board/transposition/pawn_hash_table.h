@@ -20,7 +20,7 @@ public:
 		m_table[hash.get_raw_value() % m_table.size()] = PawnHashTableEntry(hash, openingScore, endingScore);
 	}
 
-	PawnHashTableEntry get(common::Bitboard hash) const {
+	const PawnHashTableEntry &get(common::Bitboard hash) const {
 		return m_table[hash.get_raw_value() % m_table.size()];
 	}
 

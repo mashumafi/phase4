@@ -15,8 +15,10 @@ public:
 	static constexpr int32_t MIN_VALUE = std::numeric_limits<int16_t>::min();
 	static constexpr int32_t MAX_VALUE = std::numeric_limits<int16_t>::max();
 	static constexpr int32_t NO_KING_VALUE = MIN_VALUE - 10;
+	static_assert(NO_KING_VALUE == -32778);
+
 	static constexpr int8_t MAX_DEPTH = 32;
-	static constexpr int32_t MAX_MOVES_COUNT = 218;
+	static constexpr size_t MAX_MOVES_COUNT = 218;
 	static constexpr float DEADLINE_FACTOR = 1.5f;
 
 	static constexpr int32_t INTERNAL_ITERATIVE_DEEPENING_MIN_DEPTH = 4;
