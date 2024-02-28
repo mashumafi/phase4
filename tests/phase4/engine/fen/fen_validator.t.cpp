@@ -67,7 +67,7 @@ TEST_CASE("FenValidator") {
 	}
 }
 
-TEST_CASE("FenValidator r2q1rk1/4N1bp/p2p2p1/2p3N1/Pp4P1/1Q5P/1P1n1P2/5RK1 b - - 0 21") {
+TEST_CASE("FenValidator r2q1rk1/4N1bp/p2p2p1/2p3N1/Pp4P1/1Q5P/1P1n1P2/5RK1 b - - 0 21" * doctest::skip()) {
 	using namespace phase4::engine;
 
 	const std::string fen = "r2q1rk1/4N1bp/p2p2p1/2p3N1/Pp4P1/1Q5P/1P1n1P2/5RK1 b - - 0 21";

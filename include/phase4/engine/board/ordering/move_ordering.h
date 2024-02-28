@@ -25,6 +25,7 @@ public:
 		const common::PieceType capturedPiece = position.m_pieceTable[move.to()];
 
 		const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, move.to());
+		// TOOD: Update defenders to include walls/sliding
 		const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, move.to());
 		return StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
 	}
