@@ -104,7 +104,7 @@ struct PuzzleStatistics {
 
 	std::atomic<uint16_t> minRating = 4000;
 	std::atomic<uint16_t> maxRating = 0;
-	std::atomic<uint64_t> maxMoves = 0;
+	std::atomic<size_t> maxMoves = 0;
 
 	// Failures
 	std::atomic<size_t> invalidCsv = 0;

@@ -9,19 +9,21 @@
 #include <phase4/engine/moves/move.h>
 #include <phase4/engine/moves/move_flags.h>
 
+#include <memory>
+
 // Make a move, check if king is in check, undo the move
 static void MakeMoveUndo(benchmark::State &state) {
 	using namespace phase4::engine;
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
-	board::Session session;
+	auto session = std::make_unique<board::Session>();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
-		session.makeMove(move);
-		session.isKingChecked(common::PieceColor::BLACK);
-		session.undoMove(move);
+		session->makeMove(move);
+		session->isKingChecked(common::PieceColor::BLACK);
+		session->undoMove(move);
 	}
 }
 BENCHMARK(MakeMoveUndo);
@@ -32,11 +34,11 @@ static void isMoveLegal(benchmark::State &state) {
 
 	moves::magic::MagicBitboards::initWithInternalKeys();
 
-	board::Session session;
+	auto session = std::make_unique<board::Session>();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
 	for (auto _ : state) {
-		benchmark::DoNotOptimize(session.isMoveLegal(move));
+		benchmark::DoNotOptimize(session->isMoveLegal(move));
 	}
 }
 BENCHMARK(isMoveLegal);
@@ -52,7 +54,7 @@ static void CopyMakeMove(benchmark::State &state) {
 
 	for (auto _ : state) {
 		board::Position positionCopy = position;
-		board::PositionMoves::makeMove(positionCopy.makeMove(move));
+		board::PositionMoves::makeMove(positionCopy, move);
 		benchmark::DoNotOptimize(positionCopy.isKingChecked(common::PieceColor::BLACK));
 	}
 }
