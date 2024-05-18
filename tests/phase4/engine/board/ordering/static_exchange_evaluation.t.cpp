@@ -40,15 +40,9 @@ int32_t evaluate(const phase4::engine::board::Position &position, phase4::engine
 	REQUIRE(realMove);
 	REQUIRE(realMove->flags() == moves::MoveFlags::CAPTURE); // Only testing captures
 
-	const common::PieceColor enemyColor = position.m_colorToMove.invert();
-
-	const common::PieceType attackingPiece = position.m_pieceTable[realMove->from()];
-	const common::PieceType capturedPiece = position.m_pieceTable[realMove->to()];
-
-	const uint8_t attackers = board::ordering::SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, realMove->to());
-	const uint8_t defenders = board::ordering::SeePiece::getAttackingPiecesWithColor(position, enemyColor, realMove->to());
-	return board::ordering::StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
+	return board::ordering::MoveOrdering::seeEvaluate(position, move);
 }
+
 } //namespace
 
 TEST_CASE("StaticExchangeEvaluation evaluate") {

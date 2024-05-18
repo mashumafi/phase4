@@ -14,9 +14,9 @@ public:
 	}
 
 	PawnHashTableEntry(common::Bitboard hash, int16_t openingScore, int16_t endingScore) {
-		const uint32_t hashPart = (uint32_t)((hash.get_raw_value() >> 52) << 20);
-		const uint32_t endingScorePart = (uint32_t)((endingScore & 0x3FF) << 10);
-		const uint32_t openingScorePart = (uint32_t)(openingScore & 0x3FF);
+		const uint32_t hashPart = static_cast<uint32_t>((hash.get_raw_value() >> 52) << 20);
+		const uint32_t endingScorePart = static_cast<uint32_t>((endingScore & 0x3FF) << 10);
+		const uint32_t openingScorePart = static_cast<uint32_t>(openingScore & 0x3FF);
 
 		m_data = hashPart | endingScorePart | openingScorePart;
 	}
@@ -26,13 +26,13 @@ public:
 	}
 
 	int16_t endingScore() const {
-		const int16_t result = (int16_t)((m_data >> 10) & 0x3FF);
-		return result < 512 ? result : (int16_t)(result - 1024);
+		const int16_t result = static_cast<int16_t>((m_data >> 10) & 0x3FF);
+		return result < 512 ? result : result - 1024;
 	}
 
 	int16_t openingScore() const {
-		const int16_t result = (int16_t)(m_data & 0x3FF);
-		return result < 512 ? result : (int16_t)(result - 1024);
+		const int16_t result = static_cast<int16_t>(m_data & 0x3FF);
+		return result < 512 ? result : result - 1024;
 	}
 
 	bool isKeyValid(common::Bitboard hash) const {

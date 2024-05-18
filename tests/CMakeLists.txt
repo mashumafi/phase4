@@ -45,6 +45,8 @@ add_executable(phase4_test
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp
+    phase4/engine/board/transposition/evaluation_hash_table.t.cpp
+    phase4/engine/board/transposition/pawn_hash_table.t.cpp
     phase4/engine/board/transposition/transposition_table.t.cpp
     phase4/engine/board/zobrist_hashing.t.cpp
 
