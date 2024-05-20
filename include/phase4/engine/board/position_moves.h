@@ -267,16 +267,15 @@ public:
 		}
 
 		if (likely(position.m_walls > 0)) {
-			uint8_t wallIndex = position.m_walls.fastBitScan();
+			const uint8_t wallIndex = position.m_walls.fastBitScan();
 			const FieldIndex wallMove = WallOperations::SLIDE_DIR[wallIndex][move.to()];
 			if (wallMove != FieldIndex::ZERO) {
 				position.m_occupancySummary = position.m_occupancySummary & ~position.m_walls;
 
 				Bitboard original = WallOperations::SLIDE_TO[wallIndex][move.to()];
 				while (original > 0) {
-					Square from(original.fastBitScan());
-					Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
-					result.moved.push_back(MakeMoveResult::Movement{ from, to });
+					const Square from(original.fastBitScan());
+					const Square to = WallOperations::SLIDE_SQUARE[wallIndex][from];
 					if (auto pieceResult = position.getPiece(from)) {
 						auto [resultColor, resultType] = *pieceResult;
 						position.movePiece(resultColor, resultType, from, to);
@@ -287,10 +286,10 @@ public:
 						}
 
 						if (resultType == PieceType::PAWN && position.m_enPassant != 0) {
-							int8_t offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
-							uint8_t enPassantField = position.m_enPassant.fastBitScan();
+							const int8_t offset = (resultColor == PieceColor::WHITE) ? -8 : 8;
+							const uint8_t enPassantField = position.m_enPassant.fastBitScan();
 							if (enPassantField == from.get_raw_value() + offset) {
-								uint8_t enPassantRank = enPassantField % 8;
+								const uint8_t enPassantRank = enPassantField % 8;
 								position.m_hash = position.m_hash.toggleEnPassant(enPassantRank);
 
 								if (wallMove.offset() >= 0)
@@ -435,6 +434,19 @@ public:
 		}
 
 		return mutablePosition;
+	}
+
+	static void getValidMoves(const board::Position &position, moves::Moves &moves) {
+		moves::Moves allMoves;
+		Operators::getAllMoves(position, allMoves);
+
+		for (size_t i = 0; i < allMoves.size(); ++i) {
+			board::Position positionCopy = position;
+			board::PositionMoves::makeMove(positionCopy, allMoves[i]);
+			if (!positionCopy.isKingChecked(position.m_colorToMove.invert())) {
+				moves.push_back(allMoves[i]);
+			}
+		}
 	}
 };
 

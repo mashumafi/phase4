@@ -120,15 +120,15 @@ constexpr std::array<std::array<common::Square, 64>, 64> WallOperations::populat
 	for (common::Square wallIndex = common::Square::BEGIN; wallIndex != common::Square::INVALID; ++wallIndex) {
 		for (common::Square landIndex = common::Square::BEGIN; landIndex != common::Square::INVALID; ++landIndex) {
 			common::Square destinationSquare = landIndex;
-			const common::Bitboard wallBB = SLIDE_FROM[wallIndex];
+			const common::Bitboard landBB = SLIDE_FROM[landIndex];
 
-			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & wallBB) != 0) {
+			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & landBB) != 0) {
 				destinationSquare = destinationSquare.west(2);
-			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & wallBB) != 0) {
+			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & landBB) != 0) {
 				destinationSquare = destinationSquare.east(2);
-			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & wallBB) != 0) {
+			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & landBB) != 0) {
 				destinationSquare = destinationSquare.south(2);
-			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & wallBB) != 0) {
+			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & landBB) != 0) {
 				destinationSquare = destinationSquare.north(2);
 			}
 
