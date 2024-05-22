@@ -98,9 +98,8 @@ public:
 		using namespace common;
 		using namespace piece_square_tables;
 
-		assert((colorPieceMask(color, piece) & from.asBitboard()) != 0);
-		assert((colorPieceMask(color, piece) & to.asBitboard()) == 0);
-		assert((m_colorPieceMasks[color.invert().get_raw_value()][piece.get_raw_value()] & to.asBitboard()) == 0);
+		assert((colorPieceMask(color, piece) & from.asBitboard()) != 0 && "Ensure there is a piece in from");
+		assert((m_occupancySummary & to.asBitboard()) == 0 && "Ensure to is empty");
 
 		const common::Bitboard move = from.asBitboard() | to.asBitboard();
 

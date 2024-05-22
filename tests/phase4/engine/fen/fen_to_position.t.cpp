@@ -1,4 +1,5 @@
 #include <phase4/engine/fen/fen_to_position.h>
+#include <phase4/engine/fen/position_to_fen.h>
 
 #include <phase4/engine/ai/search/iterative_deepening.h>
 #include <phase4/engine/ai/search/search_context.h>
@@ -71,5 +72,38 @@ TEST_CASE("FenToPosition mateIn2") {
 		CHECK(bestMove.to() == common::Square::F8);
 
 		session->makeMove(bestMove);
+	}
+}
+
+void testTransform(std::string_view fen) {
+	using namespace phase4::engine::fen;
+
+	auto position = FenToPosition::parse(fen);
+	REQUIRE(position);
+
+	REQUIRE(fen == PositionToFen::encode(*position));
+}
+
+TEST_CASE("FEN input should match output") {
+	using namespace phase4::engine::fen;
+
+	SUBCASE("rn2bq2/pp2pp2/2**nrkb/2**pppp/2PP2PP/2BQ2NR/PPPP4/RNKB4 w KQkq - 0 1") {
+		testTransform("rn2bq2/pp2pp2/2**nrkb/2**pppp/2PP2PP/2BQ2NR/PPPP4/RNKB4 w KQkq - 0 1");
+	}
+
+	SUBCASE("rnbqkbnr/pppppppp/2**4/2**4/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		testTransform("rnbqkbnr/pppppppp/2**4/2**4/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	SUBCASE("rnbqkbnr/pppppppp/4**2/4**2/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		testTransform("rnbqkbnr/pppppppp/4**2/4**2/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	SUBCASE("rnbqkbnr/pppppppp/2**4/2**4/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		testTransform("rnbqkbnr/pppppppp/8/8/2**4/2**4/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	SUBCASE("rnbqkbnr/pppppppp/4**2/4**2/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		testTransform("rnbqkbnr/pppppppp/8/8/4**2/4**2/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 }

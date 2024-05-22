@@ -42,6 +42,7 @@ add_executable(phase4_test
     phase4/engine/board/ordering/see_piece.t.cpp
     phase4/engine/board/ordering/static_exchange_evaluation.t.cpp
     phase4/engine/board/piece_square_tables/table_operations.t.cpp
+    phase4/engine/board/position_moves.t.cpp
     phase4/engine/board/position_state.t.cpp
     phase4/engine/board/position.t.cpp
     phase4/engine/board/session.t.cpp

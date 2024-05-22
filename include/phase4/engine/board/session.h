@@ -79,7 +79,7 @@ public:
 
 		const FieldIndex wallMove = m_wallSlides.pop_back();
 		if (wallMove != FieldIndex::ZERO) {
-			PositionMoves::slideWall(m_position, wallMove);
+			PositionMoves::slideWall(m_position, -wallMove);
 		}
 
 		const PieceType pieceType = m_position.m_pieceTable[move.to()];
@@ -207,6 +207,10 @@ public:
 	transposition::HashTables<> m_hashTables;
 	ordering::HistoryHeuristic m_historyHeuristic;
 	ordering::KillerHeuristic m_killerHeuristic;
+
+	const common::FastVector<common::FieldIndex>& wallSlides() const {
+		return m_wallSlides;
+	}
 
 private:
 	common::FastVector<common::PieceType> m_killedPieces;
