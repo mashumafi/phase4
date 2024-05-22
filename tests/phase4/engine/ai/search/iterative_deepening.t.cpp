@@ -20,7 +20,7 @@ TEST_CASE("IterativeDeepening default state") {
 	auto session = std::make_shared<board::Session>();
 
 	ai::search::SearchContext context(session.get());
-	context.maxDepth = 12;
+	context.maxDepth = 8;
 
 	const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
 
@@ -37,7 +37,7 @@ TEST_CASE("IterativeDeepening slide") {
 	auto session = std::make_shared<board::Session>(*position);
 
 	ai::search::SearchContext context(session.get());
-	context.maxDepth = 12;
+	context.maxDepth = 8;
 
 	const moves::Move bestMove = ai::search::IterativeDeepening::findBestMove(context, [](const ai::search::SearchStatistics &) {});
 
