@@ -17,7 +17,7 @@ public:
 	static constexpr int16_t FileB = 1;
 
 	static constexpr FieldIndex NORTH = { 0, 1 };
-	static constexpr FieldIndex EAST = { 1, 0 };
+	static constexpr FieldIndex EAST = { -1, 0 };
 	static constexpr FieldIndex SOUTH = -NORTH;
 	static constexpr FieldIndex WEST = -EAST;
 	static constexpr FieldIndex NorthEast = NORTH + EAST;
@@ -100,13 +100,13 @@ constexpr std::array<std::array<FieldIndex, 64>, 64> WallOperations::populateSli
 			const common::Bitboard landBB = SLIDE_FROM[landIndex];
 
 			if ((RIGHT & wallIndex.asBitboard()) == 0 && (wallIndex.east(2).asBitboard() & landBB) != 0) {
-				d = WEST * 2;
-			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & landBB) != 0) {
 				d = EAST * 2;
+			} else if ((LEFT & wallIndex.asBitboard()) == 0 && (wallIndex.west(2).asBitboard() & landBB) != 0) {
+				d = WEST * 2;
 			} else if ((TOP & wallIndex.asBitboard()) == 0 && (wallIndex.north(2).asBitboard() & landBB) != 0) {
-				d = SOUTH * 2;
-			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & landBB) != 0) {
 				d = NORTH * 2;
+			} else if ((BOTTOM & wallIndex.asBitboard()) == 0 && (wallIndex.south(2).asBitboard() & landBB) != 0) {
+				d = SOUTH * 2;
 			}
 
 			result[wallIndex][landIndex] = d;

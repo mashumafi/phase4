@@ -134,78 +134,83 @@ TEST_CASE("WallOperations slide to") {
 TEST_CASE("WallOperations slide direction") {
 	using namespace phase4::engine::common;
 
+	constexpr auto NORTH = WallOperations::NORTH * 2;
+	constexpr auto EAST = WallOperations::EAST * 2;
+	constexpr auto SOUTH = WallOperations::SOUTH * 2;
+	constexpr auto WEST = WallOperations::WEST * 2;
+
 	//                              WALLS       LANDING
-	CHECK(WallOperations::SLIDE_DIR[Square::H1][Square::H1.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::G1][Square::G1.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::F1][Square::F1.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::E1][Square::E1.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::D1][Square::D1.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::C1][Square::C1.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B1][Square::B1.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::A1][Square::A1.east(2)] == FieldIndex(-2, 0));
+	CHECK(WallOperations::SLIDE_DIR[Square::H1][Square::H1.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::G1][Square::G1.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::F1][Square::F1.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::E1][Square::E1.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::D1][Square::D1.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::C1][Square::C1.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B1][Square::B1.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::A1][Square::A1.east(2)] == EAST);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H2][Square::H2.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G2][Square::G2.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F2][Square::F2.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::E2][Square::E2.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::D2][Square::D2.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::C2][Square::C2.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B2][Square::B2.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::A2][Square::A2.north(2)] == FieldIndex(0, -2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H2][Square::H2.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G2][Square::G2.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F2][Square::F2.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::E2][Square::E2.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::D2][Square::D2.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::C2][Square::C2.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B2][Square::B2.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::A2][Square::A2.north(2)] == NORTH);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H3][Square::H3.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G3][Square::G3.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F3][Square::F3.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::E3][Square::E3.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::D3][Square::D3.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::C3][Square::C3.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B3][Square::B3.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::A3][Square::A3.north(2)] == FieldIndex(0, -2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H3][Square::H3.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G3][Square::G3.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F3][Square::F3.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::E3][Square::E3.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::D3][Square::D3.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::C3][Square::C3.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B3][Square::B3.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::A3][Square::A3.north(2)] == NORTH);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H4][Square::H4.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G4][Square::G4.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F4][Square::F4.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::E4][Square::E4.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::D4][Square::D4.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::C4][Square::C4.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::B4][Square::B4.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::A4][Square::A4.east(2)] == FieldIndex(-2, 0));
+	CHECK(WallOperations::SLIDE_DIR[Square::H4][Square::H4.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G4][Square::G4.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F4][Square::F4.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::E4][Square::E4.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::D4][Square::D4.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::C4][Square::C4.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::B4][Square::B4.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::A4][Square::A4.east(2)] == EAST);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H5][Square::H5.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G5][Square::G5.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F5][Square::F5.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::E5][Square::E5.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::D5][Square::D5.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::C5][Square::C5.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B5][Square::B5.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::A5][Square::A5.north(2)] == FieldIndex(0, -2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H5][Square::H5.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G5][Square::G5.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F5][Square::F5.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::E5][Square::E5.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::D5][Square::D5.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::C5][Square::C5.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B5][Square::B5.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::A5][Square::A5.north(2)] == NORTH);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H6][Square::H6.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::G6][Square::G6.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::F6][Square::F6.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::E6][Square::E6.north(2)] == FieldIndex(0, -2));
-	CHECK(WallOperations::SLIDE_DIR[Square::D6][Square::D6.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::C6][Square::C6.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B6][Square::B6.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::A6][Square::A6.south(2)] == FieldIndex(0, 2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H6][Square::H6.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::G6][Square::G6.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::F6][Square::F6.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::E6][Square::E6.north(2)] == NORTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::D6][Square::D6.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::C6][Square::C6.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B6][Square::B6.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::A6][Square::A6.south(2)] == SOUTH);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H7][Square::H7.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G7][Square::G7.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F7][Square::F7.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::E7][Square::E7.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::D7][Square::D7.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::C7][Square::C7.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B7][Square::B7.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::A7][Square::A7.south(2)] == FieldIndex(0, 2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H7][Square::H7.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G7][Square::G7.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F7][Square::F7.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::E7][Square::E7.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::D7][Square::D7.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::C7][Square::C7.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B7][Square::B7.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::A7][Square::A7.south(2)] == SOUTH);
 
-	CHECK(WallOperations::SLIDE_DIR[Square::H8][Square::H8.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::G8][Square::G8.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::F8][Square::F8.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::E8][Square::E8.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::D8][Square::D8.south(2)] == FieldIndex(0, 2));
-	CHECK(WallOperations::SLIDE_DIR[Square::C8][Square::C8.west(2)] == FieldIndex(2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::B8][Square::B8.east(2)] == FieldIndex(-2, 0));
-	CHECK(WallOperations::SLIDE_DIR[Square::A8][Square::A8.south(2)] == FieldIndex(0, 2));
+	CHECK(WallOperations::SLIDE_DIR[Square::H8][Square::H8.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::G8][Square::G8.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::F8][Square::F8.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::E8][Square::E8.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::D8][Square::D8.south(2)] == SOUTH);
+	CHECK(WallOperations::SLIDE_DIR[Square::C8][Square::C8.west(2)] == WEST);
+	CHECK(WallOperations::SLIDE_DIR[Square::B8][Square::B8.east(2)] == EAST);
+	CHECK(WallOperations::SLIDE_DIR[Square::A8][Square::A8.south(2)] == SOUTH);
 }
 
 TEST_CASE("WallOperations slide square") {

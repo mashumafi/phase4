@@ -42,7 +42,7 @@ public:
 			}
 		};
 
-		common::FastVector<Movement, 5> moved;
+		common::FastVector<Movement, 6> moved;
 
 		std::optional<PieceAndSquare> added;
 
@@ -376,17 +376,18 @@ public:
 
 		Bitboard walls = position.m_walls;
 		if (wallMove.offset() >= 0)
-			walls >>= wallMove.offset();
+			walls <<= wallMove.offset();
 		else
-			walls <<= -wallMove.offset();
+			walls >>= -wallMove.offset();
+		assert(walls > 0);
 
 		Bitboard original = walls;
 		while (original != 0) {
 			const Square from(original.fastBitScan());
-			const Square to(from + wallMove.offset());
-			result.moves.push_back({ from, to });
+			const Square to(from - wallMove.offset());
 			if (auto pieceResult = position.getPiece(from)) {
 				const auto [resultColor, resultType] = *pieceResult;
+				result.moves.push_back({ from, to });
 				position.movePiece(resultColor, resultType, from, to);
 			}
 
