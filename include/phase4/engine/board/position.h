@@ -167,7 +167,7 @@ public:
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
-	std::optional<std::tuple<common::PieceColor, common::PieceType>> getPiece(common::Square fieldIndex) {
+	std::optional<std::tuple<common::PieceColor, common::PieceType>> getPiece(common::Square fieldIndex) const {
 		using namespace common;
 
 		const PieceType pieceType = m_pieceTable[fieldIndex];

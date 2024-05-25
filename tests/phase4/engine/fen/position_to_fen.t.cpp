@@ -1,5 +1,5 @@
-#include <phase4/engine/fen/position_to_fen.h>
 #include <phase4/engine/fen/fen_to_position.h>
+#include <phase4/engine/fen/position_to_fen.h>
 
 #include <phase4/engine/board/position.h>
 #include <phase4/engine/board/session.h>

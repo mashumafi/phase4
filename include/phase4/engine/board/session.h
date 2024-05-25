@@ -208,7 +208,7 @@ public:
 	ordering::HistoryHeuristic m_historyHeuristic;
 	ordering::KillerHeuristic m_killerHeuristic;
 
-	const common::FastVector<common::FieldIndex>& wallSlides() const {
+	const common::FastVector<common::FieldIndex> &wallSlides() const {
 		return m_wallSlides;
 	}
 

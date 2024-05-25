@@ -19,23 +19,6 @@ if [ ! -z "$files" ]; then
     clang-format --Wno-error=unknown -i $files
 fi
 
-# Fix copyright headers, but not all files get them.
-for f in $files; do
-    if [[ "$f" == *"inc" && "$f" != *"compat.inc" ]]; then
-        continue
-    elif [[ "$f" == *"glsl" ]]; then
-        continue
-    elif [[ "$f" == "platform/android/java/lib/src/org/godotengine/godot/gl/GLSurfaceView"* ]]; then
-        continue
-    elif [[ "$f" == "platform/android/java/lib/src/org/godotengine/godot/gl/EGLLogWrapper"* ]]; then
-        continue
-    elif [[ "$f" == "platform/android/java/lib/src/org/godotengine/godot/utils/ProcessPhoenix"* ]]; then
-        continue
-    fi
-
-    python misc/scripts/copyright_headers.py "$f"
-done
-
 diff=$(git diff --color)
 
 # If no diff has been generated all is OK, clean up, and exit.
