@@ -13,27 +13,27 @@ class PositionState {
 public:
 	static const Position DEFAULT;
 
-	static constexpr void setDefaultState(Position &position);
+	static constexpr void setDefaultState(Position &position) noexcept;
 
-	static constexpr void recalculateEvaluationDependentValues(Position &position);
+	static constexpr void recalculateEvaluationDependentValues(Position &position) noexcept;
 
 	/// @brief Calculates the piece table based on piece masks
 	/// @param position the Position to update and compute from
-	static constexpr void calculatePieceTable(Position &position);
+	static constexpr void calculatePieceTable(Position &position) noexcept;
 
-	static constexpr ZobristHashing calculateHash(const Position &position);
+	static constexpr ZobristHashing calculateHash(const Position &position) noexcept;
 
-	static constexpr ZobristHashing calculatePawnHash(const Position &position);
+	static constexpr ZobristHashing calculatePawnHash(const Position &position) noexcept;
 
 private:
-	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color);
+	static constexpr int32_t calculateMaterial(const Position &position, common::PieceColor color) noexcept;
 
-	static constexpr int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase);
+	static constexpr int32_t calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) noexcept;
 
-	static constexpr Position makeDefaultPosition();
+	static constexpr Position makeDefaultPosition() noexcept;
 };
 
-inline constexpr void PositionState::calculatePieceTable(Position &position) {
+inline constexpr void PositionState::calculatePieceTable(Position &position) noexcept {
 	for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 		for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 			common::Bitboard bitboard = position.colorPieceMask(common::PieceColor::WHITE, pieceIndex) | position.colorPieceMask(common::PieceColor::BLACK, pieceIndex);
@@ -45,7 +45,7 @@ inline constexpr void PositionState::calculatePieceTable(Position &position) {
 	}
 }
 
-inline constexpr int32_t PositionState::calculateMaterial(const Position &position, common::PieceColor color) {
+inline constexpr int32_t PositionState::calculateMaterial(const Position &position, common::PieceColor color) noexcept {
 	int32_t material = 0;
 
 	for (common::PieceType piece = common::PieceType::PAWN; piece != common::PieceType::INVALID; ++piece) {
@@ -55,7 +55,7 @@ inline constexpr int32_t PositionState::calculateMaterial(const Position &positi
 	return material;
 }
 
-inline constexpr int32_t PositionState::calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) {
+inline constexpr int32_t PositionState::calculatePosition(const Position &position, common::PieceColor color, common::GamePhase phase) noexcept {
 	int32_t result = 0;
 
 	for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
@@ -72,7 +72,7 @@ inline constexpr int32_t PositionState::calculatePosition(const Position &positi
 	return result;
 }
 
-inline constexpr void PositionState::recalculateEvaluationDependentValues(Position &position) {
+inline constexpr void PositionState::recalculateEvaluationDependentValues(Position &position) noexcept {
 	position.material(common::PieceColor::WHITE) = calculateMaterial(position, common::PieceColor::WHITE);
 	position.material(common::PieceColor::BLACK) = calculateMaterial(position, common::PieceColor::BLACK);
 
@@ -82,7 +82,7 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 	position.m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::ENDING);
 }
 
-inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) {
+inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) noexcept {
 	using namespace common;
 
 	ZobristHashing hash(0);
@@ -129,7 +129,7 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 	return hash;
 }
 
-inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position &position) {
+inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position &position) noexcept {
 	using namespace common;
 
 	ZobristHashing pawnHash(0);
@@ -148,7 +148,7 @@ inline constexpr ZobristHashing PositionState::calculatePawnHash(const Position 
 	return pawnHash;
 }
 
-inline constexpr void PositionState::setDefaultState(Position &position) {
+inline constexpr void PositionState::setDefaultState(Position &position) noexcept {
 	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::PAWN) = 65280;
 	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::ROOK) = 129;
 	position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KNIGHT) = 66;
@@ -185,13 +185,13 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 	recalculateEvaluationDependentValues(position);
 }
 
-inline constexpr Position PositionState::makeDefaultPosition() {
+inline constexpr Position PositionState::makeDefaultPosition() noexcept {
 	Position position;
 	setDefaultState(position);
 	return position;
 }
 
-inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
+inline const Position PositionState::DEFAULT = makeDefaultPosition();
 
 } //namespace phase4::engine::board
 
