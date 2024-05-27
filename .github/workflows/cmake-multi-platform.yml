@@ -32,15 +32,34 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            arcitecture: x86
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            arcitecture: x64
+
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            arcitecture: x86
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            arcitecture: x64
+
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            arcitecture: x86
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            arcitecture: x64
+
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
+            arcitecture: x64
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -71,6 +90,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -A {matrix.architecture}
         -S ${{ github.workspace }}
       timeout-minutes: 4
 
