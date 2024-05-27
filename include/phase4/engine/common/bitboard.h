@@ -163,7 +163,11 @@ inline constexpr Bitboard Bitboard::MAX(0b11111111'11111111'11111111'11111111'11
 	// GCC or Clang
 	return __builtin_popcountll(m_bitset);
 #elif defined(_MSC_VER)
+#ifdef _WIN64
 	return static_cast<uint8_t>(__popcnt64(m_bitset));
+#else
+	return static_cast<uint8_t>(__popcnt(static_cast<uint32_t>(m_bitset)) + __popcnt(static_cast<uint32_t>(m_bitset >> 32)));
+#endif
 #else
 	static_assert(false, "Define USE_SLOW_BITSET_COUNT to use internal implementation.")
 #endif
