@@ -32,34 +32,34 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            arcitecture: x86
+            architecture: x86
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            arcitecture: x64
+            architecture: x64
 
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            arcitecture: x86
+            architecture: x86
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            arcitecture: x64
+            architecture: x64
 
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            arcitecture: x86
+            architecture: x86
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            arcitecture: x64
+            architecture: x64
 
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
-            arcitecture: x64
+            architecture: x64
         exclude:
           - os: windows-latest
             c_compiler: gcc
