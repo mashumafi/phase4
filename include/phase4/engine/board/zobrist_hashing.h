@@ -50,7 +50,7 @@ public:
 		std::array<uint64_t, BOARD_SIZE> m_wallHash;
 	};
 
-	inline constexpr ZobristHashing(uint64_t hash = 0);
+	inline constexpr ZobristHashing(uint64_t hash = 0) noexcept;
 
 	[[nodiscard]] constexpr ZobristHashing movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) const noexcept;
 
@@ -91,7 +91,7 @@ constexpr ZobristHashing::Keys::Keys(common::Random random) :
 
 inline constexpr ZobristHashing::Keys ZobristHashing::G_KEYS(common::Random(0b11001011111010010010011011101101100101111101001001001101110110));
 
-inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) :
+inline constexpr ZobristHashing::ZobristHashing(uint64_t hash) noexcept :
 		m_hash(hash) {
 }
 

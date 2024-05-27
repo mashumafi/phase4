@@ -14,14 +14,14 @@ public:
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
-	[[nodiscard]] constexpr int8_t get_raw_value() const;
+	[[nodiscard]] constexpr int8_t get_raw_value() const noexcept;
 
 	/// @brief inverts the color
 	/// @return the inverted color
 	[[nodiscard]] constexpr inline PieceColor invert() const noexcept;
 
-	constexpr PieceColor(PieceColor const &that) = default;
-	constexpr PieceColor &operator=(const PieceColor &that) = default;
+	constexpr PieceColor(PieceColor const &that) noexcept = default;
+	constexpr PieceColor &operator=(const PieceColor &that) noexcept = default;
 
 	constexpr PieceColor(PieceColor &&that) noexcept = default;
 	constexpr PieceColor &operator=(PieceColor &&that) noexcept = default;
@@ -34,17 +34,17 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, PieceColor color);
 
 private:
-	constexpr PieceColor(uint64_t value);
-	constexpr PieceColor &operator=(uint64_t value);
+	constexpr PieceColor(uint64_t value) noexcept;
+	constexpr PieceColor &operator=(uint64_t value) noexcept;
 
 	int8_t m_value;
 };
 
-constexpr PieceColor::PieceColor(uint64_t value) :
+constexpr PieceColor::PieceColor(uint64_t value) noexcept :
 		m_value{ static_cast<int8_t>(value) } {
 }
 
-constexpr PieceColor &PieceColor::operator=(uint64_t value) {
+constexpr PieceColor &PieceColor::operator=(uint64_t value) noexcept {
 	m_value = static_cast<int8_t>(value);
 	return *this;
 }
@@ -53,7 +53,7 @@ inline constexpr PieceColor PieceColor::WHITE = 0;
 inline constexpr PieceColor PieceColor::BLACK = 1;
 inline constexpr PieceColor PieceColor::INVALID = 2;
 
-[[nodiscard]] constexpr int8_t PieceColor::get_raw_value() const {
+[[nodiscard]] constexpr int8_t PieceColor::get_raw_value() const noexcept {
 	return m_value;
 }
 
