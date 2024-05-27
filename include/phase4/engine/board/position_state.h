@@ -191,7 +191,7 @@ inline constexpr Position PositionState::makeDefaultPosition() noexcept {
 	return position;
 }
 
-inline const Position PositionState::DEFAULT = makeDefaultPosition();
+inline constexpr Position PositionState::DEFAULT = makeDefaultPosition();
 
 } //namespace phase4::engine::board
 
