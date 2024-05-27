@@ -20,8 +20,8 @@ public:
 	/// @return the inverted color
 	[[nodiscard]] constexpr inline PieceColor invert() const noexcept;
 
-	constexpr PieceColor(PieceColor const &that) = default;
-	constexpr PieceColor &operator=(const PieceColor &that) = default;
+	constexpr PieceColor(PieceColor const &that) noexcept = default;
+	constexpr PieceColor &operator=(const PieceColor &that) noexcept = default;
 
 	constexpr PieceColor(PieceColor &&that) noexcept = default;
 	constexpr PieceColor &operator=(PieceColor &&that) noexcept = default;

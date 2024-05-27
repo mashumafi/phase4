@@ -27,11 +27,11 @@ namespace phase4::engine::board {
 
 class Position {
 public:
-	ZobristHashing m_hash;
-	ZobristHashing m_pawnHash;
+	ZobristHashing m_hash = ZobristHashing(0);
+	ZobristHashing m_pawnHash = ZobristHashing(0);
 
 private:
-	std::array<std::array<common::Bitboard, 6>, 2> m_colorPieceMasks;
+	std::array<std::array<common::Bitboard, 6>, 2> m_colorPieceMasks = {};
 
 public:
 	inline constexpr common::Bitboard &colorPieceMask(common::PieceColor color, common::PieceType piece) {
@@ -52,8 +52,8 @@ public:
 		return m_occupancyByColor[color.get_raw_value()];
 	}
 
-	common::Bitboard m_occupancySummary;
-	common::Bitboard m_enPassant;
+	common::Bitboard m_occupancySummary = common::Bitboard(0);
+	common::Bitboard m_enPassant = common::Bitboard(0);
 	common::Castling m_castling = common::Castling::NONE;
 	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
 	uint16_t m_movesCount = 1;

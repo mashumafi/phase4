@@ -23,10 +23,10 @@ public:
 	/// @return the raw internal value
 	[[nodiscard]] constexpr uint8_t get_raw_value() const;
 
-	constexpr Castling();
+	constexpr Castling() noexcept;
 
-	constexpr Castling(Castling const &that) = default;
-	constexpr Castling &operator=(const Castling &that) = default;
+	constexpr Castling(Castling const &that) noexcept = default;
+	constexpr Castling &operator=(const Castling &that) noexcept = default;
 
 	constexpr Castling(Castling &&that) noexcept = default;
 	constexpr Castling &operator=(Castling &&that) noexcept = default;
