@@ -21,7 +21,7 @@ public:
 
 	/// @brief gets the raw internal value
 	/// @return the raw internal value
-	[[nodiscard]] constexpr uint8_t get_raw_value() const;
+	[[nodiscard]] constexpr uint8_t get_raw_value() const noexcept;
 
 	constexpr Castling() noexcept;
 
@@ -47,22 +47,22 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, Castling castling);
 
 private:
-	constexpr Castling(uint64_t value);
-	constexpr Castling &operator=(uint64_t value);
+	constexpr Castling(uint64_t value) noexcept;
+	constexpr Castling &operator=(uint64_t value)noexcept;
 
 	uint8_t m_value;
 };
 
-constexpr Castling::Castling(uint64_t value) :
+constexpr Castling::Castling(uint64_t value) noexcept :
 		m_value{ static_cast<uint8_t>(value) } {
 }
 
-constexpr Castling &Castling::operator=(uint64_t value) {
+constexpr Castling &Castling::operator=(uint64_t value) noexcept {
 	m_value = static_cast<uint8_t>(value);
 	return *this;
 }
 
-constexpr Castling::Castling() :
+constexpr Castling::Castling() noexcept :
 		Castling(0) {
 }
 
@@ -92,7 +92,7 @@ inline constexpr Castling Castling::WHITE_CASTLING = Castling::WHITE_SHORT | Cas
 inline constexpr Castling Castling::BLACK_CASTLING = Castling::BLACK_SHORT | Castling::BLACK_LONG;
 inline constexpr Castling Castling::EVERYTHING = Castling::WHITE_CASTLING | Castling::BLACK_CASTLING;
 
-[[nodiscard]] constexpr uint8_t Castling::get_raw_value() const {
+[[nodiscard]] constexpr uint8_t Castling::get_raw_value() const noexcept {
 	return m_value;
 }
 
