@@ -165,7 +165,7 @@ inline constexpr void PositionState::setDefaultState(Position &position) {
 
 	position.occupancy(common::PieceColor::WHITE) = 65535;
 	position.occupancy(common::PieceColor::BLACK) = 18446462598732840960ULL;
-	position.m_occupancySummary = position.occupancy(common::PieceColor::WHITE) | position.occupancy(common::PieceColor::BLACK) | position.m_walls;
+	position.m_occupancySummary = position.occupancy(common::PieceColor::WHITE) | position.occupancy(common::PieceColor::BLACK);
 
 	position.m_enPassant = 0;
 	position.m_castling = common::Castling::EVERYTHING;
