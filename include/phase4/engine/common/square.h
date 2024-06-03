@@ -126,6 +126,8 @@ public:
 	inline constexpr Square south(int8_t scalar) const noexcept;
 	inline constexpr Square west(int8_t scalar) const noexcept;
 
+	inline constexpr Square flip() const noexcept;
+
 	inline constexpr Square middle(Square that) const noexcept;
 
 	inline constexpr bool operator!=(Square piece) const;
@@ -269,6 +271,10 @@ inline constexpr Square Square::south(int8_t scalar) const noexcept {
 
 inline constexpr Square Square::west(int8_t scalar) const noexcept {
 	return Square(m_value + scalar);
+}
+
+inline constexpr Square Square::flip() const noexcept {
+	return Square(63 - m_value);
 }
 
 inline constexpr Square Square::middle(Square that) const noexcept {

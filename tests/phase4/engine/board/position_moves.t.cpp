@@ -7,6 +7,47 @@
 
 #include <doctest/doctest.h>
 
+TEST_CASE("Position moves valid default") {
+	using namespace phase4::engine::board;
+	using namespace phase4::engine::moves;
+	using namespace phase4::engine::fen;
+
+	auto position = PositionState::DEFAULT;
+
+	Moves moves;
+	PositionMoves::getValidMoves(position, moves);
+	CHECK(moves.size() == 20);
+	CHECK(PositionMoves::findRealMove(position, Move("a2a3")));
+	CHECK(PositionMoves::findRealMove(position, Move("a2a4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("b2b3")));
+	CHECK(PositionMoves::findRealMove(position, Move("b2b4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("c2c3")));
+	CHECK(PositionMoves::findRealMove(position, Move("c2c4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("d2d3")));
+	CHECK(PositionMoves::findRealMove(position, Move("d2d4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("e2e3")));
+	CHECK(PositionMoves::findRealMove(position, Move("e2e4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("f2f3")));
+	CHECK(PositionMoves::findRealMove(position, Move("f2f4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("g2g3")));
+	CHECK(PositionMoves::findRealMove(position, Move("g2g4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("h2h3")));
+	CHECK(PositionMoves::findRealMove(position, Move("h2h4")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("g1h3")));
+	CHECK(PositionMoves::findRealMove(position, Move("g1f3")));
+
+	CHECK(PositionMoves::findRealMove(position, Move("b1c3")));
+	CHECK(PositionMoves::findRealMove(position, Move("b1a3")));
+}
+
 TEST_CASE("Position moves valid rn2bq2/pp2pp2/2**nrkb/2**pppp/2PP2PP/2BQ2NR/PPPP4/RNKB4 w - - 0 1") {
 	using namespace phase4::engine::board;
 	using namespace phase4::engine::moves;
@@ -55,4 +96,44 @@ TEST_CASE("Position moves valid rn2bq2/pp2pp2/2**nrkb/2**pppp/2PP2PP/2BQ2NR/PPPP
 
 	CHECK(PositionMoves::findRealMove(*position, Move("h3h2")));
 	CHECK(PositionMoves::findRealMove(*position, Move("h3h1")));
+}
+
+TEST_CASE("Position moves valid rnbqkbnr/pppppppp/8/8/2**4/2**4/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+	using namespace phase4::engine::board;
+	using namespace phase4::engine::moves;
+	using namespace phase4::engine::fen;
+
+	auto position = FenToPosition::parse("rnbqkbnr/pppppppp/8/8/2**4/2**4/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	REQUIRE(position);
+	CHECK(position->m_walls != 0);
+	CHECK((position->m_occupancySummary & phase4::engine::common::Square::C3.asBitboard()) != 0);
+	CHECK((position->m_occupancySummary & phase4::engine::common::Square::C4.asBitboard()) != 0);
+	CHECK((position->m_occupancySummary & phase4::engine::common::Square::D3.asBitboard()) != 0);
+	CHECK((position->m_occupancySummary & phase4::engine::common::Square::D4.asBitboard()) != 0);
+
+	Moves moves;
+	PositionMoves::getValidMoves(*position, moves);
+	CHECK(moves.size() == 15);
+	CHECK(PositionMoves::findRealMove(*position, Move("a2a3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("a2a4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("b2b3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("b2b4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("e2e3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("e2e4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("f2f3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("f2f4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("g2g3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("g2g4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("h2h3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("h2h4")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("g1h3")));
+	CHECK(PositionMoves::findRealMove(*position, Move("g1f3")));
+
+	CHECK(PositionMoves::findRealMove(*position, Move("b1a3")));
 }
