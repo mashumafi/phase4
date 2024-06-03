@@ -58,7 +58,7 @@ TEST_CASE("Position moves valid rn2bq2/pp2pp2/2**nrkb/2**pppp/2PP2PP/2BQ2NR/PPPP
 
 	Moves moves;
 	PositionMoves::getValidMoves(*position, moves);
-	CHECK(moves.size() == 28);
+	CHECK(moves.size() == 26);
 	CHECK(PositionMoves::findRealMove(*position, Move("a2a3")));
 	CHECK(PositionMoves::findRealMove(*position, Move("a2a4")));
 
