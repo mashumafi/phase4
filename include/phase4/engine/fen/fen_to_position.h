@@ -122,6 +122,7 @@ private:
 				} else {
 					position.m_walls = common::WallOperations::SLIDE_FROM[square];
 				}
+				position.m_occupancySummary |= square.asBitboard();
 				field += common::FieldIndex(1, 0);
 			} else if (c == '/') {
 				field = common::FieldIndex(0, field.y - 1);
