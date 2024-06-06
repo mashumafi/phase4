@@ -107,3 +107,14 @@ TEST_CASE("FEN input should match output") {
 		testTransform("rnbqkbnr/pppppppp/8/8/4**2/4**2/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 }
+
+TEST_CASE("FenToPosition should not crash") {
+	using namespace phase4::engine::fen;
+
+	CHECK_FALSE(FenToPosition::parse(""));
+	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/4**4/4**4/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/44**/44**/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/4PP4/4pp4/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/44PP/44pp/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/44/44/PPPPPPPP/RNBQKBNR/7P w KQkq - 0 1"));
+}

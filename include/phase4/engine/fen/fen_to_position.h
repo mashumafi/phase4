@@ -20,7 +20,7 @@ namespace phase4::engine::fen {
 
 class FenToPosition {
 public:
-	static std::optional<board::Position> parse(std::string_view fen) {
+	static std::optional<board::Position> parse(std::string_view fen) noexcept {
 		using namespace common;
 
 		const size_t spacePos = fen.find(' ');
@@ -77,20 +77,31 @@ public:
 		}
 
 		board::Position result;
-		const PieceColor currentColor = parseSideToMove(sideToMove);
-
-		if (!parsePieces(pieces, result))
+		if (!parseSideToMove(sideToMove, result)) {
 			return {};
+		}
 
-		parseCastlingRights(castlingRights, result);
-		parseEnPassantState(enPassantSquare, result);
+		if (!parsePieces(pieces, result)) {
+			return {};
+		}
+
+		if (!parseCastlingRights(castlingRights, result)) {
+			return {};
+		}
+
+		if (!parseEnPassantState(enPassantSquare, result)) {
+			return {};
+		}
+
+		if (!validated(result)) {
+			return {};
+		}
 
 		board::PositionState::recalculateEvaluationDependentValues(result);
 		board::PositionState::calculatePieceTable(result);
 
 		result.movesCount() = fullmoveNumber;
 		result.irreversibleMovesCount() = halfmoveClockNumber;
-		result.colorToMove() = currentColor;
 		result.hash() = board::PositionState::calculateHash(result);
 		result.pawnHash() = board::PositionState::calculatePawnHash(result);
 
@@ -101,7 +112,7 @@ public:
 	}
 
 private:
-	static bool parsePieces(std::string_view pieces, board::Position &position) {
+	static bool parsePieces(std::string_view pieces, board::Position &position) noexcept {
 		common::FieldIndex field(0, 7);
 
 		for (size_t i = 0; i < pieces.size(); ++i) {
@@ -114,11 +125,18 @@ private:
 				position.addPiece(color, *piece, common::Square(field));
 				field += common::FieldIndex(1, 0);
 			} else if (std::isdigit(c)) {
+				// Numbers should be 0 to 8
+				if (c < '0' || '8' < c) {
+					return false;
+				}
 				field += common::FieldIndex(c - '0', 0);
 			} else if (c == '*') {
 				const common::Square square(field);
 				if (position.walls() != 0) {
-					assert((square.asBitboard() & position.walls()) != 0);
+					// Walls should be adjacent
+					if ((square.asBitboard() & position.walls()) == 0) {
+						return false;
+					}
 				} else {
 					position.walls() = common::WallOperations::SLIDE_FROM[square];
 				}
@@ -127,41 +145,67 @@ private:
 			} else if (c == '/') {
 				field = common::FieldIndex(0, field.y - 1);
 			}
+
+			// Handle out of bounds
+			if (field.x > 8 || field.y < 0) {
+				return false;
+			}
 		}
 
 		return true;
 	}
 
-	static common::PieceColor parseSideToMove(std::string_view sideToMove) {
-		return sideToMove == "w" ? common::PieceColor::WHITE : common::PieceColor::BLACK;
-	}
-
-	static void parseCastlingRights(std::string_view castlingRights, board::Position &position) {
-		if (castlingRights.find('K') != std::string_view::npos) {
-			position.castling() |= common::Castling::WHITE_SHORT;
+	static bool parseSideToMove(std::string_view sideToMove, board::Position &position) noexcept {
+		if (sideToMove.size() != 1) {
+			return false;
 		}
-
-		if (castlingRights.find('Q') != std::string_view::npos) {
-			position.castling() |= common::Castling::WHITE_LONG;
-		}
-
-		if (castlingRights.find('k') != std::string_view::npos) {
-			position.castling() |= common::Castling::BLACK_SHORT;
-		}
-
-		if (castlingRights.find('q') != std::string_view::npos) {
-			position.castling() |= common::Castling::BLACK_LONG;
+		switch (sideToMove[0]) {
+			case 'w':
+				position.colorToMove() = common::PieceColor::WHITE;
+				return true;
+			case 'b':
+				position.colorToMove() = common::PieceColor::BLACK;
+				return true;
+			default:
+				return false;
 		}
 	}
 
-	static void parseEnPassantState(std::string_view enPassantSquare, board::Position &position) {
+	static bool parseCastlingRights(std::string_view castlingRights, board::Position &position) {
+		for (size_t i = 0; i < castlingRights.size(); ++i) {
+			switch (castlingRights[i]) {
+				case 'K':
+					position.castling() |= common::Castling::WHITE_SHORT;
+					break;
+				case 'Q':
+					position.castling() |= common::Castling::WHITE_LONG;
+					break;
+				case 'k':
+					position.castling() |= common::Castling::BLACK_SHORT;
+					break;
+				case 'q':
+					position.castling() |= common::Castling::BLACK_LONG;
+					break;
+				case '-':
+					if (castlingRights.empty()) {
+						return false;
+					}
+			}
+		}
+
+		return true;
+	}
+
+	static bool parseEnPassantState(std::string_view enPassantSquare, board::Position &position) noexcept {
 		if (enPassantSquare != "-") {
 			common::Square square(enPassantSquare);
 			position.enPassant() = square.asBitboard();
 		}
+
+		return true;
 	}
 
-	static std::optional<common::PieceType> convertToPiece(char c) {
+	static std::optional<common::PieceType> convertToPiece(char c) noexcept {
 		switch (std::tolower(c)) {
 			case 'p':
 				return common::PieceType::PAWN;
@@ -180,8 +224,16 @@ private:
 		return {};
 	}
 
-	static common::PieceColor convertToColor(char c) {
+	static common::PieceColor convertToColor(char c) noexcept {
 		return std::isupper(c) ? common::PieceColor::WHITE : common::PieceColor::BLACK;
+	}
+
+	static bool validated(board::Position &position) {
+		// TODO: Fix invalid castling flags
+		// TODO: Fail if king is missing
+		// TODO: Fail if king is in check
+		// TODO: Check enpassant makes sense
+		return true;
 	}
 };
 
