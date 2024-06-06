@@ -197,22 +197,22 @@ public:
 		m_position.clearWalls();
 	}
 
-private:
-	Position m_position;
-
-public:
 	inline const Position &position() const {
 		return m_position;
 	}
-	transposition::HashTables<> m_hashTables;
-	ordering::HistoryHeuristic m_historyHeuristic;
-	ordering::KillerHeuristic m_killerHeuristic;
 
 	const common::FastVector<common::FieldIndex> &wallSlides() const {
 		return m_wallSlides;
 	}
 
+	transposition::HashTables<> m_hashTables;
+	ordering::HistoryHeuristic m_historyHeuristic;
+	ordering::KillerHeuristic m_killerHeuristic;
+
 private:
+	Position m_position;
+
+	// History
 	common::FastVector<common::PieceType> m_killedPieces;
 	common::FastVector<common::Bitboard> m_enPassants;
 	common::FastVector<common::Castling> m_castlings;
