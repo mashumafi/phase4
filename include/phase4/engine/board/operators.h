@@ -64,11 +64,11 @@ public:
 
 	static inline bool isMoveLegal(const Position &position, moves::Move move) {
 		// Check if that color has a piece at the `move.from()` square
-		if (unlikely(((move.from().asBitboard()) & position.occupancy(position.m_colorToMove)) == 0)) {
+		if (unlikely(((move.from().asBitboard()) & position.occupancy(position.colorToMove())) == 0)) {
 			return false;
 		}
 
-		common::PieceType fromPiece = position.m_pieceTable[move.from().get_raw_value()];
+		common::PieceType fromPiece = position.pieceTable(move.from());
 		switch (fromPiece.get_raw_value()) {
 			case common::PieceType::PAWN.get_raw_value():
 				return operators::PawnOperator::isMoveLegal(position, move);

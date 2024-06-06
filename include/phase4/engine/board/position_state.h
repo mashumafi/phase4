@@ -38,7 +38,7 @@ inline constexpr void PositionState::calculatePieceTable(Position &position) noe
 		for (common::PieceType pieceIndex = common::PieceType::PAWN; pieceIndex != common::PieceType::INVALID; ++pieceIndex) {
 			common::Bitboard bitboard = position.colorPieceMask(common::PieceColor::WHITE, pieceIndex) | position.colorPieceMask(common::PieceColor::BLACK, pieceIndex);
 			if ((bitboard & fieldIndex.asBitboard()) != 0) {
-				position.m_pieceTable[fieldIndex] = pieceIndex;
+				position.pieceTable(fieldIndex) = pieceIndex;
 				break;
 			}
 		}
@@ -76,10 +76,10 @@ inline constexpr void PositionState::recalculateEvaluationDependentValues(Positi
 	position.material(common::PieceColor::WHITE) = calculateMaterial(position, common::PieceColor::WHITE);
 	position.material(common::PieceColor::BLACK) = calculateMaterial(position, common::PieceColor::BLACK);
 
-	position.m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::OPENING);
-	position.m_positionEval[common::PieceColor::WHITE.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::ENDING);
-	position.m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::OPENING] = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::OPENING);
-	position.m_positionEval[common::PieceColor::BLACK.get_raw_value()][common::GamePhase::ENDING] = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::ENDING);
+	position.positionEval(common::PieceColor::WHITE, common::GamePhase::OPENING) = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::OPENING);
+	position.positionEval(common::PieceColor::WHITE, common::GamePhase::ENDING) = calculatePosition(position, common::PieceColor::WHITE, common::GamePhase::ENDING);
+	position.positionEval(common::PieceColor::BLACK, common::GamePhase::OPENING) = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::OPENING);
+	position.positionEval(common::PieceColor::BLACK, common::GamePhase::ENDING) = calculatePosition(position, common::PieceColor::BLACK, common::GamePhase::ENDING);
 }
 
 inline constexpr ZobristHashing PositionState::calculateHash(const Position &position) noexcept {
@@ -100,29 +100,29 @@ inline constexpr ZobristHashing PositionState::calculateHash(const Position &pos
 		}
 	}
 
-	if ((position.m_castling & Castling::WHITE_SHORT) != Castling::NONE) {
+	if ((position.castling() & Castling::WHITE_SHORT) != Castling::NONE) {
 		hash = hash.toggleCastlingFlag(Castling::WHITE_SHORT);
 	}
-	if ((position.m_castling & Castling::WHITE_LONG) != Castling::NONE) {
+	if ((position.castling() & Castling::WHITE_LONG) != Castling::NONE) {
 		hash = hash.toggleCastlingFlag(Castling::WHITE_LONG);
 	}
-	if ((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE) {
+	if ((position.castling() & Castling::BLACK_SHORT) != Castling::NONE) {
 		hash = hash.toggleCastlingFlag(Castling::BLACK_SHORT);
 	}
-	if ((position.m_castling & Castling::BLACK_LONG) != Castling::NONE) {
+	if ((position.castling() & Castling::BLACK_LONG) != Castling::NONE) {
 		hash = hash.toggleCastlingFlag(Castling::BLACK_LONG);
 	}
 
-	if (position.m_enPassant != 0) {
-		uint8_t fieldIndex = position.m_enPassant.bitScan();
+	if (position.enPassant() != 0) {
+		uint8_t fieldIndex = position.enPassant().bitScan();
 		hash = hash.toggleEnPassant(fieldIndex % 8);
 	}
 
-	if (position.m_walls > 0) {
-		hash = hash.slowToggleWalls(position.m_walls);
+	if (position.walls() > 0) {
+		hash = hash.slowToggleWalls(position.walls());
 	}
 
-	if (position.m_colorToMove == PieceColor::BLACK) {
+	if (position.colorToMove() == PieceColor::BLACK) {
 		hash = hash.changeSide();
 	}
 
@@ -165,22 +165,22 @@ inline constexpr void PositionState::setDefaultState(Position &position) noexcep
 
 	position.occupancy(common::PieceColor::WHITE) = 65535;
 	position.occupancy(common::PieceColor::BLACK) = 18446462598732840960ULL;
-	position.m_occupancySummary = position.occupancy(common::PieceColor::WHITE) | position.occupancy(common::PieceColor::BLACK);
+	position.occupancySummary() = position.occupancy(common::PieceColor::WHITE) | position.occupancy(common::PieceColor::BLACK);
 
-	position.m_enPassant = 0;
-	position.m_castling = common::Castling::EVERYTHING;
-	position.m_colorToMove = common::PieceColor::WHITE;
-	position.m_movesCount = 1;
-	position.m_irreversibleMovesCount = 0;
-	position.m_nullMoves = 0;
+	position.enPassant() = 0;
+	position.castling() = common::Castling::EVERYTHING;
+	position.colorToMove() = common::PieceColor::WHITE;
+	position.movesCount() = 1;
+	position.irreversibleMovesCount() = 0;
+	position.nullMoves() = 0;
 
-	position.m_castlingDone[common::PieceColor::WHITE.get_raw_value()] = false;
-	position.m_castlingDone[common::PieceColor::BLACK.get_raw_value()] = false;
+	position.castlingDone(common::PieceColor::WHITE) = false;
+	position.castlingDone(common::PieceColor::BLACK) = false;
 
 	calculatePieceTable(position);
 
-	position.m_hash = calculateHash(position);
-	position.m_pawnHash = calculatePawnHash(position);
+	position.hash() = calculateHash(position);
+	position.pawnHash() = calculatePawnHash(position);
 
 	recalculateEvaluationDependentValues(position);
 }

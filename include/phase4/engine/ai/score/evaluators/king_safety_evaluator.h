@@ -40,7 +40,7 @@ private:
 
 		int32_t pawnShieldOpeningScore = 0;
 		int32_t openFilesNextToKingScore = 0;
-		if (position.m_castlingDone[color.get_raw_value()]) {
+		if (position.castlingDone(color)) {
 			const common::Bitboard pawnsNearKing = fieldsAroundKing & position.colorPieceMask(color, common::PieceType::PAWN);
 			const int32_t pawnShield = pawnsNearKing.fastCount();
 

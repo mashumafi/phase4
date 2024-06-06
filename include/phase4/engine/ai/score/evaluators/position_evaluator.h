@@ -20,8 +20,8 @@ public:
 	}
 
 	static inline int32_t evaluate(const board::Position &position, common::PieceColor color, int32_t openingPhase, int32_t endingPhase) {
-		const int32_t positionOpeningScore = position.m_positionEval[color.get_raw_value()][common::GamePhase::OPENING];
-		const int32_t positionEndingScore = position.m_positionEval[color.get_raw_value()][common::GamePhase::ENDING];
+		const int32_t positionOpeningScore = position.positionEval(color, common::GamePhase::OPENING);
+		const int32_t positionEndingScore = position.positionEval(color, common::GamePhase::ENDING);
 		return TaperedEvaluation::adjustToPhase(positionOpeningScore, positionEndingScore, openingPhase, endingPhase);
 	}
 };

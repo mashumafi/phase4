@@ -24,7 +24,7 @@ public:
 	static void getLoudMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
@@ -65,7 +65,7 @@ public:
 	static void getQuietMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
 		if (unlikely(piece == 0)) {
@@ -73,7 +73,7 @@ public:
 		}
 
 		const Square from(piece.fastBitScan());
-		Bitboard availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.m_occupancySummary;
+		Bitboard availableMoves = moves::MovesGenerator::getKingMoves(from) & ~position.occupancySummary();
 
 		while (availableMoves != 0) {
 			const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
@@ -87,7 +87,7 @@ public:
 	static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		const Bitboard piece = position.colorPieceMask(color, PieceType::KING);
 
@@ -110,11 +110,11 @@ public:
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
-		const PieceColor enemyColor = position.m_colorToMove.invert();
+		const PieceColor enemyColor = position.colorToMove().invert();
 		const Bitboard availableMoves = moves::MovesGenerator::getKingMoves(move.from());
 		const Bitboard toField = move.to().asBitboard();
 
-		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
+		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.occupancySummary() & toField) == 0) {
 			return true;
 		}
 
@@ -123,17 +123,17 @@ public:
 		}
 
 		if (move.flags().isKingCastling()) {
-			if (position.m_colorToMove == PieceColor::WHITE && isWhiteKingCastlingAvailable(position, position.m_colorToMove)) {
+			if (position.colorToMove() == PieceColor::WHITE && isWhiteKingCastlingAvailable(position, position.colorToMove())) {
 				return true;
-			} else if (position.m_colorToMove == PieceColor::BLACK && isBlackKingCastlingAvailable(position, position.m_colorToMove)) {
+			} else if (position.colorToMove() == PieceColor::BLACK && isBlackKingCastlingAvailable(position, position.colorToMove())) {
 				return true;
 			}
 		}
 
 		if (move.flags().isQueenCastling()) {
-			if (position.m_colorToMove == PieceColor::WHITE && isWhiteQueenCastlingAvailable(position, position.m_colorToMove)) {
+			if (position.colorToMove() == PieceColor::WHITE && isWhiteQueenCastlingAvailable(position, position.colorToMove())) {
 				return true;
-			} else if (position.m_colorToMove == PieceColor::BLACK && isBlackQueenCastlingAvailable(position, position.m_colorToMove)) {
+			} else if (position.colorToMove() == PieceColor::BLACK && isBlackQueenCastlingAvailable(position, position.colorToMove())) {
 				return true;
 			}
 		}
@@ -147,7 +147,7 @@ private:
 
 		constexpr Bitboard PASSING_FIELDS = Square::G1.asBitboard() | Square::F1.asBitboard();
 
-		if (unlikely((position.m_castling & common::Castling::WHITE_SHORT) != common::Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
+		if (unlikely((position.castling() & common::Castling::WHITE_SHORT) != common::Castling::NONE && (position.occupancySummary() & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E1);
 			return !position.isFieldAttacked(color, Square::G1) && !position.isFieldAttacked(color, Square::F1) && !isKingInCheck;
 		}
@@ -160,7 +160,7 @@ private:
 
 		constexpr Bitboard PASSING_FIELDS = Square::D1.asBitboard() | Square::C1.asBitboard();
 
-		if (unlikely((position.m_castling & Castling::WHITE_LONG) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
+		if (unlikely((position.castling() & Castling::WHITE_LONG) != Castling::NONE && (position.occupancySummary() & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E1);
 			return !isKingInCheck && !position.isFieldAttacked(color, Square::D1) && !position.isFieldAttacked(color, Square::C1);
 		}
@@ -173,7 +173,7 @@ private:
 
 		constexpr Bitboard PASSING_FIELDS = Square::G8.asBitboard() | Square::F8.asBitboard();
 
-		if (unlikely((position.m_castling & Castling::BLACK_SHORT) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
+		if (unlikely((position.castling() & Castling::BLACK_SHORT) != Castling::NONE && (position.occupancySummary() & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E8);
 			return !position.isFieldAttacked(color, Square::G8) && !position.isFieldAttacked(color, Square::F8) && !isKingInCheck;
 		}
@@ -186,7 +186,7 @@ private:
 
 		constexpr Bitboard PASSING_FIELDS = Square::D8.asBitboard() | Square::C8.asBitboard();
 
-		if (unlikely((position.m_castling & Castling::BLACK_LONG) != Castling::NONE && (position.m_occupancySummary & PASSING_FIELDS) == 0)) {
+		if (unlikely((position.castling() & Castling::BLACK_LONG) != Castling::NONE && (position.occupancySummary() & PASSING_FIELDS) == 0)) {
 			const bool isKingInCheck = position.isFieldAttacked(color, Square::E8);
 			return !isKingInCheck && !position.isFieldAttacked(color, Square::D8) && !position.isFieldAttacked(color, Square::C8);
 		}

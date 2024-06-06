@@ -22,7 +22,7 @@ public:
 	inline static void getLoudMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		Bitboard knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
@@ -47,7 +47,7 @@ public:
 	inline static void getQuietMoves(const Position &position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		Bitboard knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
 		while (knights != 0) {
@@ -55,7 +55,7 @@ public:
 			knights = knights.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitboard availableMoves = moves::MovesGenerator::getKnightMoves(from) & ~position.m_occupancySummary;
+			Bitboard availableMoves = moves::MovesGenerator::getKnightMoves(from) & ~position.occupancySummary();
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -71,7 +71,7 @@ public:
 	inline static void getAvailableCaptureMoves(const Position &position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		Bitboard knights = position.colorPieceMask(color, PieceType::KNIGHT);
 
@@ -119,11 +119,11 @@ public:
 	static bool isMoveLegal(const Position &position, moves::Move move) {
 		using namespace common;
 
-		const PieceColor enemyColor = position.m_colorToMove.invert();
+		const PieceColor enemyColor = position.colorToMove().invert();
 		const Bitboard availableMoves = moves::MovesGenerator::getKnightMoves(move.from());
 		const Bitboard toField = move.to().asBitboard();
 
-		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
+		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.occupancySummary() & toField) == 0) {
 			return true;
 		}
 
