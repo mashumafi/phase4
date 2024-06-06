@@ -19,12 +19,12 @@ namespace phase4::engine::board::ordering {
 class MoveOrdering {
 public:
 	static inline int16_t seeEvaluate(const Position &position, moves::Move move) {
-		const common::PieceColor enemyColor = position.m_colorToMove.invert();
+		const common::PieceColor enemyColor = position.colorToMove().invert();
 
-		const common::PieceType attackingPiece = position.m_pieceTable[move.from()];
-		const common::PieceType capturedPiece = position.m_pieceTable[move.to()];
+		const common::PieceType attackingPiece = position.pieceTable(move.from());
+		const common::PieceType capturedPiece = position.pieceTable(move.to());
 
-		const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.m_colorToMove, move.to());
+		const uint8_t attackers = SeePiece::getAttackingPiecesWithColor(position, position.colorToMove(), move.to());
 		// TOOD: Update defenders to include walls/sliding
 		const uint8_t defenders = SeePiece::getAttackingPiecesWithColor(position, enemyColor, move.to());
 		return StaticExchangeEvaluation::evaluate(attackingPiece, capturedPiece, attackers, defenders);
@@ -53,10 +53,10 @@ public:
 		moveValues.resize(moves.size());
 		const Position &position = session.position();
 		for (size_t moveIndex = startIndex; moveIndex < moves.size(); ++moveIndex) {
-			if (session.m_killerHeuristic.killerMoveExists(moves[moveIndex], position.m_colorToMove, ply)) {
+			if (session.m_killerHeuristic.killerMoveExists(moves[moveIndex], position.colorToMove(), ply)) {
 				moveValues[moveIndex] = MoveOrderingConstants::KILLER_MOVE;
 			} else {
-				moveValues[moveIndex] = session.m_historyHeuristic.getMoveValue(position.m_colorToMove, position.m_pieceTable[moves[moveIndex].from()], moves[moveIndex].to(), MoveOrderingConstants::HISTORY_HEURISTIC_MAX_SCORE);
+				moveValues[moveIndex] = session.m_historyHeuristic.getMoveValue(position.colorToMove(), position.pieceTable(moves[moveIndex].from()), moves[moveIndex].to(), MoveOrderingConstants::HISTORY_HEURISTIC_MAX_SCORE);
 			}
 		}
 	}

@@ -29,20 +29,20 @@ public:
 			context.statistics.selectiveDepth = ply;
 		}
 
-		if (context.session->position().colorPieceMask(context.session->position().m_colorToMove, PieceType::KING) == 0) {
+		if (context.session->position().colorPieceMask(context.session->position().colorToMove(), PieceType::KING) == 0) {
 			++context.statistics.qLeafs;
 			return board::SearchConstants::NO_KING_VALUE;
 		}
 
-		if (context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
+		if (context.session->position().isKingChecked(context.session->position().colorToMove().invert())) {
 			++context.statistics.qLeafs;
 			return -board::SearchConstants::NO_KING_VALUE;
 		}
 
 		int32_t standPat = 0;
 
-		const EvaluationHashTableEntry &evaluationEntry = context.session->m_hashTables.m_evaluationHashTable.get(context.session->position().m_hash.asBitboard());
-		if (evaluationEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
+		const EvaluationHashTableEntry &evaluationEntry = context.session->m_hashTables.m_evaluationHashTable.get(context.session->position().hash().asBitboard());
+		if (evaluationEntry.isKeyValid(context.session->position().hash().asBitboard())) {
 			standPat = evaluationEntry.score();
 
 #ifndef NDEBUG
@@ -50,7 +50,7 @@ public:
 #endif
 		} else {
 			standPat = score::Evaluation::evaluate(*context.session, context.statistics.evaluationStatistics);
-			context.session->m_hashTables.m_evaluationHashTable.add(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(standPat));
+			context.session->m_hashTables.m_evaluationHashTable.add(context.session->position().hash().asBitboard(), static_cast<int16_t>(standPat));
 
 #ifndef NDEBUG
 			context.statistics.evaluationStatistics.m_evaluationHashTableNonHits++;

@@ -38,13 +38,13 @@ public:
 			result |= attackingKnightsCount == 1 ? SeePiece::KNIGHT1.asByte() : SeePiece::KNIGHT1.asByte() | SeePiece::KNIGHT2.asByte();
 		}
 
-		const common::Bitboard diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.m_occupancySummary, fieldIndex) & position.occupancy(color);
+		const common::Bitboard diagonalAttacks = moves::MovesGenerator::getBishopMoves(position.occupancySummary(), fieldIndex) & position.occupancy(color);
 		const common::Bitboard attackingBishops = diagonalAttacks & position.colorPieceMask(color, common::PieceType::BISHOP);
 		if (attackingBishops != 0) {
 			result |= SeePiece::BISHOP.asByte();
 		}
 
-		const common::Bitboard occupancyWithoutFileRankPieces = position.m_occupancySummary & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
+		const common::Bitboard occupancyWithoutFileRankPieces = position.occupancySummary() & ~position.colorPieceMask(color, common::PieceType::ROOK) & ~position.colorPieceMask(color, common::PieceType::QUEEN);
 		const common::Bitboard fileRankAttacks = moves::MovesGenerator::getRookMoves(occupancyWithoutFileRankPieces, fieldIndex) & position.occupancy(color);
 		const common::Bitboard attackingRooks = fileRankAttacks & position.colorPieceMask(color, common::PieceType::ROOK);
 		const uint8_t attackingRooksCount = attackingRooks.fastCount();

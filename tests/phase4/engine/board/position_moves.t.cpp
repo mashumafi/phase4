@@ -105,11 +105,11 @@ TEST_CASE("Position moves valid rnbqkbnr/pppppppp/8/8/2**4/2**4/PPPPPPPP/RNBQKBN
 
 	auto position = FenToPosition::parse("rnbqkbnr/pppppppp/8/8/2**4/2**4/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	REQUIRE(position);
-	CHECK(position->m_walls != 0);
-	CHECK((position->m_occupancySummary & phase4::engine::common::Square::C3.asBitboard()) != 0);
-	CHECK((position->m_occupancySummary & phase4::engine::common::Square::C4.asBitboard()) != 0);
-	CHECK((position->m_occupancySummary & phase4::engine::common::Square::D3.asBitboard()) != 0);
-	CHECK((position->m_occupancySummary & phase4::engine::common::Square::D4.asBitboard()) != 0);
+	CHECK(position->walls() != 0);
+	CHECK((position->occupancySummary() & phase4::engine::common::Square::C3.asBitboard()) != 0);
+	CHECK((position->occupancySummary() & phase4::engine::common::Square::C4.asBitboard()) != 0);
+	CHECK((position->occupancySummary() & phase4::engine::common::Square::D3.asBitboard()) != 0);
+	CHECK((position->occupancySummary() & phase4::engine::common::Square::D4.asBitboard()) != 0);
 
 	Moves moves;
 	PositionMoves::getValidMoves(*position, moves);

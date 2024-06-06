@@ -22,7 +22,7 @@ public:
 	static void getLoudMoves(Position position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		Bitboard rooks = position.colorPieceMask(color, PieceType::ROOK);
 
@@ -31,7 +31,7 @@ public:
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
+			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.occupancySummary(), from) & position.occupancy(enemyColor);
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -47,7 +47,7 @@ public:
 	static void getQuietMoves(Position position, moves::Moves &moves, common::Bitboard evasionMask) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		Bitboard rooks = position.colorPieceMask(color, PieceType::ROOK);
 
 		while (rooks != 0) {
@@ -55,7 +55,7 @@ public:
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());
-			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from) & ~position.m_occupancySummary;
+			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.occupancySummary(), from) & ~position.occupancySummary();
 			availableMoves &= evasionMask;
 
 			while (availableMoves != 0) {
@@ -71,7 +71,7 @@ public:
 	static void getAvailableCaptureMoves(Position position, moves::Moves &moves) {
 		using namespace common;
 
-		const PieceColor color = position.m_colorToMove;
+		const PieceColor color = position.colorToMove();
 		const PieceColor enemyColor = color.invert();
 		Bitboard rooks = position.colorPieceMask(color, PieceType::ROOK);
 
@@ -80,7 +80,7 @@ public:
 			rooks = rooks.popLsb();
 
 			Square from(piece.fastBitScan());
-			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from) & position.occupancy(enemyColor);
+			Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.occupancySummary(), from) & position.occupancy(enemyColor);
 
 			while (availableMoves != 0) {
 				const Bitboard field = availableMoves.getLsb(); // TODO: skip lsb
@@ -105,7 +105,7 @@ public:
 			rooks = rooks.popLsb();
 
 			const Square from(piece.fastBitScan());
-			const Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, from);
+			const Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.occupancySummary(), from);
 
 			centerMobility += (availableMoves & board::EvaluationConstants::EXTENDED_CENTER).fastCount();
 			outsideMobility += (availableMoves & board::EvaluationConstants::OUTSIDE).fastCount();
@@ -119,11 +119,11 @@ public:
 	static bool isMoveLegal(Position position, moves::Move move) {
 		using namespace common;
 
-		const PieceColor enemyColor = position.m_colorToMove.invert();
-		const Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.m_occupancySummary, move.from());
+		const PieceColor enemyColor = position.colorToMove().invert();
+		const Bitboard availableMoves = moves::MovesGenerator::getRookMoves(position.occupancySummary(), move.from());
 		const Bitboard toField = move.to().asBitboard();
 
-		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.m_occupancySummary & toField) == 0) {
+		if (move.flags().isSinglePush() && (availableMoves & toField) != 0 && (position.occupancySummary() & toField) == 0) {
 			return true;
 		}
 

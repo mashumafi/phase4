@@ -42,8 +42,8 @@ private:
 			for (int16_t file = 0; file < 8; file++) {
 				const Square fieldIndex(FieldIndex(file, rank));
 
-				const PieceType possibleWhitePiece = position.m_pieceTable[fieldIndex];
-				const PieceType possibleBlackPiece = position.m_pieceTable[fieldIndex];
+				const PieceType possibleWhitePiece = position.pieceTable(fieldIndex);
+				const PieceType possibleBlackPiece = position.pieceTable(fieldIndex);
 
 				const PieceColor color = std::invoke([&]() -> PieceColor {
 					if ((position.occupancy(PieceColor::WHITE) & fieldIndex.asBitboard()) != 0) {
@@ -63,7 +63,7 @@ private:
 					return PieceType::INVALID;
 				});
 
-				const bool hasWall = (position.m_walls & fieldIndex.asBitboard()) != 0;
+				const bool hasWall = (position.walls() & fieldIndex.asBitboard()) != 0;
 
 				if (piece != PieceType::INVALID) {
 					if (emptyFields != 0) {
@@ -100,26 +100,26 @@ private:
 	}
 
 	static std::string encodeColor(const board::Position &position) {
-		return position.m_colorToMove == common::PieceColor::WHITE ? "w" : "b";
+		return position.colorToMove() == common::PieceColor::WHITE ? "w" : "b";
 	}
 
 	static std::string encodeCastling(const board::Position &position) {
 		std::string resultBuilder;
 		resultBuilder.reserve(4);
 
-		if ((position.m_castling & common::Castling::WHITE_SHORT) != common::Castling::NONE) {
+		if ((position.castling() & common::Castling::WHITE_SHORT) != common::Castling::NONE) {
 			resultBuilder += "K";
 		}
 
-		if ((position.m_castling & common::Castling::WHITE_LONG) != common::Castling::NONE) {
+		if ((position.castling() & common::Castling::WHITE_LONG) != common::Castling::NONE) {
 			resultBuilder += "Q";
 		}
 
-		if ((position.m_castling & common::Castling::BLACK_SHORT) != common::Castling::NONE) {
+		if ((position.castling() & common::Castling::BLACK_SHORT) != common::Castling::NONE) {
 			resultBuilder += "k";
 		}
 
-		if ((position.m_castling & common::Castling::BLACK_LONG) != common::Castling::NONE) {
+		if ((position.castling() & common::Castling::BLACK_LONG) != common::Castling::NONE) {
 			resultBuilder += "q";
 		}
 
@@ -131,11 +131,11 @@ private:
 	}
 
 	static std::string encodeEnPassant(const board::Position &position) {
-		if (position.m_enPassant == 0) {
+		if (position.enPassant() == 0) {
 			return "-";
 		}
 
-		const uint8_t enPassantField = position.m_enPassant.bitScan(); // TODO: skip lsb
+		const uint8_t enPassantField = position.enPassant().bitScan(); // TODO: skip lsb
 		const common::Square enPassantPosition(enPassantField);
 
 		std::stringstream iss;
@@ -145,11 +145,11 @@ private:
 	}
 
 	static std::string encodeHalfmoveClock(const board::Position &position) {
-		return std::to_string(position.m_irreversibleMovesCount);
+		return std::to_string(position.irreversibleMovesCount());
 	}
 
 	static std::string encodeFullmoveNumber(const board::Position &position) {
-		return std::to_string(common::Math::max_uint16(position.m_movesCount, 1));
+		return std::to_string(common::Math::max_uint16(position.movesCount(), 1));
 	}
 
 	static char convertToPiece(common::PieceType piece, common::PieceColor color) {

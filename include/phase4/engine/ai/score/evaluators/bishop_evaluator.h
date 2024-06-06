@@ -33,7 +33,7 @@ private:
 		const common::Bitboard kingPattern = color == common::PieceColor::WHITE ? WHITE_KING_FIANCHETTO_PATTERN : BLACK_KING_FIANCHETTO_PATTEREN;
 		const common::Bitboard pawnsPattern = color == common::PieceColor::WHITE ? WHITE_PAWNS_FIANCHETTO_PATTERN : BLACK_PAWNS_FIANCHETTO_PATTERN;
 
-		if (position.m_castlingDone[color.get_raw_value()] && (position.colorPieceMask(color, common::PieceType::KING) & kingPattern) != 0 && (position.colorPieceMask(color, common::PieceType::PAWN) & pawnsPattern) == pawnsPattern) {
+		if (position.castlingDone(color) && (position.colorPieceMask(color, common::PieceType::KING) & kingPattern) != 0 && (position.colorPieceMask(color, common::PieceType::PAWN) & pawnsPattern) == pawnsPattern) {
 			const common::Bitboard bishopPattern = color == common::PieceColor::WHITE ? WHITE_BISHOP_FIANCHETTO_PATTERN : BLACK_BISHOP_FIANCHETTO_PATTERN;
 			if ((position.colorPieceMask(color, common::PieceType::BISHOP) & bishopPattern) == bishopPattern) {
 				fianchettos++;

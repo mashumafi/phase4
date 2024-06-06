@@ -25,7 +25,7 @@ namespace phase4::engine::ai::search {
 class NegaMax {
 public:
 	static int32_t findBestMove(SearchContext &context, int32_t depth, int32_t ply, int32_t alpha, int32_t beta) {
-		const bool friendlyKingInCheck = context.session->isKingChecked(context.session->position().m_colorToMove);
+		const bool friendlyKingInCheck = context.session->isKingChecked(context.session->position().colorToMove());
 		return findBestMove(context, depth, ply, alpha, beta, true, friendlyKingInCheck, 0);
 	}
 
@@ -44,12 +44,12 @@ public:
 
 		context.statistics.nodes++;
 
-		if (context.session->position().colorPieceMask(context.session->position().m_colorToMove, common::PieceType::KING) == 0) {
+		if (context.session->position().colorPieceMask(context.session->position().colorToMove(), common::PieceType::KING) == 0) {
 			context.statistics.leafs++;
 			return board::SearchConstants::NO_KING_VALUE;
 		}
 
-		if (context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
+		if (context.session->position().isKingChecked(context.session->position().colorToMove().invert())) {
 			context.statistics.leafs++;
 			return -board::SearchConstants::NO_KING_VALUE;
 		}
@@ -60,7 +60,7 @@ public:
 		}
 
 		if (context.session->position().isInsufficientMaterial()) {
-			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
+			const common::PieceColor enemyColor = context.session->position().colorToMove().invert();
 			if (!friendlyKingInCheck && !context.session->position().isKingChecked(enemyColor)) {
 				context.statistics.leafs++;
 				return board::EvaluationConstants::INSUFFICIENT_MATERIAL;
@@ -80,11 +80,11 @@ public:
 		const int32_t originalAlpha = alpha;
 		const bool pvNode = beta - alpha > 1;
 
-		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
+		TranspositionTableEntry &entry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().hash().asBitboard());
 		moves::Move hashMove = moves::Move::EMPTY;
 		moves::Move bestMove = moves::Move::EMPTY;
 
-		if (entry.flags() != TranspositionTableEntryFlags::INVALID && entry.isKeyValid(context.session->position().m_hash.asBitboard())) {
+		if (entry.flags() != TranspositionTableEntryFlags::INVALID && entry.isKeyValid(context.session->position().hash().asBitboard())) {
 #ifndef NDEBUG
 			++context.statistics.transpositionTableHits;
 #endif
@@ -201,8 +201,8 @@ public:
 		if (internalIterativeDeepeningCanBeApplied(depth, entry.flags(), hashMove)) {
 			findBestMove(context, depth - 1 - board::SearchConstants::INTERNAL_ITERATIVE_DEEPENING_DEPTH_REDUCTION, ply, alpha, beta, allowNullMove, friendlyKingInCheck, extensionsCount);
 
-			const TranspositionTableEntry &internalIterativeDeepeningEntry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().m_hash.asBitboard());
-			if (internalIterativeDeepeningEntry.isKeyValid(context.session->position().m_hash.asBitboard())) {
+			const TranspositionTableEntry &internalIterativeDeepeningEntry = context.session->m_hashTables.m_transpositionTable.get(context.session->position().hash().asBitboard());
+			if (internalIterativeDeepeningEntry.isKeyValid(context.session->position().hash().asBitboard())) {
 				hashMove = internalIterativeDeepeningEntry.bestMove();
 
 #ifndef NDEBUG
@@ -228,7 +228,7 @@ public:
 		bool quietMovesGenerated = false;
 
 		Bitboard evasionMask = Bitboard::MAX;
-		if (friendlyKingInCheck && !context.session->position().isKingChecked(context.session->position().m_colorToMove.invert())) {
+		if (friendlyKingInCheck && !context.session->position().isKingChecked(context.session->position().colorToMove().invert())) {
 			evasionMask = context.session->position().getEvasionMask();
 		}
 
@@ -298,7 +298,7 @@ public:
 
 				context.session->makeMove(moves[moveIndex]);
 
-				const bool enemyKingInCheck = context.session->position().isKingChecked(context.session->position().m_colorToMove);
+				const bool enemyKingInCheck = context.session->position().isKingChecked(context.session->position().colorToMove());
 				const int32_t extension = getExtensions(depth, extensionsCount, enemyKingInCheck);
 
 #ifndef NDEBUG
@@ -352,8 +352,8 @@ public:
 
 					if (alpha >= beta) {
 						if (moves[moveIndex].flags().isQuiet()) {
-							context.session->m_killerHeuristic.addKillerMove(moves[moveIndex], context.session->position().m_colorToMove, ply);
-							context.session->m_historyHeuristic.addHistoryMove(context.session->position().m_colorToMove, context.session->position().m_pieceTable[moves[moveIndex].from()], moves[moveIndex].to(), depth);
+							context.session->m_killerHeuristic.addKillerMove(moves[moveIndex], context.session->position().colorToMove(), ply);
+							context.session->m_historyHeuristic.addHistoryMove(context.session->position().colorToMove(), context.session->position().pieceTable(moves[moveIndex].from()), moves[moveIndex].to(), depth);
 						}
 
 #ifndef NDEBUG
@@ -456,8 +456,8 @@ public:
 #endif
 
 				const int32_t valueToSave = TranspositionTable<0>::regularToTranspositionTableScore(alpha, ply);
-				const TranspositionTableEntry newEntry(context.session->position().m_hash.asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
-				context.session->m_hashTables.m_transpositionTable.add(context.session->position().m_hash.asBitboard(), newEntry);
+				const TranspositionTableEntry newEntry(context.session->position().hash().asBitboard(), static_cast<int16_t>(valueToSave), bestMove, static_cast<uint8_t>(depth), entryType, static_cast<uint8_t>(context.transpositionTableEntryAge));
+				context.session->m_hashTables.m_transpositionTable.add(context.session->position().hash().asBitboard(), newEntry);
 			}
 		}
 
@@ -497,8 +497,8 @@ private:
 			return false;
 		}
 
-		if (context.session->position().m_pieceTable[move.from()] == common::PieceType::PAWN) {
-			if (context.session->position().isFieldPassing(context.session->position().m_colorToMove, move.to())) {
+		if (context.session->position().pieceTable(move.from()) == common::PieceType::PAWN) {
+			if (context.session->position().isFieldPassing(context.session->position().colorToMove(), move.to())) {
 				return false;
 			}
 		}
@@ -508,7 +508,7 @@ private:
 
 	static int32_t futilityPruningGetGain(const SearchContext &context, moves::Move move) {
 		if (move.flags().isCapture()) {
-			const common::PieceType capturedPiece = context.session->position().m_pieceTable[move.to()];
+			const common::PieceType capturedPiece = context.session->position().pieceTable(move.to());
 			if (capturedPiece != common::PieceType::INVALID) {
 				return board::EvaluationConstants::pieceValue(capturedPiece);
 			} else {
@@ -527,8 +527,8 @@ private:
 	static bool lateMoveReductionsCanBeApplied(SearchContext &context, int32_t depth, bool friendlyKingInCheck, bool enemyKingInCheck, size_t moveIndex, const moves::Moves &moves, const moves::MoveValues &moveValues) {
 		if (depth >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MIN_DEPTH && moveIndex >= board::SearchConstants::LATE_MOVE_REDUCTIONS_MOVES_WITHOUT_REDUCTION &&
 				(moves[moveIndex].flags().isQuiet() || (moves[moveIndex].flags().isCapture() && moveValues[moveIndex] < 0)) && !friendlyKingInCheck && !enemyKingInCheck) {
-			const common::PieceColor enemyColor = context.session->position().m_colorToMove.invert();
-			const common::PieceType piece = context.session->position().m_pieceTable[moves[moveIndex].to()];
+			const common::PieceColor enemyColor = context.session->position().colorToMove().invert();
+			const common::PieceType piece = context.session->position().pieceTable(moves[moveIndex].to());
 
 			// TODO: Figure out why piece is sometimes INVALID
 			if (piece != common::PieceType::INVALID && context.session->m_historyHeuristic.getRawMoveValue(enemyColor, piece, moves[moveIndex].to()) >= context.session->m_historyHeuristic.getMaxValue() / board::SearchConstants::LATE_MOVE_REDUCTIONS_MAX_HISTORY_VALUE_DIVIDER) {

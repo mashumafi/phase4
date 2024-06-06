@@ -84,7 +84,7 @@ public:
 		int32_t result = MaterialEvaluator::evaluate(session.position());
 		result += PawnStructureEvaluator::evaluate(session, statistics, openingPhase, endingPhase);
 		result += PositionEvaluator::evaluate(session.position(), openingPhase, endingPhase);
-		return session.position().m_colorToMove == common::PieceColor::WHITE ? result : -result;
+		return session.position().colorToMove() == common::PieceColor::WHITE ? result : -result;
 	}
 };
 

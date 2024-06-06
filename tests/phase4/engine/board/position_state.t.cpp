@@ -17,8 +17,8 @@ TEST_CASE("PositionState DEFAULT") {
 
 	const board::Position position = board::PositionState::DEFAULT;
 
-	CHECK(position.m_hash != board::ZobristHashing(0));
-	CHECK(position.m_pawnHash != board::ZobristHashing(0));
+	CHECK(position.hash() != board::ZobristHashing(0));
+	CHECK(position.pawnHash() != board::ZobristHashing(0));
 
 	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::PAWN) == common::PositionConstants::RANK_2);
 	CHECK(position.colorPieceMask(common::PieceColor::WHITE, common::PieceType::KNIGHT) == (common::Square::B1.asBitboard() | common::Square::G1.asBitboard()));
@@ -37,16 +37,16 @@ TEST_CASE("PositionState DEFAULT") {
 	CHECK(position.occupancy(common::PieceColor::WHITE) == common::Bitboard(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2));
 	CHECK(position.occupancy(common::PieceColor::BLACK) == common::Bitboard(common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
 
-	CHECK(position.m_occupancySummary == common::Bitboard(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2 | common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
-	CHECK(position.m_enPassant == common::Bitboard(0));
-	CHECK(position.m_castling == common::Castling::EVERYTHING);
-	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
-	CHECK(position.m_movesCount == 1);
-	CHECK(position.m_irreversibleMovesCount == 0);
-	CHECK(position.m_nullMoves == 0);
+	CHECK(position.occupancySummary() == common::Bitboard(common::PositionConstants::RANK_1 | common::PositionConstants::RANK_2 | common::PositionConstants::RANK_7 | common::PositionConstants::RANK_8));
+	CHECK(position.enPassant() == common::Bitboard(0));
+	CHECK(position.castling() == common::Castling::EVERYTHING);
+	CHECK(position.colorToMove() == common::PieceColor::WHITE);
+	CHECK(position.movesCount() == 1);
+	CHECK(position.irreversibleMovesCount() == 0);
+	CHECK(position.nullMoves() == 0);
 
-	CHECK(position.m_castlingDone[0] == false);
-	CHECK(position.m_castlingDone[1] == false);
+	CHECK(position.castlingDone(common::PieceColor::WHITE) == false);
+	CHECK(position.castlingDone(common::PieceColor::BLACK) == false);
 
 	CHECK(position.material(common::PieceColor::WHITE) != 0);
 	CHECK(position.material(common::PieceColor::BLACK) != 0);
@@ -55,5 +55,5 @@ TEST_CASE("PositionState DEFAULT") {
 
 	std::array<common::PieceType, 64> m_pieceTable = {};*/
 
-	CHECK(position.m_walls == 0);
+	CHECK(position.walls() == 0);
 }

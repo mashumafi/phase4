@@ -27,8 +27,8 @@ public:
 	static inline int32_t evaluate(board::Session &session, EvaluationStatistics &statistics, int32_t openingPhase, int32_t endingPhase) {
 		(void)statistics;
 
-		const board::transposition::PawnHashTableEntry &entry = session.m_hashTables.m_pawnHashTable.get(session.position().m_pawnHash.asBitboard());
-		if (entry.isKeyValid(session.position().m_pawnHash.asBitboard())) {
+		const board::transposition::PawnHashTableEntry &entry = session.m_hashTables.m_pawnHashTable.get(session.position().pawnHash().asBitboard());
+		if (entry.isKeyValid(session.position().pawnHash().asBitboard())) {
 #ifndef NDEBUG
 			++statistics.m_pawnHashTableHits;
 #endif
@@ -53,7 +53,7 @@ public:
 		const int32_t endingScore = endingWhiteScore - endingBlackScore;
 		const int32_t result = TaperedEvaluation::adjustToPhase(openingScore, endingScore, openingPhase, endingPhase);
 
-		session.m_hashTables.m_pawnHashTable.add(session.position().m_pawnHash.asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
+		session.m_hashTables.m_pawnHashTable.add(session.position().pawnHash().asBitboard(), static_cast<int16_t>(openingScore), static_cast<int16_t>(endingScore));
 
 		return result;
 	}

@@ -27,64 +27,141 @@ namespace phase4::engine::board {
 
 class Position {
 public:
-	ZobristHashing m_hash = ZobristHashing(0);
-	ZobristHashing m_pawnHash = ZobristHashing(0);
-
-private:
-	std::array<std::array<common::Bitboard, 6>, 2> m_colorPieceMasks = {};
-
-public:
-	inline constexpr common::Bitboard &colorPieceMask(common::PieceColor color, common::PieceType piece) {
-		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
-	}
-	inline constexpr common::Bitboard colorPieceMask(common::PieceColor color, common::PieceType piece) const {
-		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
-	}
-
-private:
-	std::array<common::Bitboard, 2> m_occupancyByColor = {};
-
-public:
-	inline constexpr common::Bitboard &occupancy(common::PieceColor color) {
-		return m_occupancyByColor[color.get_raw_value()];
-	}
-	inline constexpr common::Bitboard occupancy(common::PieceColor color) const {
-		return m_occupancyByColor[color.get_raw_value()];
-	}
-
-	common::Bitboard m_occupancySummary = common::Bitboard(0);
-	common::Bitboard m_enPassant = common::Bitboard(0);
-	common::Castling m_castling = common::Castling::NONE;
-	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
-	uint16_t m_movesCount = 1;
-	size_t m_irreversibleMovesCount = 0;
-	uint16_t m_nullMoves = 0;
-
-	std::array<bool, 2> m_castlingDone = {};
-
-private:
-	std::array<int32_t, 2> m_material = {};
-
-public:
-	inline constexpr int32_t &material(common::PieceColor color) {
-		return m_material[color.get_raw_value()];
-	}
-	inline constexpr int32_t material(common::PieceColor color) const {
-		return m_material[color.get_raw_value()];
-	}
-	std::array<std::array<int32_t, 2>, 2> m_positionEval = {};
-
-	std::array<common::PieceType, 64> m_pieceTable = {};
-
-	common::Bitboard m_walls = 0;
-
 	inline constexpr Position() noexcept = default;
 
 	inline constexpr Position(const Position &that) noexcept = default;
-	inline constexpr Position &operator=(const Position &that) = default;
+	inline constexpr Position &operator=(const Position &that) noexcept = default;
 
 	inline constexpr Position(Position &&that) noexcept = default;
 	inline constexpr Position &operator=(Position &&that) noexcept = default;
+
+	inline constexpr common::Bitboard &colorPieceMask(common::PieceColor color, common::PieceType piece) noexcept {
+		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+	}
+
+	inline constexpr common::Bitboard colorPieceMask(common::PieceColor color, common::PieceType piece) const noexcept {
+		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
+	}
+
+	inline constexpr common::Bitboard &occupancy(common::PieceColor color) noexcept {
+		return m_occupancyByColor[color.get_raw_value()];
+	}
+
+	inline constexpr common::Bitboard occupancy(common::PieceColor color) const noexcept {
+		return m_occupancyByColor[color.get_raw_value()];
+	}
+
+	inline constexpr int32_t &positionEval(common::PieceColor color, common::GamePhase phase) noexcept {
+		return m_positionEval[color.get_raw_value()][phase];
+	}
+
+	inline constexpr int32_t positionEval(common::PieceColor color, common::GamePhase phase) const noexcept {
+		return m_positionEval[color.get_raw_value()][phase];
+	}
+
+	inline constexpr int32_t &material(common::PieceColor color) noexcept {
+		return m_material[color.get_raw_value()];
+	}
+
+	inline constexpr int32_t material(common::PieceColor color) const noexcept {
+		return m_material[color.get_raw_value()];
+	}
+
+	inline constexpr uint16_t &movesCount() noexcept {
+		return m_movesCount;
+	}
+
+	inline constexpr uint16_t movesCount() const noexcept {
+		return m_movesCount;
+	}
+
+	inline constexpr common::Bitboard &occupancySummary() noexcept {
+		return m_occupancySummary;
+	}
+
+	inline constexpr common::Bitboard occupancySummary() const noexcept {
+		return m_occupancySummary;
+	}
+
+	inline constexpr common::PieceType &pieceTable(common::Square square) noexcept {
+		return m_pieceTable[square];
+	}
+
+	inline constexpr common::PieceType pieceTable(common::Square square) const noexcept {
+		return m_pieceTable[square];
+	}
+
+	inline constexpr common::Bitboard &enPassant() noexcept {
+		return m_enPassant;
+	}
+
+	inline constexpr common::Bitboard enPassant() const noexcept {
+		return m_enPassant;
+	}
+
+	inline constexpr common::Castling &castling() noexcept {
+		return m_castling;
+	}
+
+	inline constexpr common::Castling castling() const noexcept {
+		return m_castling;
+	}
+
+	inline constexpr common::PieceColor &colorToMove() noexcept {
+		return m_colorToMove;
+	}
+
+	inline constexpr common::PieceColor colorToMove() const noexcept {
+		return m_colorToMove;
+	}
+
+	inline constexpr size_t &irreversibleMovesCount() noexcept {
+		return m_irreversibleMovesCount;
+	}
+
+	inline constexpr size_t irreversibleMovesCount() const noexcept {
+		return m_irreversibleMovesCount;
+	}
+
+	inline constexpr uint16_t &nullMoves() noexcept {
+		return m_nullMoves;
+	}
+
+	inline constexpr uint16_t nullMoves() const noexcept {
+		return m_nullMoves;
+	}
+
+	inline constexpr bool &castlingDone(common::PieceColor color) noexcept {
+		return m_castlingDone[color.get_raw_value()];
+	}
+
+	inline constexpr bool castlingDone(common::PieceColor color) const noexcept {
+		return m_castlingDone[color.get_raw_value()];
+	}
+
+	inline constexpr ZobristHashing &hash() noexcept {
+		return m_hash;
+	}
+
+	inline constexpr ZobristHashing hash() const noexcept {
+		return m_hash;
+	}
+
+	inline constexpr ZobristHashing &pawnHash() noexcept {
+		return m_pawnHash;
+	}
+
+	inline constexpr ZobristHashing pawnHash() const noexcept {
+		return m_pawnHash;
+	}
+
+	inline constexpr common::Bitboard &walls() noexcept {
+		return m_walls;
+	}
+
+	inline constexpr common::Bitboard walls() const noexcept {
+		return m_walls;
+	}
 
 	void clearWalls() {
 		if (likely(m_walls > 0)) {
@@ -94,7 +171,7 @@ public:
 		}
 	}
 
-	inline void movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) {
+	inline void movePiece(common::PieceColor color, common::PieceType piece, common::Square from, common::Square to) noexcept {
 		using namespace common;
 		using namespace piece_square_tables;
 
@@ -117,7 +194,7 @@ public:
 		m_pieceTable[to] = piece;
 	}
 
-	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) {
+	inline void addPiece(common::PieceColor color, common::PieceType piece, common::Square fieldIndex) noexcept {
 		using namespace phase4::engine::common;
 		using namespace piece_square_tables;
 
@@ -157,7 +234,7 @@ public:
 		m_pieceTable[fieldIndex] = PieceType::INVALID;
 	}
 
-	bool isKingChecked(common::PieceColor color) const {
+	bool isKingChecked(common::PieceColor color) const noexcept {
 		const common::Bitboard king = colorPieceMask(color, common::PieceType::KING);
 		if (unlikely(king == 0)) {
 			return false;
@@ -167,7 +244,7 @@ public:
 		return isFieldAttacked(color, common::Square(kingField));
 	}
 
-	std::optional<std::tuple<common::PieceColor, common::PieceType>> getPiece(common::Square fieldIndex) const {
+	std::optional<std::tuple<common::PieceColor, common::PieceType>> getPiece(common::Square fieldIndex) const noexcept {
 		using namespace common;
 
 		const PieceType pieceType = m_pieceTable[fieldIndex];
@@ -187,7 +264,7 @@ public:
 		return {};
 	}
 
-	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) const {
+	bool isFieldAttacked(common::PieceColor color, common::Square fieldIndex) const noexcept {
 		using namespace common;
 
 		const PieceColor enemyColor = color.invert();
@@ -223,7 +300,7 @@ public:
 		return (attackingPawns != 0);
 	}
 
-	constexpr int32_t getPhaseRatio() const {
+	constexpr int32_t getPhaseRatio() const noexcept {
 		using namespace common;
 
 		const int32_t materialOfWeakerSide = Math::min_int32(material(PieceColor::WHITE), material(PieceColor::BLACK));
@@ -234,7 +311,7 @@ public:
 		return Math::max_int32(boardDelta, 0) * PositionConstants::PHASE_RESOLUTION / openingDelta;
 	}
 
-	int32_t getGamePhase() const {
+	constexpr int32_t getGamePhase() const noexcept {
 		using namespace common;
 
 		const int32_t materialOfWeakerSide = Math::min_int32(material(PieceColor::WHITE), material(PieceColor::BLACK));
@@ -248,7 +325,7 @@ public:
 		return (passingArea & colorPieceMask(enemyColor, common::PieceType::PAWN)) == 0;
 	}
 
-	bool isFiftyMoveRuleDraw() const {
+	constexpr bool isFiftyMoveRuleDraw() const noexcept {
 		if (m_nullMoves == 0 && m_irreversibleMovesCount >= 100) {
 			return true;
 		}
@@ -256,7 +333,7 @@ public:
 		return false;
 	}
 
-	bool isInsufficientMaterial() const {
+	constexpr bool isInsufficientMaterial() const noexcept {
 		using namespace common;
 
 		const int32_t drawEdge = EvaluationConstants::pieceValue(PieceType::KING) + 4 * EvaluationConstants::pieceValue(PieceType::PAWN);
@@ -276,7 +353,7 @@ public:
 		return false;
 	}
 
-	inline common::Bitboard getEvasionMask() const {
+	inline common::Bitboard getEvasionMask() const noexcept {
 		const common::Bitboard kingField = colorPieceMask(m_colorToMove, common::PieceType::KING);
 		const common::Square kingFieldIndex(kingField);
 
@@ -289,6 +366,27 @@ public:
 
 		return evasionMask;
 	}
+
+private:
+	ZobristHashing m_hash = ZobristHashing(0);
+	ZobristHashing m_pawnHash = ZobristHashing(0);
+	std::array<std::array<common::Bitboard, 6>, 2> m_colorPieceMasks = {};
+	std::array<common::Bitboard, 2> m_occupancyByColor = {};
+	common::Bitboard m_occupancySummary = common::Bitboard(0);
+	common::Bitboard m_enPassant = common::Bitboard(0);
+	common::Castling m_castling = common::Castling::NONE;
+	common::PieceColor m_colorToMove = common::PieceColor::WHITE;
+	uint16_t m_movesCount = 1;
+	size_t m_irreversibleMovesCount = 0;
+	uint16_t m_nullMoves = 0;
+
+	std::array<bool, 2> m_castlingDone = {};
+	std::array<int32_t, 2> m_material = {};
+	std::array<std::array<int32_t, 2>, 2> m_positionEval = {};
+
+	std::array<common::PieceType, 64> m_pieceTable = {};
+
+	common::Bitboard m_walls = 0;
 };
 
 } //namespace phase4::engine::board

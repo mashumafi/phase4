@@ -42,8 +42,8 @@ TEST_CASE("PawnStructureEvaluators Good structure black") {
 	const int32_t blackEndingScore = blackChainedPawnsEndingScore;
 	const int32_t whiteEndingScore = whiteDoubledPawnsEndingScore + whiteIsolatedPawnsEndingScore + whiteChainedPawnsEndingScore;
 
-	const auto &entry = session->m_hashTables.m_pawnHashTable.get(session->position().m_pawnHash.asBitboard());
-	CHECK(entry.isKeyValid(session->position().m_pawnHash.asBitboard()));
+	const auto &entry = session->m_hashTables.m_pawnHashTable.get(session->position().pawnHash().asBitboard());
+	CHECK(entry.isKeyValid(session->position().pawnHash().asBitboard()));
 	CHECK(entry.openingScore() == whiteOpeningScore - blackOpeningScore);
 	CHECK(entry.endingScore() == whiteEndingScore - blackEndingScore);
 
@@ -91,8 +91,8 @@ TEST_CASE("PawnStructureEvaluators Good structure white") {
 	const int32_t blackEndingScore = blackDoubledPawnsEndingScore + blackIsolatedPawnsEndingScore;
 	const int32_t whiteEndingScore = whiteIsolatedPawnsEndingScore + whiteChainedPawnsEndingScore + whitePassingPawnsEndingScore;
 
-	const auto &entry = session->m_hashTables.m_pawnHashTable.get(session->position().m_pawnHash.asBitboard());
-	CHECK(entry.isKeyValid(session->position().m_pawnHash.asBitboard()));
+	const auto &entry = session->m_hashTables.m_pawnHashTable.get(session->position().pawnHash().asBitboard());
+	CHECK(entry.isKeyValid(session->position().pawnHash().asBitboard()));
 	CHECK(entry.openingScore() == whiteOpeningScore - blackOpeningScore);
 	CHECK(entry.endingScore() == whiteEndingScore - blackEndingScore);
 

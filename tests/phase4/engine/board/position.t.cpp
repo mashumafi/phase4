@@ -24,7 +24,7 @@ TEST_CASE("Position default") {
 
 	constexpr board::Position position;
 
-	CHECK(position.m_colorToMove == common::PieceColor::WHITE);
+	CHECK(position.colorToMove() == common::PieceColor::WHITE);
 }
 
 TEST_CASE("Position opening phase") {
@@ -60,22 +60,22 @@ public:
 			return;
 		}
 
-		CHECK(hashes.insert(positionBegin.m_hash.asBitboard().get_raw_value()).second);
+		CHECK(hashes.insert(positionBegin.hash().asBitboard().get_raw_value()).second);
 
 		moves::Moves moves;
 		board::Operators::getAllMoves(positionBegin, moves);
 
 		for (size_t i = 0; i < moves.size(); ++i) {
 			board::Position position = positionBegin;
-			const bool isPawnHash = position.m_pieceTable[moves[i].from()] == common::PieceType::PAWN || position.m_pieceTable[moves[i].to()] == common::PieceType::PAWN;
+			const bool isPawnHash = position.pieceTable(moves[i].from()) == common::PieceType::PAWN || position.pieceTable(moves[i].to()) == common::PieceType::PAWN;
 			board::PositionMoves::makeMove(position, moves[i]);
 			if (isPawnHash) {
-				CHECK(positionBegin.m_pawnHash != position.m_pawnHash);
+				CHECK(positionBegin.pawnHash() != position.pawnHash());
 			} else {
-				CHECK(positionBegin.m_pawnHash == position.m_pawnHash);
+				CHECK(positionBegin.pawnHash() == position.pawnHash());
 			}
-			CHECK(positionBegin.m_hash != position.m_hash);
-			CHECK(positionBegin.m_hash != position.m_hash.changeSide());
+			CHECK(positionBegin.hash() != position.hash());
+			CHECK(positionBegin.hash() != position.hash().changeSide());
 
 			validate(position, ply - 1);
 		}

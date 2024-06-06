@@ -121,8 +121,8 @@ private:
 			return;
 		}
 
-		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().m_hash.asBitboard());
-		if (entry.isKeyValid(session.position().m_hash.asBitboard())) {
+		const TranspositionTableEntry &entry = session.m_hashTables.m_transpositionTable.get(session.position().hash().asBitboard());
+		if (entry.isKeyValid(session.position().hash().asBitboard())) {
 			if (entry.flags() != TranspositionTableEntryFlags::EXACT_SCORE) {
 				return;
 			}
@@ -134,7 +134,7 @@ private:
 			moves.push_back(entry.bestMove());
 			session.makeMove(entry.bestMove());
 
-			const common::PieceColor enemyColor = session.position().m_colorToMove.invert();
+			const common::PieceColor enemyColor = session.position().colorToMove().invert();
 			const common::Bitboard king = session.position().colorPieceMask(enemyColor, common::PieceType::KING);
 			const common::Square kingField(king.bitScan());
 
