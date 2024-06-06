@@ -108,7 +108,7 @@ TEST_CASE("FEN input should match output") {
 	}
 }
 
-TEST_CASE("FenToPosition should not crash") {
+TEST_CASE("FenToPosition failure should not crash") {
 	using namespace phase4::engine::fen;
 
 	CHECK_FALSE(FenToPosition::parse(""));
@@ -117,4 +117,14 @@ TEST_CASE("FenToPosition should not crash") {
 	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/4PP4/4pp4/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/44PP/44pp/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 	CHECK_FALSE(FenToPosition::parse("rnbqkbnr/pppppppp/8/8/44/44/PPPPPPPP/RNBQKBNR/7P w KQkq - 0 1"));
+	CHECK_FALSE(FenToPosition::parse("q3k1nr/1pp1nQpp/1/1P2p3/4P3/B1PP1b2/B5PP/5K2 b k - 0 17"));
+	CHECK_FALSE(FenToPosition::parse("q3k1nr/1pp1nQpp/1P2p3/4P3/B1PP1b2/B5PP/5K2 b k - 0 17"));
+}
+
+TEST_CASE("FenToPosition ignores whitespace") {
+	using namespace phase4::engine;
+
+	const std::string_view fen = "   rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR    w     KQkq    -   0      1   ";
+	const std::optional<board::Position> position = fen::FenToPosition::parse(fen);
+	REQUIRE(position);
 }

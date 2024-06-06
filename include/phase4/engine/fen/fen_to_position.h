@@ -20,43 +20,47 @@ namespace phase4::engine::fen {
 
 class FenToPosition {
 public:
+	static std::string_view skipUntilAlphaNumeric(std::string_view s) noexcept {
+		for (size_t i = 0; i < s.size(); ++i) {
+			if (!std::isspace(s[i])) {
+				return std::string_view(s.data() + i, s.size() - i);
+			}
+		}
+
+		return "";
+	}
+
+	static std::string_view collectUntilSpace(std::string_view &s) noexcept {
+		for (size_t i = 0; i < s.size(); ++i) {
+			if (std::isspace(s[i])) {
+				const std::string_view result(s.data(), i);
+				s = std::string_view(s.data() + i, s.size() - i);
+				return result;
+			}
+		}
+
+		const std::string_view result = s;
+		s = "";
+		return result;
+	}
+
 	static std::optional<board::Position> parse(std::string_view fen) noexcept {
 		using namespace common;
 
-		const size_t spacePos = fen.find(' ');
-		if (spacePos == std::string_view::npos)
-			return {};
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view pieces = collectUntilSpace(fen);
 
-		const std::string_view pieces = fen.substr(0, spacePos);
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view sideToMove = collectUntilSpace(fen);
 
-		fen.remove_prefix(spacePos + 1);
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view castlingRights = collectUntilSpace(fen);
 
-		size_t nextSpacePos = fen.find(' ');
-		if (nextSpacePos == std::string_view::npos)
-			return {};
-		const std::string_view sideToMove = fen.substr(0, nextSpacePos);
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view enPassantSquare = collectUntilSpace(fen);
 
-		fen.remove_prefix(nextSpacePos + 1);
-
-		nextSpacePos = fen.find(' ');
-		if (nextSpacePos == std::string_view::npos)
-			return {};
-		const std::string_view castlingRights = fen.substr(0, nextSpacePos);
-
-		// Move the position to the next character after the space
-		fen.remove_prefix(nextSpacePos + 1);
-
-		nextSpacePos = fen.find(' ');
-		if (nextSpacePos == std::string_view::npos)
-			return {};
-		const std::string_view enPassantSquare = fen.substr(0, nextSpacePos);
-
-		fen.remove_prefix(nextSpacePos + 1);
-
-		nextSpacePos = fen.find(' ');
-		if (nextSpacePos == std::string_view::npos)
-			return {};
-		const std::string_view halfmoveClock = fen.substr(0, nextSpacePos);
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view halfmoveClock = collectUntilSpace(fen);
 
 		uint16_t halfmoveClockNumber = 0;
 		{
@@ -65,9 +69,13 @@ public:
 				return {};
 		}
 
-		fen.remove_prefix(nextSpacePos + 1);
+		fen = skipUntilAlphaNumeric(fen);
+		const std::string_view fullmove = collectUntilSpace(fen);
 
-		const std::string_view fullmove = fen;
+		fen = skipUntilAlphaNumeric(fen);
+		if (!fen.empty()) {
+			return {};
+		}
 
 		uint16_t fullmoveNumber = 0;
 		{
@@ -119,8 +127,9 @@ private:
 			const char c = pieces[i];
 			if (std::isalpha(c)) {
 				const std::optional<common::PieceType> &piece = convertToPiece(c);
-				if (!piece)
+				if (!piece) {
 					return false;
+				}
 				const common::PieceColor color = convertToColor(c);
 				position.addPiece(color, *piece, common::Square(field));
 				field += common::FieldIndex(1, 0);
@@ -143,6 +152,10 @@ private:
 				position.occupancySummary() |= square.asBitboard();
 				field += common::FieldIndex(1, 0);
 			} else if (c == '/') {
+				// Ensure the end is reached
+				if (field.x != 8) {
+					return false;
+				}
 				field = common::FieldIndex(0, field.y - 1);
 			}
 
@@ -150,6 +163,11 @@ private:
 			if (field.x > 8 || field.y < 0) {
 				return false;
 			}
+		}
+
+		// Ensure the end is reached
+		if (field.y != 0) {
+			return false;
 		}
 
 		return true;
@@ -228,7 +246,7 @@ private:
 		return std::isupper(c) ? common::PieceColor::WHITE : common::PieceColor::BLACK;
 	}
 
-	static bool validated(board::Position &position) {
+	static bool validated(board::Position &) {
 		// TODO: Fix invalid castling flags
 		// TODO: Fail if king is missing
 		// TODO: Fail if king is in check
