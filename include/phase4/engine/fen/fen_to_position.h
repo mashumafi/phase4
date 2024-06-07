@@ -190,6 +190,10 @@ private:
 	}
 
 	static bool parseCastlingRights(std::string_view castlingRights, board::Position &position) {
+		if (castlingRights.size() == 1 && castlingRights[0] == '-') {
+			return true;
+		}
+
 		for (size_t i = 0; i < castlingRights.size(); ++i) {
 			switch (castlingRights[i]) {
 				case 'K':
@@ -204,10 +208,8 @@ private:
 				case 'q':
 					position.castling() |= common::Castling::BLACK_LONG;
 					break;
-				case '-':
-					if (castlingRights.empty()) {
-						return false;
-					}
+				default:
+					return false;
 			}
 		}
 
@@ -216,8 +218,11 @@ private:
 
 	static bool parseEnPassantState(std::string_view enPassantSquare, board::Position &position) noexcept {
 		if (enPassantSquare != "-") {
-			common::Square square(enPassantSquare);
-			position.enPassant() = square.asBitboard();
+			const std::optional<common::Square> &square = common::Square::parse(enPassantSquare);
+			if (!square) {
+				return false;
+			}
+			position.enPassant() = square->asBitboard();
 		}
 
 		return true;
