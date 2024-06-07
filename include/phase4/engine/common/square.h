@@ -7,6 +7,7 @@
 #include <phase4/engine/common/util.h>
 
 #include <iostream>
+#include <optional>
 
 namespace phase4::engine::common {
 
@@ -103,6 +104,7 @@ public:
 	inline constexpr operator uint64_t() const;
 
 	inline constexpr Square();
+	inline static constexpr std::optional<Square> parse(std::string_view square);
 
 	inline constexpr explicit Square(uint64_t value);
 	inline constexpr Square &operator=(uint64_t value);
@@ -159,6 +161,22 @@ inline constexpr Square::operator uint64_t() const {
 
 inline constexpr Square::Square() :
 		m_value(64) {
+}
+
+inline constexpr std::optional<Square> Square::parse(std::string_view square) {
+	if (unlikely(square.size() != 2)) {
+		return {};
+	}
+
+	if (unlikely(square[0] < 'a' || 'h' < square[0])) {
+		return {};
+	}
+
+	if (unlikely(square[1] < '1' || '8' < square[1])) {
+		return {};
+	}
+
+	return Square(square);
 }
 
 inline constexpr Square::Square(uint64_t value) :

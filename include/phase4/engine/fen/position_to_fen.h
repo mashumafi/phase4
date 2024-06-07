@@ -18,7 +18,7 @@ namespace phase4::engine::fen {
 
 class PositionToFen {
 public:
-	static std::string encode(const board::Position &position) {
+	static std::string encode(const board::Position &position) noexcept {
 		return encodePieces(position) + " " +
 				encodeColor(position) + " " +
 				encodeCastling(position) + " " +
@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	static std::string encodePieces(const board::Position &position) {
+	static std::string encodePieces(const board::Position &position) noexcept {
 		using namespace common;
 
 		std::string resultBuilder;
@@ -99,11 +99,11 @@ private:
 		return resultBuilder;
 	}
 
-	static std::string encodeColor(const board::Position &position) {
+	static std::string encodeColor(const board::Position &position) noexcept {
 		return position.colorToMove() == common::PieceColor::WHITE ? "w" : "b";
 	}
 
-	static std::string encodeCastling(const board::Position &position) {
+	static std::string encodeCastling(const board::Position &position) noexcept {
 		std::string resultBuilder;
 		resultBuilder.reserve(4);
 
@@ -130,7 +130,7 @@ private:
 		return resultBuilder;
 	}
 
-	static std::string encodeEnPassant(const board::Position &position) {
+	static std::string encodeEnPassant(const board::Position &position) noexcept {
 		if (position.enPassant() == 0) {
 			return "-";
 		}
@@ -144,15 +144,15 @@ private:
 		return iss.str();
 	}
 
-	static std::string encodeHalfmoveClock(const board::Position &position) {
+	static std::string encodeHalfmoveClock(const board::Position &position) noexcept {
 		return std::to_string(position.irreversibleMovesCount());
 	}
 
-	static std::string encodeFullmoveNumber(const board::Position &position) {
+	static std::string encodeFullmoveNumber(const board::Position &position) noexcept {
 		return std::to_string(common::Math::max_uint16(position.movesCount(), 1));
 	}
 
-	static char convertToPiece(common::PieceType piece, common::PieceColor color) {
+	static char convertToPiece(common::PieceType piece, common::PieceColor color) noexcept {
 		using namespace common;
 
 		const auto pieceAsChar = [](PieceType piece) -> char {

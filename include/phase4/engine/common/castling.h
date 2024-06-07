@@ -48,7 +48,7 @@ public:
 
 private:
 	constexpr Castling(uint64_t value) noexcept;
-	constexpr Castling &operator=(uint64_t value)noexcept;
+	constexpr Castling &operator=(uint64_t value) noexcept;
 
 	uint8_t m_value;
 };
