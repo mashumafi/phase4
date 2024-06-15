@@ -444,7 +444,7 @@ public:
 		for (size_t i = 0; i < allMoves.size(); ++i) {
 			board::Position positionCopy = position;
 			board::PositionMoves::makeMove(positionCopy, allMoves[i]);
-			if (!positionCopy.isKingChecked(position.colorToMove().invert())) {
+			if (!positionCopy.isKingChecked(position.colorToMove())) {
 				moves.push_back(allMoves[i]);
 			}
 		}
