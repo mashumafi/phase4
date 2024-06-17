@@ -48,7 +48,7 @@ TEST_CASE("Square output invalid") {
 		const Square invalidSquare(64);
 		std::stringstream ss;
 		ss << invalidSquare;
-		CHECK(ss.fail());
+		CHECK(ss.str() == "");
 	}
 }
 
