@@ -11,6 +11,7 @@
 #include <phase4/engine/common/piece_type.h>
 #include <phase4/engine/common/square.h>
 
+#include <cstdio>
 #include <sstream>
 #include <string>
 
@@ -19,22 +20,26 @@ namespace phase4::engine::fen {
 class PositionToFen {
 public:
 	static std::string encode(const board::Position &position) noexcept {
-		return encodePieces(position) + " " +
-				encodeColor(position) + " " +
-				encodeCastling(position) + " " +
-				encodeEnPassant(position) + " " +
-				encodeHalfmoveClock(position) + " " +
-				encodeFullmoveNumber(position);
+		std::string fen;
+		fen.reserve(100);
+		encodePieces(fen, position);
+		fen.push_back(' ');
+		encodeColor(fen, position);
+		fen.push_back(' ');
+		encodeCastling(fen, position);
+		fen.push_back(' ');
+		encodeEnPassant(fen, position);
+		fen.push_back(' ');
+		encodeHalfmoveClock(fen, position);
+		fen.push_back(' ');
+		encodeFullmoveNumber(fen, position);
+
+		return fen;
 	}
 
 private:
-	static std::string encodePieces(const board::Position &position) noexcept {
+	static void encodePieces(std::string &fen, const board::Position &position) noexcept {
 		using namespace common;
-
-		std::string resultBuilder;
-		resultBuilder.reserve(9 * 8);
-		std::string rankBuilder;
-		rankBuilder.reserve(9);
 
 		for (int16_t rank = 7; rank >= 0; rank--) {
 			uint8_t emptyFields = 0;
@@ -67,92 +72,87 @@ private:
 
 				if (piece != PieceType::INVALID) {
 					if (emptyFields != 0) {
-						rankBuilder += std::to_string(emptyFields);
+						fen += std::to_string(emptyFields);
 						emptyFields = 0;
 					}
 
-					rankBuilder.push_back(convertToPiece(piece, color));
+					fen.push_back(convertToPiece(piece, color));
 				} else if (hasWall) {
 					if (emptyFields != 0) {
-						rankBuilder += std::to_string(emptyFields);
+						fen += std::to_string(emptyFields);
 						emptyFields = 0;
 					}
 
-					rankBuilder.push_back('*');
+					fen.push_back('*');
 				} else {
 					emptyFields++;
 				}
 			}
 
 			if (emptyFields != 0) {
-				rankBuilder += std::to_string(emptyFields);
+				fen += std::to_string(emptyFields);
 			}
-
-			resultBuilder += rankBuilder;
-			rankBuilder.clear();
 
 			if (rank > 0) {
-				resultBuilder.push_back('/');
+				fen.push_back('/');
 			}
 		}
-
-		return resultBuilder;
 	}
 
-	static std::string encodeColor(const board::Position &position) noexcept {
-		return position.colorToMove() == common::PieceColor::WHITE ? "w" : "b";
+	static inline void encodeColor(std::string &fen, const board::Position &position) noexcept {
+		fen.push_back(position.colorToMove() == common::PieceColor::WHITE ? 'w' : 'b');
 	}
 
-	static std::string encodeCastling(const board::Position &position) noexcept {
-		std::string resultBuilder;
-		resultBuilder.reserve(4);
+	static inline void encodeCastling(std::string &fen, const board::Position &position) noexcept {
+		if (position.castling() == common::Castling::NONE) {
+			fen.push_back('-');
+			return;
+		}
 
 		if ((position.castling() & common::Castling::WHITE_SHORT) != common::Castling::NONE) {
-			resultBuilder += "K";
+			fen.push_back('K');
 		}
 
 		if ((position.castling() & common::Castling::WHITE_LONG) != common::Castling::NONE) {
-			resultBuilder += "Q";
+			fen.push_back('Q');
 		}
 
 		if ((position.castling() & common::Castling::BLACK_SHORT) != common::Castling::NONE) {
-			resultBuilder += "k";
+			fen.push_back('k');
 		}
 
 		if ((position.castling() & common::Castling::BLACK_LONG) != common::Castling::NONE) {
-			resultBuilder += "q";
+			fen.push_back('q');
 		}
-
-		if (resultBuilder.size() == 0) {
-			resultBuilder += "-";
-		}
-
-		return resultBuilder;
 	}
 
-	static std::string encodeEnPassant(const board::Position &position) noexcept {
+	static inline void encodeEnPassant(std::string &fen, const board::Position &position) noexcept {
 		if (position.enPassant() == 0) {
-			return "-";
+			fen.push_back('-');
 		}
 
 		const uint8_t enPassantField = position.enPassant().bitScan(); // TODO: skip lsb
 		const common::Square enPassantPosition(enPassantField);
 
-		std::stringstream iss;
+		std::stringstream iss; // TODO: Avoid string stream
 		iss << enPassantPosition;
 
-		return iss.str();
+		fen.append(iss.str());
 	}
 
-	static std::string encodeHalfmoveClock(const board::Position &position) noexcept {
-		return std::to_string(position.irreversibleMovesCount());
+	static inline void encodeHalfmoveClock(std::string &fen, const board::Position &position) noexcept {
+		std::array<char, 5> halfmoveClock;
+		snprintf(halfmoveClock.data(), halfmoveClock.size(), "%zu", position.irreversibleMovesCount());
+		fen.append(halfmoveClock.data());
 	}
 
-	static std::string encodeFullmoveNumber(const board::Position &position) noexcept {
-		return std::to_string(common::Math::max_uint16(position.movesCount(), 1));
+	static inline void encodeFullmoveNumber(std::string &fen, const board::Position &position) noexcept {
+		std::array<char, 5> fullmoveClock;
+		snprintf(fullmoveClock.data(), fullmoveClock.size(), "%d", common::Math::max_uint16(position.movesCount(), 1));
+		fen.append(fullmoveClock.data());
 	}
 
-	static char convertToPiece(common::PieceType piece, common::PieceColor color) noexcept {
+	static inline char convertToPiece(common::PieceType piece, common::PieceColor color) noexcept {
 		using namespace common;
 
 		const auto pieceAsChar = [](PieceType piece) -> char {
