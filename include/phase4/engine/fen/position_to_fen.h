@@ -147,7 +147,7 @@ private:
 	}
 
 	static inline void encodeFullmoveNumber(std::string &fen, const board::Position &position) noexcept {
-		std::array<char, 5> fullmoveClock;
+		std::array<char, 6> fullmoveClock;
 		snprintf(fullmoveClock.data(), fullmoveClock.size(), "%d", common::Math::max_uint16(position.movesCount(), 1));
 		fen.append(fullmoveClock.data());
 	}
