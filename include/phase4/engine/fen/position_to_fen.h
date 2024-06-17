@@ -129,6 +129,7 @@ private:
 	static inline void encodeEnPassant(std::string &fen, const board::Position &position) noexcept {
 		if (position.enPassant() == 0) {
 			fen.push_back('-');
+			return;
 		}
 
 		const uint8_t enPassantField = position.enPassant().bitScan(); // TODO: skip lsb
