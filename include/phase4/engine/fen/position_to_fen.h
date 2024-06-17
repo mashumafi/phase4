@@ -129,15 +129,13 @@ private:
 	static inline void encodeEnPassant(std::string &fen, const board::Position &position) noexcept {
 		if (position.enPassant() == 0) {
 			fen.push_back('-');
+			return;
 		}
 
 		const uint8_t enPassantField = position.enPassant().bitScan(); // TODO: skip lsb
 		const common::Square enPassantPosition(enPassantField);
 
-		std::stringstream iss; // TODO: Avoid string stream
-		iss << enPassantPosition;
-
-		fen.append(iss.str());
+		fen.append(enPassantPosition.asBuffer().data());
 	}
 
 	static inline void encodeHalfmoveClock(std::string &fen, const board::Position &position) noexcept {
@@ -147,7 +145,7 @@ private:
 	}
 
 	static inline void encodeFullmoveNumber(std::string &fen, const board::Position &position) noexcept {
-		std::array<char, 5> fullmoveClock;
+		std::array<char, 6> fullmoveClock;
 		snprintf(fullmoveClock.data(), fullmoveClock.size(), "%d", common::Math::max_uint16(position.movesCount(), 1));
 		fen.append(fullmoveClock.data());
 	}
