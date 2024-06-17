@@ -6,6 +6,7 @@
 #include <phase4/engine/common/piece_color.h>
 #include <phase4/engine/common/util.h>
 
+#include <array>
 #include <iostream>
 #include <optional>
 
@@ -101,6 +102,8 @@ public:
 
 	inline constexpr Bitboard asBitboard() const noexcept;
 
+	inline constexpr std::array<char, 3> asBuffer() const noexcept;
+
 	inline constexpr operator uint64_t() const;
 
 	inline constexpr Square();
@@ -153,6 +156,22 @@ inline constexpr FieldIndex Square::asFieldIndex() const noexcept {
 
 inline constexpr Bitboard Square::asBitboard() const noexcept {
 	return Bitboard(1ull << m_value);
+}
+
+inline constexpr std::array<char, 3> Square::asBuffer() const noexcept {
+	constexpr char fileLabels[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+	const FieldIndex field = asFieldIndex();
+
+	std::array<char, 3> buffer{};
+	if (unlikely(field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8)) {
+		buffer[0] = fileLabels[field.x];
+		buffer[1] = '1' + field.y;
+		buffer[2] = '\0';
+	} else {
+		buffer[0] = '\0';
+	}
+
+	return buffer;
 }
 
 inline constexpr Square::operator uint64_t() const {
@@ -308,16 +327,7 @@ inline constexpr Square Square::operator++() {
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Square &square) {
-	constexpr char fileLabels[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-	const FieldIndex field = square.asFieldIndex();
-
-	if (unlikely(field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8)) {
-		os << fileLabels[field.x] << (field.y + 1);
-	} else {
-		os.setstate(std::ios_base::failbit);
-	}
-
-	return os;
+	return os << square.asBuffer().data();
 }
 
 } //namespace phase4::engine::common

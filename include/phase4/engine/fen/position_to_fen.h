@@ -135,10 +135,7 @@ private:
 		const uint8_t enPassantField = position.enPassant().bitScan(); // TODO: skip lsb
 		const common::Square enPassantPosition(enPassantField);
 
-		std::stringstream iss; // TODO: Avoid string stream
-		iss << enPassantPosition;
-
-		fen.append(iss.str());
+		fen.append(enPassantPosition.asBuffer().data());
 	}
 
 	static inline void encodeHalfmoveClock(std::string &fen, const board::Position &position) noexcept {
