@@ -54,14 +54,14 @@ public:
 		return !positionCopy.isKingChecked(m_position.colorToMove());
 	}
 
-	PositionMoves::MakeMoveResult makeMove(moves::Move move) {
+	moves::Result makeMove(moves::Move move) {
 		m_castlings.push_back(m_position.castling());
 		m_hashes.push_back(m_position.hash());
 		m_pawnHashes.push_back(m_position.pawnHash());
 		m_enPassants.push_back(m_position.enPassant());
 		m_irreversibleMovesCounts.push_back(m_position.irreversibleMovesCount());
 
-		const PositionMoves::MakeMoveResult &details = PositionMoves::makeMove(m_position, move);
+		const moves::Result &details = PositionMoves::makeMove(m_position, move);
 		if (unlikely(details.promotion))
 			m_promotedPieces.push_back(*details.promotion);
 
