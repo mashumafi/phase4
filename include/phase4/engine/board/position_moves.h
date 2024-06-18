@@ -5,6 +5,7 @@
 #include <phase4/engine/board/position.h>
 
 #include <phase4/engine/moves/move.h>
+#include <phase4/engine/moves/result.h>
 
 #include <phase4/engine/common/bitboard.h>
 #include <phase4/engine/common/castling.h>
@@ -23,41 +24,10 @@ namespace phase4::engine::board {
 
 class PositionMoves {
 public:
-	struct MakeMoveResult {
-		struct Movement {
-			common::Square from;
-			common::Square to;
-
-			bool operator==(MakeMoveResult::Movement that) const {
-				return from == that.from && to == that.to;
-			}
-		};
-
-		struct PieceAndSquare {
-			common::PieceType pieceType;
-			common::Square at;
-
-			bool operator==(MakeMoveResult::PieceAndSquare that) const {
-				return pieceType == that.pieceType && at == that.at;
-			}
-		};
-
-		common::FastVector<Movement, 6> moved;
-
-		std::optional<PieceAndSquare> added;
-
-		std::optional<common::PieceType> promotion;
-
-		std::optional<PieceAndSquare> killed;
-		common::FastVector<PieceAndSquare, 2> removed;
-
-		std::optional<common::FieldIndex> slide;
-	};
-
-	static inline MakeMoveResult makeMove(Position &position, moves::Move move) {
+	static inline moves::Result makeMove(Position &position, moves::Move move) {
 		using namespace common;
 
-		MakeMoveResult result;
+		moves::Result result;
 
 		const PieceType pieceType = position.pieceTable(move.from());
 		const PieceColor enemyColor = position.colorToMove().invert();
@@ -111,7 +81,7 @@ public:
 			position.hash() = position.hash().movePiece(position.colorToMove(), pieceType, move.from(), move.to());
 			position.pawnHash() = position.pawnHash().movePiece(position.colorToMove(), pieceType, move.from(), move.to());
 
-			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, enemyPieceField };
+			result.killed = moves::Result::PieceAndSquare{ killedPiece, enemyPieceField };
 		} else if (move.flags().isCapture()) {
 			PieceType killedPiece = position.pieceTable(move.to());
 
@@ -165,7 +135,7 @@ public:
 				}
 			}
 
-			result.killed = MakeMoveResult::PieceAndSquare{ killedPiece, move.to() };
+			result.killed = moves::Result::PieceAndSquare{ killedPiece, move.to() };
 		} else if (move.flags().isCastling()) {
 			if (move.flags().isKingCastling()) { // Short/King castling
 				if (position.colorToMove() == PieceColor::WHITE) {
@@ -279,7 +249,6 @@ public:
 					if (auto pieceResult = position.getPiece(from)) {
 						auto [resultColor, resultType] = *pieceResult;
 						position.movePiece(resultColor, resultType, from, to);
-						result.moved.push_back({ from, to });
 						position.hash() = position.hash().movePiece(resultColor, resultType, from, to);
 						if (resultType == PieceType::PAWN) {
 							position.pawnHash() = position.pawnHash().movePiece(resultColor, resultType, from, to);
