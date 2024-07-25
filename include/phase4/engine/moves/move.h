@@ -27,7 +27,7 @@ public:
 
 	constexpr Move(std::string_view textNotation);
 
-	constexpr UciNotation asUciNotation() const noexcept;
+	inline constexpr UciNotation asUciNotation() const noexcept;
 
 	friend std::ostream &operator<<(std::ostream &os, const Move &move);
 
@@ -102,18 +102,18 @@ constexpr Move::Move(std::string_view textNotation) :
 				(textNotation.size() >= 5) ? MoveFlags::getPromotionSymbolFlags(textNotation[4]) : MoveFlags::QUIET) {
 }
 
-constexpr UciNotation Move::asUciNotation() const noexcept {
+inline constexpr UciNotation Move::asUciNotation() const noexcept {
 	UciNotation move = { 0 };
-	const std::array<char, 3> &fromBuffer = m_from.asBuffer();
-	const std::array<char, 3> &toBuffer = m_to.asBuffer();
+	const std::array<char, 3> &fromBuffer = from().asBuffer();
+	const std::array<char, 3> &toBuffer = to().asBuffer();
 
 	move[0] = fromBuffer[0];
 	move[1] = fromBuffer[1];
 	move[2] = toBuffer[0];
 	move[3] = toBuffer[1];
 
-	if (unlikely(m_flags.isPromotion())) {
-		move[4] = m_flags.getPromotionSymbol();
+	if (unlikely(flags().isPromotion())) {
+		move[4] = flags().getPromotionSymbol();
 		move[5] = '\0';
 	} else {
 		move[4] = '\0';
