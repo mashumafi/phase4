@@ -9,6 +9,8 @@
 
 namespace phase4::engine::moves {
 
+using UciNotation = std::array<char, 6>;
+
 class Move {
 public:
 	static const Move EMPTY;
@@ -24,6 +26,8 @@ public:
 	constexpr Move(common::Square from, common::Square to, MoveFlags flags);
 
 	constexpr Move(std::string_view textNotation);
+
+	UciNotation asUciNotation() const;
 
 	friend std::ostream &operator<<(std::ostream &os, const Move &move);
 
@@ -96,6 +100,26 @@ constexpr Move::Move(std::string_view textNotation) :
 				common::Square(textNotation.substr(0, 2)),
 				common::Square(textNotation.substr(2, 2)),
 				(textNotation.size() >= 5) ? MoveFlags::getPromotionSymbolFlags(textNotation[4]) : MoveFlags::QUIET) {
+}
+
+inline UciNotation Move::asUciNotation() const {
+	UciNotation move;
+	const auto &fromBuffer = m_from.asBuffer();
+	const auto &toBuffer = m_to.asBuffer();
+
+	move[0] = fromBuffer[0];
+	move[1] = fromBuffer[1];
+	move[2] = toBuffer[0];
+	move[3] = toBuffer[1];
+
+	if (unlikely(m_flags.isPromotion())) {
+		move[4] = m_flags.getPromotionSymbol();
+		move[5] = '\0';
+	} else {
+		move[4] = '\0';
+	}
+
+	return move;
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Move &move) {

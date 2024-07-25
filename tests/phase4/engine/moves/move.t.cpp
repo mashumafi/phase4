@@ -70,3 +70,13 @@ TEST_CASE("Move string constructor") {
 		CHECK(ss.str() == "c2c1n");
 	}
 }
+
+TEST_CASE("Move as uci notation") {
+	using namespace phase4::engine::common;
+	using namespace phase4::engine::moves;
+
+	using namespace std::string_literals;
+
+	CHECK(Move(Square::A1, Square::B2, MoveFlags::QUIET).asUciNotation().data() == "a1b2"s);
+	CHECK(Move(Square::A1, Square::B2, MoveFlags::ROOK_PROMOTION).asUciNotation().data() == "a1b2r"s);
+}
