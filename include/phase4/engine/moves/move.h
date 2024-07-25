@@ -123,11 +123,7 @@ inline UciNotation Move::asUciNotation() const {
 }
 
 inline std::ostream &operator<<(std::ostream &os, const Move &move) {
-	os << common::Square(move.from()) << common::Square(move.to());
-	if (unlikely(move.flags().isPromotion())) {
-		os << move.flags().getPromotionSymbol();
-	}
-	return os;
+	return os << move.asUciNotation().data();
 }
 
 inline constexpr bool operator==(const Move a, const Move b) {
