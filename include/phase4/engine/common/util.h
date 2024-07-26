@@ -72,7 +72,7 @@ private:
 namespace phase4::engine::common::util {
 
 template <typename T, size_t N>
-void clear(std::array<T, N> &array) {
+void inline clear(std::array<T, N> &array) {
 	std::memset(static_cast<void *>(array.data()), 0, array.size() * sizeof(T));
 }
 

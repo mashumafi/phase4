@@ -41,7 +41,7 @@ constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() n
 
 inline constexpr FilePatternGenerator::Array FilePatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitboard FilePatternGenerator::getPatternForField(common::Square square) noexcept {
+inline constexpr common::Bitboard FilePatternGenerator::getPatternForField(common::Square square) noexcept {
 	return PATTERNS[square % 8] & ~(square.asBitboard().get_raw_value());
 }
 

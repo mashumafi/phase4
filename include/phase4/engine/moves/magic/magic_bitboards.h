@@ -114,14 +114,12 @@ private:
 			container.magicNumber = rand.fewBits();
 
 			if (container.magicNumber == first) {
-				std::cout << "Repeated the first number in the random sequence" << std::endl;
 				return false;
 			}
 
-			common::util::clear(container.attacks);
+			container.attacks.fill(0);
 		}
 
-		std::cout << "Max attack limit reached" << std::endl;
 		return false;
 	}
 

@@ -61,7 +61,7 @@ constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::generatePatt
 
 inline constexpr DiagonalPatternGenerator::Array DiagonalPatternGenerator::PATTERNS = DiagonalPatternGenerator::generatePatterns();
 
-constexpr common::Bitboard DiagonalPatternGenerator::getPattern(common::Square square) {
+inline constexpr common::Bitboard DiagonalPatternGenerator::getPattern(common::Square square) {
 	return PATTERNS[square];
 }
 

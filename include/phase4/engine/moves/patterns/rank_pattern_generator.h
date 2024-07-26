@@ -40,7 +40,7 @@ constexpr RankPatternGenerator::Array RankPatternGenerator::generatePatterns() {
 
 inline constexpr RankPatternGenerator::Array RankPatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitboard RankPatternGenerator::getPatternForField(common::Square square) {
+inline constexpr common::Bitboard RankPatternGenerator::getPatternForField(common::Square square) {
 	return PATTERNS[square / 8] & ~(square.asBitboard());
 }
 

@@ -35,7 +35,7 @@ constexpr uint64_t Random::next() {
 	return m_state;
 }
 
-constexpr uint64_t Random::fewBits() {
+inline constexpr uint64_t Random::fewBits() {
 	return next() & next() & next();
 }
 
