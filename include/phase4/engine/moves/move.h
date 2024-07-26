@@ -9,6 +9,8 @@
 
 namespace phase4::engine::moves {
 
+using UciNotation = std::array<char, 6>;
+
 class Move {
 public:
 	static const Move EMPTY;
@@ -24,6 +26,8 @@ public:
 	constexpr Move(common::Square from, common::Square to, MoveFlags flags);
 
 	constexpr Move(std::string_view textNotation);
+
+	inline constexpr UciNotation asUciNotation() const noexcept;
 
 	friend std::ostream &operator<<(std::ostream &os, const Move &move);
 
@@ -98,12 +102,28 @@ constexpr Move::Move(std::string_view textNotation) :
 				(textNotation.size() >= 5) ? MoveFlags::getPromotionSymbolFlags(textNotation[4]) : MoveFlags::QUIET) {
 }
 
-inline std::ostream &operator<<(std::ostream &os, const Move &move) {
-	os << common::Square(move.from()) << common::Square(move.to());
-	if (unlikely(move.flags().isPromotion())) {
-		os << move.flags().getPromotionSymbol();
+inline constexpr UciNotation Move::asUciNotation() const noexcept {
+	UciNotation move = { 0 };
+	const std::array<char, 3> &fromBuffer = from().asBuffer();
+	const std::array<char, 3> &toBuffer = to().asBuffer();
+
+	move[0] = fromBuffer[0];
+	move[1] = fromBuffer[1];
+	move[2] = toBuffer[0];
+	move[3] = toBuffer[1];
+
+	if (unlikely(flags().isPromotion())) {
+		move[4] = flags().getPromotionSymbol();
+		move[5] = '\0';
+	} else {
+		move[4] = '\0';
 	}
-	return os;
+
+	return move;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const Move &move) {
+	return os << move.asUciNotation().data();
 }
 
 inline constexpr bool operator==(const Move a, const Move b) {
