@@ -48,7 +48,7 @@ public:
 
 	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
 
-	static std::unique_ptr<MagicBitboards::BishopMagicContainers> generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {});
+	static constexpr BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {});
 
 private:
 	static constexpr Masks generateRookMasks() {
@@ -163,8 +163,8 @@ inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray,
 	magicArray.isValid = true;
 }
 
-inline std::unique_ptr<MagicBitboards::BishopMagicContainers> MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) {
-	auto magicArray = std::make_unique<BishopMagicContainers>();
+inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) {
+	BishopMagicContainers magicArray;
 	constexpr Masks masks = generateBishopMasks();
 
 	auto permutations = std::array<common::Bitboard, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
@@ -176,13 +176,13 @@ inline std::unique_ptr<MagicBitboards::BishopMagicContainers> MagicBitboards::ge
 			attacks[permutationIndex] = AttacksGenerator::getDiagonalAttacks(permutations[permutationIndex], common::Square(fieldIndex));
 		}
 
-		generateAttacks(magicArray->containers[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
+		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
 	}
-	magicArray->isValid = true;
+	magicArray.isValid = true;
 	return magicArray;
 }
 
-inline const MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY = *generateBishopAttacks(MagicKeys::BISHOP_KEYS);
+inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::BISHOP_MAGIC_ARRAY = generateBishopAttacks(MagicKeys::BISHOP_KEYS);
 
 } //namespace phase4::engine::moves::magic
 
