@@ -165,7 +165,7 @@ inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray,
 	magicArray.isValid = true;
 }
 
-inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) noexcept {
+inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &) noexcept {
 	BishopMagicContainers magicArray;
 	/*constexpr Masks masks = generateBishopMasks();
 
