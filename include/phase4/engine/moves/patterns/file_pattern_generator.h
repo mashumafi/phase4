@@ -15,23 +15,23 @@ class FilePatternGenerator {
 public:
 	using Array = std::array<common::Bitboard, 8>;
 
-	static constexpr common::Bitboard getPatternForField(common::Square square);
+	static constexpr common::Bitboard getPatternForField(common::Square square) noexcept;
 
-	static constexpr common::Bitboard getPatternForFile(uint16_t rank);
+	static constexpr common::Bitboard getPatternForFile(uint16_t rank) noexcept;
 
 private:
-	static constexpr Array generatePatterns();
+	static constexpr Array generatePatterns() noexcept;
 
-	static constexpr common::Bitboard generatePatternForField(size_t file);
+	static constexpr common::Bitboard generatePatternForField(size_t file) noexcept;
 
 	static const Array PATTERNS;
 };
 
-constexpr common::Bitboard FilePatternGenerator::generatePatternForField(size_t file) {
+constexpr common::Bitboard FilePatternGenerator::generatePatternForField(size_t file) noexcept {
 	return common::PositionConstants::FILE_H << file;
 }
 
-constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
+constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() noexcept {
 	Array patterns{};
 	for (size_t i = 0; i < patterns.size(); ++i) {
 		patterns[i] = generatePatternForField(i);
@@ -41,11 +41,11 @@ constexpr FilePatternGenerator::Array FilePatternGenerator::generatePatterns() {
 
 inline constexpr FilePatternGenerator::Array FilePatternGenerator::PATTERNS = generatePatterns();
 
-constexpr common::Bitboard FilePatternGenerator::getPatternForField(common::Square square) {
+inline constexpr common::Bitboard FilePatternGenerator::getPatternForField(common::Square square) noexcept {
 	return PATTERNS[square % 8] & ~(square.asBitboard().get_raw_value());
 }
 
-constexpr common::Bitboard FilePatternGenerator::getPatternForFile(uint16_t file) {
+constexpr common::Bitboard FilePatternGenerator::getPatternForFile(uint16_t file) noexcept {
 	assert(file < 8);
 	assert(file < 64); // TODO: remove this or mod below
 	return PATTERNS[file % 8];

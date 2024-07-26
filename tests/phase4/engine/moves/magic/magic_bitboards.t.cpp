@@ -7,9 +7,7 @@
 TEST_CASE("MagicBitboards generateBishopAttacks") {
 	using namespace phase4::engine::moves::magic;
 
-	auto bishopAttacks = std::make_unique<MagicBitboards::BishopMagicContainers>();
-	MagicBitboards::generateBishopAttacks(*bishopAttacks);
-	CHECK(bishopAttacks->isValid);
+	const auto bishopAttacks = MagicBitboards::generateBishopAttacks();
 	CHECK(bishopAttacks->containers[0].magicNumber.get_raw_value() == 4613379283715375620ull);
 	CHECK(bishopAttacks->containers[1].magicNumber.get_raw_value() == 1134706804948992ull);
 	CHECK(bishopAttacks->containers[2].magicNumber.get_raw_value() == 1193454665762160640ull);
@@ -22,9 +20,7 @@ TEST_CASE("MagicBitboards generateBishopAttacks") {
 TEST_CASE("MagicBitboards generateRookAttacks") {
 	using namespace phase4::engine::moves::magic;
 
-	auto rookAttacks = std::make_unique<MagicBitboards::RookMagicContainers>();
-	MagicBitboards::generateRookAttacks(*rookAttacks);
-	CHECK(rookAttacks->isValid);
+	auto rookAttacks = MagicBitboards::generateRookAttacks();
 	CHECK(rookAttacks->containers[0].magicNumber.get_raw_value() == 36028866283716608ull);
 	CHECK(rookAttacks->containers[1].magicNumber.get_raw_value() == 54078380169052160ull);
 	CHECK(rookAttacks->containers[2].magicNumber.get_raw_value() == 293859888579350528ull);
