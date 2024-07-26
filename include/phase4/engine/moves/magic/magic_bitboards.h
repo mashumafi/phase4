@@ -21,7 +21,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
 #include <memory>
 #include <optional>
 
@@ -122,6 +121,7 @@ private:
 			common::util::clear(container.attacks);
 		}
 
+		std::cout << "Max attack limit reached" << std::endl;
 		return false;
 	}
 
@@ -140,7 +140,6 @@ inline common::Bitboard MagicBitboards::getRookMoves(common::Bitboard board, com
 }
 
 inline common::Bitboard MagicBitboards::getBishopMoves(common::Bitboard board, common::Square square) noexcept {
-	std::cout << "Is bishop valid: " << BISHOP_MAGIC_ARRAY.isValid << std::endl;
 	assert(BISHOP_MAGIC_ARRAY.isValid);
 	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
 	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
