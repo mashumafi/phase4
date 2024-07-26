@@ -10,14 +10,14 @@ namespace phase4::engine::moves::magic {
 
 class AttacksGenerator {
 public:
-	static constexpr common::Bitboard getFileRankAttacks(common::Bitboard board, common::Square square) {
+	static constexpr common::Bitboard getFileRankAttacks(common::Bitboard board, common::Square square) noexcept {
 		return getAttacksForDirection(board, square, common::FieldIndex(0, 1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(0, -1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(1, 0)) |
 				getAttacksForDirection(board, square, common::FieldIndex(-1, 0));
 	}
 
-	static constexpr common::Bitboard getDiagonalAttacks(common::Bitboard board, common::Square square) {
+	static constexpr common::Bitboard getDiagonalAttacks(common::Bitboard board, common::Square square) noexcept {
 		return getAttacksForDirection(board, square, common::FieldIndex(1, 1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(1, -1)) |
 				getAttacksForDirection(board, square, common::FieldIndex(-1, 1)) |
@@ -25,7 +25,7 @@ public:
 	}
 
 private:
-	static constexpr common::Bitboard getAttacksForDirection(common::Bitboard board, common::Square square, const common::FieldIndex &shift) {
+	static constexpr common::Bitboard getAttacksForDirection(common::Bitboard board, common::Square square, common::FieldIndex shift) noexcept {
 		common::FieldIndex current = square.asFieldIndex() + shift;
 		common::Bitboard attacks = 0;
 

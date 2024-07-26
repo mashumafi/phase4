@@ -38,39 +38,39 @@ public:
 
 	using Masks = std::array<common::Bitboard, 64>;
 
-	static void initWithInternalKeys() {
+	static void initWithInternalKeys() noexcept {
 		generateRookAttacks(ROOK_MAGIC_ARRAY, MagicKeys::ROOK_KEYS);
 	}
 
-	static common::Bitboard getRookMoves(common::Bitboard board, common::Square square);
+	static common::Bitboard getRookMoves(common::Bitboard board, common::Square square) noexcept;
 
-	static common::Bitboard getBishopMoves(common::Bitboard board, common::Square square);
+	static common::Bitboard getBishopMoves(common::Bitboard board, common::Square square) noexcept;
 
-	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {});
+	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {}) noexcept;
 
-	static constexpr BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {});
+	static constexpr BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) noexcept;
 
 private:
-	static constexpr Masks generateRookMasks() {
+	static constexpr Masks generateRookMasks() noexcept {
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] =
-					(patterns::FilePatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~common::PositionConstants::TOP_BOTTOM_EDGE) |
-					(patterns::RankPatternGenerator::getPatternForField(common::Square(fieldIndex)) & ~common::PositionConstants::RIGHT_LEFT_EDGE);
+					(patterns::FilePatternGenerator::getPatternForField(fieldIndex) & ~common::PositionConstants::TOP_BOTTOM_EDGE) |
+					(patterns::RankPatternGenerator::getPatternForField(fieldIndex) & ~common::PositionConstants::RIGHT_LEFT_EDGE);
 		}
 		return masks;
 	}
 
-	static constexpr Masks generateBishopMasks() {
+	static constexpr Masks generateBishopMasks() noexcept {
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
-			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(common::Square(fieldIndex)) & ~common::PositionConstants::EDGES;
+			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(fieldIndex) & ~common::PositionConstants::EDGES;
 		}
 		return masks;
 	}
 
 	template <size_t N>
-	static constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitboard, N> &permutations, const std::array<common::Bitboard, N> &attacks) {
+	static constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitboard, N> &permutations, const std::array<common::Bitboard, N> &attacks) noexcept {
 		const size_t length = 1ull << shift;
 		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 			const common::Bitboard hash = permutations[permutationIndex] * container.magicNumber;
@@ -94,7 +94,7 @@ private:
 			int32_t shift,
 			const std::array<common::Bitboard, N> &permutations,
 			const std::array<common::Bitboard, N> &attacks,
-			std::optional<uint64_t> key = {}) {
+			std::optional<uint64_t> key = {}) noexcept {
 		common::Random rand(123456);
 		const uint64_t first = key ? key.value() : rand.fewBits();
 
@@ -130,7 +130,7 @@ private:
 
 inline MagicBitboards::RookMagicContainers MagicBitboards::ROOK_MAGIC_ARRAY;
 
-inline common::Bitboard MagicBitboards::getRookMoves(common::Bitboard board, common::Square square) {
+inline common::Bitboard MagicBitboards::getRookMoves(common::Bitboard board, common::Square square) noexcept {
 	assert(ROOK_MAGIC_ARRAY.isValid);
 	board = board & ROOK_MAGIC_ARRAY.containers[square].mask;
 	board = board * ROOK_MAGIC_ARRAY.containers[square].magicNumber;
@@ -138,7 +138,7 @@ inline common::Bitboard MagicBitboards::getRookMoves(common::Bitboard board, com
 	return ROOK_MAGIC_ARRAY.containers[square].attacks[board.get_raw_value()];
 }
 
-inline common::Bitboard MagicBitboards::getBishopMoves(common::Bitboard board, common::Square square) {
+inline common::Bitboard MagicBitboards::getBishopMoves(common::Bitboard board, common::Square square) noexcept {
 	assert(BISHOP_MAGIC_ARRAY.isValid);
 	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
 	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
@@ -146,7 +146,7 @@ inline common::Bitboard MagicBitboards::getBishopMoves(common::Bitboard board, c
 	return BISHOP_MAGIC_ARRAY.containers[square].attacks[board.get_raw_value()];
 }
 
-inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) {
+inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys) noexcept {
 	constexpr Masks masks = generateRookMasks();
 
 	auto permutations = std::array<common::Bitboard, 1ull << MagicShifts::MAX_ROOK_SHIFT>();
@@ -163,7 +163,7 @@ inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray,
 	magicArray.isValid = true;
 }
 
-inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) {
+inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) noexcept {
 	BishopMagicContainers magicArray;
 	constexpr Masks masks = generateBishopMasks();
 

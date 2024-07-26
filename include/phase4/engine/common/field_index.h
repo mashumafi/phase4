@@ -15,11 +15,11 @@ struct FieldIndex {
 
 	static const FieldIndex ZERO;
 
-	constexpr FieldIndex();
+	constexpr FieldIndex() noexcept;
 
-	constexpr FieldIndex(int16_t x, int16_t y);
+	constexpr FieldIndex(int16_t x, int16_t y) noexcept;
 
-	constexpr FieldIndex(std::string_view move);
+	constexpr FieldIndex(std::string_view move) noexcept;
 
 	constexpr uint16_t maxCartesianDistance(FieldIndex other) const;
 
@@ -30,18 +30,18 @@ struct FieldIndex {
 	constexpr FieldIndex operator+=(FieldIndex that);
 };
 
-constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) :
+constexpr FieldIndex::FieldIndex(int16_t x, int16_t y) noexcept :
 		x{ x },
 		y{ y } {
 }
 
 inline constexpr FieldIndex FieldIndex::ZERO(0, 0);
 
-constexpr FieldIndex::FieldIndex() :
+constexpr FieldIndex::FieldIndex() noexcept :
 		FieldIndex(0, 0) {
 }
 
-constexpr FieldIndex::FieldIndex(std::string_view move) :
+constexpr FieldIndex::FieldIndex(std::string_view move) noexcept :
 		x{ static_cast<int16_t>(move[0] - 'a') },
 		y{ static_cast<int16_t>(move[1] - '1') } {
 }
