@@ -9,7 +9,7 @@ namespace phase4::engine::moves::magic {
 
 class PermutationsGenerator {
 public:
-	static constexpr common::Bitboard getPermutation(common::Bitboard mask, uint64_t permutationIndex) noexcept {
+	static inline constexpr common::Bitboard getPermutation(common::Bitboard mask, uint64_t permutationIndex) noexcept {
 		common::Bitboard permutation = 0;
 		while (mask != 0) {
 			if ((permutationIndex & 1) != 0) {

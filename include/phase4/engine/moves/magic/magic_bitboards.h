@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <optional>
 
@@ -38,20 +39,20 @@ public:
 
 	using Masks = std::array<common::Bitboard, 64>;
 
-	static void initWithInternalKeys() noexcept {
+	static inline void initWithInternalKeys() noexcept {
 		generateRookAttacks(ROOK_MAGIC_ARRAY, MagicKeys::ROOK_KEYS);
 	}
 
-	static common::Bitboard getRookMoves(common::Bitboard board, common::Square square) noexcept;
+	static inline common::Bitboard getRookMoves(common::Bitboard board, common::Square square) noexcept;
 
-	static common::Bitboard getBishopMoves(common::Bitboard board, common::Square square) noexcept;
+	static inline common::Bitboard getBishopMoves(common::Bitboard board, common::Square square) noexcept;
 
-	static void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {}) noexcept;
+	static inline void generateRookAttacks(RookMagicContainers &magicArray, const std::optional<MagicKeys::Array> &keys = {}) noexcept;
 
-	static constexpr BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) noexcept;
+	static inline constexpr BishopMagicContainers generateBishopAttacks(const std::optional<MagicKeys::Array> &keys = {}) noexcept;
 
 private:
-	static constexpr Masks generateRookMasks() noexcept {
+	static inline constexpr Masks generateRookMasks() noexcept {
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] =
@@ -61,7 +62,7 @@ private:
 		return masks;
 	}
 
-	static constexpr Masks generateBishopMasks() noexcept {
+	static inline constexpr Masks generateBishopMasks() noexcept {
 		Masks masks;
 		for (common::Square fieldIndex = common::Square::BEGIN; fieldIndex != common::Square::INVALID; ++fieldIndex) {
 			masks[fieldIndex] = patterns::DiagonalPatternGenerator::getPattern(fieldIndex) & ~common::PositionConstants::EDGES;
@@ -70,7 +71,7 @@ private:
 	}
 
 	template <size_t N>
-	static constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitboard, N> &permutations, const std::array<common::Bitboard, N> &attacks) noexcept {
+	static inline constexpr bool validate(MagicContainer<N> &container, int32_t shift, const std::array<common::Bitboard, N> &permutations, const std::array<common::Bitboard, N> &attacks) noexcept {
 		const size_t length = 1ull << shift;
 		for (size_t permutationIndex = 0; permutationIndex < length; ++permutationIndex) {
 			const common::Bitboard hash = permutations[permutationIndex] * container.magicNumber;
@@ -88,7 +89,7 @@ private:
 	}
 
 	template <size_t N>
-	static constexpr bool generateAttacks(
+	static inline constexpr bool generateAttacks(
 			MagicContainer<N> &container,
 			common::Bitboard mask,
 			int32_t shift,
@@ -139,6 +140,7 @@ inline common::Bitboard MagicBitboards::getRookMoves(common::Bitboard board, com
 }
 
 inline common::Bitboard MagicBitboards::getBishopMoves(common::Bitboard board, common::Square square) noexcept {
+	std::cout << "Is bishop valid: " << BISHOP_MAGIC_ARRAY.isValid << std::endl;
 	assert(BISHOP_MAGIC_ARRAY.isValid);
 	board = board & BISHOP_MAGIC_ARRAY.containers[square].mask;
 	board = board * BISHOP_MAGIC_ARRAY.containers[square].magicNumber;
