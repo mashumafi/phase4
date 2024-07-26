@@ -165,9 +165,9 @@ inline void MagicBitboards::generateRookAttacks(RookMagicContainers &magicArray,
 	magicArray.isValid = true;
 }
 
-inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &) noexcept {
-	BishopMagicContainers magicArray;
-	/*constexpr Masks masks = generateBishopMasks();
+inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateBishopAttacks(const std::optional<MagicKeys::Array> &keys) noexcept {
+	BishopMagicContainers magicArray = { true, {} };
+	constexpr Masks masks = generateBishopMasks();
 
 	auto permutations = std::array<common::Bitboard, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
 	auto attacks = std::array<common::Bitboard, 1ull << MagicShifts::MAX_BISHOP_SHIFT>();
@@ -179,8 +179,7 @@ inline constexpr MagicBitboards::BishopMagicContainers MagicBitboards::generateB
 		}
 
 		generateAttacks(magicArray.containers[fieldIndex], masks[fieldIndex], MagicShifts::BISHOP_SHIFTS[fieldIndex], permutations, attacks, keys ? std::optional<uint64_t>(keys.value()[fieldIndex]) : std::nullopt);
-	}*/
-	magicArray.isValid = true;
+	}
 	return magicArray;
 }
 
