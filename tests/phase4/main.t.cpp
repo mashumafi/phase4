@@ -6,8 +6,6 @@
 int main(int argc, char **argv) {
 	using namespace phase4::engine;
 
-	moves::magic::MagicBitboards::initWithInternalKeys();
-
 	doctest::Context context;
 
 	context.applyCommandLine(argc, argv);
