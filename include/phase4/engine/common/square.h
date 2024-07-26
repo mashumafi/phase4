@@ -165,7 +165,7 @@ inline constexpr std::array<char, 3> Square::asBuffer() const noexcept {
 	std::array<char, 3> buffer{};
 	if (unlikely(field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8)) {
 		buffer[0] = fileLabels[field.x];
-		buffer[1] = '1' + field.y;
+		buffer[1] = '1' + static_cast<int8_t>(field.y);
 		buffer[2] = '\0';
 	} else {
 		buffer[0] = '\0';

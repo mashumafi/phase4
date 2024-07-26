@@ -7,8 +7,7 @@
 TEST_CASE("MagicBitboards generateBishopAttacks") {
 	using namespace phase4::engine::moves::magic;
 
-	auto bishopAttacks = std::make_unique<MagicBitboards::BishopMagicContainers>();
-	MagicBitboards::generateBishopAttacks(*bishopAttacks);
+	auto bishopAttacks = MagicBitboards::generateBishopAttacks();
 	CHECK(bishopAttacks->isValid);
 	CHECK(bishopAttacks->containers[0].magicNumber.get_raw_value() == 4613379283715375620ull);
 	CHECK(bishopAttacks->containers[1].magicNumber.get_raw_value() == 1134706804948992ull);
