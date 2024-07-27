@@ -205,3 +205,37 @@ TEST_CASE("Position moves valid rnbqkbnr/pppp3p/7P/4p1P1/3P2**/4pN**/PPPPPR2/RNB
 		CHECK_FALSE(PositionMoves::findRealMove(moves, Move("f2h2")));
 	}
 }
+
+TEST_CASE("PositionMoves Algebraic Notation") {
+	using namespace std::string_literals;
+
+	using namespace phase4::engine::common;
+	using namespace phase4::engine::moves;
+	using namespace phase4::engine::board;
+	using namespace phase4::engine::fen;
+
+	// Pawn moves
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"), Move(Square::E2, Square::E4, MoveFlags::QUIET)).data() == "1. e4"s);
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3"), Move(Square::E5, Square::F6, MoveFlags::QUIET)).data() == "3. exf6"s);
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqkbnr/ppp3p1/4p3/3pPpPp/8/8/PPPP1P1P/RNBQKBNR w KQkq f6 0 5"), Move(Square::G5, Square::F6, MoveFlags::QUIET)).data() == "5. gxf6"s);
+	// Promotion
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbq3r/pppk2P1/4p3/2bpPp2/8/8/PPPP1P1P/RNB1KBNR w KQ - 1 11"), Move(Square::G7, Square::G8, MoveFlags::BISHOP_PROMOTION)).data() == "11. g8=♝"s);
+	// Promotion + Capture
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbq3r/pppk2P1/4p3/2bpPp2/8/8/PPPP1P1P/RNB1KBNR w KQ - 1 11"), Move(Square::G7, Square::H8, MoveFlags::KNIGHT_PROMOTION_CAPTURE)).data() == "11. gxh8=♞"s);
+	// Promotion + Check
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppp3P1/4p3/2bpPp2/8/5P2/PPPP3P/RNB1KBNR w KQ - 1 12"), Move(Square::G7, Square::G8, MoveFlags::QUEEN_PROMOTION)).data() == "12. g8=♛+"s);
+	// Promotion + Capture + Check
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppp3P1/4p3/2bpPp2/8/5P2/PPPP3P/RNB1KBNR w KQ - 1 12"), Move(Square::G7, Square::H8, MoveFlags::ROOK_PROMOTION_CAPTURE)).data() == "12. gxh8=♜+"s);
+
+	// Capture + Check
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqkbnr/ppp3p1/4p3/3pPpPp/8/8/PPPP1P1P/RNBQKBNR w KQkq f6 0 5"), Move(Square::D1, Square::H5, MoveFlags::QUIET)).data() == "5. ♛xh5+"s);
+
+	// Castling
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk1nr/ppp5/4p3/2bpPpPp/8/5N1B/PPPP1P1P/RNB1K2R w KQkq - 2 8"), Move(Square::E1, Square::G1, MoveFlags::QUIET)).data() == "8. O-O"s);
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("r3k1nr/pppb4/2n1pP2/2bp1BPp/8/3P1N2/PPP2P1P/RNB2RK1 b kq - 0 11"), Move(Square::E8, Square::C8, MoveFlags::QUIET)).data() == "O-O-O"s);
+	// Check
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppppp2p/7b/3n4/8/5KP1/PPPPP2P/RNBQ1BNR b kq - 0 6"), Move(Square::E8, Square::G8, MoveFlags::QUIET)).data() == "O-O+"s);
+
+	// Checkmate
+	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("2r3k1/2q1pr2/3p2p1/p2P4/3Q4/1Pp2P2/P5P1/2K4R w - - 0 25"), Move(Square::D4, Square::H8, MoveFlags::QUIET)).data() == "25. ♛h8#"s);
+}

@@ -17,10 +17,13 @@
 #include <phase4/engine/common/wall_operations.h>
 
 #include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <optional>
 
 namespace phase4::engine::board {
+
+using AlgebraicNotation = std::array<char, 42>;
 
 class PositionMoves {
 public:
@@ -372,9 +375,8 @@ public:
 	}
 
 	static inline std::optional<moves::Move> findRealMove(moves::Moves moves, moves::Move move) {
-		const bool isQuiet = move.flags() == moves::MoveFlags::QUIET;
 		for (size_t i = 0; i < moves.size(); ++i) {
-			const bool correctFlags = isQuiet || (moves[i].flags().isPromotion() && moves[i].flags().getPromotionPiece() == move.flags().getPromotionPiece());
+			const bool correctFlags = moves[i].flags().getPromotionPiece() == move.flags().getPromotionPiece();
 			if (moves[i].from() == move.from() && moves[i].to() == move.to() && correctFlags) {
 				return moves[i];
 			}
@@ -417,6 +419,68 @@ public:
 				moves.push_back(allMoves[i]);
 			}
 		}
+	}
+
+	static AlgebraicNotation algebraicNotation(const Position &position, moves::Move move) noexcept {
+		using namespace common;
+		using namespace moves;
+
+		AlgebraicNotation result = { 0 };
+
+		auto realMove = findRealMove(position, move);
+		if (!realMove) {
+			return result;
+		}
+
+		int offset = 0;
+
+		if (position.colorToMove() == PieceColor::WHITE) {
+			const uint16_t moveNumber = position.movesCount();
+			offset += snprintf(result.data() + offset, result.size() + offset, "%d. ", moveNumber);
+		}
+
+		if (realMove->flags().isKingCastling()) {
+			offset += snprintf(result.data() + offset, result.size() + offset, "O-O");
+		} else if (realMove->flags().isQueenCastling()) {
+			offset += snprintf(result.data() + offset, result.size() + offset, "O-O-O");
+		} else {
+			const PieceType pieceType = position.pieceTable(realMove->from());
+			if (pieceType == PieceType::PAWN) {
+				if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
+					const std::array<char, 3> fromBuffer = realMove->from().asBuffer();
+					offset += snprintf(result.data() + offset, result.size() - offset, "%c", fromBuffer[0]);
+				}
+			} else {
+				//result[offset++] = pieceType.toSymbol(position.colorToMove());
+				offset += snprintf(result.data() + offset, result.size() - offset, "%s", pieceType.toSymbol(position.colorToMove()));
+			}
+
+			if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
+				result[offset++] = L'x';
+			}
+
+			const std::array<char, 3> toBuffer = realMove->to().asBuffer();
+			offset += snprintf(result.data() + offset, result.size() - offset, "%s", toBuffer.data());
+
+			if (realMove->flags().isPromotion()) {
+				result[offset++] = L'=';
+				offset += snprintf(result.data() + offset, result.size() - offset, "%s", realMove->flags().getPromotionPiece().toSymbol(position.colorToMove()));
+			}
+		}
+
+		Position positionCopy = position;
+		PositionMoves::makeMove(positionCopy, *realMove);
+		if (positionCopy.isKingChecked(positionCopy.colorToMove())) {
+			Moves validMoves;
+			getValidMoves(positionCopy, validMoves);
+			if (validMoves.is_empty()) {
+				result[offset++] = L'#';
+			} else {
+				result[offset++] = L'+';
+			}
+		}
+
+		return result;
 	}
 };
 

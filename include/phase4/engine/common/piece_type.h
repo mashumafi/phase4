@@ -1,7 +1,10 @@
 #ifndef PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 #define PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 
+#include <phase4/engine/common/piece_color.h>
+
 #include <array>
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 
@@ -33,6 +36,9 @@ public:
 	inline constexpr bool operator!=(const PieceType &that) const;
 
 	inline constexpr PieceType operator++();
+
+	inline constexpr const char *toSymbol() const;
+	inline constexpr const char *toSymbol(const PieceColor &color) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
@@ -78,6 +84,68 @@ inline constexpr bool PieceType::operator!=(const PieceType &that) const {
 
 inline constexpr PieceType PieceType::operator++() {
 	return m_piece++;
+}
+
+inline constexpr const char *PieceType::toSymbol() const {
+	switch (m_piece) {
+		case PAWN.get_raw_value():
+			return "p";
+		case KNIGHT.get_raw_value():
+			return "n";
+		case BISHOP.get_raw_value():
+			return "b";
+		case ROOK.get_raw_value():
+			return "r";
+		case QUEEN.get_raw_value():
+			return "q";
+		case KING.get_raw_value():
+			return "k";
+		default:
+			return "?";
+	}
+}
+
+inline constexpr const char *PieceType::toSymbol(const PieceColor &color) const {
+	switch (color.get_raw_value()) {
+		case PieceColor::WHITE.get_raw_value(): {
+			switch (m_piece) {
+				case PAWN.get_raw_value():
+					return "♟";
+				case KNIGHT.get_raw_value():
+					return "♞";
+				case BISHOP.get_raw_value():
+					return "♝";
+				case ROOK.get_raw_value():
+					return "♜";
+				case QUEEN.get_raw_value():
+					return "♛";
+				case KING.get_raw_value():
+					return "♚";
+				default:
+					return "?";
+			}
+		}
+		case PieceColor::BLACK.get_raw_value(): {
+			switch (m_piece) {
+				case PAWN.get_raw_value():
+					return "♙";
+				case KNIGHT.get_raw_value():
+					return "♘";
+				case BISHOP.get_raw_value():
+					return "♗";
+				case ROOK.get_raw_value():
+					return "♖";
+				case QUEEN.get_raw_value():
+					return "♕";
+				case KING.get_raw_value():
+					return "♔";
+				default:
+					return "?";
+			}
+		}
+	}
+
+	return "?";
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceType color) {
