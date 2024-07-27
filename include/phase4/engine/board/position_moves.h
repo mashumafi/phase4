@@ -22,7 +22,7 @@
 
 namespace phase4::engine::board {
 
-constexpr std::array<wchar_t, 12> unicode_pieces{
+constexpr std::array<wchar_t, 12> PieceUnicode{
 	L'♟',
 	L'♞',
 	L'♝',
@@ -466,9 +466,9 @@ public:
 				}
 			} else {
 				if (position.colorToMove() == PieceColor::BLACK) {
-					result[offset++] = unicode_pieces[pieceType.get_raw_value() + 6];
+					result[offset++] = PieceUnicode[pieceType.get_raw_value() + 6];
 				} else {
-					result[offset++] = unicode_pieces[pieceType.get_raw_value()];
+					result[offset++] = PieceUnicode[pieceType.get_raw_value()];
 				}
 			}
 
@@ -482,9 +482,9 @@ public:
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
 				if (position.colorToMove() == PieceColor::BLACK) {
-					result[offset++] = unicode_pieces[realMove->flags().getPromotionPiece().get_raw_value() + 6];
+					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6];
 				} else {
-					result[offset++] = unicode_pieces[realMove->flags().getPromotionPiece().get_raw_value()];
+					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()];
 				}
 			}
 		}
