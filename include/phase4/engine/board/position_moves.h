@@ -22,7 +22,20 @@
 
 namespace phase4::engine::board {
 
-constexpr wchar_t PieceUnicode[] = L"♟♞♝♜♛♚♙♘♗♖♕♔";
+constexpr std::array<wchar_t, 12> PieceUnicode{
+	L'♟',
+	L'♞',
+	L'♝',
+	L'♜',
+	L'♛',
+	L'♚',
+	L'♙',
+	L'♘',
+	L'♗',
+	L'♖',
+	L'♕',
+	L'♔',
+};
 
 using AlgebraicNotation = std::array<wchar_t, 42>;
 
@@ -454,9 +467,11 @@ public:
 				}
 			} else {
 				if (position.colorToMove() == PieceColor::BLACK) {
-					result[offset++] = PieceUnicode[pieceType.get_raw_value() + 6];
+					//result[offset++] = PieceUnicode[pieceType.get_raw_value() + 6];
+					offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[pieceType.get_raw_value() + 6]);
 				} else {
-					result[offset++] = PieceUnicode[pieceType.get_raw_value()];
+					//result[offset++] = PieceUnicode[pieceType.get_raw_value()];
+					offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[pieceType.get_raw_value()]);
 				}
 			}
 
