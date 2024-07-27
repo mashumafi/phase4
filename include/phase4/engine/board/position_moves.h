@@ -22,20 +22,7 @@
 
 namespace phase4::engine::board {
 
-constexpr std::array<wchar_t, 12> PieceUnicode{
-	L'♟',
-	L'♞',
-	L'♝',
-	L'♜',
-	L'♛',
-	L'♚',
-	L'♙',
-	L'♘',
-	L'♗',
-	L'♖',
-	L'♕',
-	L'♔',
-};
+constexpr wchar_t PieceUnicode[] = L"♟♞♝♜♛♚♙♘♗♖♕♔";
 
 using AlgebraicNotation = std::array<wchar_t, 42>;
 
