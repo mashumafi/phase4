@@ -478,7 +478,10 @@ public:
 			}
 
 			const std::array<char, 3> toBuffer = realMove->to().asBuffer();
-			offset += swprintf(result.data() + offset, result.size() - offset, L"%s", toBuffer.data());
+
+			wchar_t wcharArray[3];
+			std::mbstowcs(wcharArray, toBuffer.data(), toBuffer.size());
+			offset += swprintf(result.data() + offset, result.size() - offset, L"%ls", wcharArray);
 
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
