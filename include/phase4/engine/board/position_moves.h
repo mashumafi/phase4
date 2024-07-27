@@ -451,7 +451,8 @@ public:
 					offset += swprintf(result.data() + offset, result.size() - offset, L"%c", fromBuffer[0]);
 				}
 			} else {
-				result[offset++] = pieceType.toSymbol(position.colorToMove());
+				//result[offset++] = pieceType.toSymbol(position.colorToMove());
+				offset += swprintf(result.data() + offset, result.size() - offset, L"%ls", pieceType.toSymbol(position.colorToMove()));
 			}
 
 			if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
@@ -466,7 +467,8 @@ public:
 
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
-				result[offset++] = realMove->flags().getPromotionPiece().toSymbol(position.colorToMove());
+				//result[offset++] = realMove->flags().getPromotionPiece().toSymbol(position.colorToMove());
+				offset += swprintf(result.data() + offset, result.size() - offset, L"%ls", realMove->flags().getPromotionPiece().toSymbol(position.colorToMove()));
 			}
 		}
 
