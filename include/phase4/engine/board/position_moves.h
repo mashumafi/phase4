@@ -443,7 +443,7 @@ public:
 
 		auto realMove = findRealMove(position, move);
 		if (!realMove) {
-			std::cout << "Failed: " << result.data() << std::endl;
+			std::wcout << L"Failed: " << std::wstring(result.data()) << std::endl;
 			return result;
 		}
 
@@ -502,7 +502,7 @@ public:
 			}
 		}
 
-		std::cout << "Success: " << result.data() << std::endl;
+		std::wcout << L"Success: " << std::wstring(result.data()) << std::endl;
 		return result;
 	}
 };
