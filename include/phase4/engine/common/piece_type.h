@@ -1,7 +1,10 @@
 #ifndef PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 #define PHASE4_ENGINE_COMMON_PIECE_TYPE_H
 
+#include <phase4/engine/common/piece_color.h>
+
 #include <array>
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 
@@ -33,6 +36,9 @@ public:
 	inline constexpr bool operator!=(const PieceType &that) const;
 
 	inline constexpr PieceType operator++();
+
+	inline constexpr char toSymbol() const;
+	inline constexpr wchar_t toSymbol(const PieceColor &color) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
@@ -78,6 +84,42 @@ inline constexpr bool PieceType::operator!=(const PieceType &that) const {
 
 inline constexpr PieceType PieceType::operator++() {
 	return m_piece++;
+}
+
+inline constexpr char PieceType::toSymbol() const {
+	constexpr std::array<char, 6> symbols{
+		'p',
+		'n',
+		'b',
+		'r',
+		'q',
+		'k',
+	};
+
+	assert(m_piece != PieceType::INVALID.m_piece);
+
+	return symbols[m_piece];
+}
+
+inline constexpr wchar_t PieceType::toSymbol(const PieceColor &color) const {
+	constexpr std::array<wchar_t, 12> symbols{
+		L'♟',
+		L'♞',
+		L'♝',
+		L'♜',
+		L'♛',
+		L'♚',
+		L'♙',
+		L'♘',
+		L'♗',
+		L'♖',
+		L'♕',
+		L'♔',
+	};
+
+	assert(m_piece != PieceType::INVALID.m_piece);
+	assert(color != PieceColor::INVALID);
+	return symbols[m_piece + 6 * color.get_raw_value()];
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceType color) {

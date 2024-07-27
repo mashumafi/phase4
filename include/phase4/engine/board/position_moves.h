@@ -22,21 +22,6 @@
 
 namespace phase4::engine::board {
 
-constexpr std::array<wchar_t, 12> PieceUnicode{
-	L'♟',
-	L'♞',
-	L'♝',
-	L'♜',
-	L'♛',
-	L'♚',
-	L'♙',
-	L'♘',
-	L'♗',
-	L'♖',
-	L'♕',
-	L'♔',
-};
-
 using AlgebraicNotation = std::array<wchar_t, 42>;
 
 class PositionMoves {
@@ -466,13 +451,7 @@ public:
 					offset += swprintf(result.data() + offset, result.size() - offset, L"%c", fromBuffer[0]);
 				}
 			} else {
-				if (position.colorToMove() == PieceColor::BLACK) {
-					result[offset++] = PieceUnicode[pieceType.get_raw_value() + 6];
-					//offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[pieceType.get_raw_value() + 6]);
-				} else {
-					result[offset++] = PieceUnicode[pieceType.get_raw_value()];
-					//offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[pieceType.get_raw_value()]);
-				}
+				result[offset++] = pieceType.toSymbol(position.colorToMove());
 			}
 
 			if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
@@ -487,13 +466,7 @@ public:
 
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
-				if (position.colorToMove() == PieceColor::BLACK) {
-					//offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6]);
-					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6];
-				} else {
-					//offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()]);
-					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()];
-				}
+				result[offset++] = realMove->flags().getPromotionPiece().toSymbol(position.colorToMove());
 			}
 		}
 
