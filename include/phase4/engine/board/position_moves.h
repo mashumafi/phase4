@@ -389,9 +389,7 @@ public:
 	}
 
 	static inline std::optional<moves::Move> findRealMove(moves::Moves moves, moves::Move move) {
-		//const bool isQuiet = move.flags() == moves::MoveFlags::QUIET;
 		for (size_t i = 0; i < moves.size(); ++i) {
-			//const bool correctFlags = isQuiet || (moves[i].flags().isPromotion() && moves[i].flags().getPromotionPiece() == move.flags().getPromotionPiece());
 			const bool correctFlags = moves[i].flags().getPromotionPiece() == move.flags().getPromotionPiece();
 			if (moves[i].from() == move.from() && moves[i].to() == move.to() && correctFlags) {
 				return moves[i];
