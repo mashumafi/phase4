@@ -38,7 +38,7 @@ public:
 	inline constexpr PieceType operator++();
 
 	inline constexpr const char *toSymbol() const;
-	inline constexpr const wchar_t *toSymbol(const PieceColor &color) const;
+	inline constexpr const char *toSymbol(const PieceColor &color) const;
 
 	friend std::ostream &operator<<(std::ostream &os, PieceType color);
 
@@ -105,47 +105,47 @@ inline constexpr const char *PieceType::toSymbol() const {
 	}
 }
 
-inline constexpr const wchar_t *PieceType::toSymbol(const PieceColor &color) const {
+inline constexpr const char *PieceType::toSymbol(const PieceColor &color) const {
 	switch (color.get_raw_value()) {
 		case PieceColor::WHITE.get_raw_value(): {
 			switch (m_piece) {
 				case PAWN.get_raw_value():
-					return L"♟";
+					return "♟";
 				case KNIGHT.get_raw_value():
-					return L"♞";
+					return "♞";
 				case BISHOP.get_raw_value():
-					return L"♝";
+					return "♝";
 				case ROOK.get_raw_value():
-					return L"♜";
+					return "♜";
 				case QUEEN.get_raw_value():
-					return L"♛";
+					return "♛";
 				case KING.get_raw_value():
-					return L"♚";
+					return "♚";
 				default:
-					return L"?";
+					return "?";
 			}
 		}
 		case PieceColor::BLACK.get_raw_value(): {
 			switch (m_piece) {
 				case PAWN.get_raw_value():
-					return L"♙";
+					return "♙";
 				case KNIGHT.get_raw_value():
-					return L"♘";
+					return "♘";
 				case BISHOP.get_raw_value():
-					return L"♗";
+					return "♗";
 				case ROOK.get_raw_value():
-					return L"♖";
+					return "♖";
 				case QUEEN.get_raw_value():
-					return L"♕";
+					return "♕";
 				case KING.get_raw_value():
-					return L"♔";
+					return "♔";
 				default:
-					return L"?";
+					return "?";
 			}
 		}
 	}
 
-	return L"?";
+	return "?";
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceType color) {
