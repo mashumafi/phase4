@@ -488,9 +488,11 @@ public:
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
 				if (position.colorToMove() == PieceColor::BLACK) {
-					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6];
+					offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6]);
+					//result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value() + 6];
 				} else {
-					result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()];
+					offset += swprintf(result.data() + offset, result.size() - offset, L"%lc", PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()]);
+					//result[offset++] = PieceUnicode[realMove->flags().getPromotionPiece().get_raw_value()];
 				}
 			}
 		}
