@@ -39,6 +39,7 @@ public:
 
 	const T &at(std::size_t index) const;
 	const T &peek() const;
+	T &peek();
 
 	void resize(std::size_t);
 
@@ -118,6 +119,13 @@ const T &FastVector<T, N>::at(std::size_t index) const {
 
 template <typename T, std::size_t N>
 const T &FastVector<T, N>::peek() const {
+	assert(!is_empty());
+
+	return m_items[m_size - 1];
+}
+
+template <typename T, std::size_t N>
+T &FastVector<T, N>::peek() {
 	assert(!is_empty());
 
 	return m_items[m_size - 1];
