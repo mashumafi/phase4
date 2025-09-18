@@ -27,6 +27,43 @@ using AlgebraicNotation = std::array<char, 42>;
 
 class PositionMoves {
 public:
+	static inline void processRookCastling(Position &position, common::Square square) {
+		using namespace common;
+
+		switch (square.get_raw_value()) {
+			case Square::H1.get_raw_value():
+				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
+				position.castling() &= ~Castling::WHITE_SHORT;
+				break;
+			case Square::A1.get_raw_value():
+				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
+				position.castling() &= ~Castling::WHITE_LONG;
+				break;
+			case Square::H8.get_raw_value():
+				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
+				position.castling() &= ~Castling::BLACK_SHORT;
+				break;
+			case Square::A8.get_raw_value():
+				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
+				position.castling() &= ~Castling::BLACK_LONG;
+				break;
+		}
+	}
+
+	static inline void processKingCastling(Position &position, common::PieceColor color) {
+		using namespace common;
+
+		if (color == PieceColor::WHITE) {
+			position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
+			position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
+			position.castling() &= ~Castling::WHITE_CASTLING;
+		} else {
+			position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
+			position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
+			position.castling() &= ~Castling::BLACK_CASTLING;
+		}
+	}
+
 	static inline moves::Result makeMove(Position &position, moves::Move move) {
 		using namespace common;
 
@@ -95,24 +132,7 @@ public:
 			if (killedPiece == PieceType::PAWN) {
 				position.pawnHash() = position.pawnHash().addOrRemovePiece(enemyColor, killedPiece, move.to());
 			} else if (killedPiece == PieceType::ROOK) {
-				switch (move.to()) {
-					case Square::H1.get_raw_value():
-						position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-						position.castling() &= ~Castling::WHITE_SHORT;
-						break;
-					case Square::A1.get_raw_value():
-						position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-						position.castling() &= ~Castling::WHITE_LONG;
-						break;
-					case Square::H8.get_raw_value():
-						position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-						position.castling() &= ~Castling::BLACK_SHORT;
-						break;
-					case Square::A8.get_raw_value():
-						position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-						position.castling() &= ~Castling::BLACK_LONG;
-						break;
-				}
+				processRookCastling(position, move.to());
 			}
 
 			if (move.flags().isPromotion()) {
@@ -182,15 +202,7 @@ public:
 				}
 			}
 
-			if (position.colorToMove() == PieceColor::WHITE) {
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-				position.castling() &= ~Castling::WHITE_CASTLING;
-			} else {
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-				position.castling() &= ~Castling::BLACK_CASTLING;
-			}
+			processKingCastling(position, position.colorToMove());
 
 			position.castlingDone(position.colorToMove()) = true;
 		} else if (move.flags().isPromotion()) {
@@ -209,34 +221,9 @@ public:
 		}
 
 		if (pieceType == PieceType::KING && !move.flags().isCastling()) {
-			if (position.colorToMove() == PieceColor::WHITE) {
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-				position.castling() &= ~Castling::WHITE_CASTLING;
-			} else {
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-				position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-				position.castling() &= ~Castling::BLACK_CASTLING;
-			}
+			processKingCastling(position, position.colorToMove());
 		} else if (pieceType == PieceType::ROOK && position.castling() != Castling::NONE) {
-			switch (move.from().get_raw_value()) {
-				case Square::H1.get_raw_value():
-					position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-					position.castling() &= ~Castling::WHITE_SHORT;
-					break;
-				case Square::A1.get_raw_value():
-					position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-					position.castling() &= ~Castling::WHITE_LONG;
-					break;
-				case Square::H8.get_raw_value():
-					position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-					position.castling() &= ~Castling::BLACK_SHORT;
-					break;
-				case Square::A8.get_raw_value():
-					position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-					position.castling() &= ~Castling::BLACK_LONG;
-					break;
-			}
+			processRookCastling(position, move.from());
 		}
 
 		if (likely(position.walls() > 0)) {
@@ -273,34 +260,9 @@ public:
 						}
 
 						if (resultType == PieceType::KING) {
-							if (resultColor == PieceColor::WHITE) {
-								position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-								position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-								position.castling() &= ~Castling::WHITE_CASTLING;
-							} else {
-								position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-								position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-								position.castling() &= ~Castling::BLACK_CASTLING;
-							}
+							processKingCastling(position, resultColor);
 						} else if (resultType == PieceType::ROOK) {
-							switch (from.get_raw_value()) {
-								case Square::H1.get_raw_value():
-									position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_SHORT);
-									position.castling() &= ~Castling::WHITE_SHORT;
-									break;
-								case Square::A1.get_raw_value():
-									position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::WHITE_LONG);
-									position.castling() &= ~Castling::WHITE_LONG;
-									break;
-								case Square::H8.get_raw_value():
-									position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_SHORT);
-									position.castling() &= ~Castling::BLACK_SHORT;
-									break;
-								case Square::A8.get_raw_value():
-									position.hash() = position.hash().removeCastlingFlag(position.castling(), Castling::BLACK_LONG);
-									position.castling() &= ~Castling::BLACK_LONG;
-									break;
-							}
+							processRookCastling(position, from);
 						}
 					}
 					original = original.popLsb();
@@ -361,6 +323,11 @@ public:
 				const auto [resultColor, resultType] = *pieceResult;
 				result.moves.push_back({ from, to });
 				position.movePiece(resultColor, resultType, from, to);
+				if (resultType == PieceType::KING) {
+					processKingCastling(position, resultColor);
+				} else {
+					processRookCastling(position, from);
+				}
 			}
 
 			original = original.popLsb();

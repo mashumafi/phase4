@@ -239,3 +239,9 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	// Checkmate
 	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("2r3k1/2q1pr2/3p2p1/p2P4/3Q4/1Pp2P2/P5P1/2K4R w - - 0 25"), Move(Square::D4, Square::H8, MoveFlags::QUIET)).data() == "25. ♛h8#"s);
 }
+
+TEST_CASE("Sliding walls clears castling flags") {
+	// TODO: We need to test that sliding clears flags when:
+	// * King is slid and rook is not
+	// * Rook is slid and the king is not
+}
