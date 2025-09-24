@@ -36,34 +36,42 @@ public:
 	inline constexpr Position &operator=(Position &&that) noexcept = default;
 
 	inline constexpr common::Bitboard &colorPieceMask(common::PieceColor color, common::PieceType piece) noexcept {
+		assert(color.isValid());
 		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
 	}
 
 	inline constexpr common::Bitboard colorPieceMask(common::PieceColor color, common::PieceType piece) const noexcept {
+		assert(color.isValid());
 		return m_colorPieceMasks[color.get_raw_value()][piece.get_raw_value()];
 	}
 
 	inline constexpr common::Bitboard &occupancy(common::PieceColor color) noexcept {
+		assert(color.isValid());
 		return m_occupancyByColor[color.get_raw_value()];
 	}
 
 	inline constexpr common::Bitboard occupancy(common::PieceColor color) const noexcept {
+		assert(color.isValid());
 		return m_occupancyByColor[color.get_raw_value()];
 	}
 
 	inline constexpr int32_t &positionEval(common::PieceColor color, common::GamePhase phase) noexcept {
+		assert(color.isValid());
 		return m_positionEval[color.get_raw_value()][phase];
 	}
 
 	inline constexpr int32_t positionEval(common::PieceColor color, common::GamePhase phase) const noexcept {
+		assert(color.isValid());
 		return m_positionEval[color.get_raw_value()][phase];
 	}
 
 	inline constexpr int32_t &material(common::PieceColor color) noexcept {
+		assert(color.isValid());
 		return m_material[color.get_raw_value()];
 	}
 
 	inline constexpr int32_t material(common::PieceColor color) const noexcept {
+		assert(color.isValid());
 		return m_material[color.get_raw_value()];
 	}
 
@@ -84,10 +92,12 @@ public:
 	}
 
 	inline constexpr common::PieceType &pieceTable(common::Square square) noexcept {
+		assert(square.isValid());
 		return m_pieceTable[square];
 	}
 
 	inline constexpr common::PieceType pieceTable(common::Square square) const noexcept {
+		assert(square.isValid());
 		return m_pieceTable[square];
 	}
 
@@ -132,10 +142,12 @@ public:
 	}
 
 	inline constexpr bool &castlingDone(common::PieceColor color) noexcept {
+		assert(color.isValid());
 		return m_castlingDone[color.get_raw_value()];
 	}
 
 	inline constexpr bool castlingDone(common::PieceColor color) const noexcept {
+		assert(color.isValid());
 		return m_castlingDone[color.get_raw_value()];
 	}
 

@@ -20,6 +20,8 @@ public:
 	/// @return the inverted color
 	[[nodiscard]] constexpr inline PieceColor invert() const noexcept;
 
+	[[nodiscard]] constexpr inline bool isValid() const noexcept;
+
 	constexpr PieceColor(PieceColor const &that) noexcept = default;
 	constexpr PieceColor &operator=(const PieceColor &that) noexcept = default;
 
@@ -75,6 +77,10 @@ constexpr bool PieceColor::operator!=(PieceColor color) const {
 	} else {
 		return WHITE;
 	}
+}
+
+[[nodiscard]] constexpr inline bool PieceColor::isValid() const noexcept {
+	return m_value < PieceColor::INVALID.get_raw_value();
 }
 
 inline std::ostream &operator<<(std::ostream &os, PieceColor color) {
