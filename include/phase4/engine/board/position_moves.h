@@ -323,10 +323,19 @@ public:
 				const auto [resultColor, resultType] = *pieceResult;
 				result.moves.push_back({ from, to });
 				position.movePiece(resultColor, resultType, from, to);
+
+				// Update castling
 				if (resultType == PieceType::KING) {
 					processKingCastling(position, resultColor);
 				} else {
 					processRookCastling(position, from);
+				}
+
+				// Update en passant
+				if (position.enPassant() != 0) {
+					const uint8_t enPassantRank = position.enPassant().fastBitScan() % 8;
+					position.hash() = position.hash().toggleEnPassant(enPassantRank);
+					position.enPassant() = 0;
 				}
 			}
 
