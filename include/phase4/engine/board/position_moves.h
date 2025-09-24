@@ -427,8 +427,44 @@ public:
 					offset += snprintf(result.data() + offset, result.size() - offset, "%c", fromBuffer[0]);
 				}
 			} else {
-				//result[offset++] = pieceType.toSymbol(position.colorToMove());
 				offset += snprintf(result.data() + offset, result.size() - offset, "%s", pieceType.toSymbol(position.colorToMove()));
+
+				// Disambiguate move
+				Bitboard colorPieceMask = position.colorPieceMask(position.colorToMove(), pieceType);
+				bool disambiguateRank = false;
+				bool disambiguateFile = false;
+
+				// 
+				while (colorPieceMask > 0) {
+					Square square(colorPieceMask);
+					colorPieceMask = colorPieceMask.popLsb();
+					if (square == move.from()) {
+						continue;
+					}
+
+					Moves moves;
+					PositionMoves::getValidMoves(position, moves);
+					for (size_t i = 0; i < moves.size(); ++i) {
+						const Move ambiguousMove = moves[i];
+						if (ambiguousMove.from() == square && ambiguousMove.to() == move.to()) {
+							Bitboard ambiguousSquare(ambiguousMove.from().asBitboard());
+							if ((moves::patterns::RankPatternGenerator::getPatternForField(move.from()) & ambiguousSquare) != 0) {
+								disambiguateRank = true;
+							}
+							if ((moves::patterns::FilePatternGenerator::getPatternForField(move.from()) & ambiguousSquare) != 0) {
+								disambiguateFile = true;
+							}
+						}
+					}
+				}
+
+				auto buffer = move.from().asBuffer();
+				if (disambiguateRank) {
+					result[offset++] = buffer[0];
+				}
+				if (disambiguateFile) {
+					result[offset++] = buffer[1];
+				}
 			}
 
 			if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
