@@ -15,8 +15,6 @@
 static void MakeMoveUndo(benchmark::State &state) {
 	using namespace phase4::engine;
 
-	moves::magic::MagicBitboards::initWithInternalKeys();
-
 	auto session = std::make_unique<board::Session>();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
@@ -32,8 +30,6 @@ BENCHMARK(MakeMoveUndo);
 static void isMoveLegal(benchmark::State &state) {
 	using namespace phase4::engine;
 
-	moves::magic::MagicBitboards::initWithInternalKeys();
-
 	auto session = std::make_unique<board::Session>();
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);
 
@@ -46,8 +42,6 @@ BENCHMARK(isMoveLegal);
 // Make a copy, make a move, check if king is in check
 static void CopyMakeMove(benchmark::State &state) {
 	using namespace phase4::engine;
-
-	moves::magic::MagicBitboards::initWithInternalKeys();
 
 	board::Position position = board::PositionState::DEFAULT;
 	constexpr moves::Move move(common::Square::G2, common::Square::G3, moves::MoveFlags::QUIET);

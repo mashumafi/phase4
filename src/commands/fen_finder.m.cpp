@@ -32,8 +32,6 @@ int main(int argc, const char **args) {
 	using namespace phase4::engine::moves::magic;
 	using namespace std::literals;
 
-	MagicBitboards::initWithInternalKeys();
-
 	bool bishopSearch = false; // -b
 	bool kingSafetySearch = false; // -k
 	bool materialSearch = false; // -m

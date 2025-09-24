@@ -135,8 +135,6 @@ int main() {
 	using namespace phase4::engine;
 	using namespace phase4::engine::moves::magic;
 
-	MagicBitboards::initWithInternalKeys();
-
 	fen::LichessCsvParser csvReader("/workspaces/phase4/puzzles/lichess_db_puzzle.csv");
 
 	const uint32_t NUM_THREADS = std::max(std::thread::hardware_concurrency() - 1, 1u);
