@@ -252,7 +252,13 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	std::optional<Position> ambiguousPosition = FenToPosition::parse("3R3R/8/8/R7/4Q2Q/8/8/R6Q w - - 0 1");
 	REQUIRE(ambiguousPosition);
 	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::D8, Square::F8, MoveFlags::QUIET)).data() == "1. ♜df8"s);
+	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H8, Square::F8, MoveFlags::QUIET)).data() == "1. ♜hf8"s);
+	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::D8, Square::B8, MoveFlags::QUIET)).data() == "1. ♜b8"s);
+
 	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::A1, Square::A3, MoveFlags::QUIET)).data() == "1. ♜1a3"s);
+	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::A5, Square::A3, MoveFlags::QUIET)).data() == "1. ♜5a3"s);
+	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::A5, Square::A7, MoveFlags::QUIET)).data() == "1. ♜a7"s);
+
 	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H4, Square::E1, MoveFlags::QUIET)).data() == "1. ♛h4e1"s);
 }
 

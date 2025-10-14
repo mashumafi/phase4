@@ -23,7 +23,7 @@
 
 namespace phase4::engine::board {
 
-using AlgebraicNotation = std::array<char, 42>;
+using AlgebraicNotation = std::array<char, 10>;
 
 class PositionMoves {
 public:
@@ -360,6 +360,23 @@ public:
 
 		return std::nullopt;
 	};
+
+	/// @brief Based on the list of moves, determines if adding a promotion flag would make it valid
+	/// @param moves List of moves to check
+	/// @param move The desired move
+	/// @return True if promotion flag exists on the move or if the move exists in the list of moves and promotion is there instead
+	static inline bool isPromotionFlagMissing(const moves::Moves& moves, moves::Move move) {
+		if (move.flags().isPromotion()) {
+			return true;
+		}
+
+		for (size_t i = 0; i < moves.size(); ++i) {
+			if (moves[i].from() == move.from() && moves[i].to() == move.to() && moves[i].flags().isPromotion()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	static inline std::optional<moves::Move> findRealMove(const board::Position &position, moves::Move move) {
 		moves::Moves moves;

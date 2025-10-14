@@ -27,6 +27,36 @@
 
 #include <vector>
 
+struct MoveFinder {
+	bool check() const {
+		if (isValid(puzzle.blunder)) {
+			return true;
+		}
+
+		for (size_t i = 0; i < puzzle.expectedMoves.size(); ++i) {
+			if (isValid(puzzle.expectedMoves[i])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	const phase4::engine::fen::LichessPuzzle &puzzle;
+	const std::function<bool(phase4::engine::moves::Move)> &isValid;
+};
+
+std::ostream &operator<<(std::ostream &out, const MoveFinder &finder) {
+	out << finder.puzzle.fen;
+	const bool isBlunderValid = finder.isValid(finder.puzzle.blunder);
+	out << (isBlunderValid ? " (" : " ") << finder.puzzle.blunder << (isBlunderValid ? ")" : "");
+	for (size_t i = 0; i < finder.puzzle.expectedMoves.size(); ++i) {
+		const bool isExpectedMoveValid = finder.isValid(finder.puzzle.expectedMoves[i]);
+		out << (isExpectedMoveValid ? " (" : " ") << finder.puzzle.expectedMoves[i] << (isExpectedMoveValid ? ")" : "");
+	}
+	return out;
+}
+
 int main(int argc, const char **args) {
 	using namespace phase4::engine;
 	using namespace phase4::engine::moves::magic;
@@ -44,6 +74,10 @@ int main(int argc, const char **args) {
 	bool quietSearch = false; // -quiet
 	bool loudSearch = false; // -loud
 	bool captureSearch = false; // -capture
+	bool enPassantSearch = false; // -e
+	bool castleSearch = false; // -castle
+	bool promoSearch = false; // -P
+	uint16_t minRating = 0; // --rating
 	int32_t phase = common::PositionConstants::PHASE_RESOLUTION;
 	std::vector<common::PieceType> pieces;
 
@@ -102,6 +136,20 @@ int main(int argc, const char **args) {
 		if (args[i] == "-K"sv) {
 			pieces.push_back(common::PieceType::KING);
 		}
+		if (args[i] == "-e"sv) {
+			enPassantSearch = true;
+		}
+		if (args[i] == "-castle"sv) {
+			castleSearch = true;
+		}
+		if (args[i] == "-P"sv) {
+			promoSearch = true;
+		}
+		if (args[i] == "--rating"sv) {
+			minRating = std::stoi(args[i + 1]);
+			++i;
+			continue;
+		}
 	}
 
 	if (bishopSearch) {
@@ -139,25 +187,75 @@ int main(int argc, const char **args) {
 		std::cout << "Search will include Operator::getAvailableCaptureMoves" << std::endl;
 	}
 
-	fen::LichessCsvParser csvReader("/workspaces/phase4/puzzles/lichess_db_puzzle.csv");
+	fen::LichessCsvParser csvReader("/Users/mmurphy316/Downloads/lichess_db_puzzle.csv");
 
 	while (auto puzzle = csvReader.nextPuzzle()) {
 		if (!puzzle) {
+			std::cout << "No more puzzles";
 			return 1;
+		}
+
+		if (puzzle->rating < minRating) {
+			continue;
 		}
 
 		std::optional<board::Position> position = fen::FenToPosition::parse(puzzle->fen);
 		if (!position) {
+			std::cout << "Invalid position";
 			return 1;
 		}
 
 		auto blunderMove = board::PositionMoves::findRealMove(*position, puzzle->blunder);
 		if (!blunderMove) {
+			std::cout << "Invalid blunder";
 			return 1;
 		}
+		puzzle->blunder = *blunderMove;
+
+		{
+			board::Position copyPosition = *position;
+			board::PositionMoves::makeMove(copyPosition, puzzle->blunder);
+			for (size_t i = 0; i < puzzle->expectedMoves.size(); ++i) {
+				auto expectedMove = board::PositionMoves::findRealMove(copyPosition, puzzle->expectedMoves[i]);
+				if (!expectedMove) {
+					std::cout << "Invalid move";
+					return 1;
+				}
+				board::PositionMoves::makeMove(copyPosition, *expectedMove);
+				puzzle->expectedMoves[i] = *expectedMove;
+			}
+		}
+
 		board::Position blunderPosition = *position;
 		board::PositionMoves::makeMove(blunderPosition, *blunderMove);
 		const std::string blunderFen = fen::PositionToFen::encode(blunderPosition);
+
+		auto isEnPassant = [](moves::Move move) -> bool {
+			return move.flags().isEnPassant();
+		};
+
+		MoveFinder enPassantFinder{ *puzzle, isEnPassant };
+		if (enPassantSearch && enPassantFinder.check()) {
+			std::cout << "EnPassant " << enPassantFinder << std::endl;
+		}
+
+		auto isCastling = [](moves::Move move) -> bool {
+			return move.flags().isCastling();
+		};
+
+		MoveFinder castlingFinder{ *puzzle, isCastling };
+		if (castleSearch && castlingFinder.check()) {
+			std::cout << "Castling " << castlingFinder << std::endl;
+		}
+
+		auto isPromotion = [](moves::Move move) -> bool {
+			return move.flags().isPromotion();
+		};
+
+		MoveFinder promoFinder{ *puzzle, isPromotion };
+		if (promoSearch && promoFinder.check()) {
+			std::cout << "Promo " << promoFinder << std::endl;
+		}
 
 		common::Bitboard fieldsAttackedByWhite;
 		common::Bitboard fieldsAttackedByBlack;

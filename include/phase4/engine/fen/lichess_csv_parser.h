@@ -72,7 +72,7 @@ public:
 		}
 
 		std::string line;
-		line.reserve(100);
+		line.reserve(300);
 		INVALIDATE_RETURN(!std::getline(file, line));
 
 		std::istringstream lineStream(line);
