@@ -24,10 +24,11 @@
 
 namespace phase4::engine::board {
 
-using AlgebraicNotation = std::array<char, 15>;
+constexpr size_t LONGEST_ALGEBRAIC_NOTATION = 8;
+constexpr size_t MAX_UTF_CHAR_SIZE = 4;
+using AlgebraicNotation = std::array<char, LONGEST_ALGEBRAIC_NOTATION * MAX_UTF_CHAR_SIZE + 1>;
 
-inline std::string_view SV(const AlgebraicNotation& notation)
-{
+inline std::string_view SV(const AlgebraicNotation &notation) {
 	return notation.data();
 }
 
@@ -371,7 +372,7 @@ public:
 	/// @param moves List of moves to check
 	/// @param move The desired move
 	/// @return True if promotion flag exists on the move or if the move exists in the list of moves and promotion is there instead
-	static inline bool isPromotionFlagMissing(const moves::Moves& moves, moves::Move move) {
+	static inline bool isPromotionFlagMissing(const moves::Moves &moves, moves::Move move) {
 		if (move.flags().isPromotion()) {
 			return true;
 		}
@@ -457,7 +458,6 @@ public:
 				bool disambiguateRank = false;
 				bool disambiguateFile = false;
 
-				// 
 				while (colorPieceMask > 0) {
 					Square square(colorPieceMask);
 					colorPieceMask = colorPieceMask.popLsb();
