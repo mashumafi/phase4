@@ -267,7 +267,6 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 
 	CHECK(SV(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H4, Square::E1, MoveFlags::QUIET))) == "1. ♛h4e1"s);
 
-	return;
 	CHECK(SV(PositionMoves::algebraicNotation(parseFen("K7/8/8/8/4Q2Q/8/3k4/4r2Q w - - 0 500"), Move(Square::H4, Square::E1, MoveFlags::QUIET))) == "500. ♛h4xe1#"s);
 }
 
