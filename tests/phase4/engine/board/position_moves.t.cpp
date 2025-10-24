@@ -246,7 +246,7 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	//CHECK(SV(PositionMoves::algebraicNotation(parseFen("rnbqk1nr/ppp5/4p3/2bpPpPp/8/5N1B/PPPP1P1P/RNB1K2R w KQkq - 2 8"), Move(Square::E1, Square::G1, MoveFlags::KING_CASTLE))) == "8. O-O"s);
 
 	// Castling
-	//CHECK(SV(PositionMoves::algebraicNotation(parseFen("r3k1nr/pppb4/2n1pP2/2bp1BPp/8/3P1N2/PPP2P1P/RNB2RK1 b kq - 0 11"), Move(Square::E8, Square::C8, MoveFlags::QUEEN_CASTLE))) == "O-O-O"s);
+	CHECK(SV(PositionMoves::algebraicNotation(parseFen("r3k1nr/pppb4/2n1pP2/2bp1BPp/8/3P1N2/PPP2P1P/RNB2RK1 b kq - 0 11"), Move(Square::E8, Square::C8, MoveFlags::QUEEN_CASTLE))) == "O-O-O"s);
 
 	// Castling + Check
 	CHECK(SV(PositionMoves::algebraicNotation(parseFen("rnbqk2r/ppppp2p/7b/3n4/8/5KP1/PPPPP2P/RNBQ1BNR b kq - 0 6"), Move(Square::E8, Square::G8, MoveFlags::KING_CASTLE))) == "O-O+"s);
