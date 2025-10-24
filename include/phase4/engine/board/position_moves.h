@@ -20,10 +20,16 @@
 #include <cstdio>
 #include <cstring>
 #include <optional>
+#include <string_view>
 
 namespace phase4::engine::board {
 
-using AlgebraicNotation = std::array<char, 10>;
+using AlgebraicNotation = std::array<char, 14>;
+
+inline std::string_view SV(const AlgebraicNotation& notation)
+{
+	return notation.data();
+}
 
 class PositionMoves {
 public:

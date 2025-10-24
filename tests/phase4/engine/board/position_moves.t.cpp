@@ -231,7 +231,7 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppp3P1/4p3/2bpPp2/8/5P2/PPPP3P/RNB1KBNR w KQ - 1 12"), Move(Square::G7, Square::G8, MoveFlags::QUEEN_PROMOTION)).data() == "12. g8=♛+"s);
 
 	// Promotion + Capture + Check
-	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppp3P1/4p3/2bpPp2/8/5P2/PPPP3P/RNB1KBNR w KQ - 1 12"), Move(Square::G7, Square::H8, MoveFlags::ROOK_PROMOTION_CAPTURE)).data() == "12. gxh8=♜+"s);
+	CHECK(SV(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqk2r/ppp3P1/4p3/2bpPp2/8/5P2/PPPP3P/RNB1KBNR w KQ - 1 12"), Move(Square::G7, Square::H8, MoveFlags::ROOK_PROMOTION_CAPTURE))) == "12. gxh8=♜+"s);
 
 	// Capture + Check
 	CHECK(PositionMoves::algebraicNotation(*FenToPosition::parse("rnbqkbnr/ppp3p1/4p3/3pPpPp/8/8/PPPP1P1P/RNBQKBNR w KQkq f6 0 5"), Move(Square::D1, Square::H5, MoveFlags::QUIET)).data() == "5. ♛xh5+"s);
@@ -259,7 +259,7 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::A5, Square::A3, MoveFlags::QUIET)).data() == "1. ♜5a3"s);
 	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::A5, Square::A7, MoveFlags::QUIET)).data() == "1. ♜a7"s);
 
-	CHECK(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H4, Square::E1, MoveFlags::QUIET)).data() == "1. ♛h4e1"s);
+	CHECK(SV(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H4, Square::E1, MoveFlags::QUIET))) == "1. ♛h4e1"s);
 }
 
 TEST_CASE("Sliding walls clears castling flags") {
