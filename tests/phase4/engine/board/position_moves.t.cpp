@@ -254,7 +254,6 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 	// Checkmate
 	CHECK(SV(PositionMoves::algebraicNotation(parseFen("2r3k1/2q1pr2/3p2p1/p2P4/3Q4/1Pp2P2/P5P1/2K4R w - - 0 25"), Move(Square::D4, Square::H8, MoveFlags::QUIET))) == "25. ♛h8#"s);
 
-	return;
 	// Disambiguating moves
 	std::optional<Position> ambiguousPosition = FenToPosition::parse("3R3R/8/8/R7/4Q2Q/8/8/R6Q w - - 0 1");
 	REQUIRE(ambiguousPosition);
@@ -268,6 +267,7 @@ TEST_CASE("PositionMoves Algebraic Notation") {
 
 	CHECK(SV(PositionMoves::algebraicNotation(*ambiguousPosition, Move(Square::H4, Square::E1, MoveFlags::QUIET))) == "1. ♛h4e1"s);
 
+	return;
 	CHECK(SV(PositionMoves::algebraicNotation(parseFen("K7/8/8/8/4Q2Q/8/3k4/4r2Q w - - 0 500"), Move(Square::H4, Square::E1, MoveFlags::QUIET))) == "500. ♛h4xe1#"s);
 }
 
