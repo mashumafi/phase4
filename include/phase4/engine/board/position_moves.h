@@ -20,10 +20,20 @@
 #include <cstdio>
 #include <cstring>
 #include <optional>
+#include <string_view>
 
 namespace phase4::engine::board {
 
-using AlgebraicNotation = std::array<char, 10>;
+constexpr size_t NUM_PREFIX_SIZE = 5; // Moves have a number prefix, enough for 99999 moves
+constexpr size_t NUM_SEPERATOR_SIZE = 2; // Side for the ". " after the number
+constexpr size_t UTF_PIECE_SIZE = 3; // UTF for chess pieces take 3 bytes
+constexpr size_t ASCII_COUNT = 6; // There should only be 6 characters max
+constexpr size_t LONGEST_ALGEBRAIC_NOTATION = NUM_PREFIX_SIZE + NUM_SEPERATOR_SIZE + UTF_PIECE_SIZE + ASCII_COUNT + 1;
+using AlgebraicNotation = std::array<char, LONGEST_ALGEBRAIC_NOTATION>;
+
+inline std::string_view SV(const AlgebraicNotation &notation) {
+	return notation.data();
+}
 
 class PositionMoves {
 public:
@@ -365,7 +375,7 @@ public:
 	/// @param moves List of moves to check
 	/// @param move The desired move
 	/// @return True if promotion flag exists on the move or if the move exists in the list of moves and promotion is there instead
-	static inline bool isPromotionFlagMissing(const moves::Moves& moves, moves::Move move) {
+	static inline bool isPromotionFlagMissing(const moves::Moves &moves, moves::Move move) {
 		if (move.flags().isPromotion()) {
 			return true;
 		}
@@ -425,33 +435,38 @@ public:
 			return result;
 		}
 
-		int offset = 0;
+		size_t offset = 0;
 
 		if (position.colorToMove() == PieceColor::WHITE) {
 			const uint16_t moveNumber = position.movesCount();
-			offset += snprintf(result.data() + offset, result.size() + offset, "%d. ", moveNumber);
+			offset += snprintf(result.data() + offset, result.size() - offset, "%d. ", moveNumber);
+			assert(offset < result.size());
 		}
 
 		if (realMove->flags().isKingCastling()) {
-			offset += snprintf(result.data() + offset, result.size() + offset, "O-O");
+			offset += snprintf(result.data() + offset, result.size() - offset, "O-O");
+			assert(offset < result.size());
 		} else if (realMove->flags().isQueenCastling()) {
-			offset += snprintf(result.data() + offset, result.size() + offset, "O-O-O");
+			offset += snprintf(result.data() + offset, result.size() - offset, "O-O-O");
+			assert(offset < result.size());
 		} else {
 			const PieceType pieceType = position.pieceTable(realMove->from());
 			if (pieceType == PieceType::PAWN) {
 				if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
 					const std::array<char, 3> fromBuffer = realMove->from().asBuffer();
 					offset += snprintf(result.data() + offset, result.size() - offset, "%c", fromBuffer[0]);
+					assert(offset < result.size());
 				}
 			} else {
 				offset += snprintf(result.data() + offset, result.size() - offset, "%s", pieceType.toSymbol(position.colorToMove()));
+				assert(offset < result.size());
 
 				// Disambiguate move
 				Bitboard colorPieceMask = position.colorPieceMask(position.colorToMove(), pieceType);
 				bool disambiguateRank = false;
 				bool disambiguateFile = false;
 
-				// 
+				//
 				while (colorPieceMask > 0) {
 					Square square(colorPieceMask);
 					colorPieceMask = colorPieceMask.popLsb();
@@ -478,22 +493,28 @@ public:
 				auto buffer = move.from().asBuffer();
 				if (disambiguateRank) {
 					result[offset++] = buffer[0];
+					assert(offset < result.size());
 				}
 				if (disambiguateFile) {
 					result[offset++] = buffer[1];
+					assert(offset < result.size());
 				}
 			}
 
 			if (realMove->flags() == MoveFlags::EN_PASSANT || realMove->flags().isCapture()) {
 				result[offset++] = L'x';
+				assert(offset < result.size());
 			}
 
 			const std::array<char, 3> toBuffer = realMove->to().asBuffer();
 			offset += snprintf(result.data() + offset, result.size() - offset, "%s", toBuffer.data());
+			assert(offset < result.size());
 
 			if (realMove->flags().isPromotion()) {
 				result[offset++] = L'=';
+				assert(offset < result.size());
 				offset += snprintf(result.data() + offset, result.size() - offset, "%s", realMove->flags().getPromotionPiece().toSymbol(position.colorToMove()));
+				assert(offset < result.size());
 			}
 		}
 
@@ -507,8 +528,10 @@ public:
 			} else {
 				result[offset++] = L'+';
 			}
+			assert(offset < result.size());
 		}
 
+		assert(result[offset] == '\0');
 		return result;
 	}
 };
