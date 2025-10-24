@@ -24,7 +24,7 @@
 
 namespace phase4::engine::board {
 
-using AlgebraicNotation = std::array<char, 14>;
+using AlgebraicNotation = std::array<char, 15>;
 
 inline std::string_view SV(const AlgebraicNotation& notation)
 {
