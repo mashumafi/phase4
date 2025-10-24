@@ -24,9 +24,13 @@
 
 namespace phase4::engine::board {
 
-constexpr size_t LONGEST_ALGEBRAIC_NOTATION = 8;
+constexpr size_t NUM_PREFIX_SIZE = 4; // Moves have a number prefix, enough for 9999 moves
+constexpr size_t NUM_SEPERATOR_SIZE = 2; // Side for the ". " after the number
 constexpr size_t MAX_UTF_CHAR_SIZE = 4;
-using AlgebraicNotation = std::array<char, LONGEST_ALGEBRAIC_NOTATION * MAX_UTF_CHAR_SIZE + 1>;
+constexpr size_t MAX_EXPECTED_PIECES = 1;
+constexpr size_t ASCII_CHARACTERS = 7;
+constexpr size_t LONGEST_ALGEBRAIC_NOTATION = NUM_PREFIX_SIZE + NUM_SEPERATOR_SIZE + ASCII_CHARACTERS + MAX_EXPECTED_PIECES * MAX_UTF_CHAR_SIZE + 1;
+using AlgebraicNotation = std::array<char, LONGEST_ALGEBRAIC_NOTATION>;
 
 inline std::string_view SV(const AlgebraicNotation &notation) {
 	return notation.data();
@@ -458,6 +462,7 @@ public:
 				bool disambiguateRank = false;
 				bool disambiguateFile = false;
 
+				//
 				while (colorPieceMask > 0) {
 					Square square(colorPieceMask);
 					colorPieceMask = colorPieceMask.popLsb();
