@@ -69,6 +69,8 @@ public:
 	constexpr MoveFlags(MoveFlags &&that) noexcept;
 	constexpr MoveFlags &operator=(MoveFlags &&that) noexcept;
 
+	[[nodiscard]] static constexpr MoveFlags promotion_from_piece_type(common::PieceType pieceType);
+
 	constexpr bool operator==(const MoveFlags &) const;
 
 	friend std::ostream &operator<<(std::ostream &os, const MoveFlags &color);
@@ -84,6 +86,20 @@ private:
 
 constexpr MoveFlags::MoveFlags(uint64_t value) :
 		m_flags{ static_cast<uint8_t>(value) } {
+}
+
+constexpr MoveFlags MoveFlags::promotion_from_piece_type(common::PieceType pieceType) {
+	switch (pieceType.get_raw_value()) {
+		case common::PieceType::KNIGHT.get_raw_value():
+			return MoveFlags::KNIGHT_PROMOTION;
+		case common::PieceType::BISHOP.get_raw_value():
+			return MoveFlags::BISHOP_PROMOTION;
+		case common::PieceType::ROOK.get_raw_value():
+			return MoveFlags::ROOK_PROMOTION;
+		case common::PieceType::QUEEN.get_raw_value():
+			return MoveFlags::QUEEN_PROMOTION;
+	}
+	return MoveFlags::QUIET;
 }
 
 constexpr MoveFlags &MoveFlags::operator=(uint64_t value) {
