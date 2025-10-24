@@ -30,7 +30,7 @@ constexpr size_t MAX_UTF_CHAR_SIZE = 4;
 constexpr size_t MAX_EXPECTED_PIECES = 1;
 constexpr size_t ASCII_CHARACTERS = 7;
 constexpr size_t LONGEST_ALGEBRAIC_NOTATION = NUM_PREFIX_SIZE + NUM_SEPERATOR_SIZE + ASCII_CHARACTERS + MAX_EXPECTED_PIECES * MAX_UTF_CHAR_SIZE + 1;
-using AlgebraicNotation = std::array<char, 8 + 8 + LONGEST_ALGEBRAIC_NOTATION>;
+using AlgebraicNotation = std::array<char, 8 + 8 + 4 + LONGEST_ALGEBRAIC_NOTATION>;
 
 inline std::string_view SV(const AlgebraicNotation &notation) {
 	return notation.data();
