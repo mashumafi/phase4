@@ -439,15 +439,15 @@ public:
 
 		if (position.colorToMove() == PieceColor::WHITE) {
 			const uint16_t moveNumber = position.movesCount();
-			offset += snprintf(result.data() + offset, result.size() + offset, "%d. ", moveNumber);
+			offset += snprintf(result.data() + offset, result.size() - offset, "%d. ", moveNumber);
 			assert(offset < result.size());
 		}
 
 		if (realMove->flags().isKingCastling()) {
-			offset += snprintf(result.data() + offset, result.size() + offset, "O-O");
+			offset += snprintf(result.data() + offset, result.size() - offset, "O-O");
 			assert(offset < result.size());
 		} else if (realMove->flags().isQueenCastling()) {
-			offset += snprintf(result.data() + offset, result.size() + offset, "O-O-O");
+			offset += snprintf(result.data() + offset, result.size() - offset, "O-O-O");
 			assert(offset < result.size());
 		} else {
 			const PieceType pieceType = position.pieceTable(realMove->from());
