@@ -27,10 +27,9 @@ namespace phase4::engine::board {
 constexpr size_t NUM_PREFIX_SIZE = 5; // Moves have a number prefix, enough for 99999 moves
 constexpr size_t NUM_SEPERATOR_SIZE = 2; // Side for the ". " after the number
 constexpr size_t MAX_UTF_CHAR_SIZE = 4;
-constexpr size_t MAX_EXPECTED_PIECES = 1;
-constexpr size_t ASCII_CHARACTERS = 7;
-constexpr size_t LONGEST_ALGEBRAIC_NOTATION = NUM_PREFIX_SIZE + NUM_SEPERATOR_SIZE + ASCII_CHARACTERS + MAX_EXPECTED_PIECES * MAX_UTF_CHAR_SIZE + 1;
-using AlgebraicNotation = std::array<char, 8 + 8 + 4 + LONGEST_ALGEBRAIC_NOTATION>;
+constexpr size_t CHARACTER_COUNT = 7;
+constexpr size_t LONGEST_ALGEBRAIC_NOTATION = (NUM_PREFIX_SIZE + NUM_SEPERATOR_SIZE + CHARACTER_COUNT + 1) * MAX_UTF_CHAR_SIZE;
+using AlgebraicNotation = std::array<char, LONGEST_ALGEBRAIC_NOTATION>;
 
 inline std::string_view SV(const AlgebraicNotation &notation) {
 	return notation.data();
